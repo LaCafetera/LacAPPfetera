@@ -1,0 +1,45 @@
+<ion-header>
+    <ion-navbar>
+        <button ion-button left menuToggle icon-only>
+                <ion-icon name="menu"></ion-icon>
+            </button>
+        <ion-title>
+            La cAPPfetera
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button right icon-only clear [navPush]="infoFer">
+                <ion-icon name="information-circle"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-list>
+        <ion-item text-wrap *ngFor="let item of items">
+            <ion-thumbnail item-left>
+                <img [src]="item.image_url" />
+            </ion-thumbnail>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.published_at |tiempoHastaAhora }}</p>
+            <!---ion-badge item-right>260 like</ion-badge-->
+            <button item-right outline [navPush]="reproductor" [navParams]="{episodio: item.episode_id,image_url:item.image_url}">
+                <ion-icon name="play"></ion-icon>
+            </button>
+
+            <!--ion-row no-padding>
+                <ion-col text-right>
+                    <button ion-button clear small color="peace" icon-left>
+                        <ion-icon name='heart'>254</ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col text-center>
+                    <button ion-button clear small color="danger" icon-left>
+                        <ion-icon name='play'>32</ion-icon>
+                    </button>
+                </ion-col>
+            </ion-row-->
+
+        </ion-item>
+    </ion-list>
+</ion-content>
