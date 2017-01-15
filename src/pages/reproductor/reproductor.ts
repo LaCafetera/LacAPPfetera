@@ -29,6 +29,7 @@ export class ReproductorPage {
     capItems: any;
     
     episodio: string;
+    audioEnRep: string = null;
     imagen: string;
     reproductor: MediaPlugin;
     reproduciendo: boolean = false;
@@ -66,7 +67,7 @@ export class ReproductorPage {
                 this.titulo = data.response.episode.title;
                 this.descripcion = data.response.episode.description;
                 this.totDurPlay =  data.response.episode.duration;
-                this.tamanyoStr = this.dameTiempo(this.totDurPlay);
+                this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
                 console.log ("La duración del capítulo es "+ this.totDurPlay + " y trato de mostrar "+ this.tamanyoStr);
             },
             err => {
@@ -76,22 +77,14 @@ export class ReproductorPage {
         platform.ready().then((readySource) => {
             console.log("platform Ready");
       })
-            
-        //<audio-track-progress-bar>
     }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad ReproductorPage');
-        /*
-        this.reproductor.init.then(() => {
-            console.log('Playback Finished');
-        }, (err) => {
-            console.log('somthing went wrong! error code: ' + err.code + ' message: ' + err.message);
-        }, (msg) =>{this.statusRep = msg});*/
     }
 
     numerosDosCifras(numero):string {
-        var ret = "00";
+        let ret: string = "00";
         if (!isNaN(numero)){
             if (numero < 10){
                 ret = '0' + numero;
@@ -100,13 +93,13 @@ export class ReproductorPage {
                 ret = numero.toString();
             }
         }
-        return (ret);
+        return (ret.substr(0,2));
     }
 
     dameTiempo(totSegundos){
-        var horas = Math.floor(totSegundos / 3600);
-        var minutos = Math.floor((totSegundos % 3600) / 60);
-        var segundos = (totSegundos % 60);
+        let horas = Math.floor(totSegundos / 3600);
+        let minutos = Math.floor((totSegundos % 3600) / 60);
+        let segundos = (totSegundos % 60);
         return (this.numerosDosCifras (horas) + ':' + this.numerosDosCifras (minutos) + ':' + this.numerosDosCifras (segundos));
     }
 
@@ -128,10 +121,10 @@ export class ReproductorPage {
                     this.timer = setInterval(() =>{
                         // get media position
                         this.reproductor.getCurrentPosition().then((position)=>{
-                            console.log("Posición: "+ position + ". Status: "+ this.statusRep + " - " + MediaPlugin.MEDIA_RUNNING);
+                            console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + MediaPlugin.MEDIA_RUNNING);
                             if (position > -1 && this.statusRep == MediaPlugin.MEDIA_RUNNING) {
-                                    this.posicionRep = position;
-                                    this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep));
+                                    this.posicionRep = position*1000;
+                                    this.posicionRepStr = this.dameTiempo(Math.round(position));
                                     console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
                                     // ESta línea tiene que estar aquí abajo, para que refresque el valor máximo de la barra antes de que cambiemos el valor.
                                     //$("#slider-rep").val(Math.round(position)).slider("refresh");
@@ -151,15 +144,12 @@ export class ReproductorPage {
         else alert("Es nulo");
     }
 
-    actualizaPosicion(posicion){
-        this.reproductor.seekTo(posicion.value*1000);
-        console.log("Ha cambiado la posición del slider." + this.posicionRep);
+    actualizaPosicion(){
+        this.reproductor.seekTo(this.posicionRep);
+        console.log("Ha cambiado la posición del slider: " + this.posicionRep);
     }
 
     compartir(){
-
-        console.log ("Compartir es muy bonito ");
-
         var options = {
             message: this.titulo, // not supported on some apps (Facebook, Instagram)
             subject: 'Creo que esto puede interesarte.', // fi. for email
@@ -167,15 +157,6 @@ export class ReproductorPage {
             url: this.audio,
             chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
         }
-/*
-        var onSuccess = function(result) {
-            console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-            console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-        }
-
-        var onError = function(msg) {
-            console.log("Sharing failed with message: " + msg);
-        }*/
 
         SocialSharing.shareWithOptions(options).then(() => {
             console.log("Ok"); // On Android apps mostly return false even while it's true
@@ -185,7 +166,7 @@ export class ReproductorPage {
     }
 
     actualizaPorcentaje(evento):void{
-        console.log ("recibido evento "+ evento.porcentaje);
+        console.log ("[actualizaPorcentaje] recibido evento "+ evento.porcentaje);
         this.porcentajeDescargado = evento.porcentaje;
     }
 
@@ -196,71 +177,45 @@ export class ReproductorPage {
     
     ficheroDescargado(evento):void{
         let nombrerep: string;
+        let meVoyPorAqui: number = 0;
+        console.log("[ficheroDescargado] Recibido evento");
         const onStatusUpdate = (status) =>{
             this.statusRep = status
-            console.log("actualizado status de la reproducción a " + status);
+            console.log("[ficheroDescargado] actualizado status de la reproducción a " + status);
         };
         if (evento.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
-            console.log("EL fichero existe. Reproduciendo descarga");
+            console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
         } else {
             nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
-            console.log("EL fichero no existe. Reproduciendo de red");
+            console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
         };
         if(this.noesAndroid){
             this.audio = nombrerep;
         }
         else{
-            this.reproductor = new MediaPlugin (nombrerep, onStatusUpdate);
-      /*    this.reproductor.getDuration().then((duration) => {
-                console.log(position);
-            });*/
+            if (this.audioEnRep != null){
+                console.log("[ficheroDescargado] Segunda o más vez que entramos.");
+                if (this.audioEnRep != nombrerep){
+                    if (this.audioEnRep.indexOf(this.episodio)) {
+                        this.reproductor.getCurrentPosition().then((position)=>meVoyPorAqui = position);
+                        console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
+                    }
+                    this.reproductor.release();
+                    this.audioEnRep = nombrerep;
+                    this.reproductor = new MediaPlugin (this.audioEnRep, onStatusUpdate);
+                    if (meVoyPorAqui > 0)
+                    {
+                        this.reproductor.play();
+                        this.reproductor.seekTo(meVoyPorAqui*1000);
+                    }
+                }
+            }
+            else {
+                this.audioEnRep = nombrerep;
+                this.reproductor = new MediaPlugin (this.audioEnRep, onStatusUpdate);
+                console.log("[ficheroDescargado] Primera vez que entramos.");
+            }
         }
     }
-/*
-    inicializaReproductor(fichero){
-        console.log ("Vamos a ver si existe el fichero " + fichero + " de la carpeta " + cordova.file.dataDirectory);
-        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(fileSystem){
-            fileSystem.getFile(fichero, { create: false }, fileExists, fileDoesNotExist);
-        }, getFSFail); //of requestFileSystem
-    }
-    function fileExists(fileEntry){
-            console.log("El fichero existe. Reproduciremos fichero local")
-            console.log("Reproductor:" + reproductor);
-            if (typeof(reproductor) != 'undefined'){
-                reproductor.release();
-            }
-            $("#descarga").removeClass("ui-icon-arrow-d ui-icon-cloud").addClass("ui-icon-cloud");
-            reproductor = new Media(encodeURI(fichero_en_rep), function(){console.log("comenzando reproduccion fichero local")},
-                                                             function(err){console.log("Error en reproduccion" + err.code)},
-                                                             function(msg){reproduciendo = msg});
-             $("#slider-rep").attr("max", "1");
-                reproductor.play();
-             descargado = true;
-        }
-        function fileDoesNotExist(){
-            console.log("El fichero NO existe. Reproduciremos por streaming")
-            $("#descarga").removeClass("ui-icon-arrow-d ui-icon-cloud").addClass("ui-icon-arrow-d");
-            console.log("Reproductor:" + reproductor);
-            if (typeof(reproductor) != 'undefined'){
-                reproductor.release();
-                console.log ("Eliminando instancia de reproductor");
-            }
-            else
-            {
-                console.log ("No se elimina la instancia de reproductor");
-            }
-            reproductor = new Media(encodeURI(audio_en_rep), function(){console.log("comenzando reproduccion streaming")},
-                                                             function(err){console.log("Error en reproduccion: " + err.code); alert ("Error reproduciendo: " + err.code)},
-                                                             function(msg){reproduciendo = msg});
-            $("#slider-rep").attr("max", "1");
-                reproductor.play();
-            descargado = false;
-        }
-        function getFSFail(evt) {
-            console.log(evt.target.error.code);
-            alert("Errorrrr");
-        }
-
-*/
 }
