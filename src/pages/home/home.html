@@ -16,16 +16,16 @@
 
 <ion-content padding>
     <ion-list>
-        <ion-item text-wrap *ngFor="let item of items">
+        <ion-item text-wrap *ngFor="let item of items" [navPush]="reproductor" [navParams]="{episodio: item.episode_id,image_url:item.image_url}">
             <ion-thumbnail item-left>
                 <img [src]="item.image_url" />
             </ion-thumbnail>
             <h3>{{ item.title }}</h3>
             <p>{{ item.published_at |tiempoHastaAhora }}</p>
             <!---ion-badge item-right>260 like</ion-badge-->
-            <button item-right outline [navPush]="reproductor" [navParams]="{episodio: item.episode_id,image_url:item.image_url}">
+            <!--button item-right outline>
                 <ion-icon name="play"></ion-icon>
-            </button>
+            </button-->
 
             <!--ion-row no-padding>
                 <ion-col text-right>
@@ -41,5 +41,6 @@
             </ion-row-->
 
         </ion-item>
+        <!--/button-->
     </ion-list>
 </ion-content>

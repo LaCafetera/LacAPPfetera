@@ -8,6 +8,7 @@ import { NavController, NavParams, Platform, PopoverController } from 'ionic-ang
 import { MediaPlugin, SocialSharing } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
+import { ChatPage } from '../chat/chat';
 //import { DescargaCafetera } from '../../app/descarga.components';
 
 declare var cordova: any
@@ -29,13 +30,14 @@ export class ReproductorPage {
     capItems: any;
     
     episodio: string;
+    episodioDescarga: string;
     audioEnRep: string = null;
     imagen: string;
     reproductor: MediaPlugin;
     reproduciendo: boolean = false;
     descargando: boolean = false;
     statusRep: number;
-    noesAndroid:boolean;
+    live:boolean;
     ficheroExiste:boolean;
     posicionRepStr:string = "00:00:00";
     tamanyoStr:string = "01:00:00"
@@ -50,23 +52,26 @@ export class ReproductorPage {
     audio: string;
     storageDirectory: string = '';
 
-
     porcentajeDescargado: number;
+
+    pantallaChat= ChatPage;
 
     /*** compartir */
 
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController) {
-        let prueba: string;
-        this.noesAndroid = !platform.is('android');
+        //let prueba: string;
+        //this.noesAndroid = !platform.is('android');
         this.episodio = this.navParams.get('episodio');
         this.imagen = this.navParams.get('image_url');
-        prueba = (this.noesAndroid?"si":"no");
+        //prueba = (this.noesAndroid?"si":"no");
         this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
             data => {
                 this.titulo = data.response.episode.title;
                 this.descripcion = data.response.episode.description;
                 this.totDurPlay =  data.response.episode.duration;
+                this.live = (data.response.episode.type == "LIVE"?true:false);
+                this.episodioDescarga = (this.live?null:this.episodio);
                 this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
                 console.log ("La duración del capítulo es "+ this.totDurPlay + " y trato de mostrar "+ this.tamanyoStr);
             },
@@ -106,16 +111,16 @@ export class ReproductorPage {
     playPause(){
         if (this.reproductor != null){
             if (this.reproduciendo) {
-                if (!this.noesAndroid){
+              //  if (!this.noesAndroid){
                     this.reproductor.pause();
                     clearInterval(this.timer);
-                }
+              //  }
                 this.iconoPlayPause = 'play';
                 console.log("pause.");
                 this.reproduciendo=!this.reproduciendo;
             }
             else {
-                if (!this.noesAndroid){
+                //if (!this.noesAndroid){
                     this.reproductor.play();
                     this.iconoPlayPause = 'pause';
                     this.timer = setInterval(() =>{
@@ -136,7 +141,7 @@ export class ReproductorPage {
                             }
                         );
                     }, 1000);
-                }
+               // }
                 console.log("play");
                 this.reproduciendo=!this.reproduciendo;
             }
@@ -190,10 +195,10 @@ export class ReproductorPage {
             nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
         };
-        if(this.noesAndroid){
+      /*  if(this.noesAndroid){
             this.audio = nombrerep;
         }
-        else{
+        else{*/
             if (this.audioEnRep != null){
                 console.log("[ficheroDescargado] Segunda o más vez que entramos.");
                 if (this.audioEnRep != nombrerep){
@@ -216,6 +221,6 @@ export class ReproductorPage {
                 this.reproductor = new MediaPlugin (this.audioEnRep, onStatusUpdate);
                 console.log("[ficheroDescargado] Primera vez que entramos.");
             }
-        }
+        //}
     }
 }

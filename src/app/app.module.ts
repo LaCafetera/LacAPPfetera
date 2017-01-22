@@ -5,6 +5,7 @@ import { HomePage } from '../pages/home/home';
 import { InfoFerPage } from '../pages/info-fer/info-fer';
 import { ReproductorPage } from '../pages/reproductor/reproductor';
 import { DetalleCapituloPage } from '../pages/detalle-capitulo/detalle-capitulo';
+import { ChatPage } from '../pages/chat/chat';
 
 import { DescargaCafetera } from './descarga.component';
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
@@ -17,6 +18,7 @@ import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
     InfoFerPage,
     ReproductorPage,
     DetalleCapituloPage,
+    ChatPage,
     tiempoHastaAhoraPipe
   ],
   imports: [
@@ -28,7 +30,8 @@ import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
     HomePage,
     InfoFerPage,
     ReproductorPage,
-    DetalleCapituloPage
+    DetalleCapituloPage,
+    ChatPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })

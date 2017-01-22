@@ -14,7 +14,7 @@ declare var cordova: any
 export class DescargaCafetera {
 
     @Input() fileDownload: string;
-    @Input() fileExists: string;
+//@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
     @Output() ficheroDescargado = new EventEmitter();
 
@@ -35,6 +35,7 @@ export class DescargaCafetera {
     
     constructor() {
         this.porcentajeDescarga.emit({porcentaje: 0});
+        if (this.fileDownload != null){
         File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
             this.ficheroDescargado.emit({existe: true});
             console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
@@ -45,6 +46,12 @@ export class DescargaCafetera {
             console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 NO existe.');
             this.icono = 'cloud-download';
         });
+        }
+        else{
+            this.ficheroDescargado.emit({existe: false});
+            console.log("[DescargaCafetera] Emision en vivo. NO aplica.");
+            this.icono = 'lock';
+        }
     };
 
     descargarFichero(evento){
@@ -86,14 +93,17 @@ export class DescargaCafetera {
                 alert ("Cancelando descarga");
             }
         }
-        else {
+        else if (this.icono == 'trash') {
             if (confirm('El fichero ya ha sido descargado. \n ¿Desea borrarlo?')) {
                 //reproductor.stop();
                 this.borrarDescarga(this.fileDownload + ".mp3");
             //inicializaReproductor (episodio_id + ".mp3");
-        } else {
-            console.log("Rechazada opción de borrado.")
+            } else {
+                console.log("Rechazada opción de borrado.")
+            }
         }
+        else {
+            alert("No se permite descargar una emisión en vivo.");
         }
     }
 

@@ -25,7 +25,7 @@ export class HomePage {
         this.episodiosService.dameEpisodios().subscribe(
             data => {
                 this.items=data.response.items;
-                console.log('ok');
+                //console.log('ok');
             },
             err => {
                 console.log(err);

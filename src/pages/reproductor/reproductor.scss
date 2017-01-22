@@ -17,4 +17,12 @@ page-reproductor {
         border-radius: 20px;
         background-color: map-get($colors, primary);
     }
+    .imgEnVivo {
+        height: 50% !important;
+        display: block;
+        width: auto !important;
+    }
+    .scroll {
+        height: 100% !important
+    }
 }

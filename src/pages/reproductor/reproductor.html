@@ -33,15 +33,14 @@
             <!--p>
                 {{descripcion}}
             </p-->
-            <audio [controls]="noesAndroid">
-                <source src={{audio}} type="audio/ogg">
-                Your browser does not support the audio element.
-            </audio>
-            <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!noesAndroid">
+            <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!live  ">
                 <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()">
                     <ion-label range-left>{{posicionRepStr}}</ion-label>
                     <ion-label range-right>{{tamanyoStr}}</ion-label>
                 </ion-range>
+            </div>
+            <div data-role="fieldcontain" id="enVivo" name="barra" *ngIf="live">
+                <img src="assets/images/EnVivo.png" class="imgEnVivo">
             </div>
             <div data-role="content" id="fechaEmision"></div>
             <!--ion-item>
@@ -71,14 +70,14 @@
                     </button>
                 </ion-col>
                 <ion-col text-center>
-                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)"></descargaCafetera>
+                    <!--descargaCafetera [fileDownload]="episodioDescarga" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)"></descargaCafetera-->
                 </ion-col>
                 <ion-col text-center>
                     <button ion-button clear small icon-left (click)="compartir()">
                         <ion-icon name='md-share'></ion-icon>
                     </button>
                 </ion-col>
-                <ion-col text-center>
+                <ion-col text-center [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
                     <button ion-button clear small icon-left>
                         <ion-icon name='chatbubbles'></ion-icon>
                     </button>
