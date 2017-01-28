@@ -3,16 +3,17 @@ typings install dt~cordova --save --global
 
 ionic plugin add cordova-plugin-file-transfer*/
 
-import { Component } from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController } from 'ionic-angular';
-import { MediaPlugin, SocialSharing } from 'ionic-native';
+import { Component/*, Output, EventEmitter*/ } from '@angular/core';
+import { NavController, NavParams, Platform, PopoverController, Events } from 'ionic-angular';
+import { SocialSharing } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
+import { Player } from '../../app/player';
+
 //import { DescargaCafetera } from '../../app/descarga.components';
 
 declare var cordova: any
-
 
 /*
   Generated class for the Reproductor page.
@@ -26,18 +27,20 @@ declare var cordova: any
   providers: [EpisodiosService]
 })
 export class ReproductorPage {
+
+    capItem: any;
     
-    capItems: any;
-    
+    // Parámetros de entrada---- 
     episodio: string;
+    imagen: string;
+    enVivo: boolean;
+    reproductor: Player;
+    // Hasta aquí
     episodioDescarga: string;
     audioEnRep: string = null;
-    imagen: string;
-    reproductor: MediaPlugin;
     reproduciendo: boolean = false;
     descargando: boolean = false;
     statusRep: number;
-    live:boolean;
     ficheroExiste:boolean;
     posicionRepStr:string = "00:00:00";
     tamanyoStr:string = "01:00:00"
@@ -56,38 +59,55 @@ export class ReproductorPage {
 
     pantallaChat= ChatPage;
 
+    //onStatusUpdate: any;
+
+
     /*** compartir */
 
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController) {
-        //let prueba: string;
-        //this.noesAndroid = !platform.is('android');
-        this.episodio = this.navParams.get('episodio');
-        this.imagen = this.navParams.get('image_url');
-        //prueba = (this.noesAndroid?"si":"no");
-        this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
-            data => {
-                this.titulo = data.response.episode.title;
-                this.descripcion = data.response.episode.description;
-                this.totDurPlay =  data.response.episode.duration;
-                this.live = (data.response.episode.type == "LIVE"?true:false);
-                this.episodioDescarga = (this.live?null:this.episodio);
-                this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
-                console.log ("La duración del capítulo es "+ this.totDurPlay + " y trato de mostrar "+ this.tamanyoStr);
-            },
-            err => {
-                alert(err);
-            }
-        );       
-        platform.ready().then((readySource) => {
-            console.log("platform Ready");
-      })
+    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events) {
+        this.capItem = this.navParams.get('episodio');
+        this.episodio = this.capItem.episode_id;
+        this.imagen = this.capItem.image_url;
+        this.enVivo = this.capItem.type=="LIVE";
+        this.reproductor = this.navParams.get('player'); 
+        this.episodioDescarga = (this.enVivo?null:this.episodio);
+        console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
+        //this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
+        //    data => {
+        this.titulo = this.capItem.title;
+        this.descripcion = this.capItem.description;
+        this.totDurPlay =  this.capItem.duration;
+        this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
+        events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
+            // user and time are the same arguments passed in `events.publish(user, time)`
+            this.porcentajeDescargado=pctjeDescarga;
+            //alert('Recibido');
+        });
+        /*this.onStatusUpdate = (status) =>{
+            this.statusRep = status
+            console.log("[ficheroDescargado] actualizado status de la reproducción a " + status);
+        };*/
+                //console.log ("La duración del capítulo es "+ this.totDurPlay + " y trato de mostrar "+ this.tamanyoStr);
+        //    },
+        //    err => {
+        //        alert(err);
+        //    }
+        //);    
+
+        //platform.ready().then((readySource) => {
+        //    console.log("platform Ready");
+      //})
     }
 
     ionViewDidLoad() {
-        console.log('ionViewDidLoad ReproductorPage');
+        //console.log('ionViewDidLoad ReproductorPage');
     }
 
+    ngOnDestroy(){
+        //this.salidaPagina.emit({reproductor: this.reproductor});
+        this.events.publish('audio:modificado', this.reproductor);
+    }
     numerosDosCifras(numero):string {
         let ret: string = "00";
         if (!isNaN(numero)){
@@ -108,41 +128,49 @@ export class ReproductorPage {
         return (this.numerosDosCifras (horas) + ':' + this.numerosDosCifras (minutos) + ':' + this.numerosDosCifras (segundos));
     }
 
+    iniciaContadorRep(){
+        this.timer = setInterval(() =>{
+            this.reproductor.getCurrentPosition().then((position)=>{
+                //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
+                if (position > -1 && this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING) {
+                    this.posicionRep = position*1000;
+                    this.posicionRepStr = this.dameTiempo(Math.round(position));
+                    console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
+                }
+            }).catch ((e) =>{
+                console.log("Error getting pos=" + e);
+            });
+        }, 1000);
+    }
+
     playPause(){
         if (this.reproductor != null){
             if (this.reproduciendo) {
-              //  if (!this.noesAndroid){
-                    this.reproductor.pause();
-                    clearInterval(this.timer);
-              //  }
+                this.reproductor.pause();
+                clearInterval(this.timer);
                 this.iconoPlayPause = 'play';
                 console.log("pause.");
                 this.reproduciendo=!this.reproduciendo;
             }
             else {
-                //if (!this.noesAndroid){
-                    this.reproductor.play();
-                    this.iconoPlayPause = 'pause';
-                    this.timer = setInterval(() =>{
-                        // get media position
-                        this.reproductor.getCurrentPosition().then((position)=>{
-                            console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + MediaPlugin.MEDIA_RUNNING);
-                            if (position > -1 && this.statusRep == MediaPlugin.MEDIA_RUNNING) {
-                                    this.posicionRep = position*1000;
-                                    this.posicionRepStr = this.dameTiempo(Math.round(position));
-                                    console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
-                                    // ESta línea tiene que estar aquí abajo, para que refresque el valor máximo de la barra antes de que cambiemos el valor.
-                                    //$("#slider-rep").val(Math.round(position)).slider("refresh");
-                                }
-                            },
-                            // error callback
-                            function (e) {
-                                console.log("Error getting pos=" + e);
-                            }
-                        );
-                    }, 1000);
-               // }
-                console.log("play");
+                    //this.reproductor.resume();
+                this.reproductor.play(this.audioEnRep);
+                this.iconoPlayPause = 'pause';
+                this.iniciaContadorRep();
+                /*this.timer = setInterval(() =>{
+                    this.reproductor.getCurrentPosition().then((position)=>{
+                        //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
+                        if (position > -1 && this.statusRep == this.reproductor.MEDIA_RUNNING) {
+                            this.posicionRep = position*1000;
+                            this.posicionRepStr = this.dameTiempo(Math.round(position));
+                                    //console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
+                        }
+                    },
+                    function (e) {
+                        console.log("Error getting pos=" + e);
+                    });
+                }, 1000);*/
+                //console.log("play");
                 this.reproduciendo=!this.reproduciendo;
             }
         }
@@ -151,7 +179,7 @@ export class ReproductorPage {
 
     actualizaPosicion(){
         this.reproductor.seekTo(this.posicionRep);
-        console.log("Ha cambiado la posición del slider: " + this.posicionRep);
+        //console.log("Ha cambiado la posición del slider: " + this.posicionRep);
     }
 
     compartir(){
@@ -180,47 +208,80 @@ export class ReproductorPage {
         popover.present({ ev: myEvent }) ;
     } 
     
-    ficheroDescargado(evento):void{
+    ficheroDescargado(fichero):void{
         let nombrerep: string;
-        let meVoyPorAqui: number = 0;
-        console.log("[ficheroDescargado] Recibido evento");
-        const onStatusUpdate = (status) =>{
-            this.statusRep = status
-            console.log("[ficheroDescargado] actualizado status de la reproducción a " + status);
-        };
-        if (evento.existe ){
+        let meVoyPorAqui: number = 0; 
+        if (fichero.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
         } else {
             nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
         };
-      /*  if(this.noesAndroid){
-            this.audio = nombrerep;
-        }
-        else{*/
-            if (this.audioEnRep != null){
-                console.log("[ficheroDescargado] Segunda o más vez que entramos.");
-                if (this.audioEnRep != nombrerep){
-                    if (this.audioEnRep.indexOf(this.episodio)) {
-                        this.reproductor.getCurrentPosition().then((position)=>meVoyPorAqui = position);
-                        console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
-                    }
-                    this.reproductor.release();
-                    this.audioEnRep = nombrerep;
-                    this.reproductor = new MediaPlugin (this.audioEnRep, onStatusUpdate);
-                    if (meVoyPorAqui > 0)
-                    {
-                        this.reproductor.play();
-                        this.reproductor.seekTo(meVoyPorAqui*1000);
+        if (this.audioEnRep != null){
+            console.log("[ficheroDescargado] Segunda o más vez que entramos.");
+            if (this.audioEnRep != nombrerep){
+                if (this.audioEnRep.includes(this.episodio)) {
+                    this.reproductor.getCurrentPosition().then((position)=>{
+                        meVoyPorAqui = position;
+                        console.log("[ficheroDescargado] REcibido que se va por "+ meVoyPorAqui);
+                    });
+                    console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
+                }
+                this.reproductor.release();
+                this.audioEnRep = nombrerep;
+                if (this.reproductor == null) {
+                    this.reproductor = new Player(this.audioEnRep);
+                    console.log("[ficheroDescargado] reproductor es nulo");
+                } else {
+                    this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
+                    if (this.reproduciendo){
+                        this.iconoPlayPause = 'pause';
+                        this.iniciaContadorRep();
+                        this.reproductor.play(this.audioEnRep);
+                        this.reproductor.seekTo(this.posicionRep);//*1000); 
+                        console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
             }
-            else {
-                this.audioEnRep = nombrerep;
-                this.reproductor = new MediaPlugin (this.audioEnRep, onStatusUpdate);
-                console.log("[ficheroDescargado] Primera vez que entramos.");
+        }
+        else {
+            console.log("[ficheroDescargado] Primera vez que entramos.");
+            this.audioEnRep = nombrerep;
+            if (this.reproductor == null) {
+                this.reproductor = new Player(this.audioEnRep);
+                console.log("[ficheroDescargado] reproductor es nulo");
             }
-        //}
+            else {
+                if (this.reproductor.reproduciendoEste(this.audioEnRep)){
+                    this.iconoPlayPause = 'pause';
+                    this.iniciaContadorRep();
+                    this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
+                }
+                else {
+                    this.iconoPlayPause = 'play';
+                }
+            }
+/*
+
+                console.log("[ficheroDescargado] reproductor no es nulo. "+ this.audioEnRep +" - " + this.episodio);
+                this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
+                if (this.reproduciendo){
+                    if (this.reproductor.reproduciendoEste(nombrerep)){
+                        console.log("[ficheroDescargado] Estaba reproduciendo el mismo audio.");
+                        //this.reproductor.play(this.audioEnRep);
+                        this.iconoPlayPause = 'pause';
+                        this.iniciaContadorRep();
+                    }
+                    else{
+                        console.log("[ficheroDescargado] Estaba reproduciendo distinto audio.");
+                        //this.reproductor.play(this.audioEnRep);
+                        this.iconoPlayPause = 'play';
+                        //this.iniciaContadorRep();
+                    }
+
+                }
+            }*/
+        }
     }
 }

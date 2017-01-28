@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { NavController } from 'ionic-angular';
-import { Splashscreen } from 'ionic-native';
+import { NavController, Events } from 'ionic-angular';
+import { MediaPlugin, Splashscreen } from 'ionic-native';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { InfoFerPage } from '../info-fer/info-fer';
@@ -17,10 +17,21 @@ import { ReproductorPage } from '../reproductor/reproductor';
 export class HomePage {
     
     items: Array<any>;
-    reproductor = ReproductorPage;
+   // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
+    reproductor: MediaPlugin;
+    capEnRep:string = "ninguno";
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService) {
+    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events) {
+        events.subscribe('audio:modificado', (reproductorIn) => {
+            // user and time are the same arguments passed in `events.publish(user, time)`
+            this.reproductor=reproductorIn;
+            this.capEnRep = reproductorIn.dameCapitulo();
+        });
+    }    
+    
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad HomePage');
         console.log("Entrando en constructor HomePage - w");
         this.episodiosService.dameEpisodios().subscribe(
             data => {
@@ -33,6 +44,13 @@ export class HomePage {
         );
         Splashscreen.hide();
     }
+
+      pushPage(item){
+        // push another page on to the navigation stack
+        // causing the nav controller to transition to the new page
+        // optional data can also be passed to the pushed page.
+        this.navCtrl.push(ReproductorPage, {episodio: item,player:this.reproductor});
+  }
 
 }
 

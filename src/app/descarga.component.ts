@@ -1,7 +1,8 @@
 import {Component, Input, Output, EventEmitter } from '@angular/core';
 import { File, Transfer } from 'ionic-native';
+import { Events } from 'ionic-angular';
 
-declare var cordova: any
+declare var cordova: any;
 
 @Component({
     selector: 'descargaCafetera',
@@ -25,6 +26,7 @@ export class DescargaCafetera {
 
     UBICACIONHTTP: string = "https://api.spreaker.com/download/episode/";
     DIRDESTINO:string = cordova.file.dataDirectory;
+
     
     /***** Esto lo podrás borrar cuando ya controles esta parte ****************/
     tamanyo:number;
@@ -33,26 +35,29 @@ export class DescargaCafetera {
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
     
-    constructor() {
+    constructor(public events: Events) {};
+
+    ngOnInit(){
         this.porcentajeDescarga.emit({porcentaje: 0});
+        console.log ("[descarga.components.ts] fileDownload vale" + this.fileDownload);
         if (this.fileDownload != null){
-        File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
-            this.ficheroDescargado.emit({existe: true});
-            console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
-            this.icono = 'trash';
-        }, (err) => {
-            this.ficheroDescargado.emit({existe: false});
-            console.log('[DescargaCafetera] somthing went wrong! error code: ' + err.code + ' message: ' + err.message);
-            console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 NO existe.');
-            this.icono = 'cloud-download';
-        });
+            File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
+                console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
+                this.icono = 'trash';
+                this.ficheroDescargado.emit({existe: true});
+            }, (err) => {
+                console.log('[DescargaCafetera] something went wrong! error code: ' + err.code + ' message: ' + err.message);
+                console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 NO existe.');
+                this.icono = 'cloud-download';
+                this.ficheroDescargado.emit({existe: false});
+            });
         }
         else{
-            this.ficheroDescargado.emit({existe: false});
             console.log("[DescargaCafetera] Emision en vivo. NO aplica.");
             this.icono = 'lock';
+            this.ficheroDescargado.emit({existe: false});
         }
-    };
+    }
 
     descargarFichero(evento){
         let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
@@ -62,7 +67,7 @@ export class DescargaCafetera {
             if (!this.descargando){
                 console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
                 this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
-                        alert("Descarga completa.");
+                        console.log("[DescargaCAfetera] Descarga completa.");
                         this.porcentajeDescarga.emit({porcentaje: 0});
                         this.ficheroDescargado.emit({existe: true});
                         this.porcentajeDescargado = 0;
@@ -83,8 +88,8 @@ export class DescargaCafetera {
                     this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
                     if (this.porcentajeDescargado != this.porcentajeAnterior){
                         this.porcentajeAnterior = this.porcentajeDescargado;
-                        //console.log(this.porcentajeDescargado);
-                        this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                        //this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                        this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
                     }
                 })  
             }
