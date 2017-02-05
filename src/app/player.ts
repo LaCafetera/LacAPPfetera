@@ -25,10 +25,10 @@ export class Player {
     }
 
     private creaReproductor (audio){
-        const onStatusUpdate = (status) =>{
+        const onStatusUpdate = ((status) =>{
             this.statusRep = status
             console.log("[Player] actualizado status de la reproducción a " + status);
-        };
+        });
         this.reproductor = new MediaPlugin (audio, onStatusUpdate);
     }
 
@@ -39,20 +39,23 @@ export class Player {
     dameCapitulo():string{
         let inicio:number;
         let fin:number;
-        if (this.capitulo.includes('http')){
-            fin = this.capitulo.length-5;
+        if (this.capitulo != null){
+            if (this.capitulo.includes('http')){
+                fin = this.capitulo.length-5;
+            }
+            else {
+                fin = this.capitulo.length-4;
+            }
+            inicio = this.capitulo.substring(0, fin).lastIndexOf("/")+1;
+            return (this.capitulo.substring(inicio, fin));
         }
-        else {
-            fin = this.capitulo.length-4;
-        }
-        inicio = this.capitulo.substring(0, fin).lastIndexOf("/")+1;
+        else return ("");
         /*console.log("[PLAYER] Longitud: "+ this.capitulo.length);
         console.log("[PLAYER] Inicio: "+ inicio);
         console.log("[PLAYER] FIN : " + fin);
         console.log("[PLAYER] Capítulo: " + this.capitulo);
         console.log("[PLAYER] incluye http: " + this.capitulo.includes('http'));
         console.log ("[PLAYER] Capítulo vale " + this.capitulo.substring(inicio, fin));*/
-        return (this.capitulo.substring(inicio, fin));
     }
 
     capDescargado (idDescargado){
@@ -72,22 +75,29 @@ export class Player {
     }
 
     play(audio){
+        console.log("[PLAYER] 1");
         if (this.reproduciendoEste(audio))
         {
-            return this.reproductor.play();
+            console.log("[PLAYER] 2");
+            this.reproductor.play();
         }
         else{
+            console.log("[PLAYER] 3");
             this.reproductor.stop();
+            console.log("[PLAYER] 4");
             this.reproductor.release();
-            this.creaReproductor (audio);      
+            console.log("[PLAYER] 5");
+            this.creaReproductor (audio);   
+            console.log("[PLAYER] 6");   
             this.capitulo = audio;
+            console.log("[PLAYER] 7");
             this.reproductor.play();
         }
         //this.reproduciendo = true;
     }
 
     resume(){
-        return this.reproductor.play();
+        this.reproductor.play();
     }
 
     pause(){

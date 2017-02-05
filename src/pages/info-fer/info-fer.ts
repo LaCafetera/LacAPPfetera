@@ -41,14 +41,13 @@ export class InfoFerPage {
                 if (this.esAndroid){
                     this.dirJingle.pause();
                 }
-                alert("pause");
                 this.reproduciendo=!this.reproduciendo;
             }
             else {
                 if (this.esAndroid){
                     this.dirJingle.play();
                 }
-                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Alerta');
+                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Muahaha.');
                 this.reproduciendo=!this.reproduciendo;
             }
         }

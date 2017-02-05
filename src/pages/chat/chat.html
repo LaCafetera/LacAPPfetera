@@ -11,17 +11,20 @@
 </ion-header>
 
 
-<ion-content padding>
-    <ion-list>
-        <ion-item text-wrap *ngFor="let item of items">
+<ion-content>
+    <ion-card *ngFor="let item of items">
+        <ion-item>
             <ion-avatar item-left>
                 <img [src]="item.author_image_original_url" />
             </ion-avatar>
             <h3>{{ item.author_fullname }}</h3>
             <p>{{ item.created_at |tiempoHastaAhora }}</p>
-            <p>{{ item.text }}</p>
-            <!---ion-badge item-right>260 like</ion-badge-->
         </ion-item>
-    </ion-list>
-
+        <ion-card-content>
+            <p>{{ item.text }}</p>
+        </ion-card-content>
+    </ion-card>
+    <ion-infinite-scroll (ionInfinite)="quieroMas($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>

@@ -5,7 +5,7 @@ ionic plugin add cordova-plugin-file-transfer*/
 
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events } from 'ionic-angular';
-import { SocialSharing } from 'ionic-native';
+import { SocialSharing, Dialogs } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
@@ -66,6 +66,7 @@ export class ReproductorPage {
 
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events) {
+
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
         this.imagen = this.capItem.image_url;
@@ -79,29 +80,16 @@ export class ReproductorPage {
         this.descripcion = this.capItem.description;
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
-        events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
+        this.events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             this.porcentajeDescargado=pctjeDescarga;
             //alert('Recibido');
         });
-        /*this.onStatusUpdate = (status) =>{
-            this.statusRep = status
-            console.log("[ficheroDescargado] actualizado status de la reproducción a " + status);
-        };*/
-                //console.log ("La duración del capítulo es "+ this.totDurPlay + " y trato de mostrar "+ this.tamanyoStr);
-        //    },
-        //    err => {
-        //        alert(err);
-        //    }
-        //);    
-
-        //platform.ready().then((readySource) => {
-        //    console.log("platform Ready");
-      //})
     }
 
     ionViewDidLoad() {
         //console.log('ionViewDidLoad ReproductorPage');
+        
     }
 
     ngOnDestroy(){
@@ -154,9 +142,13 @@ export class ReproductorPage {
             }
             else {
                     //this.reproductor.resume();
+                    console.log("[REPRODUCTOR] 1");
                 this.reproductor.play(this.audioEnRep);
+                    console.log("[REPRODUCTOR] 2");
                 this.iconoPlayPause = 'pause';
+                    console.log("[REPRODUCTOR] 3");
                 this.iniciaContadorRep();
+                    console.log("[REPRODUCTOR] 4");
                 /*this.timer = setInterval(() =>{
                     this.reproductor.getCurrentPosition().then((position)=>{
                         //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
@@ -174,7 +166,7 @@ export class ReproductorPage {
                 this.reproduciendo=!this.reproduciendo;
             }
         }
-        else alert("Es nulo");
+        else Dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
     }
 
     actualizaPosicion(){

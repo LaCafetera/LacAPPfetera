@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { NavController, Events } from 'ionic-angular';
-import { MediaPlugin, Splashscreen } from 'ionic-native';
+import { MediaPlugin, Dialogs } from 'ionic-native';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { InfoFerPage } from '../info-fer/info-fer';
@@ -25,24 +25,26 @@ export class HomePage {
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events) {
         events.subscribe('audio:modificado', (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
-            this.reproductor=reproductorIn;
-            this.capEnRep = reproductorIn.dameCapitulo();
+            if (reproductorIn != null){
+                this.reproductor=reproductorIn;
+                this.capEnRep = reproductorIn.dameCapitulo();
+            }
         });
     }    
     
     ionViewDidLoad() {
         console.log('ionViewDidLoad HomePage');
         console.log("Entrando en constructor HomePage - w");
-        this.episodiosService.dameEpisodios().subscribe(
+        this.episodiosService.dameEpisodios2().subscribe(
             data => {
                 this.items=data.response.items;
                 //console.log('ok');
             },
             err => {
                 console.log(err);
+                Dialogs.alert ('Error descargando episodios' + err, 'Error');
             }
         );
-        Splashscreen.hide();
     }
 
       pushPage(item){
@@ -51,6 +53,50 @@ export class HomePage {
         // optional data can also be passed to the pushed page.
         this.navCtrl.push(ReproductorPage, {episodio: item,player:this.reproductor});
   }
+
+  recalentarCafe(event){
+      this.episodiosService.dameMasEpisodios(this.items[this.items.length-1].episode_id).subscribe(
+            data => {
+                this.items=this.items.concat(data.response.items);
+                if (data.response.items.length == 0) { // no quedan más capítulos
+                    event.enable(false);
+                }
+                //console.log("[HOME] Recibidos "+data.response.items.length+" nuevos elementos. Ahora la lista tiene "+ this.items.length + " elementos");
+                event.complete();
+            },
+            err => {
+                event.complete();
+                console.log(err);
+                Dialogs.alert ('Error descargando episodios' + err, 'Error');
+            }
+        );
+    }
+
+  hacerCafe(event){
+      this.episodiosService.dameEpisodios().subscribe(
+            data => {
+                let longArray = data.response.items.length;
+                let i:number=0;
+                while (data.response.items[i].episode_id != this.items[0].episode_id && (i+1) < longArray) {
+                    i++;
+                }
+                if (i>0){
+                    this.items = data.response.items.slice(0,i).concat(this.items);
+                    console.log("[HOME] Se han encontrado " + i + " nuevos capítulo");
+                }
+                else{
+                    //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
+                    this.items = data.response.items.slice(0,1).concat(this.items.slice(1)); 
+                }
+                event.complete();
+            },
+            err => {
+                event.complete();
+                console.log(err);
+                Dialogs.alert ('Error descargando episodios' + err, 'Error');
+            }
+        );
+    }
 
 }
 

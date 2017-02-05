@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter } from '@angular/core';
-import { File, Transfer } from 'ionic-native';
-import { Events } from 'ionic-angular';
+import { File, Transfer, Dialogs } from 'ionic-native';
+import { Events, ToastController } from 'ionic-angular';
 
 declare var cordova: any;
 
@@ -35,7 +35,7 @@ export class DescargaCafetera {
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
     
-    constructor(public events: Events) {};
+    constructor(public events: Events, public toastCtrl: ToastController) {};
 
     ngOnInit(){
         this.porcentajeDescarga.emit({porcentaje: 0});
@@ -59,6 +59,14 @@ export class DescargaCafetera {
         }
     }
 
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000
+        });
+        toast.present();
+    }
+
     descargarFichero(evento){
         let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
         let uri : string = encodeURI(audio_en_desc);
@@ -72,12 +80,14 @@ export class DescargaCafetera {
                         this.ficheroDescargado.emit({existe: true});
                         this.porcentajeDescargado = 0;
                         this.icono = 'trash';
+                        this.msgDescarga('Descarga completa');
                     }, (error) => {
                         if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
-                            alert("Error en Descargarga. Código de error " + error.code);
+                            Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
                             console.log("download error source " + error.source);
                             console.log("download error target " + error.target);
                             console.log("download error code" + error.code);
+                            this.porcentajeDescarga.emit({porcentaje: 0});
                         }
                         this.descargando = false;
                     });
@@ -86,16 +96,18 @@ export class DescargaCafetera {
                     this.tamanyo = progress.total;
                     this.descargado = progress.loaded;
                     this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
+                    console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "%")
                     if (this.porcentajeDescargado != this.porcentajeAnterior){
                         this.porcentajeAnterior = this.porcentajeDescargado;
-                        //this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
-                        this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
+                        this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                        //this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
                     }
                 })  
             }
             else{
                 this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
-                alert ("Cancelando descarga");
+                this.msgDescarga ("Cancelando descarga");
+                this.porcentajeDescarga.emit({porcentaje: 0});
             }
         }
         else if (this.icono == 'trash') {
@@ -108,7 +120,7 @@ export class DescargaCafetera {
             }
         }
         else {
-            alert("No se permite descargar una emisión en vivo.");
+            this.msgDescarga("No se permite descargar una emisión en vivo.");
         }
     }
 
@@ -117,8 +129,10 @@ export class DescargaCafetera {
             console.log("[DescargaCafetera] El fichero " + fichero + '.se ha eliminado.');
             this.icono = 'cloud-download';
             this.ficheroDescargado.emit({existe: false});
+            this.msgDescarga('Programa borrado');
         }, (err) => {
             console.log('[DescargaCafetera] Error borrando fichero. Error code: ' + err.code + ' message: ' + err.message);
+
         });
     }
 }
