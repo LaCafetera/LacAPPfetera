@@ -35,7 +35,7 @@ export class HomePage {
     ionViewDidLoad() {
         console.log('ionViewDidLoad HomePage');
         console.log("Entrando en constructor HomePage - w");
-        this.episodiosService.dameEpisodios2().subscribe(
+        this.episodiosService.dameEpisodios().subscribe(
             data => {
                 this.items=data.response.items;
                 //console.log('ok');
