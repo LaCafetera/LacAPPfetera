@@ -83,7 +83,7 @@ export class ReproductorPage {
         this.events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             this.porcentajeDescargado=pctjeDescarga;
-            //alert('Recibido');
+            console.log('[Reproductor] Recibido pctje descarga '+pctjeDescarga);
         });
     }
 

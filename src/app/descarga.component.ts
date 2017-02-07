@@ -99,8 +99,8 @@ export class DescargaCafetera {
                     console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "%")
                     if (this.porcentajeDescargado != this.porcentajeAnterior){
                         this.porcentajeAnterior = this.porcentajeDescargado;
-                        this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
-                        //this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
+                        //this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                        this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
                     }
                 })  
             }

@@ -13,7 +13,8 @@ export class tiempoHastaAhoraPipe implements PipeTransform{
         var milisegundosPorDia = milisegundosPorHora * 24;
         var milisegundosPorMes = milisegundosPorDia * 30;
         var milisegundosPorAnyo = milisegundosPorDia * 365;
-        var fechaSegundos = new Date (Number(value.substr(0,4)), Number(value.substr(5,2))-1, Number(value.substr(8,2)), Number(value.substr(11,2)), Number(value.substr(14,2)), Number(value.substr(17,2)));
+        // En la siguiente línea hay un +1 porque las horas que manda spreaker son las de gmt+0
+        var fechaSegundos = new Date (Number(value.substr(0,4)), Number(value.substr(5,2))-1, Number(value.substr(8,2)), Number(value.substr(11,2))+1, Number(value.substr(14,2)), Number(value.substr(17,2)));
         //console.log(value + "|"+ value.substr(0,4)+"|"+value.substr(5,2)+"|"+value.substr(8,2)+"|"+value.substr(11,2)+"|"+value.substr(14,2)+"|"+value.substr(17,2)+"|");
         var valueResultado = "Hace un rato";
 
@@ -21,7 +22,7 @@ export class tiempoHastaAhoraPipe implements PipeTransform{
 
         diferencia = Math.floor(ahora - fechaSegundos.getTime());
         //console.log("FEcha 1 =" + ahora.toString() + " Fecha 2 =" + fechaSegundos.toString() + " o también  =" + fechaSegundos.getTime());
-        //console.log("diferencia = " + diferencia);
+        //console.log("[tiempoHastaAhora] Recibido: "+value+"; fechaSegundos = " + fechaSegundos + "-"+ fechaSegundos.getTime() + "; diferencia = " + diferencia + "; ahora = " + ahora);
         if (diferencia < milisegundosPorMinuto) {
             valueResultado = "Hace menos de un minuto";
         } //

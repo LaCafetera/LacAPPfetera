@@ -26,7 +26,7 @@ export class EpisodiosService {
         return episodiosJSON;
     }
   
-    dameEpisodios2(){
+    dameEpisodios2(){ //Esto se usa para pruebas....
         var episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id=10462689').map(res => res.json()); // Fernando
         //var episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json());   //Live
         return episodiosJSON;
