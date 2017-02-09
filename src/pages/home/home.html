@@ -1,8 +1,8 @@
 <ion-header>
     <ion-navbar>
         <button ion-button left menuToggle icon-only>
-                <ion-icon name="menu"></ion-icon>
-            </button>
+        	<ion-icon name="menu"></ion-icon>
+        </button>
         <ion-title>
             La cAPPfetera
         </ion-title>
@@ -14,8 +14,7 @@
     </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-
+<ion-content>
     <ion-refresher (ionRefresh)="hacerCafe($event)">
         <ion-refresher-content loadingText="Haciendo café..."></ion-refresher-content>
     </ion-refresher>
