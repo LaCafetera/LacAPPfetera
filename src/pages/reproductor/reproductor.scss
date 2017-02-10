@@ -25,4 +25,63 @@ page-reproductor {
     .scroll {
         height: 100% !important
     }
+
+    #titular {
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 6px;
+      margin-bottom: 10px;
+      border-bottom: solid 1px #ccc;
+    }
+
+      .card-title {
+        font-weight: bold;
+        font-size: 1.6rem;
+      }
+
+    #imagen-cap {
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+      #imagen-cap img{
+        box-shadow: 3px 3px 3px #999;
+      }
+
+    #boton-play {
+      width: 80px; /* Es lo que mide el FAB en $fab-size variables.scss */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #barra_reprod {
+      width: 100%;
+    }
+
+      #tiempo-lleva {
+        float: left;
+      }
+
+      #tiempo-falta {
+        float: right;
+      }
+
+    .button {
+      height: 20px;
+    }
+
+    .social {
+      border-top: solid 1px #ccc;
+      border-bottom: solid 1px #ccc;
+    }
+
+    .scroll-content {
+      background-color: #777;
+    }
+
+    .card {
+      background-color: #ddd;
+    }
 }

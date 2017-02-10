@@ -29,8 +29,8 @@ declare var cordova: any
 export class ReproductorPage {
 
     capItem: any;
-    
-    // Parámetros de entrada---- 
+
+    // Parámetros de entrada----
     episodio: string;
     imagen: string;
     enVivo: boolean;
@@ -48,10 +48,10 @@ export class ReproductorPage {
     totDurPlay:number;
     iconoPlayPause:string = 'play';
     timer:any;
-    
+
     titulo: string;
     descripcion: string;
-    
+
     audio: string;
     storageDirectory: string = '';
 
@@ -71,7 +71,7 @@ export class ReproductorPage {
         this.episodio = this.capItem.episode_id;
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
-        this.reproductor = this.navParams.get('player'); 
+        this.reproductor = this.navParams.get('player');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         //this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
@@ -89,7 +89,7 @@ export class ReproductorPage {
 
     ionViewDidLoad() {
         //console.log('ionViewDidLoad ReproductorPage');
-        
+
     }
 
     ngOnDestroy(){
@@ -198,11 +198,11 @@ export class ReproductorPage {
     muestraDetalle(myEvent) {
         let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
         popover.present({ ev: myEvent }) ;
-    } 
-    
+    }
+
     ficheroDescargado(fichero):void{
         let nombrerep: string;
-        let meVoyPorAqui: number = 0; 
+        let meVoyPorAqui: number = 0;
         if (fichero.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
@@ -231,7 +231,7 @@ export class ReproductorPage {
                         this.iconoPlayPause = 'pause';
                         this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep);
-                        this.reproductor.seekTo(this.posicionRep);//*1000); 
+                        this.reproductor.seekTo(this.posicionRep);//*1000);
                         console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
