@@ -15,7 +15,12 @@
     <ion-card *ngFor="let item of items">
         <ion-item>
             <ion-avatar item-left>
-                <img [src]="item.author_image_original_url" />
+                <div *ngIf="item.author_image_original_url != null">
+                    <img [src]="item.author_image_original_url" />
+                </div>
+                <div *ngIf="item.author_image_original_url == null">
+                    <img src="assets/icon/icon.png" />
+                </div>
             </ion-avatar>
             <h3>{{ item.author_fullname }}</h3>
             <p>{{ item.created_at |tiempoHastaAhora }}</p>

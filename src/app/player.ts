@@ -75,22 +75,15 @@ export class Player {
     }
 
     play(audio){
-        console.log("[PLAYER] 1");
         if (this.reproduciendoEste(audio))
         {
-            console.log("[PLAYER] 2");
             this.reproductor.play();
         }
         else{
-            console.log("[PLAYER] 3");
             this.reproductor.stop();
-            console.log("[PLAYER] 4");
             this.reproductor.release();
-            console.log("[PLAYER] 5");
             this.creaReproductor (audio);   
-            console.log("[PLAYER] 6");   
             this.capitulo = audio;
-            console.log("[PLAYER] 7");
             this.reproductor.play();
         }
         //this.reproduciendo = true;
@@ -108,6 +101,23 @@ export class Player {
     release(){
         this.reproductor.release();
         //this.reproduciendo = false;
+    }
+
+    adelantaRep(){
+        this.getCurrentPosition().then((position)=>{
+            this.seekTo((position+15)*1000);
+        });
+    }
+
+    retrocedeRep(){
+        this.getCurrentPosition().then((position)=>{
+            if (position>15){
+                this.seekTo((position-15)*1000);
+            }
+            else{
+                this.seekTo(0);
+            }
+        });
     }
 
     seekTo(milisegundos:number){

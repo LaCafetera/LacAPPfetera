@@ -6,7 +6,7 @@ declare var cordova: any;
 
 @Component({
     selector: 'descargaCafetera',
-    template: ` <button ion-button clear small icon-left (click)="descargarFichero()">
+    template: ` <button ion-button clear large (click)="descargarFichero()">
                     <ion-icon name={{icono}}></ion-icon>
                 </button>`,
     providers: [File, Transfer]
@@ -96,11 +96,12 @@ export class DescargaCafetera {
                     this.tamanyo = progress.total;
                     this.descargado = progress.loaded;
                     this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
-                    console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "%")
+                    //console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "% - " +this.porcentajeDescargado + " - " + this.porcentajeAnterior);
                     if (this.porcentajeDescargado != this.porcentajeAnterior){
                         this.porcentajeAnterior = this.porcentajeDescargado;
-                        //this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
-                        this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
+                        this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                        //this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
+                        console.log("[DESCARGA.COMPONENT] Emitido " + this.porcentajeDescargado + "%")
                     }
                 })  
             }

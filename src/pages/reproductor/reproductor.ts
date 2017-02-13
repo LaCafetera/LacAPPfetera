@@ -3,6 +3,8 @@ typings install dt~cordova --save --global
 
 ionic plugin add cordova-plugin-file-transfer*/
 
+ // Esta es la línea comentada. JCSR. http://stackoverflow.com/questions/33905001/cordova-media-plugin-stopped-working-on-android-6/34045084
+
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events } from 'ionic-angular';
 import { SocialSharing, Dialogs } from 'ionic-native';
@@ -59,11 +61,6 @@ export class ReproductorPage {
 
     pantallaChat= ChatPage;
 
-    //onStatusUpdate: any;
-
-
-    /*** compartir */
-
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events) {
 
@@ -74,22 +71,18 @@ export class ReproductorPage {
         this.reproductor = this.navParams.get('player');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
-        //this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
-        //    data => {
         this.titulo = this.capItem.title;
         this.descripcion = this.capItem.description;
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
-        this.events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
-            // user and time are the same arguments passed in `events.publish(user, time)`
-            this.porcentajeDescargado=pctjeDescarga;
-            console.log('[Reproductor] Recibido pctje descarga '+pctjeDescarga);
-        });
     }
 
     ionViewDidLoad() {
-        //console.log('ionViewDidLoad ReproductorPage');
-
+        /*console.log('ionViewDidLoad ReproductorPage');
+        this.events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
+            this.porcentajeDescargado=pctjeDescarga;
+            console.log('[Reproductor] Recibido pctje descarga '+pctjeDescarga + ' - ' + this.porcentajeDescargado);
+        });*/
     }
 
     ngOnDestroy(){
@@ -119,11 +112,23 @@ export class ReproductorPage {
     iniciaContadorRep(){
         this.timer = setInterval(() =>{
             this.reproductor.getCurrentPosition().then((position)=>{
+                let status = this.reproductor.dameStatus();
+                console.log("[REPRODUCTOR] status vale "+ status + " y parado vale " + this.reproductor.MEDIA_STOPPED);
                 //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
-                if (position > -1 && this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING) {
+                if (position > 0 && status == this.reproductor.MEDIA_RUNNING) {
                     this.posicionRep = position*1000;
                     this.posicionRepStr = this.dameTiempo(Math.round(position));
-                    console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
+                    console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
+                }
+                if (status == this.reproductor.MEDIA_PAUSED || status == this.reproductor.MEDIA_STOPPED){
+                    this.iconoPlayPause = 'play';
+                    this.reproduciendo = false;
+                    if (status == this.reproductor.MEDIA_STOPPED){
+                        clearInterval(this.timer);
+                        this.posicionRep = 0;
+                        this.posicionRepStr = this.dameTiempo(Math.round(0));
+                        this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo.
+                    }
                 }
             }).catch ((e) =>{
                 console.log("Error getting pos=" + e);
@@ -133,37 +138,18 @@ export class ReproductorPage {
 
     playPause(){
         if (this.reproductor != null){
+            console.log ("[REPRODUCTOR.playPause] " + this.reproductor);
             if (this.reproduciendo) {
                 this.reproductor.pause();
                 clearInterval(this.timer);
                 this.iconoPlayPause = 'play';
-                console.log("pause.");
-                this.reproduciendo=!this.reproduciendo;
+                this.reproduciendo=false;
             }
             else {
-                    //this.reproductor.resume();
-                    console.log("[REPRODUCTOR] 1");
                 this.reproductor.play(this.audioEnRep);
-                    console.log("[REPRODUCTOR] 2");
                 this.iconoPlayPause = 'pause';
-                    console.log("[REPRODUCTOR] 3");
                 this.iniciaContadorRep();
-                    console.log("[REPRODUCTOR] 4");
-                /*this.timer = setInterval(() =>{
-                    this.reproductor.getCurrentPosition().then((position)=>{
-                        //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
-                        if (position > -1 && this.statusRep == this.reproductor.MEDIA_RUNNING) {
-                            this.posicionRep = position*1000;
-                            this.posicionRepStr = this.dameTiempo(Math.round(position));
-                                    //console.log ("Reproductor por " + this.posicionRep + " (" + Math.round(position) + ")");
-                        }
-                    },
-                    function (e) {
-                        console.log("Error getting pos=" + e);
-                    });
-                }, 1000);*/
-                //console.log("play");
-                this.reproduciendo=!this.reproduciendo;
+                this.reproduciendo=true;
             }
         }
         else Dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
@@ -172,6 +158,14 @@ export class ReproductorPage {
     actualizaPosicion(){
         this.reproductor.seekTo(this.posicionRep);
         //console.log("Ha cambiado la posición del slider: " + this.posicionRep);
+    }
+
+    adelanta(){
+        this.reproductor.adelantaRep();
+    }
+
+    retrasa(){
+        this.reproductor.retrocedeRep();
     }
 
     compartir(){
@@ -193,6 +187,7 @@ export class ReproductorPage {
     actualizaPorcentaje(evento):void{
         console.log ("[actualizaPorcentaje] recibido evento "+ evento.porcentaje);
         this.porcentajeDescargado = evento.porcentaje;
+        console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
     }
 
     muestraDetalle(myEvent) {
@@ -254,26 +249,6 @@ export class ReproductorPage {
                     this.iconoPlayPause = 'play';
                 }
             }
-/*
-
-                console.log("[ficheroDescargado] reproductor no es nulo. "+ this.audioEnRep +" - " + this.episodio);
-                this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
-                if (this.reproduciendo){
-                    if (this.reproductor.reproduciendoEste(nombrerep)){
-                        console.log("[ficheroDescargado] Estaba reproduciendo el mismo audio.");
-                        //this.reproductor.play(this.audioEnRep);
-                        this.iconoPlayPause = 'pause';
-                        this.iniciaContadorRep();
-                    }
-                    else{
-                        console.log("[ficheroDescargado] Estaba reproduciendo distinto audio.");
-                        //this.reproductor.play(this.audioEnRep);
-                        this.iconoPlayPause = 'play';
-                        //this.iniciaContadorRep();
-                    }
-
-                }
-            }*/
         }
     }
 }
