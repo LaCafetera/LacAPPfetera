@@ -54,7 +54,7 @@
           </ion-row> <!-- /Botonera de reproducción -->
 
           <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
-              <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
+              <ion-range color=primary [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
               <div id="tiempo-lleva">
                   <ion-label range-left>{{posicionRepStr}}</ion-label>
               </div>
@@ -78,15 +78,15 @@
               </ion-col>
 
               <ion-col text-center width-25>
-                  <!-- Botón para diseño, comentar para que funcione la descarga
+                  <!-- Botón para diseño, comentar para que funcione la descarga -->
                   <button ion-button clear large (click)="compartir()">
               	       <ion-icon name='cloud-download'></ion-icon>
               	  </button>
-                  -->
-                  <!-- Descarga del programa, ocultada para diseño -->
+
+                  <!-- Descarga del programa, ocultada para diseño
                   <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
-                      <!-- descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
-                  </descargaCafetera>
+                       descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)
+                  </descargaCafetera>-->
 
               </ion-col>
 

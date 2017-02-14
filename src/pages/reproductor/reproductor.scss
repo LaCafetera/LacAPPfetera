@@ -4,9 +4,9 @@ page-reproductor {
         margin: 10px 2%;
         padding: 3px;
         text-align: center;
-        background-color: #f4f4f4;
-        border: 1px solid #dcdcdc;
-        color: #fff;
+        background-color: map-get($colors, light);
+        border: 1px solid map-get($colors, secondary);
+        color: map-get($colors, light);
         border-radius: 20px;
     }
     .progress-inner {
@@ -15,7 +15,7 @@ page-reproductor {
         overflow: hidden;
         padding: 5px;
         border-radius: 20px;
-        background-color: map-get($colors, primary);
+        background-color: map-get($colors, secondary);
     }
     .imgEnVivo {
         height: 50% !important;
@@ -31,11 +31,12 @@ page-reproductor {
         margin-right: auto;
         margin-top: 6px;
         margin-bottom: 10px;
-        border-bottom: solid 1px #ccc;
+        border-bottom: solid 1px map-get($colors, primary);
     }
       #titular .card-title { /* variación del tamaño del texto del titular */
           font-weight: bold;
           font-size: 1.6rem;
+          color: map-get($colors, primary);
       }
     #imagen-cap { /* div contiene imagen del capítulo, centrada y tamaño variable */
         width: 50%;
@@ -43,7 +44,7 @@ page-reproductor {
         margin-right: auto;
     }
       #imagen-cap img { /* imagen del capítulo, para proyección de sombra */
-          box-shadow: 3px 3px 3px #999;
+          box-shadow: 3px 3px 3px map-get($colors, dark);
       }
     #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
         width: 100%;
@@ -51,21 +52,23 @@ page-reproductor {
     }
     #tiempo-lleva { /* div con el tiempo de reproducción */
         float: left;
+        color: map-get($colors, primary);
     }
     #tiempo-falta { /* div con el tiempo de restante */
         float: right;
+        color: map-get($colors, primary);
     }
     .button { /* estilo de los botones del reproductor para fijar la alura */
         height: 20px;
     }
     .social { /* líneas de separación sup e inf en botonera social */
-        border-top: solid 1px #ccc;
-        border-bottom: solid 1px #ccc;
+        border-top: solid 1px map-get($colors, primary);
+        border-bottom: solid 1px map-get($colors, primary);
     }
     .scroll-content { /* fondo de la App */
-        background-color: #777;
+        background-color: map-get($colors, fondoApp);
     }
     .card { /* fondo de la tarjeta del reproductor */
-        background-color: #ddd;
+        background-color: map-get($colors, fondoCard);
     }
 }

@@ -17,11 +17,21 @@ $font-path: "../assets/fonts";
 // The "primary" color is the only required color in the map.
 // Originales
 //$colors: ( primary : #387ef5, secondary : #32db64, danger : #f53d3d, light : #f4f4f4, dark : #222);
-$colors: ( primary: #699, secondary: #d2e1dd, danger: #f53d3d, light: #f4f4f4, dark: #222);
+//$colors: ( primary: #699, secondary: #d2e1dd, danger: #f53d3d, light: #f4f4f4, dark: #222);
+
+// Nuevo estilo
+$colors: ( primary: #747572, secondary: #bbada0, danger: #fff, light: #fff, dark: #747572, fondoApp: #faf3dd, fondoCard: #fff, fondoBarra: #367F7D);
 
 // App iOS Variables
 // --------------------------------------------------
 // iOS only Sass variables can go here
+
+// Barra superior de la App
+$toolbar-background: map-get($colors, fondoBarra);
+//$toolbar-border-color
+//$toolbar-text-color
+//$toolbar-active-color
+//$toolbar-inactive-color
 
 // Thumnail en iOS al tamaño de Android
 $item-ios-thumbnail-size: 90px;
@@ -34,6 +44,15 @@ $button-round-border-radius: 20%;
 $range-ios-padding-vertical: 0px;
 $range-md-padding-vertical: 0px;
 $range-wp-padding-vertical: 0px;
+
+// color y grosor
+$range-ios-bar-height: 4px;
+$range-md-bar-height: 4px;
+$range-wp-bar-height: 4px;
+
+$range-ios-bar-background-color: map-get($colors, primary);
+$range-md-bar-background-color: map-get($colors, primary);
+$range-wp-bar-background-color: map-get($colors, primary);
 
 // App Material Design Variables
 // --------------------------------------------------
