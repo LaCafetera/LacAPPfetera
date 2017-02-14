@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { NavController, Events } from 'ionic-angular';
-import { MediaPlugin, Dialogs } from 'ionic-native';
+import { MediaPlugin, Dialogs, BackgroundMode,  } from 'ionic-native';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { InfoFerPage } from '../info-fer/info-fer';
@@ -23,6 +23,7 @@ export class HomePage {
     capEnRep:string = "ninguno";
 
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events) {
+
         events.subscribe('audio:modificado', (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             if (reproductorIn != null){
@@ -33,6 +34,13 @@ export class HomePage {
     }    
     
     ionViewDidLoad() {
+        BackgroundMode.setDefaults({title: 'La cAPPfetera',
+                                  ticker: 'Te estás tomando un cafetito de actualidad',
+                                  text: 'Bienvenido al bosque de Sherwood',
+                                  silent: true}); /* para que no salga nada con las notificaciones
+                                  .then(()=>{console.log("[HOME] Configuración de Backgroundmode aceptada")})
+                                  .catch(()=>{console.log("[HOME] Configuración de Background mode rechazada")});*/
+        BackgroundMode.enable();
         this.episodiosService.dameEpisodios().subscribe(
             data => {
                 this.items=data.response.items;
