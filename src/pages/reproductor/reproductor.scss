@@ -25,7 +25,7 @@ page-reproductor {
     .scroll {
         height: 100% !important
     }
-    #titular {
+    #titular { /* div para centrar el titular en la tarjeta y separarlo */
         width: 90%;
         margin-left: auto;
         margin-right: auto;
@@ -33,62 +33,39 @@ page-reproductor {
         margin-bottom: 10px;
         border-bottom: solid 1px #ccc;
     }
-    .card-title {
-        font-weight: bold;
-        font-size: 1.6rem;
-    }
-    #imagen-cap {
+      #titular .card-title { /* variación del tamaño del texto del titular */
+          font-weight: bold;
+          font-size: 1.6rem;
+      }
+    #imagen-cap { /* div contiene imagen del capítulo, centrada y tamaño variable */
         width: 50%;
         margin-left: auto;
         margin-right: auto;
     }
-    #imagen-cap img {
-        box-shadow: 3px 3px 3px #999;
-    }
-    #botonera {
-        /* Es lo que mide el FAB en $fab-size variables.scss */
-        margin-left: auto;
-        margin-right: auto;
-        float: left;
-    }
-    #boton-play {
-        width: 80px;
-        /* Es lo que mide el FAB en $fab-size variables.scss */
-        //margin-left: auto;
-        //margin-right: auto;
-        float: left;
-    }
-    #boton-rep {
-        width: 30px;
-        //margin-left: auto;
-        //margin-right: auto;
-        float: left;
-    }
-    #boton-ffwd {
-        width: 30px;
-        //margin-left: auto;
-        //margin-right: auto;
-    }
-    #barra_reprod {
+      #imagen-cap img { /* imagen del capítulo, para proyección de sombra */
+          box-shadow: 3px 3px 3px #999;
+      }
+    #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
         width: 100%;
+        clear: both;
     }
-    #tiempo-lleva {
+    #tiempo-lleva { /* div con el tiempo de reproducción */
         float: left;
     }
-    #tiempo-falta {
+    #tiempo-falta { /* div con el tiempo de restante */
         float: right;
     }
-    .button {
+    .button { /* estilo de los botones del reproductor para fijar la alura */
         height: 20px;
     }
-    .social {
+    .social { /* líneas de separación sup e inf en botonera social */
         border-top: solid 1px #ccc;
         border-bottom: solid 1px #ccc;
     }
-    .scroll-content {
+    .scroll-content { /* fondo de la App */
         background-color: #777;
     }
-    .card {
+    .card { /* fondo de la tarjeta del reproductor */
         background-color: #ddd;
     }
 }

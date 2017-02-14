@@ -32,80 +32,83 @@
         </div>
 
         <ion-card-content>
-            <div id="boton-play">
-                <button ion-fab small (click)="retrasa()">
-                  <ion-icon name=rewind></ion-icon>
+
+          <ion-row  no-padding center> <!-- Botonera de reproducción -->
+            <ion-col text-center width-20 offset-20> <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
+              <button ion-button outline round (click)="retrasa()">
+                <ion-icon name=rewind></ion-icon>
               </button>
-            </div>
+            </ion-col>
 
-            <div id="boton-play">
-                <button ion-fab (click)="playPause()">
-                  <ion-icon name={{iconoPlayPause}}></ion-icon>
+            <ion-col text-center width-20>
+              <button large ion-button outline round (click)="playPause()">
+                <ion-icon name={{iconoPlayPause}}></ion-icon>
               </button>
-            </div>
+            </ion-col>
 
-            <div id="boton-play">
-                <button ion-fab small (click)="adelanta()">
-                  <ion-icon name=fastforward></ion-icon>
+            <ion-col text-center width-20>
+              <button ion-button outline round (click)="adelanta()">
+                <ion-icon name=fastforward></ion-icon>
               </button>
-            </div>
+            </ion-col>
+          </ion-row> <!-- /Botonera de reproducción -->
 
+          <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
+              <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
+              <div id="tiempo-lleva">
+                  <ion-label range-left>{{posicionRepStr}}</ion-label>
+              </div>
+              <div id="tiempo-falta">
+                  <ion-label range-right>{{tamanyoStr}}</ion-label>
+              </div>
+          </div>
 
-            <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
-                <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()">
-                </ion-range>
-                <div id="tiempo-lleva">
-                    <ion-label range-left>{{posicionRepStr}}</ion-label>
-                </div>
-                <div id="tiempo-falta">
-                    <ion-label range-right>{{tamanyoStr}}</ion-label>
-                </div>
-            </div>
+          <div data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
+              <img src="assets/images/EnVivo.png" class="imgEnVivo">
+          </div>
 
-            <div data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
-                <img src="assets/images/EnVivo.png" class="imgEnVivo">
-            </div>
+          <div data-role="content" id="fechaEmision"></div>
 
-            <div data-role="content" id="fechaEmision"></div>
+          <ion-row class="social" no-padding text-center> <!-- Botones corazón, descarga, compartir y chat -->
 
-            <ion-row class="social" no-padding text-center>
+              <ion-col text-center width-25>
+                  <button ion-button clear large>
+                      <ion-icon name='heart'></ion-icon>
+                  </button>
+              </ion-col>
 
-                <ion-col text-center width-25>
-                    <button ion-button clear large>
-                        <ion-icon name='heart'></ion-icon>
-                    </button>
-                </ion-col>
+              <ion-col text-center width-25>
+                  <!-- Botón para diseño, comentar para que funcione la descarga
+                  <button ion-button clear large (click)="compartir()">
+              	       <ion-icon name='cloud-download'></ion-icon>
+              	  </button>
+                  -->
+                  <!-- Descarga del programa, ocultada para diseño -->
+                  <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
+                      <!-- descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
+                  </descargaCafetera>
 
-                <ion-col text-center width-25>
-                    <!--button ion-button clear large (click)="compartir()">
-                	    <ion-icon name='cloud-download'></ion-icon>
-                	</button-->
-                    <!-- descarga del programa -->
-                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
-                        <!--descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)"-->
-                    </descargaCafetera>
-                    <!-- -->
-                </ion-col>
+              </ion-col>
 
-                <ion-col text-center width-25>
-                    <button ion-button clear large (click)="compartir()">
-                        <ion-icon name='share'></ion-icon>
-                    </button>
-                </ion-col>
+              <ion-col text-center width-25>
+                  <button ion-button clear large (click)="compartir()">
+                      <ion-icon name='share'></ion-icon>
+                  </button>
+              </ion-col>
 
-                <ion-col text-center width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
-                    <button ion-button clear large>
-                        <ion-icon name='chatbubbles'></ion-icon>
-                    </button>
-                </ion-col>
+              <ion-col text-center width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
+                  <button ion-button clear large>
+                      <ion-icon name='chatbubbles'></ion-icon>
+                  </button>
+              </ion-col>
 
-            </ion-row>
+          </ion-row> <!-- /Botones corazón, descarga, compartir y chat -->
 
-            <div class="progress-outer" *ngIf="porcentajeDescargado!=0">
-                <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
-                    {{porcentajeDescargado}}%
-                </div>
-            </div>
+          <div class="progress-outer" *ngIf="porcentajeDescargado!=0">
+              <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
+                  {{porcentajeDescargado}}%
+              </div>
+          </div>
 
         </ion-card-content>
 
