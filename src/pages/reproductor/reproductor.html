@@ -33,20 +33,20 @@
 
         <ion-card-content>
 
-          <ion-row  no-padding center> <!-- Botonera de reproducción -->
-            <ion-col text-center width-20 offset-20> <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
+          <ion-row id="botonera" no-padding center> <!-- Botonera de reproducción -->
+            <ion-col text-center width-20 offset-20 no-padding> <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
               <button ion-button outline round (click)="retrasa()">
                 <ion-icon name=rewind></ion-icon>
               </button>
             </ion-col>
 
-            <ion-col text-center width-20>
-              <button large ion-button outline round (click)="playPause()">
+            <ion-col text-center width-20 no-padding>
+              <button ion-button outline round (click)="playPause()">
                 <ion-icon name={{iconoPlayPause}}></ion-icon>
               </button>
             </ion-col>
 
-            <ion-col text-center width-20>
+            <ion-col text-center width-20 no-padding>
               <button ion-button outline round (click)="adelanta()">
                 <ion-icon name=fastforward></ion-icon>
               </button>
@@ -71,33 +71,33 @@
 
           <ion-row class="social" no-padding text-center> <!-- Botones corazón, descarga, compartir y chat -->
 
-              <ion-col text-center width-25>
-                  <button ion-button clear large>
+              <ion-col width-25>
+                  <button ion-button clear>
                       <ion-icon name='heart'></ion-icon>
                   </button>
               </ion-col>
 
-              <ion-col text-center width-25>
+              <ion-col width-25>
                   <!-- Botón para diseño, comentar para que funcione la descarga
-                  <button ion-button clear large (click)="compartir()">
+                  <button ion-button clear (click)="compartir()">
               	       <ion-icon name='cloud-download'></ion-icon>
               	  </button>-->
 
                   <!-- Descarga del programa, ocultada para diseño -->
                   <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
-                      <!-- descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
+                       <!--descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
                   </descargaCafetera>
 
               </ion-col>
 
-              <ion-col text-center width-25>
-                  <button ion-button clear large (click)="compartir()">
+              <ion-col width-25>
+                  <button ion-button clear (click)="compartir()">
                       <ion-icon name='share'></ion-icon>
                   </button>
               </ion-col>
 
-              <ion-col text-center width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
-                  <button ion-button clear large>
+              <ion-col width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
+                  <button ion-button clear>
                       <ion-icon name='chatbubbles'></ion-icon>
                   </button>
               </ion-col>

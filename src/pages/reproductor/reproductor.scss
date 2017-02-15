@@ -1,5 +1,11 @@
 page-reproductor {
-    .progress-outer {
+  .scroll-content { /* fondo de la App */
+    background-color: map-get($colors, fondoApp);
+  }
+    .card { /* fondo de la tarjeta del reproductor */
+      background-color: map-get($colors, fondoCard);
+    }
+      .progress-outer {
         width: 96%;
         margin: 10px 2%;
         padding: 3px;
@@ -8,67 +14,75 @@ page-reproductor {
         border: 1px solid map-get($colors, secondary);
         color: map-get($colors, light);
         border-radius: 20px;
-    }
-    .progress-inner {
+      }
+      .progress-inner {
         min-width: 15%;
         white-space: nowrap;
         overflow: hidden;
         padding: 5px;
         border-radius: 20px;
         background-color: map-get($colors, secondary);
-    }
-    .imgEnVivo {
+      }
+      .imgEnVivo {
         height: 50% !important;
         display: block;
         width: auto !important;
-    }
-    .scroll {
+      }
+      .scroll {
         height: 100% !important
-    }
-    #titular { /* div para centrar el titular en la tarjeta y separarlo */
+      }
+
+      #titular { /* div para centrar el titular en la tarjeta y separarlo */
         width: 90%;
         margin-left: auto;
         margin-right: auto;
         margin-top: 6px;
         margin-bottom: 10px;
         border-bottom: solid 1px map-get($colors, primary);
-    }
-      #titular .card-title { /* variación del tamaño del texto del titular */
+      }
+        #titular .card-title { /* variación del tamaño del texto del titular */
           font-weight: bold;
           font-size: 1.6rem;
           color: map-get($colors, primary);
-      }
-    #imagen-cap { /* div contiene imagen del capítulo, centrada y tamaño variable */
+        }
+
+      #imagen-cap { /* div contiene imagen del capítulo, centrada y tamaño variable */
         width: 50%;
         margin-left: auto;
         margin-right: auto;
-    }
-      #imagen-cap img { /* imagen del capítulo, para proyección de sombra */
-          box-shadow: 3px 3px 3px map-get($colors, dark);
       }
-    #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
+        #imagen-cap .img-loaded {/* imagen del capítulo, para proyección de sombra y encaje en caja sup */
+          width: 100%;
+          box-shadow: 3px 3px 3px map-get($colors, dark);
+        }
+
+      #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
+        height: 20px;
+      }
+      
+      #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
         width: 100%;
         clear: both;
-    }
-    #tiempo-lleva { /* div con el tiempo de reproducción */
+      }
+      #tiempo-lleva { /* div con el tiempo de reproducción */
         float: left;
         color: map-get($colors, primary);
-    }
-    #tiempo-falta { /* div con el tiempo de restante */
+      }
+      #tiempo-falta { /* div con el tiempo de restante */
         float: right;
         color: map-get($colors, primary);
-    }
-    .button { /* estilo de los botones del reproductor para fijar la alura */
-        height: 20px;
-    }
-    .social { /* líneas de separación sup e inf en botonera social */
+      }
+
+      .social { /* líneas de separación sup e inf en botonera social */
         border-top: solid 1px map-get($colors, primary);
         border-bottom: solid 1px map-get($colors, primary);
-    }
-    .scroll-content { /* fondo de la App */
-        background-color: map-get($colors, fondoApp);
-    }
-    .card { /* fondo de la tarjeta del reproductor */
-        background-color: map-get($colors, fondoCard);
-    }
+        height: 55px;
+      }
+        .social .button { /* Botones más grandes */
+          height: 35px;
+        }
+          .social .button ion-icon {
+            font-size: 3.2rem;
+          }
+
 }
