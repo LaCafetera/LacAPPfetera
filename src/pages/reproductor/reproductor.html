@@ -63,9 +63,14 @@
               </div>
           </div>
 
-          <div data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
-              <img src="assets/images/EnVivo.png" class="imgEnVivo">
-          </div>
+
+          <ion-row data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
+              <ion-col width-33 offset-33 text-center>
+                  <ion-label>
+                      <p color=danger>EN VIVO</p>
+                  </ion-label>
+              </ion-col>
+          </ion-row>
 
           <div data-role="content" id="fechaEmision"></div>
 
@@ -83,7 +88,7 @@
               	       <ion-icon name='cloud-download'></ion-icon>
               	  </button>-->
 
-                  <!-- Descarga del programa, ocultada para diseño -->
+                  <!-- Descarga del programa, ocultada para diseño-->
                   <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
                        <!--descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
                   </descargaCafetera>

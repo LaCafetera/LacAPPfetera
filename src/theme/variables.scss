@@ -20,7 +20,7 @@ $font-path: "../assets/fonts";
 //$colors: ( primary: #699, secondary: #d2e1dd, danger: #f53d3d, light: #f4f4f4, dark: #222);
 
 // Nuevo estilo
-$colors: ( primary: #747572, secondary: #bbada0, danger: #fff, light: #fff, dark: #747572, fondoApp: #faf3dd, fondoCard: #fff, fondoBarra: #367F7D);
+$colors: ( primary: #747572, secondary: #bbada0, danger: #F25F5C, light: #eee, dark: #747572, fondoApp: #faf3dd, fondoCard: #fff, fondoBarra: #367F7D);
 
 // App iOS Variables
 // --------------------------------------------------
@@ -45,7 +45,7 @@ $range-ios-padding-vertical: 0px;
 $range-md-padding-vertical: 0px;
 $range-wp-padding-vertical: 0px;
 
-// color y grosor
+// color y grosor de la línea de reproducción
 $range-ios-bar-height: 4px;
 $range-md-bar-height: 4px;
 $range-wp-bar-height: 4px;

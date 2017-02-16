@@ -148,7 +148,7 @@ export class ReproductorPage {
             }
         });
         MusicControls.listen();
-    }   
+    }
 
 
     ngOnDestroy(){

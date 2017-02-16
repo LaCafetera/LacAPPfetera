@@ -10,7 +10,7 @@ page-reproductor {
         margin: 10px 2%;
         padding: 3px;
         text-align: center;
-        background-color: map-get($colors, light);
+        background-color: map-get($colors, fondoCard);
         border: 1px solid map-get($colors, secondary);
         color: map-get($colors, light);
         border-radius: 20px;
@@ -23,11 +23,20 @@ page-reproductor {
         border-radius: 20px;
         background-color: map-get($colors, secondary);
       }
-      .imgEnVivo {
-        height: 50% !important;
-        display: block;
-        width: auto !important;
+
+      #enVivo {
+        padding-top: 15px;
+        padding-bottom: 15px;
       }
+        #enVivo .label p{
+          margin-left: auto;
+          margin-right: auto;
+          width: 80px;
+          font-size: 1.5rem;
+          font-weight: bold;
+          border: solid 2px map-get($colors, danger);
+        }
+
       .scroll {
         height: 100% !important
       }
@@ -53,13 +62,14 @@ page-reproductor {
       }
         #imagen-cap .img-loaded {/* imagen del capítulo, para proyección de sombra y encaje en caja sup */
           width: 100%;
+          height: auto;
           box-shadow: 3px 3px 3px map-get($colors, dark);
         }
 
       #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
         height: 20px;
       }
-      
+
       #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
         width: 100%;
         clear: both;
@@ -76,6 +86,7 @@ page-reproductor {
       .social { /* líneas de separación sup e inf en botonera social */
         border-top: solid 1px map-get($colors, primary);
         border-bottom: solid 1px map-get($colors, primary);
+        background-color: map-get($colors, light);
         height: 55px;
       }
         .social .button { /* Botones más grandes */
