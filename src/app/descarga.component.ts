@@ -15,6 +15,7 @@ declare var cordova: any;
 export class DescargaCafetera {
 
     @Input() fileDownload: string;
+    @Input() permitidaDescarga: boolean;
 //@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
     @Output() ficheroDescargado = new EventEmitter();
@@ -40,6 +41,7 @@ export class DescargaCafetera {
     ngOnInit(){
         this.porcentajeDescarga.emit({porcentaje: 0});
         console.log ("[descarga.components.ts] fileDownload vale" + this.fileDownload);
+        console.log ("[descarga.components.ts] permitidaDescarga vale" + this.permitidaDescarga);
         if (this.fileDownload != null){
             File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
                 console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');

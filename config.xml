@@ -72,9 +72,10 @@
   <preference name="android-minSdkVersion" value="16"/>
   <preference name="BackupWebStorage" value="none"/>
   <!--preference name="SplashMaintainAspectRatio" value="true"/-->
-  <preference name="FadeSplashScreenDuration" value="3000"/>
-  <preference name="SplashScreen" value="screen"/>
-  <preference name="SplashScreenDelay" value="6000"/>
+  <!--preference name="FadeSplashScreenDuration" value="3000"/-->
+  <!--preference name="SplashScreen" value="screen"/-->
+  <!--preference name="SplashScreenDelay" value="6000"/-->
+  <!--preference name="LoadingDialog" value="La cAPPfetera,Entrando en el bosque de Sherwood"/-->
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar"/>
   </feature>

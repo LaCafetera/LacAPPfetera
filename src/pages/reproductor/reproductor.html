@@ -28,91 +28,97 @@
         </div>
 
         <div id="imagen-cap">
-            <ion-img src={{imagen}}></ion-img>
+            <!--ion-img src={{imagen}}></ion-img-->
+            <img [src]="imagen">
         </div>
 
         <ion-card-content>
 
-          <ion-row id="botonera" no-padding center> <!-- Botonera de reproducción -->
-            <ion-col text-center width-20 offset-20 no-padding> <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
-              <button ion-button outline round (click)="retrasa()">
+            <ion-row id="botonera" no-padding center *ngIf="!enVivo">
+                <!-- Botonera de reproducción -->
+                <ion-col text-center width-20 offset-20 no-padding>
+                    <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
+                    <button ion-button outline round (click)="retrasa()">
                 <ion-icon name=rewind></ion-icon>
               </button>
-            </ion-col>
+                </ion-col>
 
-            <ion-col text-center width-20 no-padding>
-              <button ion-button outline round (click)="playPause()">
+                <ion-col text-center width-20 no-padding>
+                    <button ion-button outline round (click)="playPause()">
                 <ion-icon name={{iconoPlayPause}}></ion-icon>
               </button>
-            </ion-col>
+                </ion-col>
 
-            <ion-col text-center width-20 no-padding>
-              <button ion-button outline round (click)="adelanta()">
+                <ion-col text-center width-20 no-padding *ngIf="!enVivo">
+                    <button ion-button outline round (click)="adelanta()">
                 <ion-icon name=fastforward></ion-icon>
               </button>
-            </ion-col>
-          </ion-row> <!-- /Botonera de reproducción -->
+                </ion-col>
+            </ion-row>
+            <!-- /Botonera de reproducción -->
 
-          <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
-              <ion-range color=primary [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
-              <div id="tiempo-lleva">
-                  <ion-label range-left>{{posicionRepStr}}</ion-label>
-              </div>
-              <div id="tiempo-falta">
-                  <ion-label range-right>{{tamanyoStr}}</ion-label>
-              </div>
-          </div>
+            <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
+                <ion-range color=primary [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
+                <div id="tiempo-lleva">
+                    <ion-label range-left>{{posicionRepStr}}</ion-label>
+                </div>
+                <div id="tiempo-falta">
+                    <ion-label range-right>{{tamanyoStr}}</ion-label>
+                </div>
+            </div>
 
-          <ion-row data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
-              <ion-col width-33 offset-33 text-center>
-                  <ion-label>
-                      <p color=danger>EN VIVO</p>
-                  </ion-label>
-              </ion-col>
-          </ion-row>
+            <ion-row data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
+                <ion-col width-33 offset-33 text-center>
+                    <ion-label>
+                        <p color=danger>EN VIVO</p>
+                    </ion-label>
+                </ion-col>
+            </ion-row>
 
-          <div data-role="content" id="fechaEmision"></div>
+            <div data-role="content" id="fechaEmision"></div>
 
-          <ion-row class="social" no-padding text-center> <!-- Botones corazón, descarga, compartir y chat -->
+            <ion-row class="social" no-padding text-center>
+                <!-- Botones corazón, descarga, compartir y chat -->
 
-              <ion-col width-25>
-                  <button ion-button clear>
+                <ion-col width-25>
+                    <button ion-button clear>
                       <ion-icon name='heart'></ion-icon>
                   </button>
-              </ion-col>
+                </ion-col>
 
-              <ion-col width-25>
-                  <!-- Botón para diseño, comentar para que funcione la descarga
+                <ion-col width-25>
+                    <!-- Botón para diseño, comentar para que funcione la descarga
                   <button ion-button clear (click)="compartir()">
               	       <ion-icon name='cloud-download'></ion-icon>
               	  </button>-->
 
-                  <!-- Descarga del programa, ocultada para diseño-->
-                  <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
-                       <!--descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
-                  </descargaCafetera>
+                    <!-- Descarga del programa, ocultada para diseño-->
+                    <descargaCafetera [fileDownload]="episodio" [permitidaDescarga]="descargaPermitida" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
+                        <!--descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)" (esta línea estaba comentada)-->
+                    </descargaCafetera>
 
-              </ion-col>
+                </ion-col>
 
-              <ion-col width-25>
-                  <button ion-button clear (click)="compartir()">
+                <ion-col width-25>
+                    <button ion-button clear (click)="compartir()">
                       <ion-icon name='share'></ion-icon>
                   </button>
-              </ion-col>
+                </ion-col>
 
-              <ion-col width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
-                  <button ion-button clear>
+                <ion-col width-25 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
+                    <button ion-button clear>
                       <ion-icon name='chatbubbles'></ion-icon>
                   </button>
-              </ion-col>
+                </ion-col>
 
-          </ion-row> <!-- /Botones corazón, descarga, compartir y chat -->
+            </ion-row>
+            <!-- /Botones corazón, descarga, compartir y chat -->
 
-          <div class="progress-outer" *ngIf="porcentajeDescargado!=0">
-              <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
-                  {{porcentajeDescargado}}%
-              </div>
-          </div>
+            <div class="progress-outer" *ngIf="porcentajeDescargado!=0">
+                <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
+                    {{porcentajeDescargado}}%
+                </div>
+            </div>
 
         </ion-card-content>
 

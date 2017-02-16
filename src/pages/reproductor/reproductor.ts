@@ -31,12 +31,14 @@ declare var cordova: any
 export class ReproductorPage {
 
     capItem: any;
+    reproductor: Player;
+    descargaPermitida: boolean;
 
     // Parámetros de entrada----
+    noRequiereDescarga:boolean=true;
     episodio: string;
     imagen: string;
     enVivo: boolean;
-    reproductor: Player;
     // Hasta aquí
     episodioDescarga: string;
     audioEnRep: string = null;
@@ -69,6 +71,7 @@ export class ReproductorPage {
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
+        this.descargaPermitida =  this.navParams.get('wifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         this.titulo = this.capItem.title;
@@ -205,7 +208,6 @@ export class ReproductorPage {
 
     playPause(){
         if (this.reproductor != null){
-            console.log ("[REPRODUCTOR.playPause] " + this.reproductor);
             if (this.reproduciendo) {
                 this.reproductor.pause();
                 clearInterval(this.timer);
@@ -213,10 +215,16 @@ export class ReproductorPage {
                 this.reproduciendo=false;
             }
             else {
-                this.reproductor.play(this.audioEnRep);
-                this.iconoPlayPause = 'pause';
-                this.iniciaContadorRep();
-                this.reproduciendo=true;
+                console.log("[reproductor.playpause] descargaPermitida: " + this.descargaPermitida + "noRequiereDescarga" + this.noRequiereDescarga);
+                if (true){ //this.descargaPermitida || this.noRequiereDescarga) {
+                    this.reproductor.play(this.audioEnRep);
+                    this.iconoPlayPause = 'pause';
+                    this.iniciaContadorRep();
+                    this.reproduciendo=true;
+                }/*
+                else{
+                    Dialogs.alert("No puede reproducir sin WIFI", 'Error');
+                }*/
             }
             MusicControls.updateIsPlaying(this.reproduciendo);
         }
@@ -269,9 +277,11 @@ export class ReproductorPage {
         if (fichero.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
+            this.noRequiereDescarga = true;
         } else {
             nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
+            this.noRequiereDescarga = false;
         };
         if (this.audioEnRep != null){
             console.log("[ficheroDescargado] Segunda o más vez que entramos.");

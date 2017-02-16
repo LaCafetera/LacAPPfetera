@@ -1,20 +1,20 @@
 <ion-header>
     <ion-navbar>
-    
-        <button ion-button left menuToggle icon-only>
+
+        <button ion-button left menuToggle (click)="menuOpen()" icon-only>
         	<ion-icon name="menu"></ion-icon>
         </button>
-        
+
         <ion-title>
             La cAPPfetera
         </ion-title>
-        
+
         <ion-buttons end>
             <button ion-button right icon-only clear [navPush]="infoFer">
                 <ion-icon name="information-circle"></ion-icon>
             </button>
         </ion-buttons>
-        
+
     </ion-navbar>
 </ion-header>
 
@@ -23,15 +23,15 @@
     <ion-refresher (ionRefresh)="hacerCafe($event)">
         <ion-refresher-content loadingText="Haciendo café..."></ion-refresher-content>
     </ion-refresher>
-    
+
     <ion-list>
         <ion-item *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
             <ion-thumbnail item-left>
                 <img [src]="item.image_url" />
             </ion-thumbnail>
-            
+
             <h3>{{ item.title }}</h3>
-            
+
             <p>{{ item.published_at |tiempoHastaAhora }}</p>
             <!--ion-badge item-right *ngIf="item.episode_id==capEnRep">En reproducción</ion-badge-->
             <button item-right outline *ngIf="item.episode_id==capEnRep">
@@ -58,5 +58,32 @@
     <ion-infinite-scroll (ionInfinite)="recalentarCafe($event)">
         <ion-infinite-scroll-content loadingText="Recalentando café..."></ion-infinite-scroll-content>
     </ion-infinite-scroll>
-    
+
 </ion-content>
+
+<ion-menu [content]="content">
+    <ion-header>
+        <ion-toolbar>
+            <ion-title>Menú Cafetero</ion-title>
+        </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+        <ion-item>
+            <ion-label> Modo noche</ion-label>
+            <ion-toggle [(ngModel)]="modoNoche" checked="false"></ion-toggle>
+        </ion-item>
+        <ion-item>
+            <ion-label> Descarga sólo con wifi</ion-label>
+            <ion-toggle [(ngModel)]="soloWifi" checked="false"></ion-toggle>
+        </ion-item>
+        <ion-item>
+            <p>Versión de la APP: 16/02/2017</p>
+        </ion-item>
+        <button ion-button round menuClose (click)="openPage(p)">Cerrar</button>
+    </ion-content>
+
+</ion-menu>
+
+<ion-nav #content swipeBackEnabled="false">
+</ion-nav>

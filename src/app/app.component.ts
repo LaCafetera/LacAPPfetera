@@ -20,6 +20,7 @@ export class MyApp {
       StatusBar.styleDefault();
       Splashscreen.hide();
     });
+
   }
 
   openPage() {
