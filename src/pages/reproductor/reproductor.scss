@@ -4,6 +4,7 @@ page-reproductor {
   }
     .card { /* fondo de la tarjeta del reproductor */
       background-color: map-get($colors, fondoCard);
+      height: 96%;
     }
       .progress-outer {
         width: 96%;
@@ -25,7 +26,7 @@ page-reproductor {
       }
 
       #enVivo {
-        padding-top: 15px;
+        padding-top: 10px;
         padding-bottom: 15px;
       }
         #enVivo .label p{
@@ -66,9 +67,13 @@ page-reproductor {
           box-shadow: 3px 3px 3px map-get($colors, dark);
         }
 
-      #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
-        height: 20px;
+      #botonera {
+        margin-top: 15px;
+        margin-bottom: 10px;
       }
+        #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
+          height: 20px;
+        }
 
       #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
         width: 100%;
@@ -84,6 +89,8 @@ page-reproductor {
       }
 
       .social { /* líneas de separación sup e inf en botonera social */
+        margin-top: 55px;
+        margin-bottom: 15px;
         border-top: solid 1px map-get($colors, primary);
         border-bottom: solid 1px map-get($colors, primary);
         background-color: map-get($colors, light);
