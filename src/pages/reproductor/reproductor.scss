@@ -26,16 +26,18 @@ page-reproductor {
       }
 
       #enVivo {
-        padding-top: 10px;
-        padding-bottom: 15px;
+        margin-top: 5%;
+        margin-bottom: 33%;
       }
-        #enVivo .label p{
+        #enVivo .button{
           margin-left: auto;
           margin-right: auto;
-          width: 80px;
-          font-size: 1.5rem;
+          width: 100%;
+          font-size: 1.3rem;
           font-weight: bold;
           border: solid 2px map-get($colors, danger);
+          background-color: map-get($colors, danger);
+          color: white;
         }
 
       .scroll {
@@ -46,8 +48,8 @@ page-reproductor {
         width: 90%;
         margin-left: auto;
         margin-right: auto;
-        margin-top: 6px;
-        margin-bottom: 10px;
+        margin-top: 2%;
+        margin-bottom: 4%;
         border-bottom: solid 1px map-get($colors, primary);
       }
         #titular .card-title { /* variación del tamaño del texto del titular */
@@ -61,15 +63,14 @@ page-reproductor {
         margin-left: auto;
         margin-right: auto;
       }
-        #imagen-cap .img-loaded {/* imagen del capítulo, para proyección de sombra y encaje en caja sup */
+        #imagen-cap img {/* imagen del capítulo, para proyección de sombra y encaje en caja sup */
           width: 100%;
           height: auto;
           box-shadow: 3px 3px 3px map-get($colors, dark);
         }
 
       #botonera {
-        margin-top: 15px;
-        margin-bottom: 10px;
+        margin-top: 2%;
       }
         #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
           height: 20px;
@@ -89,8 +90,8 @@ page-reproductor {
       }
 
       .social { /* líneas de separación sup e inf en botonera social */
-        margin-top: 55px;
-        margin-bottom: 15px;
+        margin-top: 18%;
+        margin-bottom: 4%;
         border-top: solid 1px map-get($colors, primary);
         border-bottom: solid 1px map-get($colors, primary);
         background-color: map-get($colors, light);
