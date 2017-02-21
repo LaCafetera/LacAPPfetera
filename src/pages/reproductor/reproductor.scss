@@ -1,87 +1,14 @@
 page-reproductor {
-  .scroll-content { /* fondo de la App */
-    background-color: map-get($colors, fondoApp);
-  }
-    .card { /* fondo de la tarjeta del reproductor */
-      background-color: map-get($colors, fondoCard);
-      height: 96%;
+    .scroll-content {
+        /* fondo de la App */
+        background-color: map-get($colors, fondoApp);
     }
-      #titular { /* div para centrar el titular en la tarjeta y separarlo */
-        width: 95%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 2%;
-        margin-bottom: 4%;
-        border-bottom: solid 1px map-get($colors, primary);
-      }
-        #titular .card-title { /* variación del tamaño del texto del titular */
-          font-weight: bold;
-          font-size: 1.6rem;
-          color: map-get($colors, primary);
-        }
-
-      #imagen-cap { /* div contiene imagen del capítulo, centrada y tamaño variable */
-        width: 50%;
-        margin-left: auto;
-        margin-right: auto;
-      }
-        #imagen-cap img {/* imagen del capítulo, para proyección de sombra y encaje en caja sup */
-          width: 100%;
-          height: auto;
-          box-shadow: 3px 3px 3px map-get($colors, dark);
-        }
-
-      #botonera { /* div sólo visible cuando el programa está en diferido */
-        margin-top: 2%;
-      }
-        #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
-          height: 20px;
-        }
-
-      #barra_reprod { /* div barra de reproducción, para poder bajar los otros */
-        width: 100%;
-        clear: both;
-      }
-        #tiempo-lleva { /* div con el tiempo de reproducción */
-          float: left;
-          color: map-get($colors, primary);
-        }
-        #tiempo-falta { /* div con el tiempo de restante */
-          float: right;
-          color: map-get($colors, primary);
-        }
-
-      #enVivo { /* div sólo visible cuando el programa está en directo */
-        margin-top: 5%;
-        margin-bottom: 13%;
-      }
-        #enVivo .button{ /* Botón diferente para reproducción en directo */
-          margin-left: auto;
-          margin-right: auto;
-          width: 100%;
-          font-size: 1.3rem;
-          font-weight: bold;
-          border: solid 2px map-get($colors, danger);
-          background-color: map-get($colors, danger);
-          color: white;
-        }
-
-      .social { /* líneas de separación sup e inf en botonera social */
-        margin-top: 18%;
-        margin-bottom: 4%;
-        border-top: solid 1px map-get($colors, primary);
-        border-bottom: solid 1px map-get($colors, primary);
-        background-color: map-get($colors, light);
-        height: 55px;
-      }
-        .social .button { /* Botones más grandes */
-          height: 35px;
-        }
-          .social .button ion-icon {
-            font-size: 3.2rem;
-          }
-
-      .progress-outer { /* Barra de descarga */
+    .card {
+        /* fondo de la tarjeta del reproductor */
+        background-color: map-get($colors, fondoCard);
+        height: 96%;
+    }
+    .progress-outer {
         width: 96%;
         margin: 10px 2%;
         padding: 3px;
@@ -90,14 +17,95 @@ page-reproductor {
         border: 1px solid map-get($colors, secondary);
         color: map-get($colors, light);
         border-radius: 20px;
-      }
-      .progress-inner {
+    }
+    .progress-inner {
         min-width: 15%;
         white-space: nowrap;
         overflow: hidden;
         padding: 5px;
         border-radius: 20px;
         background-color: map-get($colors, secondary);
-      }
-
+    }
+    #enVivo {
+        margin-top: 5%;
+        margin-bottom: 13%;
+    }
+    #enVivo .button {
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border: solid 2px map-get($colors, danger);
+        background-color: map-get($colors, danger);
+        color: white;
+    }
+    .scroll {
+        height: 100% !important
+    }
+    #titular {
+        /* div para centrar el titular en la tarjeta y separarlo */
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2%;
+        margin-bottom: 4%;
+        border-bottom: solid 1px map-get($colors, primary);
+    }
+    #titular .card-title {
+        /* variación del tamaño del texto del titular */
+        font-weight: bold;
+        font-size: 1.6rem;
+        color: map-get($colors, primary);
+    }
+    #imagen-cap {
+        /* div contiene imagen del capítulo, centrada y tamaño variable */
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #imagen-cap img {
+        /* imagen del capítulo, para proyección de sombra y encaje en caja sup */
+        width: 100%;
+        height: auto;
+        box-shadow: 3px 3px 3px map-get($colors, dark);
+    }
+    #botonera {
+        margin-top: 2%;
+    }
+    #botonera .button {
+        /* estilo de los botones del reproductor para fijar la alura */
+        height: 20px;
+    }
+    #barra_reprod {
+        /* div barra de reproducción, para poder bajar los otros */
+        width: 100%;
+        clear: both;
+    }
+    #tiempo-lleva {
+        /* div con el tiempo de reproducción */
+        float: left;
+        color: map-get($colors, primary);
+    }
+    #tiempo-falta {
+        /* div con el tiempo de restante */
+        float: right;
+        color: map-get($colors, primary);
+    }
+    .social {
+        /* líneas de separación sup e inf en botonera social */
+        margin-top: 18%;
+        margin-bottom: 4%;
+        border-top: solid 1px map-get($colors, primary);
+        border-bottom: solid 1px map-get($colors, primary);
+        background-color: map-get($colors, light);
+        height: 55px;
+    }
+    .social .button {
+        /* Botones más grandes */
+        height: 35px;
+    }
+    .social .button ion-icon {
+        font-size: 3.2rem;
+    }
 }
