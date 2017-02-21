@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter } from '@angular/core';
-import { File, Transfer, Dialogs } from 'ionic-native';
+import { File, Transfer, Dialogs, Network } from 'ionic-native';
 import { Events, ToastController } from 'ionic-angular';
 
 declare var cordova: any;
@@ -15,7 +15,7 @@ declare var cordova: any;
 export class DescargaCafetera {
 
     @Input() fileDownload: string;
-    @Input() permitidaDescarga: boolean;
+    @Input() soloWifi: boolean;
 //@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
     @Output() ficheroDescargado = new EventEmitter();
@@ -30,8 +30,8 @@ export class DescargaCafetera {
 
     
     /***** Esto lo podrás borrar cuando ya controles esta parte ****************/
-    tamanyo:number;
-    descargado:number;
+    //tamanyo:number;
+    //descargado:number;
     porcentajeDescargado:number = 0;
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
@@ -40,22 +40,17 @@ export class DescargaCafetera {
 
     ngOnInit(){
         this.porcentajeDescarga.emit({porcentaje: 0});
-        console.log ("[descarga.components.ts] fileDownload vale" + this.fileDownload);
-        console.log ("[descarga.components.ts] permitidaDescarga vale" + this.permitidaDescarga);
         if (this.fileDownload != null){
             File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
                 console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
                 this.icono = 'trash';
                 this.ficheroDescargado.emit({existe: true});
             }, (err) => {
-                console.log('[DescargaCafetera] something went wrong! error code: ' + err.code + ' message: ' + err.message);
-                console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 NO existe.');
                 this.icono = 'cloud-download';
                 this.ficheroDescargado.emit({existe: false});
             });
         }
         else{
-            console.log("[DescargaCafetera] Emision en vivo. NO aplica.");
             this.icono = 'lock';
             this.ficheroDescargado.emit({existe: false});
         }
@@ -73,10 +68,12 @@ export class DescargaCafetera {
         let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
         let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
+        console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.icono == 'cloud-download'){
             if (!this.descargando){
-                console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
-                this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
+                if(Network.type === "wifi" || !this.soloWifi  ) {
+                    console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
+                    this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
                         console.log("[DescargaCAfetera] Descarga completa.");
                         this.porcentajeDescarga.emit({porcentaje: 0});
                         this.ficheroDescargado.emit({existe: true});
@@ -94,16 +91,19 @@ export class DescargaCafetera {
                         this.descargando = false;
                     });
                     this.descargando = true;
+                }
+                else {
+                    this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
+                }
                 this.fileTransfer.onProgress((progress) => {
-                    this.tamanyo = progress.total;
-                    this.descargado = progress.loaded;
+                    //this.tamanyo = progress.total;
+                    //this.descargado = progress.loaded;
                     this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
                     //console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "% - " +this.porcentajeDescargado + " - " + this.porcentajeAnterior);
-                    if (this.porcentajeDescargado != this.porcentajeAnterior){
+                    if (this.porcentajeAnterior != this.porcentajeDescargado){
                         this.porcentajeAnterior = this.porcentajeDescargado;
                         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
-                        //this.events.publish('pctjeDescarga:cambiado', this.porcentajeDescargado);
-                        console.log("[DESCARGA.COMPONENT] Emitido " + this.porcentajeDescargado + "%")
+                       // console.log("[DESCARGA.COMPONENT] porcentajeDescargado vale " + this.porcentajeDescargado);
                     }
                 })  
             }
@@ -111,6 +111,7 @@ export class DescargaCafetera {
                 this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
                 this.msgDescarga ("Cancelando descarga");
                 this.porcentajeDescarga.emit({porcentaje: 0});
+                this.borrarDescarga(this.fileDownload + ".mp3");
             }
         }
         else if (this.icono == 'trash') {
@@ -134,8 +135,7 @@ export class DescargaCafetera {
             this.ficheroDescargado.emit({existe: false});
             this.msgDescarga('Programa borrado');
         }, (err) => {
-            console.log('[DescargaCafetera] Error borrando fichero. Error code: ' + err.code + ' message: ' + err.message);
-
+            console.log("[DescargaCafetera] Error borrando fichero "+ this.DIRDESTINO + this.fileDownload + " . Error code: " + err.code + " message: " + err.message);
         });
     }
 }

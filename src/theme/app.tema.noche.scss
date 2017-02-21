@@ -1,0 +1,22 @@
+.tema-noche {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .toolbar-title {
+        color: $noche-dark;
+    }
+    .toolbar-background {
+        background-color: $noche-light;
+    }
+    ion-content {
+        background-color: $noche-background;
+    }
+    ion-list {
+        .item {
+            background-color: darken($noche-background, 1.5%);
+        }
+    }
+}

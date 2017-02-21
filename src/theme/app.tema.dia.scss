@@ -1,0 +1,22 @@
+.tema-dia {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .toolbar-title {
+        color: $dia-dark;
+    }
+    .toolbar-background {
+        background-color: $dia-light;
+    }
+    ion-content {
+        background-color: $dia-background;
+    }
+    ion-list {
+        .item {
+            background-color: darken($dia-background, 1.5%);
+        }
+    }
+}

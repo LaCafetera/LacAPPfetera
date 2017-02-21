@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
-import { NavController, Events, MenuController } from 'ionic-angular';
-import { MediaPlugin, Dialogs, BackgroundMode, Network } from 'ionic-native';
+import { NavController, Events, MenuController } from "ionic-angular";
+import { Dialogs, BackgroundMode, MusicControls } from "ionic-native";
 
-import { EpisodiosService } from '../../providers/episodios-service';
-import { InfoFerPage } from '../info-fer/info-fer';
-import { ReproductorPage } from '../reproductor/reproductor';
+import { EpisodiosService } from "../../providers/episodios-service";
+import { ConfiguracionService } from '../../providers/configuracion.service';
+
+import { InfoFerPage } from "../info-fer/info-fer";
+import { ReproductorPage } from "../reproductor/reproductor";
+import { Player } from "../../app/player";
 
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html',
-  providers: [EpisodiosService]
+  selector: "page-home",
+  templateUrl: "home.html",
+  providers: [EpisodiosService, ConfiguracionService]
 })
 
 export class HomePage {
@@ -19,64 +22,58 @@ export class HomePage {
     items: Array<any>;
    // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
-    reproductor: MediaPlugin;
+    reproductor: Player;
     capEnRep:string = "ninguno";
-    modoNoche:boolean = false;
     soloWifi:boolean = false;
+    mscControl:MusicControls;
 
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController) {
 
-        events.subscribe('audio:modificado', (reproductorIn) => {
+    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private _configuracion: ConfiguracionService) {
+
+        events.subscribe("audio:modificado", (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             if (reproductorIn != null){
-                this.reproductor=reproductorIn;
-                this.capEnRep = reproductorIn.dameCapitulo();
+                this.reproductor=reproductorIn.reproductor;
+                this.capEnRep = this.reproductor.dameCapitulo();
+                this.mscControl = reproductorIn.controlador;
             }
-        });
-
-        let connectSubscription = Network.onConnect().subscribe(() => {
-            console.log('[HOME] network connected!');
-            // We just got a connection but we need to wait briefly
-            // before we determine the connection type.  Might need to wait
-            // prior to doing any api requests as well.
-            setTimeout(() => {
-                if (Network.type === 'wifi') {
-                    console.log('[HOME] Conectado vía WIFI');
-                }
-            }, 3000);
         });
     }    
     
     ionViewDidLoad() {
-        BackgroundMode.setDefaults({title: 'La cAPPfetera',
-                                  ticker: 'Te estás tomando un cafetito de actualidad',
-                                  text: 'Bienvenido al bosque de Sherwood',
+        BackgroundMode.setDefaults({title: "La cAPPfetera",
+                                  ticker: "Te estás tomando un cafetito de actualidad",
+                                  text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
         BackgroundMode.enable();
-
-        let disconnectSubscription = Network.onDisconnect().subscribe(() => {
-            Dialogs.alert("No tiene conexión a internet", 'No hay café');
-        });
         this.episodiosService.dameEpisodios().subscribe(
             data => {
                 this.items=data.response.items;
-                //console.log('ok');
+                //console.log("ok");
             },
             err => {
                 console.log(err);
-                Dialogs.alert ('Error descargando episodios' + err, 'Error');
+                Dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
     }
+    
+    ngOnDestroy(){
+        this.reproductor.release();
+        //this.mscControl.destroy(); <-- Revisar esto que no funciona.
+        //.destroy(); // onSuccess, onError
+    }
 
-      pushPage(item){
-          console.log("[home.pushPage] Network.type" + Network.type);
-        this.navCtrl.push(ReproductorPage, {episodio: item,player:this.reproductor,wifi:((this.soloWifi)&&(Network.type === 'wifi')||!this.soloWifi)});
+    pushPage(item){
+        this.navCtrl.push(ReproductorPage, {episodio:   item,
+                                            player:     this.reproductor,
+                                            controlador:this.mscControl,
+                                            soloWifi:this.soloWifi});
   }
 
-  recalentarCafe(event){
-      this.episodiosService.dameMasEpisodios(this.items[this.items.length-1].episode_id).subscribe(
+    recalentarCafe(event){
+        this.episodiosService.dameMasEpisodios(this.items[this.items.length-1].episode_id).subscribe(
             data => {
                 this.items=this.items.concat(data.response.items);
                 if (data.response.items.length == 0) { // no quedan más capítulos
@@ -88,7 +85,7 @@ export class HomePage {
             err => {
                 event.complete();
                 console.log(err);
-                Dialogs.alert ('Error descargando episodios' + err, 'Error');
+                Dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
     }
@@ -114,35 +111,22 @@ export class HomePage {
             err => {
                 event.complete();
                 console.log(err);
-                Dialogs.alert ('Error descargando episodios' + err, 'Error');
+                Dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
     }
-//---------------------- MEnú ------------------
-    openMenu() {
-    this.menuCtrl.open();
-    }
-
-    closeMenu() {
-    this.menuCtrl.close();
-    }
-
-    toggleMenu() {
-    this.menuCtrl.toggle();
-    }
-
 
 /*------------------------- salir -----------------
 exit(){
       let alert = this.alert.create({
-        title: 'Confirm',
-        message: 'Do you want to exit?',
+        title: "Confirm",
+        message: "Do you want to exit?",
         buttons: [{
           text: "exit?",
           handler: () => { this.exitApp() }
         }, {
           text: "Cancel",
-          role: 'cancel'
+          role: "cancel"
         }]
       })
       alert.present();

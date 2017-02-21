@@ -6,8 +6,8 @@ ionic plugin add cordova-plugin-file-transfer*/
  // Esta es la línea comentada. JCSR. http://stackoverflow.com/questions/33905001/cordova-media-plugin-stopped-working-on-android-6/34045084
 
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events } from 'ionic-angular';
-import { SocialSharing, Dialogs, MusicControls } from 'ionic-native';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
+import { SocialSharing, Dialogs, MusicControls, Network } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
@@ -32,7 +32,6 @@ export class ReproductorPage {
 
     capItem: any;
     reproductor: Player;
-    descargaPermitida: boolean;
 
     // Parámetros de entrada----
     noRequiereDescarga:boolean=true;
@@ -52,6 +51,7 @@ export class ReproductorPage {
     totDurPlay:number;
     iconoPlayPause:string = 'play';
     timer:any;
+    timerDescarga:number = 0;
 
     titulo: string;
     descripcion: string;
@@ -59,21 +59,24 @@ export class ReproductorPage {
     audio: string;
     storageDirectory: string = '';
 
-    porcentajeDescargado: number;
+    porcentajeDescargado: number = 0;
 
     pantallaChat= ChatPage;
+    mscControl:MusicControls;
+    soloWifi:boolean;
 
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController) {
 
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
-        this.descargaPermitida =  this.navParams.get('wifi');
+        this.mscControl = this.navParams.get('controlador');
+        this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
-        console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
+        //console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         this.titulo = this.capItem.title;
         this.descripcion = this.capItem.description;
         this.totDurPlay =  this.capItem.duration;
@@ -81,29 +84,23 @@ export class ReproductorPage {
     }
 
     ionViewDidLoad() {
-        MusicControls.create({
+        console.log ("[reproductor-2] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
+        this.mscControl = MusicControls.create({
             track       : this.capItem.title,        // optional, default : ''
             artist      : 'Radiocable.com',             // optional, default : ''
             cover       : this.capItem.image_url,      // optional, default : nothing
-            // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
-            //           or a remote url ('http://...', 'https://...', 'ftp://...')
             isPlaying   : false,                         // optional, default : true
-            dismissable : true,                         // optional, default : false
+            dismissable : false,                        
 
             // hide previous/next/close buttons:
             hasPrev   : true,      // show previous button, optional, default: true
             hasNext   : true,      // show next button, optional, default: true
-            hasClose  : false,       // show close button, optional, default: false
+            hasClose  : !this.platform.is('ios'),       // Si es iOS le quito el botón de cerrar.
 
             // Android only, optional
             // text displayed in the status bar when the notification (and the ticker) are updated
             ticker    : 'Bienvenido a Sherwood'
         });
-        /*console.log('ionViewDidLoad ReproductorPage');
-        this.events.subscribe('pctjeDescarga:cambiado', (pctjeDescarga) => {
-            this.porcentajeDescargado=pctjeDescarga;
-            console.log('[Reproductor] Recibido pctje descarga '+pctjeDescarga + ' - ' + this.porcentajeDescargado);
-        });*/
 
         MusicControls.subscribe().subscribe(action => {
             switch(action) {
@@ -123,9 +120,9 @@ export class ReproductorPage {
                     this.playPause();
                     console.log("[REPRODUCTOR.MusicControls] music-controls-play");
                     break;
-                //case 'music-controls-destroy':
-                    // Do something
-                  //  break;
+                case 'music-controls-destroy':
+                    this.platform.exitApp();
+                    break;
 
             // External controls (iOS only)
             case 'music-controls-toggle-play-pause' :
@@ -151,13 +148,14 @@ export class ReproductorPage {
             }
         });
         MusicControls.listen();
+
+        console.log ("[reproductor] Esto " + this.platform.is('ios')?'sí':'no' + 'es ios.');
     }
 
 
     ngOnDestroy(){
-        //this.salidaPagina.emit({reproductor: this.reproductor});
-        this.events.publish('audio:modificado', this.reproductor);
-        MusicControls.destroy(); // onSuccess, onError
+        this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
+        //MusicControls.destroy(); // onSuccess, onError
     }
     numerosDosCifras(numero):string {
         let ret: string = "00";
@@ -184,17 +182,18 @@ export class ReproductorPage {
             this.reproductor.getCurrentPosition().then((position)=>{
                 let status = this.reproductor.dameStatus();
         //        console.log("[REPRODUCTOR] status vale "+ status + " y parado vale " + this.reproductor.MEDIA_STOPPED);
-                //console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
+           //     console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
                 if (position > 0 && status == this.reproductor.MEDIA_RUNNING) {
                     this.posicionRep = position*1000;
                     this.posicionRepStr = this.dameTiempo(Math.round(position));
                  //   console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
                 }
                 if (status == this.reproductor.MEDIA_PAUSED || status == this.reproductor.MEDIA_STOPPED){
+                    clearInterval(this.timer);
                     this.iconoPlayPause = 'play';
                     this.reproduciendo = false;
+                    MusicControls.updateIsPlaying(this.reproduciendo);
                     if (status == this.reproductor.MEDIA_STOPPED){
-                        clearInterval(this.timer);
                         this.posicionRep = 0;
                         this.posicionRepStr = this.dameTiempo(Math.round(0));
                         this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo.
@@ -207,6 +206,8 @@ export class ReproductorPage {
     }
 
     playPause(){
+        let descargaPermitida = (Network.type === "wifi" || !this.soloWifi); 
+        console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.reproductor != null){
             if (this.reproduciendo) {
                 this.reproductor.pause();
@@ -215,17 +216,18 @@ export class ReproductorPage {
                 this.reproduciendo=false;
             }
             else {
-                console.log("[reproductor.playpause] descargaPermitida: " + this.descargaPermitida + "noRequiereDescarga" + this.noRequiereDescarga);
-                if (true){ //this.descargaPermitida || this.noRequiereDescarga) {
+                console.log("[reproductor.playpause] tipo de conexión: " + Network.type + " noRequiereDescarga " + this.noRequiereDescarga);
+                if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
                     this.iniciaContadorRep();
                     this.reproduciendo=true;
-                }/*
+                }
                 else{
-                    Dialogs.alert("No puede reproducir sin WIFI", 'Error');
-                }*/
+                    this.msgDescarga ("Sólo tiene permitidas reproducción por streaming con la conexión WIFI activada.");
+                }
             }
+            console.log("[reproductor.playpause] actualizando status control remoto");
             MusicControls.updateIsPlaying(this.reproduciendo);
         }
         else Dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
@@ -261,9 +263,19 @@ export class ReproductorPage {
     }
 
     actualizaPorcentaje(evento):void{
-        console.log ("[actualizaPorcentaje] recibido evento "+ evento.porcentaje);
         this.porcentajeDescargado = evento.porcentaje;
         console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
+        if(this.timerDescarga == 0){
+            this.timerDescarga = setInterval(() =>{
+                console.log ("[actualizaPorcentaje] timerDescarga: "+ this.porcentajeDescargado);
+                if (this.porcentajeDescargado == 0){
+                    clearInterval(this.timerDescarga);
+                    console.log ("[actualizaPorcentaje] timerDescarga-> "+ this.timerDescarga);
+                    this.timerDescarga = 0;
+                    console.log ("[actualizaPorcentaje] clearInterval *********************************** ");
+                }
+            }, 1000);
+        }
     }
 
     muestraDetalle(myEvent) {
@@ -289,7 +301,7 @@ export class ReproductorPage {
                 if (this.audioEnRep.includes(this.episodio)) {
                     this.reproductor.getCurrentPosition().then((position)=>{
                         meVoyPorAqui = position;
-                        console.log("[ficheroDescargado] REcibido que se va por "+ meVoyPorAqui);
+                        console.log("[ficheroDescargado] Recibido que se va por "+ meVoyPorAqui);
                     });
                     console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
                 }
@@ -300,7 +312,7 @@ export class ReproductorPage {
                     console.log("[ficheroDescargado] reproductor es nulo");
                 } else {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
-                    if (this.reproduciendo){
+                    if (this.reproduciendo && (Network.type === 'wifi' || !this.soloWifi)){
                         this.iconoPlayPause = 'pause';
                         this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep);
@@ -328,5 +340,13 @@ export class ReproductorPage {
                 }
             }
         }
+    }
+
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000
+        });
+        toast.present();
     }
 }

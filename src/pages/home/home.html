@@ -1,7 +1,7 @@
 <ion-header>
-    <ion-navbar>
+    <ion-navbar color=(color)>
 
-        <button ion-button left menuToggle (click)="menuOpen()" icon-only>
+        <button ion-button left menuToggle icon-only>
         	<ion-icon name="menu"></ion-icon>
         </button>
 
@@ -61,29 +61,5 @@
 
 </ion-content>
 
-<ion-menu [content]="content">
-    <ion-header>
-        <ion-toolbar>
-            <ion-title>Menú Cafetero</ion-title>
-        </ion-toolbar>
-    </ion-header>
-
-    <ion-content>
-        <ion-item>
-            <ion-label> Modo noche</ion-label>
-            <ion-toggle [(ngModel)]="modoNoche" checked="false"></ion-toggle>
-        </ion-item>
-        <ion-item>
-            <ion-label> Descarga sólo con wifi</ion-label>
-            <ion-toggle [(ngModel)]="soloWifi" checked="false"></ion-toggle>
-        </ion-item>
-        <ion-item>
-            <p>Versión de la APP: 16/02/2017</p>
-        </ion-item>
-        <button ion-button round menuClose (click)="openPage(p)">Cerrar</button>
-    </ion-content>
-
-</ion-menu>
-
-<ion-nav #content swipeBackEnabled="false">
-</ion-nav>
+<!--ion-nav #content swipeBackEnabled="false">
+</ion-nav-->
