@@ -6,46 +6,8 @@ page-reproductor {
       background-color: map-get($colors, fondoCard);
       height: 96%;
     }
-      .progress-outer {
-        width: 96%;
-        margin: 10px 2%;
-        padding: 3px;
-        text-align: center;
-        background-color: map-get($colors, fondoCard);
-        border: 1px solid map-get($colors, secondary);
-        color: map-get($colors, light);
-        border-radius: 20px;
-      }
-      .progress-inner {
-        min-width: 15%;
-        white-space: nowrap;
-        overflow: hidden;
-        padding: 5px;
-        border-radius: 20px;
-        background-color: map-get($colors, secondary);
-      }
-
-      #enVivo {
-        margin-top: 5%;
-        margin-bottom: 13%;
-      }
-        #enVivo .button{
-          margin-left: auto;
-          margin-right: auto;
-          width: 100%;
-          font-size: 1.3rem;
-          font-weight: bold;
-          border: solid 2px map-get($colors, danger);
-          background-color: map-get($colors, danger);
-          color: white;
-        }
-
-      .scroll {
-        height: 100% !important
-      }
-
       #titular { /* div para centrar el titular en la tarjeta y separarlo */
-        width: 90%;
+        width: 95%;
         margin-left: auto;
         margin-right: auto;
         margin-top: 2%;
@@ -69,7 +31,7 @@ page-reproductor {
           box-shadow: 3px 3px 3px map-get($colors, dark);
         }
 
-      #botonera {
+      #botonera { /* div sólo visible cuando el programa está en diferido */
         margin-top: 2%;
       }
         #botonera .button { /* estilo de los botones del reproductor para fijar la alura */
@@ -80,14 +42,29 @@ page-reproductor {
         width: 100%;
         clear: both;
       }
-      #tiempo-lleva { /* div con el tiempo de reproducción */
-        float: left;
-        color: map-get($colors, primary);
+        #tiempo-lleva { /* div con el tiempo de reproducción */
+          float: left;
+          color: map-get($colors, primary);
+        }
+        #tiempo-falta { /* div con el tiempo de restante */
+          float: right;
+          color: map-get($colors, primary);
+        }
+
+      #enVivo { /* div sólo visible cuando el programa está en directo */
+        margin-top: 5%;
+        margin-bottom: 13%;
       }
-      #tiempo-falta { /* div con el tiempo de restante */
-        float: right;
-        color: map-get($colors, primary);
-      }
+        #enVivo .button{ /* Botón diferente para reproducción en directo */
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          font-size: 1.3rem;
+          font-weight: bold;
+          border: solid 2px map-get($colors, danger);
+          background-color: map-get($colors, danger);
+          color: white;
+        }
 
       .social { /* líneas de separación sup e inf en botonera social */
         margin-top: 18%;
@@ -103,5 +80,24 @@ page-reproductor {
           .social .button ion-icon {
             font-size: 3.2rem;
           }
+
+      .progress-outer { /* Barra de descarga */
+        width: 96%;
+        margin: 10px 2%;
+        padding: 3px;
+        text-align: center;
+        background-color: map-get($colors, fondoCard);
+        border: 1px solid map-get($colors, secondary);
+        color: map-get($colors, light);
+        border-radius: 20px;
+      }
+      .progress-inner {
+        min-width: 15%;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 5px;
+        border-radius: 20px;
+        background-color: map-get($colors, secondary);
+      }
 
 }
