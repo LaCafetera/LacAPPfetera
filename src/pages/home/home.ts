@@ -18,7 +18,7 @@ import { Player } from "../../app/player";
 })
 
 export class HomePage {
-    
+
     items: Array<any>;
    // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
@@ -39,8 +39,8 @@ export class HomePage {
                 this.mscControl = reproductorIn.controlador;
             }
         });
-    }    
-    
+    }
+
     ionViewDidLoad() {
         BackgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
@@ -104,7 +104,7 @@ export class HomePage {
                 }
                 else{
                     //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
-                    this.items = data.response.items.slice(0,1).concat(this.items.slice(1)); 
+                    this.items = data.response.items.slice(0,1).concat(this.items.slice(1));
                 }
                 event.complete();
             },
@@ -137,10 +137,10 @@ exit(){
 
   y por ahí:
 
-  this.platform.registerBackButtonAction(this.exit) 
+  this.platform.registerBackButtonAction(this.exit)
 
   Más a mirar:
-  http://cordova.apache.org/docs/en/latest/config_ref/index.html#preference ---> KeepRunning(boolean) 
+  http://cordova.apache.org/docs/en/latest/config_ref/index.html#preference ---> KeepRunning(boolean)
 */
 }
 

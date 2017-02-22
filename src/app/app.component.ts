@@ -15,7 +15,7 @@ export class MyApp {
 
   chosenTheme: String;
   modoNoche:boolean = false;
-  
+
   rootPage = HomePage;
 
   constructor(platform: Platform, private _configuracion: ConfiguracionService) {
@@ -43,7 +43,7 @@ export class MyApp {
             color="tema-noche";
         }
         else{
-            color= "tema-dia";
+            color= "tema-base";
         }
         this._configuracion.setTheme(color);
         console.log("[APP.cambiaModo] Cambiado color a "+ color);

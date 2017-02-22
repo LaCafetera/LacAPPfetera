@@ -12,12 +12,12 @@ export class ConfiguracionService {
         // initializing the chosen theme with a default.
         // NOTE: once you've wired up your persistence layer,
         // you would pull the initial theme setting from there.
-        this.theme = new BehaviorSubject('tema-dia');
+        this.theme = new BehaviorSubject('tema-base');
 
         // again, hard-coding the values for possible selections,
         // but you would similarly pull this from your database as well
         this.availableThemes = [
-            {className: 'tema-dia', prettyName: 'Día'},
+            {className: 'tema-base', prettyName: 'Día'},
             {className: 'teman-noche', prettyName: 'Noche'}
         ];
     }

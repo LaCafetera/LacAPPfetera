@@ -57,7 +57,7 @@
             <!-- /Botonera de reproducción -->
 
             <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
-                <ion-range color=primary [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
+                <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
                 <div id="tiempo-lleva">
                     <ion-label range-left>{{posicionRepStr}}</ion-label>
                 </div>

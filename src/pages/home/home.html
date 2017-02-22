@@ -25,34 +25,41 @@
     </ion-refresher>
 
     <ion-list>
-        <ion-item *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
-            <ion-thumbnail item-left>
-                <img [src]="item.image_url" />
-            </ion-thumbnail>
+        <ion-card *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
+            <ion-row>
+              <ion-col width-33>
+                <div id="imagen">
+                  <img [src]="item.image_url" />
+                </div>
+              </ion-col>
 
-            <h3>{{ item.title }}</h3>
+              <ion-col width-66>
+                <div class="texto">
+                  <h3>{{ item.title }}</h3>
+                </div>
+              </ion-col>
+            </ion-row>
 
-            <p>{{ item.published_at |tiempoHastaAhora }}</p>
-            <!--ion-badge item-right *ngIf="item.episode_id==capEnRep">En reproducción</ion-badge-->
-            <button item-right outline *ngIf="item.episode_id==capEnRep">
-                <ion-icon name="play"></ion-icon>
-            </button>
+            <ion-row class="iconos">
+              <ion-col width-40>
+                <p>{{ item.published_at |tiempoHastaAhora }}</p>
+              </ion-col>
 
-            <!--ion-row no-padding>
-                <ion-col text-right>
-                    <button ion-button clear small color="peace" icon-left>
-                        <ion-icon name='heart'>254</ion-icon>
-                    </button>
-                </ion-col>
-                <ion-col text-center>
-                    <button ion-button clear small color="danger" icon-left>
-                        <ion-icon name='play'>32</ion-icon>
-                    </button>
-                </ion-col>
-            </ion-row-->
+              <ion-col width-20 icon-left>
+                <ion-icon name='chatbubbles'></ion-icon>
+                255
+              </ion-col>
 
-        </ion-item>
-        <!--/button-->
+              <ion-col width-20 icon-left>
+                <ion-icon name='heart'></ion-icon>
+                255
+              </ion-col>
+
+              <ion-col width-20 icon-right text-center>
+                <ion-icon name="play" *ngIf="item.episode_id==capEnRep"></ion-icon>
+              </ion-col>
+            </ion-row>
+        </ion-card>
     </ion-list>
 
     <ion-infinite-scroll (ionInfinite)="recalentarCafe($event)">
