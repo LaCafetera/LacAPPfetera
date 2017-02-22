@@ -1,10 +1,10 @@
-.tema-noche {
+.tema-cafe {
 
 // ******************************************************************* Estilos comunes a toda la App
 
   .toolbar-background {
     // Fondo de la barra de la App
-    background-color: $noche-fondoBarra;
+    background-color: $cafe-fondoBarra;
   }
   .bar-button {
     // Botones de la barra de la App
@@ -16,7 +16,7 @@
   }
   .scroll-content {
     /* color de fondo de la App */
-    background-color: $noche-fondoApp;
+    background-color: $cafe-fondoApp;
   }
 
 // ******************************************************************* Estilos página listado de capítulos home.html
@@ -24,17 +24,17 @@
   ion-list {
     .card {
       h3 {
-        color: $noche-primary;
+        color: $cafe-primary;
       }
       #imagen img{
-        box-shadow: 2px 2px 2px $noche-dark;
+        box-shadow: 2px 2px 2px $cafe-dark;
       }
       .iconos {
-    		border-top: solid 1px $noche-dark;
-        color: $noche-primary;
+    		border-top: solid 1px $cafe-dark;
+        color: $cafe-primary;
 
         ion-icon {
-          color: $noche-primary;
+          color: $cafe-primary;
         }
       }
     }
@@ -44,71 +44,71 @@
 
   .card {
     /* color de fondo de la tarjeta del reproductor */
-    background-color: $noche-fondoCard;
+    background-color: $cafe-fondoCard;
 
     #titular {
       /* Línea de separación del titular */
-      border-bottom: solid 1px $noche-primary;
+      border-bottom: solid 1px $cafe-primary;
 
      .card-title {
         /* texto del titular */
-        color: $noche-primary;
+        color: $cafe-primary;
       }
     }
 
     #imagen-cap img {
       /* proyección de sombra de imagen del capítulo */
-      box-shadow: 3px 3px 3px $noche-dark;
+      box-shadow: 3px 3px 3px $cafe-dark;
     }
 
     #enVivo .button {
       /* botón de reproducción en vivo */
-      border: solid 2px $noche-danger;
-      background-color: $noche-danger;
+      border: solid 2px $cafe-danger;
+      background-color: $cafe-danger;
     }
 
     #botonera .button {
       /* botones de reproducción diferido */
-      border-color: $noche-primary;
-      color: $noche-primary;
+      border-color: $cafe-primary;
+      color: $cafe-primary;
     }
 
     .range-bar {
-      background-color: $noche-primary;
+      background-color: $cafe-primary;
     }
     .range-bar-active {
-      background-color: $noche-dark;
+      background-color: $cafe-dark;
     }
 
     #tiempo-lleva {
       /* tiempo de reproducción */
-      color: $noche-primary;
+      color: $cafe-primary;
     }
     #tiempo-falta {
       /* tiempo de restante */
-      color: $noche-primary;
+      color: $cafe-primary;
     }
 
     .social {
       /* líneas de separación sup e inf en botonera social */
-      border-top: solid 1px $noche-primary;
-      border-bottom: solid 1px $noche-primary;
-      background-color: $noche-light;
+      border-top: solid 1px $cafe-primary;
+      border-bottom: solid 1px $cafe-primary;
+      background-color: $cafe-light;
 
      .button {
-        color: $noche-primary;
+        color: $cafe-primary;
       }
     }
 
     .progress-outer {
       /* color de fondo de la barra de descarga */
-      background-color: $noche-fondoCard;
-      border: 1px solid $noche-secondary;
-      color: $noche-light;
+      background-color: $cafe-fondoCard;
+      border: 1px solid $cafe-secondary;
+      color: $cafe-light;
     }
       .progress-inner {
         /* color de fondo de la barra de descarga */
-        background-color: $noche-secondary;
+        background-color: $cafe-secondary;
       }
   }
 }
