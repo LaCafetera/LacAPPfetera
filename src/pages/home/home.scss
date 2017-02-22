@@ -1,10 +1,14 @@
 page-home {
 
-	ion-list {
-	  padding-top: 10px;
-	}
-			
 	h3 {
 		padding-bottom: 0px;
+	}
+
+	.iconos {
+		font-size: 1.2rem;
+
+		ion-icon {
+			font-size: 2.0rem;
+		}
 	}
 }
