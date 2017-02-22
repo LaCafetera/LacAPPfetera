@@ -10,17 +10,29 @@
         </ion-header>
 
         <ion-content>
-            <ion-item>
+            <!--ion-item>
                 <ion-label> Modo noche</ion-label>
                 <ion-toggle [(ngModel)]="modoNoche" checked="false" color="dark" (ionChange)="cambiaModo()"></ion-toggle>
+            </ion-item-->
+
+            <ion-item>
+                <ion-label>Tema</ion-label>
+                <ion-select (ionChange)="setTheme($event)">
+                    <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
+                        {{theme.prettyName}}
+                    </ion-option>
+                </ion-select>
             </ion-item>
+
             <ion-item>
                 <ion-label> Descarga sólo con wifi</ion-label>
                 <ion-toggle [(ngModel)]="soloWifi" checked="false"></ion-toggle>
             </ion-item>
+
             <ion-item>
-                <p>Versión de la APP: 21/02/2017</p>
+                <p>Versión de la APP: 22/02/2017</p>
             </ion-item>
+
             <button ion-button round menuClose>Cerrar</button>
         </ion-content>
 

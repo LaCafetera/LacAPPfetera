@@ -52,6 +52,7 @@ export class ReproductorPage {
     iconoPlayPause:string = 'play';
     timer:any;
     timerDescarga:number = 0;
+    timerVigilaEnVivo:number;
 
     titulo: string;
     descripcion: string;
@@ -64,6 +65,8 @@ export class ReproductorPage {
     pantallaChat= ChatPage;
     mscControl:MusicControls;
     soloWifi:boolean;
+
+    
 
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController) {
@@ -148,6 +151,27 @@ export class ReproductorPage {
             }
         });
         MusicControls.listen();
+
+        if (this.enVivo){
+            let dataCap: Array<any>;
+            this.timerVigilaEnVivo = setInterval(() =>{
+                this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
+                    data => {
+                        dataCap=data.response.items;
+                        if (dataCap[0].type != "LIVE"){
+                            this.enVivo = false;
+                            clearInterval(this.timerVigilaEnVivo);
+                        }
+                        else {
+                            console.log("[reproductor] El primer episodio sigue siendo en vivo.");
+                            alert("[reproductor] El primer episodio sigue siendo en vivo.");
+                        }
+                    }
+            )}, 3000);
+        }
+        else{
+            console.log("[reproductor] El primer episodio no es en vivo.");
+        }
 
         console.log ("[reproductor] Esto " + this.platform.is('ios')?'sí':'no' + 'es ios.');
     }

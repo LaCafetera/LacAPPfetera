@@ -18,7 +18,10 @@ export class ConfiguracionService {
         // but you would similarly pull this from your database as well
         this.availableThemes = [
             {className: 'tema-base', prettyName: 'Día'},
-            {className: 'teman-noche', prettyName: 'Noche'}
+            {className: 'tema-bosque', prettyName: 'Bosque'},
+            {className: 'tema-cafe', prettyName: 'Café'},
+            {className: 'tema-lila', prettyName: 'Lila'},
+            {className: 'tema-noche', prettyName: 'Noche'}
         ];
     }
 
