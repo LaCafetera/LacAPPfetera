@@ -152,28 +152,27 @@ export class ReproductorPage {
         });
         MusicControls.listen();
 
+        console.log("[reproductor] EnVivo vale "+ this.enVivo);
+
         if (this.enVivo){
-            let dataCap: Array<any>;
             this.timerVigilaEnVivo = setInterval(() =>{
                 this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
                     data => {
-                        dataCap=data.response.items;
-                        if (dataCap[0].type != "LIVE"){
+                        if (data.response.episode.type != "LIVE"){
                             this.enVivo = false;
                             clearInterval(this.timerVigilaEnVivo);
                         }
                         else {
                             console.log("[reproductor] El primer episodio sigue siendo en vivo.");
-                            alert("[reproductor] El primer episodio sigue siendo en vivo.");
                         }
                     }
             )}, 3000);
         }
         else{
-            console.log("[reproductor] El primer episodio no es en vivo.");
+            console.log("[reproductor] No es en vivo.");
         }
 
-        console.log ("[reproductor] Esto " + this.platform.is('ios')?'sí':'no' + 'es ios.');
+        console.log ("[reproductor] Esto " + this.platform.is('ios')?"sí":"no" + "es ios.");
     }
 
 

@@ -28,6 +28,7 @@ export class DetalleCapituloPage {
         data => {
             this.titulo = data.response.episode.title;
             this.descripcion = data.response.episode.description;
+            console.log ("+++++++++++++++++++++++" + JSON.stringify(data));
         },
         err => {
             alert(err);

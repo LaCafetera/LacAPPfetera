@@ -35,8 +35,10 @@ export class HomePage {
             // user and time are the same arguments passed in `events.publish(user, time)`
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
-                this.capEnRep = this.reproductor.dameCapitulo();
                 this.mscControl = reproductorIn.controlador;
+            }
+            if( this.reproductor != null) {
+                this.capEnRep = this.reproductor.dameCapitulo();
             }
         });
     }
