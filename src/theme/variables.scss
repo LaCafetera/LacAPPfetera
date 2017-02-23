@@ -17,7 +17,8 @@ $font-path: "../assets/fonts";
 // The "primary" color is the only required color in the map.
 // Originales
 //$colors: ( primary : #387ef5, secondary : #32db64, danger : #f53d3d, light : #f4f4f4, dark : #222);
-//Tema Base (base)
+
+//Tema Día (base)
 $base-primary: #747572;
 $base-secondary: #bbada0;
 $base-danger: #F25F5C;
@@ -26,15 +27,17 @@ $base-dark: #747572;
 $base-fondoApp: #faf3dd;
 $base-fondoCard: #fff;
 $base-fondoBarra: #367F7D;
-// Tema Frío (noche de momento)
-$noche-primary: #575C63;
+
+// Tema Noche
+$noche-primary: #F0F1F3;
 $noche-secondary: #575C63;
 $noche-danger: #133C55;
-$noche-light: #D6DDE8;
+$noche-light: #7F7F7F;
 $noche-dark: #575C63;
 $noche-fondoApp: #1F2122;
-$noche-fondoCard: #AFC0D7;
+$noche-fondoCard: #595959;
 $noche-fondoBarra: #575C63;
+
 // Tema Sherwood (bosque)
 $bosque-primary: #DBE7CB;
 $bosque-secondary: #DBE7CB;
@@ -44,6 +47,7 @@ $bosque-dark: #2E4424;
 $bosque-fondoApp: #2E4424;
 $bosque-fondoCard: #8EB067;
 $bosque-fondoBarra: #537F36;
+
 //Tema Café
 $cafe-primary: #232020;
 $cafe-secondary: #232020;
@@ -53,6 +57,7 @@ $cafe-dark: #232020;
 $cafe-fondoApp: #4A3732;
 $cafe-fondoCard: #BBAD87;
 $cafe-fondoBarra: #856147;
+
 //Tema Purple (Lila)
 $lila-primary: #4B224C;
 $lila-secondary: #4B224C;
@@ -62,6 +67,7 @@ $lila-dark: #4B224C;
 $lila-fondoApp: #21121F;
 $lila-fondoCard: #CAA1CE;
 $lila-fondoBarra: #AB63B5;
+
 // Botones redondos reproducción
 $button-round-padding: 1.5rem;
 $button-round-border-radius: 20%;

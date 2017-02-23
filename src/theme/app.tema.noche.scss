@@ -26,15 +26,18 @@
       h3 {
         color: $noche-primary;
       }
+      p {
+        color: $noche-light;
+      }
       #imagen img{
-        box-shadow: 2px 2px 2px $noche-dark;
+        box-shadow: 2px 2px 2px $noche-fondoApp;
       }
       .iconos {
-    		border-top: solid 1px $noche-dark;
-        color: $noche-primary;
+    		border-top: solid 1px $noche-light;
+        color: $noche-light;
 
         ion-icon {
-          color: $noche-primary;
+          color: $noche-light;
         }
       }
     }
@@ -74,10 +77,10 @@
     }
 
     .range-bar {
-      background-color: $noche-primary;
+      background-color: $noche-light;
     }
     .range-bar-active {
-      background-color: $noche-dark;
+      background-color: $noche-primary;
     }
 
     #tiempo-lleva {
