@@ -114,4 +114,23 @@
         background-color: $base-secondary;
       }
   }
+
+// ******************************************************************* Estilos página de chat chat.html
+    .comentario {
+      ion-item {
+        background-color: $base-fondoCard;
+
+        h3 {
+          color: $base-danger;
+        }
+        p {
+          color: $base-primary;
+        }
+      }
+
+      .card-content p{
+        color: $base-primary;
+        border-top: solid 1px $base-light;
+      }
+    }
 }

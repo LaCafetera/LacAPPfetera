@@ -114,4 +114,23 @@
         background-color: $lila-secondary;
       }
   }
+
+// ******************************************************************* Estilos página de chat chat.html
+    .comentario {
+      ion-item {
+        background-color: $lila-fondoCard;
+
+        h3 {
+          color: $lila-primary;
+        }
+        p {
+          color: $lila-secondary;
+        }
+      }
+
+      .card-content p{
+        color: $lila-primary;
+        border-top: solid 1px $lila-secondary;
+      }
+    }
 }
