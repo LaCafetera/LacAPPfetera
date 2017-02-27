@@ -159,8 +159,11 @@ export class ReproductorPage {
                 this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
                     data => {
                         if (data.response.episode.type != "LIVE"){
-                            this.enVivo = false;
                             clearInterval(this.timerVigilaEnVivo);
+                            this.enVivo = false;
+                            this.episodioDescarga = data.response.episode.episode_id;
+                            this.totDurPlay =  data.response.episode.duration;
+                            this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
                         }
                         else {
                             console.log("[reproductor] El primer episodio sigue siendo en vivo.");

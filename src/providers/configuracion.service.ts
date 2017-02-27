@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/Rx';
+import { Storage } from '@ionic/storage';
+
 
 @Injectable()
 export class ConfiguracionService {
     // typing our private Observable, which will store our chosen theme in-memory
-    private theme: BehaviorSubject<String>;
+    public theme: BehaviorSubject<String>;
     // as promised, I've moved the availableThemes here as well
     availableThemes: {className: string, prettyName: string}[];
 
-    constructor() {
-        // initializing the chosen theme with a default.
-        // NOTE: once you've wired up your persistence layer,
-        // you would pull the initial theme setting from there.
+    constructor(public storage: Storage) {
         this.theme = new BehaviorSubject('tema-base');
 
         // again, hard-coding the values for possible selections,
@@ -23,6 +22,30 @@ export class ConfiguracionService {
             {className: 'tema-lila', prettyName: 'Lila'},
             {className: 'tema-noche', prettyName: 'Noche'}
         ];
+
+        this.storage.get('tema')
+        .then((val) => {
+            console.log("[CONFIGURACION.SERVICE] El tema guardado es "+ val);
+            if (this.availableThemes.findIndex((element)=>{
+                    return (element.className ===val);
+                }) > -1) {
+                //this.theme = new BehaviorSubject(val);
+                console.log("[CONFIGURACION.SERVICE] El tema guardado es correcto. Lo envío");
+                this.theme.next(val);
+                //this.theme.next(val);
+            }
+            else {
+                console.log("[CONFIGURACION.SERVICE] El tema guardado no lo reconozco. Envío el tema por defecto");
+                //this.theme = new BehaviorSubject('tema-base');
+                //this.theme.next('tema-base');
+            }
+        })
+        .catch((error)=>{
+            console.log("[CONFIGURACION.SERVICE] Error enviando: " + error);
+            //this.theme = new BehaviorSubject('tema-base');
+                //this.theme = new BehaviorSubject('tema-base');
+        });
+        //}
     }
 
     // exposing a public method to set the private theme property,
@@ -31,13 +54,16 @@ export class ConfiguracionService {
         // When you've wired in your persistence layer,
         // you would send it an updated theme value here.
         // for now we're just doing things in-memory
+        this.storage.set ("tema",val);
         this.theme.next(val);
-        console.log("[configuracion.service.setTheme] cambiado el tema a "+ val );
+        console.log("[CONFIGURACION.SERVICE.setTheme] cambiado el tema a "+ val );
     }
 
     // exposing a method to subscribe to changes in the theme,
     // using the Observable.asObservable() method, which BehaviorSubject also inherits
     getTheme() {
-        return this.theme.asObservable();
+        console.log("[CONFIGURACION.SERVICE.getTheme] Enviado tema.")
+        //return this.theme.asObservable();
+        this.theme.next('tema-base');
     }
 }
