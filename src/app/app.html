@@ -17,7 +17,7 @@
 
             <ion-item>
                 <ion-label>Tema</ion-label>
-                <ion-select (ionChange)="setTheme($event)">
+                <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
                     <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
                         {{theme.prettyName}}
                     </ion-option>
@@ -26,11 +26,11 @@
 
             <ion-item>
                 <ion-label> Descarga sólo con wifi</ion-label>
-                <ion-toggle [(ngModel)]="soloWifi" checked="false"></ion-toggle>
+                <ion-toggle [(ngModel)]="soloWifi" (ionChange)="setWIFI($event)"></ion-toggle>
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 24/02/2017</p>
+                <p>Versión de la APP: 01/03/2017</p>
             </ion-item>
 
             <button ion-button round menuClose>Cerrar</button>

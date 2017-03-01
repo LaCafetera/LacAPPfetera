@@ -64,6 +64,33 @@ export class ConfiguracionService {
     getTheme() {
         console.log("[CONFIGURACION.SERVICE.getTheme] Enviado tema.")
         //return this.theme.asObservable();
-        this.theme.next('tema-base');
+        this.storage.get ("tema")
+        .then (
+            data=> {return this.theme.next(data)},
+            error=> {return this.theme.next('tema-base')}
+        )
+        // .catch (console.log ("[CONFIGURACION.SERVICE.getTheme] Error extrayendo tema"))
+    }
+
+    getWIFI(){
+        console.log("[CONFIGURACION.SERVICE.getWIFI].")
+        //return this.theme.asObservable();
+        return new Promise ((resolve,reject) =>{
+             this.storage.get ("WIFI")
+            .then (
+                data=> {
+                    console.log ("[CONFIGURACION.SERVICE.getWIFI] Enviado "+ data);
+                    resolve(data==null?false:data);
+                },
+                error=> {
+                    console.log ("[CONFIGURACION.SERVICE.getWIFI] Error "+ error);
+                    resolve(false);
+                }
+        )});
+    }
+
+    setWIFI(val){
+        this.storage.set ("WIFI",val);
+        console.log("[CONFIGURACION.SERVICE.setWIFI] cambiado el WIFI a "+ val );
     }
 }

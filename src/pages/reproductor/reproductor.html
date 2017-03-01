@@ -90,13 +90,12 @@
 
                 <ion-col width-25>
                     <!-- Botón para diseño, comentar para que funcione la descarga -->
-                  <!-- <button ion-button clear (click)="compartir()"> -->
-              	       <!-- <ion-icon name='cloud-download'></ion-icon> -->
-              	  <!-- </button> -->
+                    <!-- <button ion-button clear (click)="compartir()"> -->
+                    <!-- <ion-icon name='cloud-download'></ion-icon> -->
+                    <!-- </button> -->
 
                     <!-- Descarga del programa, ocultada para diseño -->
-                    <descargaCafetera [fileDownload]="episodio" [soloWifi]="soloWifi" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
-                        <!--descargaCafetera [fileDownload]="episodio" [soloWifi]="soloWifi" [porcentajeDescargado]="porcentajeDescargado" ngDefaultControl (ficheroDescargado)="ficheroDescargado($event)"-->
+                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
                     </descargaCafetera>
 
                 </ion-col>

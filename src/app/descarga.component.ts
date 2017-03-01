@@ -2,6 +2,8 @@ import {Component, Input, Output, EventEmitter } from '@angular/core';
 import { File, Transfer, Dialogs, Network } from 'ionic-native';
 import { Events, ToastController } from 'ionic-angular';
 
+import { ConfiguracionService } from '../providers/configuracion.service';
+
 declare var cordova: any;
 
 @Component({
@@ -9,13 +11,12 @@ declare var cordova: any;
     template: ` <button ion-button clear large (click)="descargarFichero()">
                     <ion-icon name={{icono}}></ion-icon>
                 </button>`,
-    providers: [File, Transfer]
+    providers: [File, Transfer, ConfiguracionService]
 })
 
 export class DescargaCafetera {
 
     @Input() fileDownload: string;
-    @Input() soloWifi: boolean;
 //@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
     @Output() ficheroDescargado = new EventEmitter();
@@ -36,7 +37,7 @@ export class DescargaCafetera {
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
     
-    constructor(public events: Events, public toastCtrl: ToastController) {};
+    constructor(public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {};
 
     ngOnInit(){
         this.porcentajeDescarga.emit({porcentaje: 0});
@@ -68,33 +69,38 @@ export class DescargaCafetera {
         let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
         let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
-        console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.icono == 'cloud-download'){
             if (!this.descargando){
-                if(Network.type === "wifi" || !this.soloWifi  ) {
-                    console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
-                    this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
-                        console.log("[DescargaCAfetera] Descarga completa.");
-                        this.porcentajeDescarga.emit({porcentaje: 0});
-                        this.ficheroDescargado.emit({existe: true});
-                        this.porcentajeDescargado = 0;
-                        this.icono = 'trash';
-                        this.msgDescarga('Descarga completa');
-                    }, (error) => {
-                        if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
-                            Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
-                            console.log("download error source " + error.source);
-                            console.log("download error target " + error.target);
-                            console.log("download error code" + error.code);
+                this._configuracion.getWIFI()
+                .then((val)=> {
+                    console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + val);
+                    if(Network.type === "wifi" || !val  ) {
+                        console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
+                        this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
+                            console.log("[DescargaCAfetera] Descarga completa.");
                             this.porcentajeDescarga.emit({porcentaje: 0});
-                        }
-                        this.descargando = false;
-                    });
-                    this.descargando = true;
-                }
-                else {
-                    this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
-                }
+                            this.ficheroDescargado.emit({existe: true});
+                            this.porcentajeDescargado = 0;
+                            this.icono = 'trash';
+                            this.msgDescarga('Descarga completa');
+                        }, (error) => {
+                            if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
+                                Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
+                                console.log("download error source " + error.source);
+                                console.log("download error target " + error.target);
+                                console.log("download error code" + error.code);
+                                this.porcentajeDescarga.emit({porcentaje: 0});
+                            }
+                            this.descargando = false;
+                        });
+                        this.descargando = true;
+                    }
+                    else {
+                        this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
+                    }
+                }).catch(()=>{
+                    console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
+                });
                 this.fileTransfer.onProgress((progress) => {
                     //this.tamanyo = progress.total;
                     //this.descargado = progress.loaded;
