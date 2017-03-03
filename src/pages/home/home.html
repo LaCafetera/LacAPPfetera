@@ -27,37 +27,41 @@
     <ion-list>
         <ion-card *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
             <ion-row>
-              <ion-col width-33>
-                <div id="imagen">
-                  <img [src]="item.image_url" />
-                </div>
-              </ion-col>
+                <ion-col width-33>
+                    <div id="imagen">
+                        <img [src]="item.image_url" />
+                    </div>
+                </ion-col>
 
-              <ion-col width-66>
-                <div class="texto">
-                  <h3>{{ item.title }}</h3>
-                </div>
-              </ion-col>
+                <ion-col width-66>
+                    <div class="texto">
+                        <h3>{{ item.title }}</h3>
+                    </div>
+                </ion-col>
             </ion-row>
 
             <ion-row class="iconos">
-              <ion-col width-40>
-                <p>{{ item.published_at |tiempoHastaAhora }}</p>
-              </ion-col>
+                <ion-col width-40>
+                    <p>{{ item.published_at |tiempoHastaAhora }}</p>
+                </ion-col>
 
-              <ion-col width-20 icon-left>
-                <ion-icon name='chatbubbles'></ion-icon>
-                255
-              </ion-col>
+                <ion-col width-15 icon-left>
+                    <ion-icon name='chatbubbles'></ion-icon>
+                    255
+                </ion-col>
 
-              <ion-col width-20 icon-left>
-                <ion-icon name='heart'></ion-icon>
-                255
-              </ion-col>
+                <ion-col width-15 icon-left>
+                    <ion-icon name='heart'></ion-icon>
+                    255
+                </ion-col>
 
-              <ion-col width-20 icon-right text-center>
-                <ion-icon name="play" *ngIf="item.episode_id==capEnRep"></ion-icon>
-              </ion-col>
+                <ion-col width-15 icon-right text-center>
+                    <ion-icon name="ion-radio-waves" *ngIf="item.type=='LIVE'"></ion-icon>
+                </ion-col>
+
+                <ion-col width-15 icon-right text-center>
+                    <ion-icon name="play" *ngIf="item.episode_id==capEnRep"></ion-icon>
+                </ion-col>
             </ion-row>
         </ion-card>
     </ion-list>

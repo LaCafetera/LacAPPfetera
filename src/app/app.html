@@ -2,7 +2,7 @@
     <ion-nav #content swipeBackEnabled="false" [root]="rootPage">
     </ion-nav>
 
-    <ion-menu [content]="content">
+    <ion-menu [content]="content" type="overlay">
         <ion-header>
             <ion-toolbar>
                 <ion-title>Menú Cafetero</ion-title>
@@ -30,7 +30,11 @@
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 01/03/2017</p>
+                <button ion-button full (click)="cafeteaAgenda()">Danos de alta en tu agenda</button>
+            </ion-item>
+
+            <ion-item>
+                <p>Versión de la APP: 02/03/2017</p>
             </ion-item>
 
             <button ion-button round menuClose>Cerrar</button>

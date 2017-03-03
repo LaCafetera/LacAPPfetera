@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, ToastController } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
+import { Contacts, Contact, ContactField, ContactName, ContactAddress, ContactFindOptions } from 'ionic-native';
 
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -22,7 +23,7 @@ export class MyApp {
 
   rootPage = HomePage;
 
-  constructor(public platform: Platform, private _configuracion: ConfiguracionService) {
+  constructor(public platform: Platform, private _configuracion: ConfiguracionService, public toastCtrl: ToastController) {
 
     this.availableThemes = this._configuracion.availableThemes;
     platform.ready().then(() => {
@@ -56,6 +57,7 @@ export class MyApp {
     }
       
     setTheme(e) {
+    // https://webcake.co/theming-an-ionic-2-application/
         this._configuracion.setTheme(e);
     }
       
@@ -64,7 +66,30 @@ export class MyApp {
         this._configuracion.setWIFI(e.checked);
     }
 
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000
+        });
+        toast.present();
+    }
 
+    cafeteaAgenda(){
+      let telefono:string = '627002002';
+      let contact: Contact = Contacts.create();
+      let options = new ContactFindOptions();
+      options.filter   = telefono;
+      Contacts.find(["phoneNumbers"], options)
+        .then((contacts) => this.msgDescarga ("El teléfono ya está en la agenda"))
+        .catch ((error)=> {
+          console.log("[app.component.cafeteaAgenda] Guardando en agenda "+ error.message);
+          contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera'); 
+          contact.phoneNumbers = [new ContactField ('mobile', telefono)]; //(type?: string, value?: string, pref?: boolean)
+          contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'Apartado de correos 342342 08080 Madrid', 'apartado de correos 342342', 'Madrid', '', '08080', 'España')];
+          contact.save().then(
+            () => this.msgDescarga('Has dado de alta La Cafetera en tu agenda'),
+            (error: any) => this.msgDescarga('Error guardando el contacto.'+ error));
+        });
+    }
 
-    // https://webcake.co/theming-an-ionic-2-application/
 }
