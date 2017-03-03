@@ -75,20 +75,30 @@ export class MyApp {
     }
 
     cafeteaAgenda(){
-      let telefono:string = '627002002';
+       let telefono:string = '627002002';
       let contact: Contact = Contacts.create();
       let options = new ContactFindOptions();
-      options.filter   = telefono;
+      options.filter = telefono;
+      options.multiple = false;
+      options.desiredFields = ["ContactName"];
       Contacts.find(["phoneNumbers"], options)
-        .then((contacts) => this.msgDescarga ("El teléfono ya está en la agenda"))
+        .then((contacts) => {
+          if (contacts.length == 0){
+            console.log("[app.component.cafeteaAgenda] Guardando en agenda ");
+            contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera'); 
+            contact.phoneNumbers = [new ContactField ('mobile', telefono)]; //(type?: string, value?: string, pref?: boolean)
+            contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'RadioCable en Internet. Apartado postal 82042 28080 Madrid', 'Apartado de correos 82042', 'Madrid', '', '28080', 'España')];
+            contact.save().then(
+              () => this.msgDescarga('Has dado de alta La Cafetera en tu agenda'),
+              (error: any) => this.msgDescarga('Error guardando el contacto.'+ error));
+          }
+          else {
+            this.msgDescarga ("El teléfono ya está en la agenda (" + contacts[0].name + ")");
+          }
+        })
         .catch ((error)=> {
-          console.log("[app.component.cafeteaAgenda] Guardando en agenda "+ error.message);
-          contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera'); 
-          contact.phoneNumbers = [new ContactField ('mobile', telefono)]; //(type?: string, value?: string, pref?: boolean)
-          contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'Apartado de correos 342342 08080 Madrid', 'apartado de correos 342342', 'Madrid', '', '08080', 'España')];
-          contact.save().then(
-            () => this.msgDescarga('Has dado de alta La Cafetera en tu agenda'),
-            (error: any) => this.msgDescarga('Error guardando el contacto.'+ error));
+            console.log("[app.component.cafeteaAgenda] Guardando en agenda "+ error.message);
+            this.msgDescarga ("Se ha producido un error " + error.message);
         });
     }
 
