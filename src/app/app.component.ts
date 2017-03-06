@@ -49,18 +49,25 @@ export class MyApp {
       this._configuracion.theme.subscribe(val => {
         this.chosenTheme = val;
         console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
+<<<<<<< HEAD
         /*if (this.platform.is("ios")){
           StatusBar.overlaysWebView(false);
         }*/
         StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+=======
+        if (this.platform.is("ios")){
+          StatusBar.overlaysWebView(true);
+        }
+        StatusBar.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+>>>>>>> 7a8a95fd0ad84f8d8d126576631d69363e4a6ffd
       });
     }
-      
+
     setTheme(e) {
     // https://webcake.co/theming-an-ionic-2-application/
         this._configuracion.setTheme(e);
     }
-      
+
     setWIFI(e) {
         console.log("[app.component.setWIFI] El valor que trato de guardar es " + e.checked );
         this._configuracion.setWIFI(e.checked);
@@ -86,7 +93,7 @@ export class MyApp {
         .then((contacts) => {
           if (contacts.length == 0){
             console.log("[app.component.cafeteaAgenda] Guardando en agenda ");
-            contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera'); 
+            contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera');
             contact.phoneNumbers = [new ContactField ('mobile', telefono)]; //(type?: string, value?: string, pref?: boolean)
             contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'RadioCable en Internet. Apartado postal 82042 28080 Madrid', 'Apartado de correos 82042', 'Madrid', '', '28080', 'España')];
             contact.save().then(
