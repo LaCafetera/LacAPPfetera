@@ -9,6 +9,7 @@ import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
 import { SocialSharing, Dialogs, MusicControls, Network } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
+import { ConfiguracionService } from '../../providers/configuracion.service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
@@ -26,12 +27,14 @@ declare var cordova: any
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService]
+  providers: [EpisodiosService, ConfiguracionService]
 })
 export class ReproductorPage {
 
     capItem: any;
     reproductor: Player;
+
+    parche:boolean = false;
 
     // Parámetros de entrada----
     noRequiereDescarga:boolean=true;
@@ -69,7 +72,7 @@ export class ReproductorPage {
     
 
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {
 
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
@@ -87,6 +90,17 @@ export class ReproductorPage {
     }
 
     ionViewDidLoad() {
+        if (!this.descargando){
+            this._configuracion.getTimeRep(this.capItem)
+            .then((val)=> {
+                console.log("[reproductor.ionViewDidLoad] recibida posición de reproducción "+val);
+                this.posicionRep = Number(val);
+                //this.actualizaPosicion();
+            }).catch(()=>{
+                console.log("[reproductor.ionViewDidLoad] Error recuperando posición de la reproducción.");
+            });
+        }
+
         console.log ("[reproductor-2] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
         this.mscControl = MusicControls.create({
             track       : this.capItem.title,        // optional, default : ''
@@ -180,6 +194,7 @@ export class ReproductorPage {
 
 
     ngOnDestroy(){
+        this._configuracion.setTimeRep(this.capItem, this.posicionRep);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         //MusicControls.destroy(); // onSuccess, onError
     }
@@ -204,11 +219,12 @@ export class ReproductorPage {
     }
 
     iniciaContadorRep(){
+        console.log ("[REPRODUCTOR.iniciaContadorRep] Entrando");
         this.timer = setInterval(() =>{
             this.reproductor.getCurrentPosition().then((position)=>{
                 let status = this.reproductor.dameStatus();
         //        console.log("[REPRODUCTOR] status vale "+ status + " y parado vale " + this.reproductor.MEDIA_STOPPED);
-           //     console.log("Posición: "+ position*1000 + ". Status: "+ this.statusRep + " - " + this.reproductor.MEDIA_RUNNING);
+                console.log("[REPRODUCTOR.iniciaContadorRep] Posición: "+ position*1000 + ". Status: "+ status + " - " + this.reproductor.MEDIA_RUNNING);
                 if (position > 0 && status == this.reproductor.MEDIA_RUNNING) {
                     this.posicionRep = position*1000;
                     this.posicionRepStr = this.dameTiempo(Math.round(position));
@@ -220,9 +236,13 @@ export class ReproductorPage {
                     this.reproduciendo = false;
                     MusicControls.updateIsPlaying(this.reproduciendo);
                     if (status == this.reproductor.MEDIA_STOPPED){
+                        console.log ("[REPRODUCTOR.iniciaContadorRep] Poniendo la posición del reproductor a 0");
                         this.posicionRep = 0;
                         this.posicionRepStr = this.dameTiempo(Math.round(0));
                         this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo.
+                    }
+                    else {
+                        console.log ("[REPRODUCTOR.iniciaContadorRep] Sin modificar la posición del reproductor a 0");
                     }
                 }
             }).catch ((e) =>{
@@ -246,6 +266,17 @@ export class ReproductorPage {
                 if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
+                    if (this.parche){
+                        console.log ("[REPRODUCTOR.playPause] Comenzando vigilancia de play. ");
+                        this.parche = false;
+                        let timerSeek = setInterval(() =>{
+                            if (this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING){
+                                clearInterval(timerSeek);
+                                this.actualizaPosicion();
+                                console.log ("[REPRODUCTOR.playPause] Actualizando posición de reproducción ");
+                            }
+                        }, 500);
+                    }
                     this.iniciaContadorRep();
                     this.reproduciendo=true;
                 }
@@ -260,8 +291,13 @@ export class ReproductorPage {
     }
 
     actualizaPosicion(){
-        this.reproductor.seekTo(this.posicionRep);
-        //console.log("Ha cambiado la posición del slider: " + this.posicionRep);
+        if (this.reproductor != null){
+            this.reproductor.seekTo(this.posicionRep);
+            console.log("Ha cambiado la posición del slider: " + this.posicionRep);
+        }
+        else {
+            console.log("[REPRODUCTOR.actualizaPosicion] No cambio la posición del slider porque reproductor es nulo.");
+        }
     }
 
     adelanta(){
@@ -342,10 +378,10 @@ export class ReproductorPage {
                         this.iconoPlayPause = 'pause';
                         this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep);
-                        this.reproductor.seekTo(this.posicionRep);//*1000);
                         console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
+                this.actualizaPosicion();//*1000);
             }
         }
         else {
@@ -354,6 +390,7 @@ export class ReproductorPage {
             if (this.reproductor == null) {
                 this.reproductor = new Player(this.audioEnRep);
                 console.log("[ficheroDescargado] reproductor es nulo");
+                this.parche = true;
             }
             else {
                 if (this.reproductor.reproduciendoEste(this.audioEnRep)){
@@ -363,6 +400,7 @@ export class ReproductorPage {
                 }
                 else {
                     this.iconoPlayPause = 'play';
+                    this.parche = true;
                 }
             }
         }
@@ -371,7 +409,8 @@ export class ReproductorPage {
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
-            duration: 3000
+            duration: 3000,
+            cssClass: 'msgDescarga'
         });
         toast.present();
     }

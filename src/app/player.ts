@@ -27,8 +27,12 @@ export class Player {
     private creaReproductor (audio){
         const onStatusUpdate = ((status) =>{
             this.statusRep = status
-            console.log("[Player] actualizado status de la reproducción a " + status);
+            console.log("[PLAYER.creaReproductor] actualizado status de la reproducción a " + status);
         });
+   /*     const onError = ((err) => {
+            console.log ("[PLAYER.creaReproductor] Error creando reproductor " + err.message);
+        });
+*/
         this.reproductor = new MediaPlugin (audio, onStatusUpdate);
     }
 
@@ -75,9 +79,11 @@ export class Player {
     }
 
     play(audio){
+        let repeticiones:number = 1;
+        let sonarBloqueado:boolean = true;
         if (this.reproduciendoEste(audio))
         {
-            this.reproductor.play();
+            this.reproductor.play([repeticiones, sonarBloqueado]);
         }
         else{
             this.reproductor.stop();

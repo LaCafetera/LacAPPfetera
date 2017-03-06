@@ -49,10 +49,10 @@ export class MyApp {
       this._configuracion.theme.subscribe(val => {
         this.chosenTheme = val;
         console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
-        if (this.platform.is("ios")){
+        /*if (this.platform.is("ios")){
           StatusBar.overlaysWebView(false);
-        }
-        // StatusBar.backgroundColorByHexString($base-fondoBarra); -->ESto se lo voy a dejar a Mczhy. ;-)
+        }*/
+        StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto se lo voy a dejar a Mczhy. ;-)
       });
     }
       
@@ -69,18 +69,19 @@ export class MyApp {
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
-            duration: 3000
+            duration: 3000,
+            cssClass: 'msgDescarga'
         });
         toast.present();
     }
 
     cafeteaAgenda(){
-       let telefono:string = '627002002';
+      let telefono:string = '627002002';
       let contact: Contact = Contacts.create();
       let options = new ContactFindOptions();
       options.filter = telefono;
       options.multiple = false;
-      options.desiredFields = ["ContactName"];
+      //options.desiredFields = ["ContactName"];
       Contacts.find(["phoneNumbers"], options)
         .then((contacts) => {
           if (contacts.length == 0){
@@ -93,7 +94,7 @@ export class MyApp {
               (error: any) => this.msgDescarga('Error guardando el contacto.'+ error));
           }
           else {
-            this.msgDescarga ("El teléfono ya está en la agenda (" + contacts[0].name + ")");
+            this.msgDescarga ("El teléfono ya está en la agenda (" + contacts[0].displayName + ")");
           }
         })
         .catch ((error)=> {

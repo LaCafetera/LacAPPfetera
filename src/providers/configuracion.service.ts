@@ -42,25 +42,15 @@ export class ConfiguracionService {
         })
         .catch((error)=>{
             console.log("[CONFIGURACION.SERVICE] Error enviando: " + error);
-            //this.theme = new BehaviorSubject('tema-base');
-                //this.theme = new BehaviorSubject('tema-base');
         });
-        //}
     }
 
-    // exposing a public method to set the private theme property,
-    // using the Observable.next() method, which BehaviorSubject inherits
     setTheme(val) {
-        // When you've wired in your persistence layer,
-        // you would send it an updated theme value here.
-        // for now we're just doing things in-memory
         this.storage.set ("tema",val);
         this.theme.next(val);
         console.log("[CONFIGURACION.SERVICE.setTheme] cambiado el tema a "+ val );
     }
 
-    // exposing a method to subscribe to changes in the theme,
-    // using the Observable.asObservable() method, which BehaviorSubject also inherits
     getTheme() {
         console.log("[CONFIGURACION.SERVICE.getTheme] Enviado tema.")
         //return this.theme.asObservable();
@@ -69,7 +59,6 @@ export class ConfiguracionService {
             data=> {return this.theme.next(data)},
             error=> {return this.theme.next('tema-base')}
         )
-        // .catch (console.log ("[CONFIGURACION.SERVICE.getTheme] Error extrayendo tema"))
     }
 
     getWIFI(){
@@ -93,4 +82,27 @@ export class ConfiguracionService {
         this.storage.set ("WIFI",val);
         console.log("[CONFIGURACION.SERVICE.setWIFI] cambiado el WIFI a "+ val );
     }
+
+    setTimeRep (cap, pos){
+        console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos);
+        this.storage.set ("pos_"+cap, pos);
+    }
+
+    getTimeRep(cap){
+        console.log("[CONFIGURACION.SERVICE.getTimeRep] Recuperando posición del cap. " + cap + ".");
+        //return this.theme.asObservable();
+        return new Promise ((resolve,reject) =>{
+             this.storage.get ("pos_"+cap)
+            .then (
+                data=> {
+                    console.log ("[CONFIGURACION.SERVICE.getTimeRep] Enviado "+ data);
+                    resolve(data);
+                },
+                error=> {
+                    console.log ("[CONFIGURACION.SERVICE.getTimeRep] Error "+ error);
+                    resolve(0);
+                }
+        )});
+    }
+
 }

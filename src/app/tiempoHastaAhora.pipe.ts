@@ -50,4 +50,21 @@ export class tiempoHastaAhoraPipe implements PipeTransform{
         return (valueResultado);
     }
 
+    /*
+    var posHT = elementosCapitulo.title.indexOf('#');
+                if (posHT != -1){
+                    var espacio = elementosCapitulo.title.indexOf(' ', posHT);
+                    if (espacio == -1) {
+                        espacio = elementosCapitulo.title.length;
+                    }
+                    var resta = elementosCapitulo.title.indexOf(' ', posHT)-posHT;
+                    hashtag = elementosCapitulo.title.substring(posHT, espacio) + " ";
+                    console.log("El hashtag es " + hashtag + " La posición del caracter # es " + posHT + " espacio " + espacio + " resta " + resta);
+                }
+                else
+                {
+                    console.log("Sin hashtag en el titulo");
+                }
+                */
+
 }
