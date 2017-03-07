@@ -90,8 +90,9 @@ export class ReproductorPage {
     }
 
     ionViewDidLoad() {
+        console.log("[reproductor.ionViewDidLoad] pidiendo datos del capítulo" + this.episodio);
         if (!this.descargando){
-            this._configuracion.getTimeRep(this.capItem)
+            this._configuracion.getTimeRep(this.episodio)
             .then((val)=> {
                 console.log("[reproductor.ionViewDidLoad] recibida posición de reproducción "+val);
                 this.posicionRep = Number(val);
@@ -194,7 +195,7 @@ export class ReproductorPage {
 
 
     ngOnDestroy(){
-        this._configuracion.setTimeRep(this.capItem, this.posicionRep);
+        this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         //MusicControls.destroy(); // onSuccess, onError
     }
@@ -256,7 +257,14 @@ export class ReproductorPage {
         console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.reproductor != null){
             if (this.reproduciendo) {
-                this.reproductor.pause();
+                if (this.enVivo){
+                    this.reproductor.stop();
+                    this.reproductor.release();
+                    this.reproductor = new Player(this.audioEnRep);
+                }
+                else {
+                    this.reproductor.pause();
+                }
                 clearInterval(this.timer);
                 this.iconoPlayPause = 'play';
                 this.reproduciendo=false;
@@ -267,15 +275,17 @@ export class ReproductorPage {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
                     if (this.parche){
-                        console.log ("[REPRODUCTOR.playPause] Comenzando vigilancia de play. ");
-                        this.parche = false;
-                        let timerSeek = setInterval(() =>{
-                            if (this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING){
-                                clearInterval(timerSeek);
-                                this.actualizaPosicion();
-                                console.log ("[REPRODUCTOR.playPause] Actualizando posición de reproducción ");
-                            }
-                        }, 500);
+                        if (this.posicionRep > 0){
+                            console.log ("[REPRODUCTOR.playPause] Comenzando vigilancia de play. ");
+                            let timerSeek = setInterval(() =>{
+                                if (this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING){
+                                    clearInterval(timerSeek);
+                                    this.actualizaPosicion();
+                                    console.log ("[REPRODUCTOR.playPause] Actualizando posición de reproducción ");
+                                }
+                            }, 500);
+                            this.parche = false;
+                        }
                     }
                     this.iniciaContadorRep();
                     this.reproduciendo=true;
@@ -293,7 +303,8 @@ export class ReproductorPage {
     actualizaPosicion(){
         if (this.reproductor != null){
             this.reproductor.seekTo(this.posicionRep);
-            console.log("Ha cambiado la posición del slider: " + this.posicionRep);
+            this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
+            console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr);
         }
         else {
             console.log("[REPRODUCTOR.actualizaPosicion] No cambio la posición del slider porque reproductor es nulo.");
@@ -312,7 +323,7 @@ export class ReproductorPage {
         var options = {
             message: this.titulo, // not supported on some apps (Facebook, Instagram)
             subject: 'Creo que esto puede interesarte.', // fi. for email
-            files: [], //[imagen], // an array of filenames either locally or remotely
+            files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
             url: this.audio,
             chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
         }
@@ -327,7 +338,7 @@ export class ReproductorPage {
     actualizaPorcentaje(evento):void{
         this.porcentajeDescargado = evento.porcentaje;
         console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
-        if(this.timerDescarga == 0){
+       /* if(this.timerDescarga == 0){
             this.timerDescarga = setInterval(() =>{
                 console.log ("[actualizaPorcentaje] timerDescarga: "+ this.porcentajeDescargado);
                 if (this.porcentajeDescargado == 0){
@@ -337,7 +348,7 @@ export class ReproductorPage {
                     console.log ("[actualizaPorcentaje] clearInterval *********************************** ");
                 }
             }, 1000);
-        }
+        }*/
     }
 
     muestraDetalle(myEvent) {

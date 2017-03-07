@@ -49,17 +49,11 @@ export class MyApp {
       this._configuracion.theme.subscribe(val => {
         this.chosenTheme = val;
         console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
-<<<<<<< HEAD
-        /*if (this.platform.is("ios")){
-          StatusBar.overlaysWebView(false);
-        }*/
-        StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto se lo voy a dejar a Mczhy. ;-)
-=======
         if (this.platform.is("ios")){
           StatusBar.overlaysWebView(true);
         }
         StatusBar.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
->>>>>>> 7a8a95fd0ad84f8d8d126576631d69363e4a6ffd
+        //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
       });
     }
 

@@ -10,6 +10,8 @@ import { ChatPage } from '../pages/chat/chat';
 
 import { DescargaCafetera } from './descarga.component';
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
+import { muestraHashtagPipe } from './muestraHashtag.pipe'
+import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
     ReproductorPage,
     DetalleCapituloPage,
     ChatPage,
-    tiempoHastaAhoraPipe
+    tiempoHastaAhoraPipe,
+    muestraHashtagPipe,
+    eliminaHashtagPipe
   ],
   imports: [
     IonicModule.forRoot(MyApp)

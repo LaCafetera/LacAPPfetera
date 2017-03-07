@@ -35,7 +35,10 @@
 
                 <ion-col width-66>
                     <div class="texto">
-                        <h3>{{ item.title }}</h3>
+                        <h3>{{ item.title | muestraHashtag }}</h3>
+                    </div>
+                    <div class="texto">
+                        <h3>{{ item.title | eliminaHashtag  }}</h3>
                     </div>
                 </ion-col>
             </ion-row>

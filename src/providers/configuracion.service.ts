@@ -78,17 +78,17 @@ export class ConfiguracionService {
         )});
     }
 
-    setWIFI(val){
+    setWIFI(val:boolean){
         this.storage.set ("WIFI",val);
         console.log("[CONFIGURACION.SERVICE.setWIFI] cambiado el WIFI a "+ val );
     }
 
-    setTimeRep (cap, pos){
+    setTimeRep (cap: string, pos:number){
         console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos);
         this.storage.set ("pos_"+cap, pos);
     }
 
-    getTimeRep(cap){
+    getTimeRep(cap: string){
         console.log("[CONFIGURACION.SERVICE.getTimeRep] Recuperando posición del cap. " + cap + ".");
         //return this.theme.asObservable();
         return new Promise ((resolve,reject) =>{

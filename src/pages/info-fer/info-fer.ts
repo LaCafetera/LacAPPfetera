@@ -47,7 +47,7 @@ export class InfoFerPage {
                 if (this.esAndroid){
                     this.dirJingle.play();
                 }
-                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Muahaha.');
+                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Super-Guru.');
                 this.reproduciendo=!this.reproduciendo;
             }
         }

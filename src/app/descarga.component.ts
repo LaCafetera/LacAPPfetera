@@ -70,6 +70,7 @@ export class DescargaCafetera {
         let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
         if (this.icono == 'cloud-download'){
+            console.log ("[Descarga.components.descargarFichero] Solicitada descarga."); 
             if (!this.descargando){
                 this._configuracion.getWIFI()
                 .then((val)=> {
@@ -121,12 +122,15 @@ export class DescargaCafetera {
             }
         }
         else if (this.icono == 'trash') {
+            console.log("[descarga.components.descargarFichero] Solicitado borrado.")
             if (confirm('El fichero ya ha sido descargado. \n ¿Desea borrarlo?')) {
                 //reproductor.stop();
+                console.log("[descarga.components.descargarFichero] Confirmado borrado.")
                 this.borrarDescarga(this.fileDownload + ".mp3");
             //inicializaReproductor (episodio_id + ".mp3");
             } else {
-                console.log("Rechazada opción de borrado.")
+                console.log("[descarga.components.descargarFichero] Rechazado borrado.")
+                console.log("[descarga.components.descargarFichero] Rechazada opción de borrado.")
             }
         }
         else {
