@@ -60,7 +60,7 @@ export class ReproductorPage {
     titulo: string;
     descripcion: string;
 
-    audio: string;
+    httpAudio: string;
     storageDirectory: string = '';
 
     porcentajeDescargado: number = 0;
@@ -76,6 +76,7 @@ export class ReproductorPage {
 
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
+        this.httpAudio = this.capItem.site_url;
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
@@ -320,18 +321,19 @@ export class ReproductorPage {
     }
 
     compartir(){
+        console.log ("[REPRODUCTOR.compartir] Compartiendo url " + this.httpAudio);
         var options = {
             message: this.titulo, // not supported on some apps (Facebook, Instagram)
             subject: 'Creo que esto puede interesarte.', // fi. for email
-            files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
-            url: this.audio,
+            files: [], //[this.imagen], //[imagen], // an array of filenames either locally or remotely
+            url: this.httpAudio,
             chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
         }
 
         SocialSharing.shareWithOptions(options).then(() => {
-            console.log("Ok"); // On Android apps mostly return false even while it's true
+            console.log("[REPRODUCTOR.compartir] enviado Ok"); // On Android apps mostly return false even while it's true
         }).catch(() => {
-            console.log("KO");
+            console.log("[REPRODUCTOR.compartir] enviado KO");
         });
     }
 
