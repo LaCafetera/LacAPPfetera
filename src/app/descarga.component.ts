@@ -29,14 +29,14 @@ export class DescargaCafetera {
     UBICACIONHTTP: string = "https://api.spreaker.com/download/episode/";
     DIRDESTINO:string = cordova.file.dataDirectory;
 
-    
+
     /***** Esto lo podrás borrar cuando ya controles esta parte ****************/
     //tamanyo:number;
     //descargado:number;
     porcentajeDescargado:number = 0;
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
-    
+
     constructor(public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {};
 
     ngOnInit(){
@@ -69,8 +69,9 @@ export class DescargaCafetera {
         let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
         let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
+        console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
         if (this.icono == 'cloud-download'){
-            console.log ("[Descarga.components.descargarFichero] Solicitada descarga."); 
+            console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
             if (!this.descargando){
                 this._configuracion.getWIFI()
                 .then((val)=> {
@@ -112,7 +113,7 @@ export class DescargaCafetera {
                         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
                        // console.log("[DESCARGA.COMPONENT] porcentajeDescargado vale " + this.porcentajeDescargado);
                     }
-                })  
+                })
             }
             else{
                 this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
