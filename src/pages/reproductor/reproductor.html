@@ -22,7 +22,10 @@
     <ion-card>
         <div id="titular">
             <ion-card-title text-center>
-                {{titulo}}
+                <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
+            </ion-card-title>
+            <ion-card-title text-center>
+                {{titulo | eliminaHashtag}}
             </ion-card-title>
         </div>
 

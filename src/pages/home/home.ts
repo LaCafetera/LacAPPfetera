@@ -27,6 +27,8 @@ export class HomePage {
     soloWifi:boolean = false;
     mscControl:MusicControls;
 
+    hashtag:string ="";
+
 
 
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private _configuracion: ConfiguracionService) {
@@ -71,7 +73,8 @@ export class HomePage {
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
                                             controlador:this.mscControl,
-                                            soloWifi:this.soloWifi});
+                                            soloWifi:this.soloWifi,
+                                            enlaceTwitter: this.dameEnlace(item.title)});
   }
 
     recalentarCafe(event){
@@ -90,6 +93,23 @@ export class HomePage {
                 Dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
+    }
+
+    dameEnlace (cadena:string):string{
+        return "https://twitter.com/hashtag/"+this.damehashtag(cadena);
+    }
+
+    damehashtag(cadena:string):string{
+        let hashtag:string ="";
+        let posHT = cadena.indexOf('#');
+        if (posHT != -1){
+            let espacio = cadena.indexOf(' ', posHT);
+            if (espacio == -1) {
+                espacio = cadena.length;
+            }
+            hashtag = cadena.substring(posHT+1, espacio) + " ";
+        }
+        return (hashtag);
     }
 
   hacerCafe(event){
