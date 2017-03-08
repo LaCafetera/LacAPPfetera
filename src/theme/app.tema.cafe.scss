@@ -23,8 +23,15 @@
 
   ion-list {
     .card {
+      .hashtag {
+        border-bottom: solid 1px $cafe-light;
+        color: $cafe-primary;
+      }
       h3 {
         color: $cafe-primary;
+      }
+      .capDirecto {
+        color: $cafe-danger;
       }
       p {
         color: $cafe-primary;
@@ -80,10 +87,10 @@
     }
 
     .range-bar {
-      background-color: $base-light;
+      background-color: $cafe-light;
     }
     .range-bar-active {
-      background-color: $base-primary;
+      background-color: $cafe-primary;
     }
 
     #tiempo-lleva {
@@ -110,7 +117,7 @@
       /* color de fondo de la barra de descarga */
       background-color: $cafe-fondoCard;
       border: 1px solid $cafe-secondary;
-      color: $base-primary;
+      color: $cafe-primary;
     }
       .progress-inner {
         /* color de fondo de la barra de descarga */

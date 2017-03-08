@@ -23,8 +23,15 @@
 
   ion-list {
     .card {
+      .hashtag {
+        border-bottom: solid 1px $noche-light;
+        color: $noche-primary;
+      }
       h3 {
         color: $noche-primary;
+      }
+      .capDirecto {
+        color: $noche-danger;
       }
       p {
         color: $noche-light;
@@ -107,7 +114,7 @@
       /* color de fondo de la barra de descarga */
       background-color: $noche-fondoCard;
       border: 1px solid $noche-secondary;
-      color: $base-primary;
+      color: $noche-primary;
     }
       .progress-inner {
         /* color de fondo de la barra de descarga */

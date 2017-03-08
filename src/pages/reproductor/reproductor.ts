@@ -69,7 +69,7 @@ export class ReproductorPage {
     mscControl:MusicControls;
     soloWifi:boolean;
 
-    
+
 
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {
@@ -109,7 +109,7 @@ export class ReproductorPage {
             artist      : 'Radiocable.com',             // optional, default : ''
             cover       : this.capItem.image_url,      // optional, default : nothing
             isPlaying   : false,                         // optional, default : true
-            dismissable : false,                        
+            dismissable : false,
 
             // hide previous/next/close buttons:
             hasPrev   : true,      // show previous button, optional, default: true
@@ -254,10 +254,11 @@ export class ReproductorPage {
     }
 
     playPause(){
-        let descargaPermitida = (Network.type === "wifi" || !this.soloWifi); 
+        let descargaPermitida = (Network.type === "wifi" || !this.soloWifi);
         console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.reproductor != null){
             if (this.reproduciendo) {
+                clearInterval(this.timer);
                 if (this.enVivo){
                     this.reproductor.stop();
                     this.reproductor.release();
@@ -266,7 +267,6 @@ export class ReproductorPage {
                 else {
                     this.reproductor.pause();
                 }
-                clearInterval(this.timer);
                 this.iconoPlayPause = 'play';
                 this.reproduciendo=false;
             }

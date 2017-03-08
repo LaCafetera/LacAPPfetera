@@ -83,12 +83,12 @@ export class Player {
         let sonarBloqueado:boolean = true;
         if (this.reproduciendoEste(audio))
         {
-            this.reproductor.play([repeticiones, sonarBloqueado]);
+            this.reproductor.play(); //this.reproductor.play([repeticiones, sonarBloqueado]);
         }
         else{
             this.reproductor.stop();
             this.reproductor.release();
-            this.creaReproductor (audio);   
+            this.creaReproductor (audio);
             this.capitulo = audio;
             this.reproductor.play();
         }
