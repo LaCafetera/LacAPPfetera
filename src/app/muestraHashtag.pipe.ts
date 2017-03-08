@@ -13,12 +13,12 @@ export class muestraHashtagPipe implements PipeTransform{
             }
             //let resta = value.indexOf(' ', posHT)-posHT;
             hashtag = value.substring(posHT, espacio) + " ";
-            console.log("El hashtag es " + hashtag + " La posición del caracter # es " + posHT + " espacio " + espacio);
-        }
+          //  console.log("[muestraHashtag]El hashtag es " + hashtag + " La posición del caracter # es " + posHT + " espacio " + espacio);
+        }/*
         else
         {
-            console.log("Sin hashtag en el titulo");
-        }
+            console.log("[muestraHashtag]Sin hashtag en el titulo");
+        }*/
         return (hashtag);
     }
 }

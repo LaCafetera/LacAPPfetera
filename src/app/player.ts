@@ -79,8 +79,8 @@ export class Player {
     }
 
     play(audio){
-        let repeticiones:number = 1;
-        let sonarBloqueado:boolean = true;
+        //let repeticiones:number = 1;
+        //let sonarBloqueado:boolean = true;
         if (this.reproduciendoEste(audio))
         {
             this.reproductor.play(); //this.reproductor.play([repeticiones, sonarBloqueado]);

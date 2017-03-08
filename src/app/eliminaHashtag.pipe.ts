@@ -12,11 +12,11 @@ export class eliminaHashtagPipe implements PipeTransform{
                 espacio = value.length;
             }
             cadena = value.substr(0, posHT) + value.substr (espacio);
-            console.log("La cadena sin Hashtag es " + cadena + " La posición del caracter # es " + posHT + " espacio " + espacio);
+     //      console.log("[eliminaHashtagPipe]La cadena sin Hashtag es " + cadena + " La posición del caracter # es " + posHT + " espacio " + espacio);
         }
         else
         {
-            console.log("Sin hashtag en el titulo");
+     //       console.log("[eliminaHashtagPipe]Sin hashtag en el titulo. Enviando " +value);
             cadena = value;
         }
         return (cadena);

@@ -77,20 +77,21 @@ export class DescargaCafetera {
                 .then((val)=> {
                     console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + val);
                     if(Network.type === "wifi" || !val  ) {
-                        console.log("Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
+                        console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
                         this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
-                            console.log("[DescargaCAfetera] Descarga completa.");
+                            console.log("[descarga.components.descargarFichero]  Descarga completa.");
                             this.porcentajeDescarga.emit({porcentaje: 0});
                             this.ficheroDescargado.emit({existe: true});
                             this.porcentajeDescargado = 0;
                             this.icono = 'trash';
                             this.msgDescarga('Descarga completa');
+                            this.descargando = false;
                         }, (error) => {
                             if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
                                 Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
-                                console.log("download error source " + error.source);
-                                console.log("download error target " + error.target);
-                                console.log("download error code" + error.code);
+                                console.log("[descarga.components.descargarFichero] download error source " + error.source);
+                                console.log("[descarga.components.descargarFichero] download error target " + error.target);
+                                console.log("[descarga.components.descargarFichero] download error code" + error.code);
                                 this.porcentajeDescarga.emit({porcentaje: 0});
                             }
                             this.descargando = false;

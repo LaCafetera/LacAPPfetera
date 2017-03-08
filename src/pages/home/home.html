@@ -26,7 +26,8 @@
 
     <ion-list>
         <ion-card *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
-            <ion-row class="hashtag"> <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
+            <ion-row class="hashtag" *ngIf="item.title.indexOf('#')> -1">
+                <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
                 <ion-col>
                     {{ item.title | muestraHashtag }}
                 </ion-col>
@@ -41,13 +42,14 @@
 
                 <ion-col width-66>
                     <div class="texto">
-                        <h3>{{ item.title | eliminaHashtag  }}</h3>
-                        <div class="capDirecto" *ngIf="item.type=='LIVE'"> <!-- Muestra el icono y el texto en directo -->
+                        <h3>{{ item.title | eliminaHashtag }}</h3>
+                        <div class="capDirecto" *ngIf="item.type=='LIVE'">
+                            <!-- Muestra el icono y el texto en directo -->
                             <div class="iconoCD">
-                              <ion-icon name="ios-radio-outline"></ion-icon>
+                                <ion-icon name="ios-radio-outline"></ion-icon>
                             </div>
                             <div class="textoCD">
-                              Directo
+                                Directo
                             </div>
                         </div>
                     </div>
@@ -61,12 +63,14 @@
 
                 <ion-col width-25 icon-left>
                     <ion-icon name='chatbubbles'></ion-icon>
-                    255 <!-- Valor escrito a mano para maquetar -->
+                    255
+                    <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 
                 <ion-col width-25 icon-left>
                     <ion-icon name='heart'></ion-icon>
-                    255 <!-- Valor escrito a mano para maquetar -->
+                    255
+                    <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 
                 <ion-col width-10 icon-right text-center>
