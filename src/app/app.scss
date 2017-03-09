@@ -18,3 +18,7 @@
 .msgDescarga { // En teoría es para la barra de mensajes negra
   color: #FF0;
 }
+
+a:link, a:visited { // Todos los enlaces de la app sin subrayado
+  text-decoration: none;
+}

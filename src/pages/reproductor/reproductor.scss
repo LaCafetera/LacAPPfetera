@@ -18,8 +18,14 @@ page-reproductor {
 
      .card-title {
         /* variación del tamaño del texto del titular */
-        font-weight: bold;
-        font-size: 1.6rem;
+        a {
+          font-weight: bold;
+          font-size: 1.5rem;
+        }
+        p {
+          padding-top: 5px;
+          font-size: 1.3rem;
+        }
       }
     }
 
@@ -28,6 +34,7 @@ page-reproductor {
       width: 50%;
       margin-left: auto;
       margin-right: auto;
+
       img {
         /* imagen del capítulo, para proyección de sombra y encaje en caja sup */
         width: 100%;

@@ -18,6 +18,9 @@
     /* color de fondo de la App */
     background-color: $bosque-fondoApp;
   }
+  a {
+    color: $bosque-primary;
+  }
 
 // ******************************************************************* Estilos página listado de capítulos home.html
 
@@ -25,7 +28,6 @@
     .card {
       .hashtag {
         border-bottom: solid 1px $bosque-light;
-        color: $bosque-primary;
       }
       h3 {
         color: $bosque-primary;
