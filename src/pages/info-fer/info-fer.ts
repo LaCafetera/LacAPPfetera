@@ -20,34 +20,34 @@ export class InfoFerPage {
     reproduciendo: boolean = false;
     esAndroid:boolean;
     
-    constructor(public navCtrl: NavController, public navParams: NavParams, platform : Platform) {
-        this.esAndroid = platform.is('android');
-        if(this.esAndroid){
-            this.dirJingle.init.then(() => {
-                console.log('Playback Finished');
-            }, (err) => {
-                console.log('somthing went wrong! error code: ' + err.code + ' message: ' + err.message);
-            });
-        }
+    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform) {
     }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad InfoFerPage');
+     //   this.esAndroid = this.platform.is('android');
+     //   if(this.esAndroid){
+            this.dirJingle.init.then(() => {
+                console.log('[INFO_FER.ionViewDidLoad] Audio terminado');
+            }, (err) => {
+                console.log('[INFO_FER.ionViewDidLoad] Algo falló. Código de error: ' + err.code + '; mensaje: ' + err.message);
+            });
+     //   }
     }
     
     reproduceJingle (){
         if (this.dirJingle != null){
             if (this.reproduciendo) {
-                if (this.esAndroid){
+         //       if (this.esAndroid){
                     this.dirJingle.pause();
-                }
+         //       }
                 this.reproduciendo=!this.reproduciendo;
             }
             else {
-                if (this.esAndroid){
+         //       if (this.esAndroid){
                     this.dirJingle.play();
-                }
-                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Super-Guru.');
+         //       }
+                Dialogs.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Super-Gurú.');
                 this.reproduciendo=!this.reproduciendo;
             }
         }

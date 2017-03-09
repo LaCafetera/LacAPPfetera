@@ -25,7 +25,7 @@
     </ion-refresher>
 
     <ion-list>
-        <ion-card *ngFor="let item of items" (click)="pushPage(item)" text-wrap>
+        <ion-card *ngFor="let item of items" text-wrap>
             <ion-row class="hashtag" *ngIf="item.title.indexOf('#')> -1">
                 <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
                 <ion-col>
@@ -33,7 +33,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row>
+            <ion-row (click)="pushPage(item)">
                 <ion-col width-33>
                     <div id="imagen">
                         <img [src]="item.image_url" />
@@ -56,7 +56,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="iconos">
+            <ion-row class="iconos" (click)="pushPage(item)">
                 <ion-col width-40>
                     <p>{{ item.published_at |tiempoHastaAhora }}</p>
                 </ion-col>

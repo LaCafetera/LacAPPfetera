@@ -95,8 +95,12 @@ export class HomePage {
         );
     }
 
+    lanzaTwitter(cap:string){
+        window.open(this.dameEnlace(cap), '_system');
+    }
+
     dameEnlace (cadena:string):string{
-        return "https://twitter.com/hashtag/"+this.damehashtag(cadena);
+        return "https://mobile.twitter.com/hashtag/"+this.damehashtag(cadena); 
     }
 
     damehashtag(cadena:string):string{
