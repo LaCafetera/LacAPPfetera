@@ -84,7 +84,8 @@ export class ReproductorPage {
         this.mscControl = this.navParams.get('controlador');
         this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
-        this.dirTwitter = this.navParams.get('enlaceTwitter') + "/live" ;
+        //this.dirTwitter = this.navParams.get('enlaceTwitter') + "/live" ; //--> Versión 2
+        this.dirTwitter = this.navParams.get('enlaceTwitter') + "?f=tweets" ;
         //console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         this.titulo = this.capItem.title;
         this.descripcion = this.capItem.description;
