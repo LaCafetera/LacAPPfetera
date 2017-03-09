@@ -83,13 +83,14 @@ page-reproductor {
 
     .social {
       /* líneas de separación sup e inf en botonera social */
-      margin-top: 18%;
+      margin-top: 15%;
       margin-bottom: 4%;
-      height: 55px;
+      height: 50px;
 
      .button {
         /* Botones más grandes */
         height: 35px;
+        width: 50%;
 
         ion-icon {
           font-size: 3.2rem;
