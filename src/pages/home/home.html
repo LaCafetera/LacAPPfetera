@@ -29,7 +29,7 @@
             <ion-row class="hashtag" *ngIf="item.title.indexOf('#')> -1">
                 <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
                 <ion-col>
-                    <a [href]="dameEnlace(item.title)">{{ item.title | muestraHashtag }} &nbsp;<ion-icon name="logo-twitter"></ion-icon></a>
+                    <a [href]="dameEnlace(item.title)">{{ item.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a>
                 </ion-col>
             </ion-row>
 
