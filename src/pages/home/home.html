@@ -42,7 +42,9 @@
 
                 <ion-col width-66>
                     <div class="texto">
-                        <h3>{{ item.title | eliminaHashtag }}</h3>
+                        <div *ngIf="item.type!='LIVE'">
+                            <h3>{{ item.title | eliminaHashtag }}</h3>
+                        </div>
                         <div class="capDirecto" *ngIf="item.type=='LIVE'">
                             <!-- Muestra el icono y el texto en directo -->
                             <div class="iconoCD">
@@ -63,13 +65,13 @@
 
                 <ion-col width-25 icon-left>
                     <ion-icon name='chatbubbles'></ion-icon>
-                    255
+                    {{ item.messages_count}}
                     <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 
                 <ion-col width-25 icon-left>
                     <ion-icon name='heart'></ion-icon>
-                    255
+                    {{ item.likes_count}}
                     <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 

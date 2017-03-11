@@ -32,7 +32,7 @@ export class HomePage {
 
 
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private _configuracion: ConfiguracionService) {
-
+        this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             if (reproductorIn != null){
@@ -46,19 +46,27 @@ export class HomePage {
     }
 
     ionViewDidLoad() {
+        console.log("[HOME.ionViewDidLoad] Entrando" );
         BackgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
-        BackgroundMode.enable();
+        // BackgroundMode.enable();
         this.episodiosService.dameEpisodios().subscribe(
             data => {
-                this.items=data.response.items;
-                //console.log("ok");
+                //this.items=data.response.items;
+              //  console.log("[HOME.ionViewDidLoad] Recibido " + JSON.stringify(data));
+             /*   if (this.items == null){
+                    this.items = data.items;
+                }
+                else {*/
+                    this.items.push(data.episode);
+                //}
+              //  console.log("[HOME.ionViewDidLoad] Capítulos descargados ok " + this.items.length);
             },
             err => {
                 console.log(err);
-                Dialogs.alert ("Error descargando episodios" + err, "Error");
+                Dialogs.alert ("[HOME.ionViewDidLoad] Error descargando episodios" + err, "Error");
             }
         );
     }
@@ -80,12 +88,14 @@ export class HomePage {
     recalentarCafe(event){
         this.episodiosService.dameMasEpisodios(this.items[this.items.length-1].episode_id).subscribe(
             data => {
-                this.items=this.items.concat(data.response.items);
-                if (data.response.items.length == 0) { // no quedan más capítulos
-                    event.enable(false);
-                }
-                //console.log("[HOME] Recibidos "+data.response.items.length+" nuevos elementos. Ahora la lista tiene "+ this.items.length + " elementos");
-                event.complete();
+                //this.items=this.items.concat(data.response.items);
+                this.items.push(data.episode);
+                // *******************************************************************       ESto hay que arreglarlo
+                //if (data.response.items.length == 0) { // no quedan más capítulos
+                //    event.enable(false);
+                //}
+                //console.log("[HOME.recalentarCafe] Recibidos "+data.response.items.length+" nuevos elementos. Ahora la lista tiene "+ this.items.length + " elementos");
+                // event.complete();
             },
             err => {
                 event.complete();

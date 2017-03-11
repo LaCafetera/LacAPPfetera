@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-// import {Observable} from 'rxjs/Observable';
+ import {Observable} from 'rxjs/Observable';
  
 
 import 'rxjs/add/operator/map';
@@ -25,15 +25,40 @@ export class EpisodiosService {
 
     //cantidad = 3;
 
+    meVigilan:Observable<any>;
+
 
     constructor(public http: Http) {
         //console.log('Hello EpisodiosService Provider');
+        this.meVigilan = new Observable();
     }
 
     dameEpisodios(){
-        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()); // Fernando
-        //var episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json());   //Live
-        return episodiosJSON;
+        this.meVigilan = Observable.create(observer => {
+            let posicion:number = 0;
+           // this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json()).subscribe(  //Live
+            this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                if (posicion ++ == 0){
+                                    data.response.episode.type="LIVE";
+                                }
+                                observer.next (data.response);
+                            },
+                            err => {
+                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
+                }
+            );
+        });
+        return (this.meVigilan);
     }
 
     dameEpisodios2(){ //Esto se usa para pruebas....
@@ -44,9 +69,27 @@ export class EpisodiosService {
 
     dameMasEpisodios(ultimocap){
         console.log("[EPISODIOS-SERVICE] Solicitados audios más allá del "+ ultimocap  );
-        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id='+ultimocap).map(res => res.json()); // Fernando
-        //var episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json());   //Live
-        return episodiosJSON;
+        return Observable.create(observer => {
+            this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id='+ultimocap).map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                observer.next (data.response);
+                            },
+                            err => {
+                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
+                }
+            );
+        //let episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id='+ultimocap).map(res => res.json()); // Fernando
+        //return episodiosJSON;
+        });
     }
 
     dameDetalleEpisodio(episodio_id){

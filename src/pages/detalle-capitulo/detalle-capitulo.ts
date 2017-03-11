@@ -19,11 +19,14 @@ export class DetalleCapituloPage {
   capitulo:string;
     
   constructor( private modalCtrl: ModalController, private episodiosService: EpisodiosService, private viewCtrl: ViewController, private params: NavParams) {
-    this.capitulo = params.get("id_episodio");
+    //this.capitulo = params.get("id_episodio");
+    this.titulo = params.get("titulo");
+    this.descripcion = params.get("detalle");
+    console.log ("[DETALLE-CAPITULO.constructor] recibidos parámetros " + this.titulo + " - "  + this.descripcion);
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad DetalleCapituloPage');
+    /*console.log('ionViewDidLoad DetalleCapituloPage');
     this.episodiosService.dameDetalleEpisodio(this.capitulo).subscribe(
         data => {
             this.titulo = data.response.episode.title;
@@ -33,8 +36,9 @@ export class DetalleCapituloPage {
         err => {
             alert(err);
         }
-    );       
+    ); */       
   }
+
     close() {
     this.viewCtrl.dismiss();
   }

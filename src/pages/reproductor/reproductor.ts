@@ -357,7 +357,9 @@ export class ReproductorPage {
     }
 
     muestraDetalle(myEvent) {
-        let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
+        //let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
+        console.log ("[REPRODUCTOR.muestraDetalle] Enviando datos : " + this.capItem.title + " - " +  this.capItem.description);
+        let popover = this.popoverCtrl.create(DetalleCapituloPage, {titulo: this.capItem.title, detalle: this.capItem.description});
         popover.present({ ev: myEvent }) ;
     }
 
