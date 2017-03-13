@@ -28,6 +28,11 @@
     .card {
       .hashtag {
         border-bottom: solid 1px $noche-light;
+        box-shadow: 0px 0px 1px $noche-dark;
+
+        a:active {
+          color: $noche-light;
+        }
       }
       h3 {
         color: $noche-primary;
