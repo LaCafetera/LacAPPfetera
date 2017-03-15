@@ -10,6 +10,7 @@ import { NavController, NavParams, Platform, PopoverController, Events, ToastCon
 import { SocialSharing, Dialogs, MusicControls, Network } from 'ionic-native';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
+import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
@@ -27,7 +28,7 @@ declare var cordova: any
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService]
 })
 export class ReproductorPage {
 
@@ -73,7 +74,7 @@ export class ReproductorPage {
 
 
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService, public cadenaTwitter: CadenasTwitterService) {
 
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
@@ -95,7 +96,7 @@ export class ReproductorPage {
 
     ionViewDidLoad() {
         console.log("[reproductor.ionViewDidLoad] pidiendo datos del capítulo" + this.episodio);
-        if (!this.descargando){
+        /*if (!this.descargando){
             this._configuracion.getTimeRep(this.episodio)
             .then((val)=> {
                 console.log("[reproductor.ionViewDidLoad] recibida posición de reproducción "+val);
@@ -104,7 +105,7 @@ export class ReproductorPage {
             }).catch(()=>{
                 console.log("[reproductor.ionViewDidLoad] Error recuperando posición de la reproducción.");
             });
-        }
+        }*/
 
         console.log ("[reproductor-2] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
         this.mscControl = MusicControls.create({
@@ -199,7 +200,7 @@ export class ReproductorPage {
 
 
     ngOnDestroy(){
-        this._configuracion.setTimeRep(this.episodio, this.posicionRep);
+        //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         //MusicControls.destroy(); // onSuccess, onError
     }
@@ -265,7 +266,7 @@ export class ReproductorPage {
                 if (this.enVivo){
                     this.reproductor.stop();
                     this.reproductor.release();
-                    this.reproductor = new Player(this.audioEnRep);
+                    this.reproductor = new Player(this.audioEnRep, this._configuracion);
                 }
                 else {
                     this.reproductor.pause();
@@ -278,7 +279,7 @@ export class ReproductorPage {
                 if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
-                    if (this.parche){
+                    /*if (this.parche){
                         if (this.posicionRep > 0){
                             console.log ("[REPRODUCTOR.playPause] Comenzando vigilancia de play. ");
                             let timerSeek = setInterval(() =>{
@@ -290,7 +291,7 @@ export class ReproductorPage {
                             }, 500);
                             this.parche = false;
                         }
-                    }
+                    }*/
                     this.iniciaContadorRep();
                     this.reproduciendo=true;
                 }
@@ -365,7 +366,7 @@ export class ReproductorPage {
 
     ficheroDescargado(fichero):void{
         let nombrerep: string;
-        let meVoyPorAqui: number = 0;
+        //let meVoyPorAqui: number = 0;
         if (fichero.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
@@ -378,17 +379,17 @@ export class ReproductorPage {
         if (this.audioEnRep != null){
             console.log("[ficheroDescargado] Segunda o más vez que entramos.");
             if (this.audioEnRep != nombrerep){
-                if (this.audioEnRep.includes(this.episodio)) {
+                /*if (this.audioEnRep.includes(this.episodio)) {
                     this.reproductor.getCurrentPosition().then((position)=>{
                         meVoyPorAqui = position;
                         console.log("[ficheroDescargado] Recibido que se va por "+ meVoyPorAqui);
                     });
                     console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
-                }
+                }*/
                 this.reproductor.release();
                 this.audioEnRep = nombrerep;
                 if (this.reproductor == null) {
-                    this.reproductor = new Player(this.audioEnRep);
+                    this.reproductor = new Player(this.audioEnRep, this._configuracion);
                     console.log("[ficheroDescargado] reproductor es nulo");
                 } else {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
@@ -399,14 +400,14 @@ export class ReproductorPage {
                         console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
-                this.actualizaPosicion();//*1000);
+                // this.actualizaPosicion();//*1000);
             }
         }
         else {
             console.log("[ficheroDescargado] Primera vez que entramos.");
             this.audioEnRep = nombrerep;
             if (this.reproductor == null) {
-                this.reproductor = new Player(this.audioEnRep);
+                this.reproductor = new Player(this.audioEnRep, this._configuracion);
                 console.log("[ficheroDescargado] reproductor es nulo");
                 this.parche = true;
             }

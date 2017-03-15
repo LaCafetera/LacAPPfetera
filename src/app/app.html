@@ -16,7 +16,8 @@
             </ion-item-->
 
             <ion-item>
-                <ion-label><ion-icon name="color-palette"></ion-icon> Tema</ion-label>
+                <ion-label>
+                    <ion-icon name="color-palette"></ion-icon> Tema</ion-label>
                 <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
                     <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
                         {{theme.prettyName}}
@@ -34,7 +35,11 @@
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 08/03/2017</p>
+                <a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a>
+            </ion-item>
+
+            <ion-item>
+                <p>Versión de la APP: 11/03/2017</p>
             </ion-item>
 
             <button ion-button round menuClose>Cerrar</button>

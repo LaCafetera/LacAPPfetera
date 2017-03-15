@@ -4,7 +4,7 @@ import { NavController, Events, MenuController } from "ionic-angular";
 import { Dialogs, BackgroundMode, MusicControls } from "ionic-native";
 
 import { EpisodiosService } from "../../providers/episodios-service";
-import { ConfiguracionService } from '../../providers/configuracion.service';
+//import { ConfiguracionService } from '../../providers/configuracion.service';
 
 import { InfoFerPage } from "../info-fer/info-fer";
 import { ReproductorPage } from "../reproductor/reproductor";
@@ -14,7 +14,7 @@ import { Player } from "../../app/player";
 @Component({
   selector: "page-home",
   templateUrl: "home.html",
-  providers: [EpisodiosService, ConfiguracionService]
+  providers: [EpisodiosService/*, ConfiguracionService*/]
 })
 
 export class HomePage {
@@ -31,7 +31,7 @@ export class HomePage {
 
 
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private _configuracion: ConfiguracionService) {
+    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController/*, private _configuracion: ConfiguracionService*/) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`

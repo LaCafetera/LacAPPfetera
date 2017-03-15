@@ -20,7 +20,15 @@
 
 <ion-content>
     <ion-card>
-        <div id="titular">
+        <div id="titular" *ngIf="titulo.indexOf('@')!= -1">
+            <ion-card-title text-center>
+                <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
+                <p>{{cadenaTwitter.dameCadenaPreTwitter(titulo) | eliminaHashtag}}
+                    <a [href]="cadenaTwitter.dameDirTwitter(titulo)">{{cadenaTwitter.dameUsuTwitter(titulo)}} con arroba</a> {{cadenaTwitter.dameCadenaPostTwitter(titulo) | eliminaHashtag}}
+                </p>
+            </ion-card-title>
+        </div>
+        <div id="titular" *ngIf="titulo.indexOf('@')== -1">
             <ion-card-title text-center>
                 <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
                 <p>{{titulo | eliminaHashtag}}</p>

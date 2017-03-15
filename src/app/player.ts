@@ -1,4 +1,10 @@
 import { MediaPlugin } from 'ionic-native';
+import { Component/*, Output, EventEmitter*/ } from '@angular/core';
+import { ConfiguracionService } from '../providers/configuracion.service';
+
+@Component({
+  providers: [ConfiguracionService]
+})
 
 export class Player {
 
@@ -20,7 +26,9 @@ export class Player {
     public MEDIA_ERR_NONE_SUPPORTED = MediaPlugin.MEDIA_ERR_NONE_SUPPORTED;
     public MEDIA_NONE = MediaPlugin.MEDIA_NONE;
 
-    constructor(audio){
+    seekPdte:boolean = false;
+
+    constructor(audio:string, private _configuracion: ConfiguracionService){
         this.creaReproductor (audio);
     }
 
@@ -28,6 +36,20 @@ export class Player {
         const onStatusUpdate = ((status) =>{
             this.statusRep = status
             console.log("[PLAYER.creaReproductor] actualizado status de la reproducción a " + status);
+            if (this.seekPdte && status == MediaPlugin.MEDIA_RUNNING){
+                let capitulo = this.dameCapitulo();
+                this._configuracion.getTimeRep(capitulo)
+                .then((val)=> {
+                    console.log("[PLAYER.onStatusUpdate] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
+                    if (val != null && Number(val) > 0){
+                        this.seekTo (Number(val));
+                    }
+                    //this.actualizaPosicion();
+                }).catch(()=>{
+                    console.log("[PLAYER.onStatusUpdate] Error recuperando posición de la reproducción.");
+                });
+                this.seekPdte = false;
+            }
         });
    /*     const onError = ((err) => {
             console.log ("[PLAYER.creaReproductor] Error creando reproductor " + err.message);
@@ -43,6 +65,7 @@ export class Player {
     dameCapitulo():string{
         let inicio:number;
         let fin:number;
+        console.log("[PLAYER.dameCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
         if (this.capitulo != null){
             if (this.capitulo.includes('http')){
                 fin = this.capitulo.length-5;
@@ -51,9 +74,13 @@ export class Player {
                 fin = this.capitulo.length-4;
             }
             inicio = this.capitulo.substring(0, fin).lastIndexOf("/")+1;
+            console.log("[PLAYER.dameCapitulo] Devolviendo "+ this.capitulo.substring(inicio, fin));
             return (this.capitulo.substring(inicio, fin));
         }
-        else return ("");
+        else {
+            console.log("[PLAYER.dameCapitulo] Devolviendo cadena vacía");
+            return ("");
+        }
         /*console.log("[PLAYER] Longitud: "+ this.capitulo.length);
         console.log("[PLAYER] Inicio: "+ inicio);
         console.log("[PLAYER] FIN : " + fin);
@@ -81,16 +108,30 @@ export class Player {
     play(audio){
         //let repeticiones:number = 1;
         //let sonarBloqueado:boolean = true;
+		let capitulo = this.dameCapitulo();
         if (this.reproduciendoEste(audio))
         {
+            console.log ("[PLAYER.play] Play normal");
             this.reproductor.play(); //this.reproductor.play([repeticiones, sonarBloqueado]);
         }
         else{
+            console.log ("[PLAYER.play] Modificado audio");
             this.reproductor.stop();
+			this.reproductor.getCurrentPosition()
+				.then((pos)=>{
+					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo);
+                    if (pos > 0){
+					    this._configuracion.setTimeRep(capitulo, pos * 1000);
+                    }
+				})
+				.catch ((err)=> {
+					console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
+				});
             this.reproductor.release();
             this.creaReproductor (audio);
             this.capitulo = audio;
-            this.reproductor.play();
+			this.reproductor.play();
+            this.seekPdte = true;
         }
         //this.reproduciendo = true;
     }
@@ -105,6 +146,14 @@ export class Player {
     }
 
     release(){
+		this.reproductor.getCurrentPosition()
+			.then((pos)=>{
+				console.log("[PLAYER.play] Recibida posición " + pos * 1000);
+				this._configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+			})
+			.catch ((err)=> {
+				console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
+			});
         this.reproductor.release();
         //this.reproduciendo = false;
     }

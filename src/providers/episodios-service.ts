@@ -35,16 +35,16 @@ export class EpisodiosService {
 
     dameEpisodios(){
         this.meVigilan = Observable.create(observer => {
-            let posicion:number = 0;
+           // let posicion:number = 0;
            // this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json()).subscribe(  //Live
             this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()).subscribe(
                 data => {
                     data.response.items.forEach((capitulo, elemento, array) => {
                         this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
                             data => {
-                                if (posicion ++ == 0){
+                             /*   if (posicion ++ == 0){
                                     data.response.episode.type="LIVE";
-                                }
+                                }*/
                                 observer.next (data.response);
                             },
                             err => {
