@@ -19,6 +19,7 @@
     background-color: $base-fondoApp;
   }
   a {
+    /* Color de los enlaces */
     color: $base-primary;
   }
 
@@ -27,30 +28,38 @@
   ion-list {
     .card {
       .hashtag {
+        /* Línea y sombra de separación del titular */
         border-bottom: solid 1px $base-light;
         box-shadow: 0px 0px 1px $base-dark;
 
         a:active {
+          /* Enlace hashtag pulsado*/
           color: $base-light;
         }
       }
       h3 {
+        /* Resto de texto del titular */
         color: $base-primary;
       }
       .capDirecto {
+        /* Texto + icono Directo */
         color: $base-danger;
       }
       p {
+        /* Texto tiempo que hace del capítulo */
         color: $base-primary;
       }
       #imagen img{
+        /* Imagen del capítulo */
         box-shadow: 2px 2px 2px $base-dark;
       }
       .iconos {
+        /* Color y borde zona iconos */
     		border-top: solid 1px $base-light;
         color: $base-primary;
 
         ion-icon {
+          /* Iconos */
           color: $base-primary;
         }
       }
@@ -70,6 +79,10 @@
      .card-title {
         /* texto del titular */
         color: $base-primary;
+
+        a { /* Enlaces hashtag y usr twitter */
+          color: $base-danger;
+        }
       }
     }
 

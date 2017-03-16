@@ -17,14 +17,19 @@ page-reproductor {
       margin-bottom: 4%;
 
      .card-title {
-        /* variación del tamaño del texto del titular */
-        a {
+
+        a { /* variación del tamaño del texto del titular y enlace al hashtag */
           font-weight: bold;
           font-size: 1.5rem;
         }
-        p {
+        p { /* resto del titular */
           padding-top: 5px;
           font-size: 1.3rem;
+
+          a { /* enlace a usr de Twitter */
+            font-weight: normal;
+            text-decoration: underline;
+          }
         }
       }
     }

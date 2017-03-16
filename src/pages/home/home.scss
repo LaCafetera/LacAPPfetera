@@ -2,7 +2,7 @@ page-home {
   @media screen and (min-width: 44em) {
     // iPad Vertical a dos columnas
     ion-list {
-        overflow: hidden;
+      overflow: hidden;
     }
     ion-list >.card {
       float: left;
@@ -13,6 +13,7 @@ page-home {
       clear: left;
     }
   }
+
   @media screen and (min-width: 64em) {
     // iPad Horizontal a tres columnas
     ion-list >.card {
@@ -22,6 +23,7 @@ page-home {
       clear: none;
     }
   }
+
   ion-list {
     .card {
       .hashtag {
