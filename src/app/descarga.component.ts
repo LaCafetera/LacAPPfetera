@@ -9,7 +9,11 @@ declare var cordova: any;
 @Component({
     selector: 'descargaCafetera',
     template: ` <button ion-button clear large (click)="descargarFichero()">
-                    <ion-icon name={{icono}}></ion-icon>
+                    <ion-icon icon-left name={{icono}}>
+                        <div *ngIf="this.porcentajeDescargado != 0">
+                            <h3>{{this.porcentajeDescargado}}%</h3>
+                        </div>
+                    </ion-icon>
                 </button>`,
     providers: [File, Transfer, ConfiguracionService]
 })
@@ -18,7 +22,7 @@ export class DescargaCafetera {
 
     @Input() fileDownload: string;
 //@Input() fileExists: string;
-    @Output() porcentajeDescarga = new EventEmitter();
+   /* @Output() porcentajeDescarga = new EventEmitter();*/
     @Output() ficheroDescargado = new EventEmitter();
 
 
@@ -40,7 +44,7 @@ export class DescargaCafetera {
     constructor(public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {};
 
     ngOnInit(){
-        this.porcentajeDescarga.emit({porcentaje: 0});
+       // this.porcentajeDescarga.emit({porcentaje: 0});
         if (this.fileDownload != null){
             File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
                 console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
@@ -66,11 +70,12 @@ export class DescargaCafetera {
     }
 
     descargarFichero(evento){
-        let audio_en_desc : string  = this.UBICACIONHTTP+this.fileDownload+".mp3";
+        let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+this.fileDownload+"/download";
+      /////  let audio_en_desc : string  = "https://api.spreaker.com/download/episode/"+this.fileDownload+".mp3";
         let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
         console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
-        if (this.icono == 'cloud-download'){
+        if (this.icono == 'cloud-download' || this.icono == 'ios-archive'){
             console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
             if (!this.descargando){
                 this._configuracion.getWIFI()
@@ -80,7 +85,7 @@ export class DescargaCafetera {
                         console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
                         this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
                             console.log("[descarga.components.descargarFichero]  Descarga completa.");
-                            this.porcentajeDescarga.emit({porcentaje: 0});
+                          //  this.porcentajeDescarga.emit({porcentaje: 0});
                             this.ficheroDescargado.emit({existe: true});
                             this.porcentajeDescargado = 0;
                             this.icono = 'trash';
@@ -92,7 +97,7 @@ export class DescargaCafetera {
                                 console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                 console.log("[descarga.components.descargarFichero] download error target " + error.target);
                                 console.log("[descarga.components.descargarFichero] download error code" + error.code);
-                                this.porcentajeDescarga.emit({porcentaje: 0});
+                          //      this.porcentajeDescarga.emit({porcentaje: 0});
                             }
                             this.descargando = false;
                         });
@@ -111,7 +116,7 @@ export class DescargaCafetera {
                     //console.log("[DESCARGA.COMPONENT] Descargado " + (progress.loaded / progress.total) * 100 + "% - " +this.porcentajeDescargado + " - " + this.porcentajeAnterior);
                     if (this.porcentajeAnterior != this.porcentajeDescargado){
                         this.porcentajeAnterior = this.porcentajeDescargado;
-                        this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
+                   //     this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
                        // console.log("[DESCARGA.COMPONENT] porcentajeDescargado vale " + this.porcentajeDescargado);
                     }
                 })
@@ -119,7 +124,7 @@ export class DescargaCafetera {
             else{
                 this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
                 this.msgDescarga ("Cancelando descarga");
-                this.porcentajeDescarga.emit({porcentaje: 0});
+          //      this.porcentajeDescarga.emit({porcentaje: 0});
                 this.borrarDescarga(this.fileDownload + ".mp3");
             }
         }

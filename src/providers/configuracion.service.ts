@@ -105,4 +105,27 @@ export class ConfiguracionService {
         )});
     }
 
+    setTwitteado (cap: string){
+        console.log("[CONFIGURACION.SERVICE.setTwitteado] Guardando capítulo twitteado para " + cap);
+        this.storage.set ("Twit_"+cap, true);
+
+    }
+
+    getTwitteado (cap: string){
+        console.log("[CONFIGURACION.SERVICE.getTimeRep] Recuperando posición del cap. " + cap + ".");
+        //return this.theme.asObservable();
+        return new Promise ((resolve,reject) =>{
+             this.storage.get ("Twit_"+cap)
+            .then (
+                data=> {
+                    console.log ("[CONFIGURACION.SERVICE.getTwitteado] Enviado "+ data);
+                    resolve(data);
+                },
+                error=> {
+                    console.log ("[CONFIGURACION.SERVICE.getTwitteado] Error "+ error);
+                    resolve(0);
+                }
+        )});
+    }
+
 }

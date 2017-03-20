@@ -20,18 +20,14 @@
 
 <ion-content>
     <ion-card>
-        <div id="titular" *ngIf="titulo.indexOf('@')!= -1">
+
+        <div id="titular">
             <ion-card-title text-center>
                 <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
-                <p>{{cadenaTwitter.dameCadenaPreTwitter(titulo) | eliminaHashtag}}
-                    <a [href]="cadenaTwitter.dameDirTwitter(titulo)">{{cadenaTwitter.dameUsuTwitter(titulo)}} con arroba</a> {{cadenaTwitter.dameCadenaPostTwitter(titulo) | eliminaHashtag}}
-                </p>
-            </ion-card-title>
-        </div>
-        <div id="titular" *ngIf="titulo.indexOf('@')== -1">
-            <ion-card-title text-center>
-                <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
-                <p>{{titulo | eliminaHashtag}}</p>
+                <div *ngFor="let item of tituloObj">
+                    {{item.cadena | eliminaHashtag}}
+                    <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+                </div>
             </ion-card-title>
         </div>
 
@@ -92,8 +88,9 @@
                 <!-- Botones corazón, descarga, compartir y chat -->
 
                 <ion-col width-25>
-                    <button ion-button clear>
-                      <ion-icon name='heart'></ion-icon>
+                    <button ion-button clear (click)='meGustasMucho()'>
+                      <ion-icon name='heart' [color]='colorLike'></ion-icon>
+                      <!--ion-icon name='heart' color='danger'></ion-icon-->
                     </button>
                 </ion-col>
 
@@ -103,8 +100,9 @@
                     <!-- <ion-icon name='cloud-download'></ion-icon> -->
                     <!-- </button> -->
 
-                    <!-- Descarga del programa, ocultada para diseño -->
-                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)" (ficheroDescargado)="ficheroDescargado($event)">
+                    <!-- Descarga del programa, ocultada para diseño >
+                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)"-->
+                    <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
                     </descargaCafetera>
 
                 </ion-col>
@@ -124,14 +122,18 @@
             </ion-row>
             <!-- /Botones corazón, descarga, compartir y chat -->
 
-            <div class="progress-outer" *ngIf="porcentajeDescargado!=0">
+            <!--div class="progress-outer" *ngIf="porcentajeDescargado!=0">
                 <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
                     {{porcentajeDescargado}}%
                 </div>
-            </div>
+            </div-->
 
         </ion-card-content>
 
     </ion-card>
 
 </ion-content>
+
+<!--ion-split-pane when="xl">
+<ion-nav #content [root]="ChatPage"></ion-nav>
+</ion-split-pane-->

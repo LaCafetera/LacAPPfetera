@@ -55,14 +55,27 @@ export class HomePage {
         this.episodiosService.dameEpisodios().subscribe(
             data => {
                 //this.items=data.response.items;
-              //  console.log("[HOME.ionViewDidLoad] Recibido " + JSON.stringify(data));
-             /*   if (this.items == null){
-                    this.items = data.items;
+                //console.log("[HOME.ionViewDidLoad] Recibido " + JSON.stringify(data));
+                if (this.items == null){
+                    this.items = data.episode;
                 }
-                else {*/
-                    this.items.push(data.episode);
-                //}
-              //  console.log("[HOME.ionViewDidLoad] Capítulos descargados ok " + this.items.length);
+                else {
+                     this.items.push(data.episode);
+                    let ordenado = this.items;
+                    let mapped = ordenado.map((el, i) => {
+                        return { index: i, value: el.episode_id };
+                    });
+
+                    // ordenando el array mapeado conteniendo los valores reducidos
+                    mapped.sort((a, b) => {
+                        return (b.value - a.value);
+                    });
+
+                    // contenedor para el orden resultante
+                    this.items = mapped.map((el) =>{
+                        return ordenado[el.index];
+                    });
+                }
             },
             err => {
                 console.log(err);
@@ -81,7 +94,7 @@ export class HomePage {
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
                                             controlador:this.mscControl,
-                                            soloWifi:this.soloWifi,
+                                       //     soloWifi:this.soloWifi,
                                             enlaceTwitter: this.dameEnlace(item.title)});
   }
 

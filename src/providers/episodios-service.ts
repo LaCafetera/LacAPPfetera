@@ -26,6 +26,7 @@ export class EpisodiosService {
     //cantidad = 3;
 
     meVigilan:Observable<any>;
+    token: string;
 
 
     constructor(public http: Http) {
@@ -121,5 +122,15 @@ export class EpisodiosService {
         console.log("[EPISODIOS-SERVICE] Solicitados comentarios del episodio "+ episodio_id +" más allá del "+ ultimo_comentario  );
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages?last_id='+ultimo_comentario).map(res => res.json());
         return episodiosJSON;
+    }
+
+    episodioLike(episodio_id){
+        console.log("[EPISODIOS-SERVICE.episodioLike] Solicitado envío like para el episodio "+ episodio_id);
+        return this.http.get('https://api.spreaker.com/v2/users/'+this.token+'/likes/'+episodio_id).map(res => res.json());
+    }
+
+    episodioDislike(episodio_id){
+        console.log("[EPISODIOS-SERVICE.episodioDislike] ¡¡OJO!! Esto está mal y hay que cambiarlo. Solicitado envío dislike para el episodio "+ episodio_id);
+        return this.http.get('https://api.spreaker.com/v2/users/'+this.token+'/likes/'+episodio_id).map(res => res.json());
     }
 }

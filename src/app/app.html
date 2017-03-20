@@ -10,10 +10,6 @@
         </ion-header>
 
         <ion-content>
-            <!--ion-item>
-                <ion-label> Modo noche</ion-label>
-                <ion-toggle [(ngModel)]="modoNoche" checked="false" color="dark" (ionChange)="cambiaModo()"></ion-toggle>
-            </ion-item-->
 
             <ion-item>
                 <ion-label>
@@ -35,11 +31,16 @@
             </ion-item>
 
             <ion-item>
-                <a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a>
+                <!--a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a-->
+                <a href="http://telegram.me/cafeterabetatest" ion-button full>Síguenos en Telegram</a>
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 11/03/2017</p>
+                <a href="https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=localhost:8100" ion-button full>Loguéate en Spreaker</a>
+            </ion-item>
+
+            <ion-item>
+                <p>Versión de la APP: 20/03/2017</p>
             </ion-item>
 
             <button ion-button round menuClose>Cerrar</button>

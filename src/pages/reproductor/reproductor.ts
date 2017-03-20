@@ -70,6 +70,9 @@ export class ReproductorPage {
     mscControl:MusicControls;
     soloWifi:boolean;
     dirTwitter:string = "";
+    tituloObj: Array<Object>;
+    episodioLike: boolean = true;
+    colorLike:string = "";
 
 
 
@@ -92,20 +95,29 @@ export class ReproductorPage {
         this.descripcion = this.capItem.description;
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
+        this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
+
+        this._configuracion.getTwitteado(this.episodio)
+        .then((val)=> {
+            console.log("[PLAYER.onStatusUpdate] recibida verifiación de twitteado " + val + " para el capítulo " + this.episodio );
+            if (true){//val == null){
+                this.twitteaCapitulo ();
+                this._configuracion.setTwitteado(this.episodio);
+            }
+            //this.actualizaPosicion();
+        }).catch(()=>{
+            console.log("[PLAYER.onStatusUpdate] Error recuperando posición de la reproducción.");
+        });
     }
 
     ionViewDidLoad() {
-        console.log("[reproductor.ionViewDidLoad] pidiendo datos del capítulo" + this.episodio);
-        /*if (!this.descargando){
-            this._configuracion.getTimeRep(this.episodio)
-            .then((val)=> {
-                console.log("[reproductor.ionViewDidLoad] recibida posición de reproducción "+val);
-                this.posicionRep = Number(val);
-                //this.actualizaPosicion();
-            }).catch(()=>{
-                console.log("[reproductor.ionViewDidLoad] Error recuperando posición de la reproducción.");
-            });
-        }*/
+        this._configuracion.getWIFI()
+        .then((val)=> {
+            this.soloWifi = val==true;
+        }).catch(()=>{
+            this.soloWifi = true;
+            console.log("[REPRODUCTO.ionViewDidLoad] Error recuperando valor WIFI. Forzando escuchar vía WIFI");
+        });
 
         console.log ("[reproductor-2] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
         this.mscControl = MusicControls.create({
@@ -341,9 +353,18 @@ export class ReproductorPage {
         });
     }
 
-    actualizaPorcentaje(evento):void{
-        this.porcentajeDescargado = evento.porcentaje;
-        console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
+    twitteaCapitulo(){
+/////    Dialogs.confirm('¡Ayudanos twitteando la dirección del programa!', '¡Ayudanos!', ['¡Café para todos!', 'Mejor no'])
+/////        .then(() => {SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);}
+/////        .catch((error) => {console.log ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)}; Esto es una "promise"
+        if (confirm('¡Ayudanos twitteando la dirección del programa!')){
+            SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);
+        }
+    }
+
+////    actualizaPorcentaje{
+////        this.porcentajeDescargado = evento.porcentaje;
+////        console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
        /* if(this.timerDescarga == 0){
             this.timerDescarga = setInterval(() =>{
                 console.log ("[actualizaPorcentaje] timerDescarga: "+ this.porcentajeDescargado);
@@ -355,7 +376,7 @@ export class ReproductorPage {
                 }
             }, 1000);
         }*/
-    }
+////    }
 
     muestraDetalle(myEvent) {
         //let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
@@ -372,7 +393,8 @@ export class ReproductorPage {
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
             this.noRequiereDescarga = true;
         } else {
-            nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
+            /////nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
+            nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
             this.noRequiereDescarga = false;
         };
@@ -395,6 +417,7 @@ export class ReproductorPage {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
                     if (this.reproduciendo && (Network.type === 'wifi' || !this.soloWifi)){
                         this.iconoPlayPause = 'pause';
+						this.reproduciendo = true;
                         this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep);
                         console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
@@ -414,15 +437,56 @@ export class ReproductorPage {
             else {
                 if (this.reproductor.reproduciendoEste(this.audioEnRep)){
                     this.iconoPlayPause = 'pause';
+					this.reproduciendo = true;
                     this.iniciaContadorRep();
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
                 }
                 else {
                     this.iconoPlayPause = 'play';
+					this.reproduciendo = false;
                     this.parche = true;
                 }
             }
         }
+		MusicControls.updateIsPlaying(this.reproduciendo);
+    }
+
+    meGustasMucho(){
+        if (this.estaLogeado()){
+            if (this.episodioLike){
+                console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like.");
+                this.episodiosService.episodioDislike(this.episodio).subscribe(
+                    data => {
+                        console.log("[REPRODUCTOR.meGustasMucho] eliminando like:" + JSON.stringify(data));
+                        this.episodioLike = false;
+                        this.colorLike = "";
+                    },
+                    err => {
+                        console.log("[REPRODUCTOR.meGustasMucho] Error eliminando like al episodio:" + err);
+                    }
+                );
+            }
+            else {
+                console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like.");
+                this.episodiosService.episodioLike(this.episodio).subscribe(
+                    data => {
+                        console.log("[REPRODUCTOR.meGustasMucho] Aceptado el like:" + JSON.stringify(data));
+                        this.episodioLike = true;
+                        this.colorLike = "danger";
+                    },
+                    err => {
+                        console.log("[REPRODUCTOR.meGustasMucho] Error mandando like al episodio:" + err);
+                    }
+                );
+            }
+        }
+        else {
+            this.msgDescarga ("Necesita logearse en Spreaker para poder ejecutar esta acción.");
+        }
+    }
+
+    estaLogeado (){
+        return true;
     }
 
     msgDescarga  (mensaje: string) {
