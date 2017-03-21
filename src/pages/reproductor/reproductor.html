@@ -24,9 +24,11 @@
         <div id="titular">
             <ion-card-title text-center>
                 <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
-                <div *ngFor="let item of tituloObj">
-                    {{item.cadena | eliminaHashtag}}
-                    <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+                <div id="subTitulo">
+                  <p *ngFor="let item of tituloObj">
+                      {{item.cadena | eliminaHashtag}}
+                      <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+                  </p>
                 </div>
             </ion-card-title>
         </div>
@@ -103,7 +105,7 @@
                     <!-- Descarga del programa, ocultada para diseño >
                     <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)"-->
                     <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
-                    </descargaCafetera>
+                    </descargaCafetera> 
 
                 </ion-col>
 

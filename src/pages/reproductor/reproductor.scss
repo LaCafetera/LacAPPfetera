@@ -16,19 +16,22 @@ page-reproductor {
       margin-top: 2%;
       margin-bottom: 4%;
 
-     .card-title {
+     ion-card-title {
 
         a { /* variación del tamaño del texto del titular y enlace al hashtag */
           font-weight: bold;
           font-size: 1.5rem;
         }
-        p { /* resto del titular */
-          padding-top: 5px;
-          font-size: 1.3rem;
 
-          a { /* enlace a usr de Twitter */
-            font-weight: normal;
-            text-decoration: underline;
+        #subTitulo {
+          p { /* resto del titular */
+            font-size: 1.3rem;
+            display: inline;
+
+            a { /* enlace a usr de Twitter */
+              font-weight: normal;
+              text-decoration: underline;
+            }
           }
         }
       }
