@@ -71,8 +71,16 @@
       border-bottom: solid 1px $bosque-primary;
 
      .card-title {
-        /* texto del titular */
-        color: $bosque-primary;
+        p { /* texto del titular */
+          color: $bosque-primary;
+        }
+        a { /* Enlaces hashtag y usr twitter */
+          color: $bosque-danger;
+        }
+        a:active {
+          /* Enlace hashtag pulsado*/
+          color: $bosque-light;
+        }
       }
     }
 

@@ -68,8 +68,16 @@
       border-bottom: solid 1px $noche-primary;
 
      .card-title {
-        /* texto del titular */
-        color: $noche-primary;
+        p {/* texto del titular */
+          color: $noche-primary;
+        }
+        a { /* Enlaces hashtag y usr twitter */
+          color: $noche-danger;
+        }
+        a:active {
+          /* Enlace hashtag pulsado*/
+          color: $noche-light;
+        }
       }
     }
 
