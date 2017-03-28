@@ -10,7 +10,7 @@ export class CadenasTwitterService {
     constructor() {}
 
     dameDirTwitter (cadena){
-        return ('http://www.twitter.com/'+cadena);
+        return ('http://www.twitter.com/'+cadena.substr(1));
     }
 
     troceaCadena (cadenaIn:string):Array<Object>{
@@ -35,7 +35,7 @@ export class CadenasTwitterService {
                 siguientePos = siguienteEspacio+1;
             }            
             //console.log("[CADENASTWITTER.troceaCadena] siguienteComa " + siguienteComa + " siguienteEspacio " + siguienteEspacio); 
-            this.listaCadenas[this.cantidad]["usuario"] = cadenaIn.substr (hayMasUsuarios, siguientePos);
+            this.listaCadenas[this.cantidad]["usuario"] = cadenaIn.substr (hayMasUsuarios, siguientePos); 
             cadenaIn = cadenaIn.substr(hayMasUsuarios+siguientePos).trim();
             //console.log("[CADENASTWITTER.troceaCadena] posición " + this.cantidad  + "; cadena ->" + this.listaCadenas[this.cantidad]["cadena"] + "<- usuario ->" + this.listaCadenas[this.cantidad]["usuario"] + "<-");
             this.cantidad ++; 

@@ -107,7 +107,7 @@ export class ConfiguracionService {
 
     setTwitteado (cap: string){
         console.log("[CONFIGURACION.SERVICE.setTwitteado] Guardando capítulo twitteado para " + cap);
-        this.storage.set ("Twit_"+cap, true);
+        this.storage.set ("Twit_"+cap, true); // la cosa es guardar si se ha preguntado el twitear este capítulo; no qué ha respondido.
 
     }
 

@@ -123,7 +123,7 @@ export class HomePage {
     }
 
     dameEnlace (cadena:string):string{
-        return "https://mobile.twitter.com/hashtag/"+this.damehashtag(cadena)+"/live";  //--> Versión 2
+        return "https://twitter.com/hashtag/"+this.damehashtag(cadena)//+"/live";  //--> Versión 2
         //return "https://twitter.com/hashtag/"+this.damehashtag(cadena);
     }
 

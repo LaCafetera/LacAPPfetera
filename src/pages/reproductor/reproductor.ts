@@ -71,7 +71,7 @@ export class ReproductorPage {
     soloWifi:boolean;
     dirTwitter:string = "";
     tituloObj: Array<Object>;
-    episodioLike: boolean = true;
+    episodioLike: boolean = false;
     colorLike:string = "";
 
 
@@ -89,7 +89,7 @@ export class ReproductorPage {
         this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         //this.dirTwitter = this.navParams.get('enlaceTwitter') + "/live" ; //--> Versión 2
-        this.dirTwitter = this.navParams.get('enlaceTwitter') + "?f=tweets" ;
+        this.dirTwitter = this.navParams.get('enlaceTwitter');// + "?f=tweets" ;
         //console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         this.titulo = this.capItem.title;
         this.descripcion = this.capItem.description;
@@ -99,14 +99,14 @@ export class ReproductorPage {
 
         this._configuracion.getTwitteado(this.episodio)
         .then((val)=> {
-            console.log("[PLAYER.onStatusUpdate] recibida verifiación de twitteado " + val + " para el capítulo " + this.episodio );
-            if (true){//val == null){
+            console.log("[REPRODUCTOR.constructor] recibida verifiación de twitteado " + val + " para el capítulo " + this.episodio );
+            if (val == null){ //Si es null nunca se ha guardado nada, con lo que no hemos preguntado.
                 this.twitteaCapitulo ();
                 this._configuracion.setTwitteado(this.episodio);
             }
             //this.actualizaPosicion();
         }).catch(()=>{
-            console.log("[PLAYER.onStatusUpdate] Error recuperando posición de la reproducción.");
+            console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
         });
     }
 
@@ -207,7 +207,7 @@ export class ReproductorPage {
             console.log("[reproductor] No es en vivo.");
         }
 
-        console.log ("[reproductor] Esto " + this.platform.is('ios')?"sí":"no" + "es ios.");
+     //   console.log ("[reproductor] Esto " + this.platform.is('ios')?"sí":"no" + "es ios.");
     }
 
 
@@ -354,12 +354,26 @@ export class ReproductorPage {
     }
 
     twitteaCapitulo(){
-/////    Dialogs.confirm('¡Ayudanos twitteando la dirección del programa!', '¡Ayudanos!', ['¡Café para todos!', 'Mejor no'])
-/////        .then(() => {SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);}
-/////        .catch((error) => {console.log ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)}; Esto es una "promise"
-        if (confirm('¡Ayudanos twitteando la dirección del programa!')){
-            SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);
-        }
+        Dialogs.confirm('¡Ayudanos twitteando la dirección del programa!', '¡Ayudanos!', ['¡Café para todos!', 'Mejor no'])
+            .then((respuesta) => {
+                console.log ("[REPRODUCTOR.twitteaCapitulo] Recibida respuesta: " + respuesta);
+                if (respuesta == 1) {// café para todos
+                    SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
+                        .then((respuesta) => {
+                            console.log ("[REPRODUCTOR.twitteaCapitulo] Twitteo OK: " + respuesta);
+                        })
+                        .catch((error) => {
+                            console.log ("[REPRODUCTOR.twitteaCapitulo] Twitteo KO: " + error);
+                        });
+                }
+                this._configuracion.setTwitteado(this.episodio);
+            })
+            .catch((error) => {
+                console.log ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)
+            }); //Esto es una "promise"
+//////        if (confirm('¡Ayudanos twitteando la dirección del programa!')){
+//////            SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);
+//////        }
     }
 
 ////    actualizaPorcentaje{
@@ -454,35 +468,35 @@ export class ReproductorPage {
     meGustasMucho(){
         if (this.estaLogeado()){
             if (this.episodioLike){
-                console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like.");
+            /*    console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like.");
                 this.episodiosService.episodioDislike(this.episodio).subscribe(
                     data => {
-                        console.log("[REPRODUCTOR.meGustasMucho] eliminando like:" + JSON.stringify(data));
+              */         console.log("[REPRODUCTOR.meGustasMucho] eliminando like:");// + JSON.stringify(data));
                         this.episodioLike = false;
                         this.colorLike = "";
-                    },
+                /*    },
                     err => {
                         console.log("[REPRODUCTOR.meGustasMucho] Error eliminando like al episodio:" + err);
                     }
-                );
+                );*/
             }
             else {
                 console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like.");
-                this.episodiosService.episodioLike(this.episodio).subscribe(
+              /*  this.episodiosService.episodioLike(this.episodio).subscribe(
                     data => {
                         console.log("[REPRODUCTOR.meGustasMucho] Aceptado el like:" + JSON.stringify(data));
-                        this.episodioLike = true;
+                */        this.episodioLike = true;
                         this.colorLike = "danger";
-                    },
+                  /*  },
                     err => {
                         console.log("[REPRODUCTOR.meGustasMucho] Error mandando like al episodio:" + err);
                     }
-                );
+                );*/
             }
         }
-        else {
+//////        else {
             this.msgDescarga ("Necesita logearse en Spreaker para poder ejecutar esta acción.");
-        }
+//////        }
     }
 
     estaLogeado (){
