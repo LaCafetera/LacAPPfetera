@@ -103,9 +103,8 @@
                     <!-- </button> -->
 
                     <!-- Descarga del programa, ocultada para diseño >
-                    <descargaCafetera [fileDownload]="episodio" (porcentajeDescarga)="actualizaPorcentaje($event)"-->
                     <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
-                    </descargaCafetera>
+                    </descargaCafetera-->
 
                 </ion-col>
 
@@ -135,7 +134,3 @@
     </ion-card>
 
 </ion-content>
-
-<!--ion-split-pane when="xl">
-<ion-nav #content [root]="ChatPage"></ion-nav>
-</ion-split-pane-->
