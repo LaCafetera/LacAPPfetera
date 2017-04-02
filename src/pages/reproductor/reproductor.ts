@@ -74,7 +74,7 @@ export class ReproductorPage {
     episodioLike: boolean = false;
     colorLike:string = "";
 
-
+    pagChat:any=ChatPage;
 
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService, public cadenaTwitter: CadenasTwitterService) {
@@ -109,6 +109,22 @@ export class ReproductorPage {
             console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
         });
     }
+
+    /****************************************
+     HAy que estudiar esto. Salir de la página cancelará la descarga. ¿Seguro que quiere salir?
+
+
+  ionViewCanLeave(): boolean{
+   // here we can either return true or false
+   // depending on if we want to leave this view
+   if(isValid(randomValue)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+    */
 
     ionViewDidLoad() {
         this._configuracion.getWIFI()
@@ -291,19 +307,6 @@ export class ReproductorPage {
                 if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
-                    /*if (this.parche){
-                        if (this.posicionRep > 0){
-                            console.log ("[REPRODUCTOR.playPause] Comenzando vigilancia de play. ");
-                            let timerSeek = setInterval(() =>{
-                                if (this.reproductor.dameStatus() == this.reproductor.MEDIA_RUNNING){
-                                    clearInterval(timerSeek);
-                                    this.actualizaPosicion();
-                                    console.log ("[REPRODUCTOR.playPause] Actualizando posición de reproducción ");
-                                }
-                            }, 500);
-                            this.parche = false;
-                        }
-                    }*/
                     this.iniciaContadorRep();
                     this.reproduciendo=true;
                 }
@@ -407,8 +410,12 @@ export class ReproductorPage {
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
             this.noRequiereDescarga = true;
         } else {
-            /////nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
-            nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
+            if (this.enVivo) { // Esto es una warrerida que espero poder quitar pronto.
+                nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
+            }
+            else {
+                nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
+            }
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
             this.noRequiereDescarga = false;
         };

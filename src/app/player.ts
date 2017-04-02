@@ -38,7 +38,7 @@ export class Player {
             console.log("[PLAYER.creaReproductor] actualizado status de la reproducción a " + status);
             if (this.seekPdte && status == MediaPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
-                this._configuracion.getTimeRep(capitulo)
+                this._configuracion.getTimeRep(this.dameCapitulo())
                 .then((val)=> {
                     console.log("[PLAYER.onStatusUpdate] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
                     if (val != null && Number(val) > 0){
@@ -116,10 +116,9 @@ export class Player {
         }
         else{
             console.log ("[PLAYER.play] Modificado audio");
-            this.reproductor.stop();
 			this.reproductor.getCurrentPosition()
 				.then((pos)=>{
-					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo);
+					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición ");
                     if (pos > 0){
 					    this._configuracion.setTimeRep(capitulo, pos * 1000);
                     }
@@ -127,6 +126,7 @@ export class Player {
 				.catch ((err)=> {
 					console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
 				});
+            this.reproductor.stop();
             this.reproductor.release();
             this.creaReproductor (audio);
             this.capitulo = audio;
@@ -148,11 +148,11 @@ export class Player {
     release(){
 		this.reproductor.getCurrentPosition()
 			.then((pos)=>{
-				console.log("[PLAYER.play] Recibida posición " + pos * 1000);
+				console.log("[PLAYER.release] Recibida posición " + pos * 1000);
 				this._configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
 			})
 			.catch ((err)=> {
-				console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
+				console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
 			});
         this.reproductor.release();
         //this.reproduciendo = false;

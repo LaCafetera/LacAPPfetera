@@ -30,15 +30,14 @@ export class EpisodiosService {
 
 
     constructor(public http: Http) {
-        //console.log('Hello EpisodiosService Provider');
         this.meVigilan = new Observable();
     }
 
     dameEpisodios(){
         this.meVigilan = Observable.create(observer => {
            // let posicion:number = 0;
-           // this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json()).subscribe(  //Live
-            this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()).subscribe(
+           //  this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json()).subscribe(  //Live
+           this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()).subscribe(
                 data => {
                     data.response.items.forEach((capitulo, elemento, array) => {
                         this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
