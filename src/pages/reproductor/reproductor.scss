@@ -1,12 +1,21 @@
 page-reproductor {
 
+  @media screen and (min-width: 550px) {
+    // para el split view
+    .reproductor {
+    }
+    .chat {
+    }
+  }
+
   .scroll {
       height: 100% !important
   }
 
-  .card {
-    /* fondo de la tarjeta del reproductor */
-    height: 96%;
+  .reproductor {
+    /* tarjeta del reproductor */
+    height: 84%;
+    margin-top: 77px;
 
     #titular {
       /* div para centrar el titular en la tarjeta y separarlo */
@@ -17,12 +26,10 @@ page-reproductor {
       margin-bottom: 4%;
 
      ion-card-title {
-
         a { /* variación del tamaño del texto del titular y enlace al hashtag */
           font-weight: bold;
           font-size: 1.5rem;
         }
-
         #subTitulo {
           p { /* resto del titular */
             font-size: 1.3rem;
@@ -91,8 +98,7 @@ page-reproductor {
 
     .social {
       /* líneas de separación sup e inf en botonera social */
-      margin-top: 15%;
-      margin-bottom: 4%;
+      margin-top: 18%;
       height: 50px;
 
      .button {
@@ -106,19 +112,19 @@ page-reproductor {
       }
     }
 
-    .progress-outer {
-        width: 96%;
-        margin: 10px 2%;
-        padding: 3px;
-        text-align: center;
-        border-radius: 20px;
-    }
-    .progress-inner {
-        min-width: 15%;
-        white-space: nowrap;
-        overflow: hidden;
-        padding: 5px;
-        border-radius: 20px;
-    }
+    // .progress-outer {
+    //     width: 96%;
+    //     margin: 10px 2%;
+    //     padding: 3px;
+    //     text-align: center;
+    //     border-radius: 20px;
+    // }
+    // .progress-inner {
+    //     min-width: 15%;
+    //     white-space: nowrap;
+    //     overflow: hidden;
+    //     padding: 5px;
+    //     border-radius: 20px;
+    // }
   }
 }
