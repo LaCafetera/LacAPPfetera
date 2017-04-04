@@ -410,12 +410,12 @@ export class ReproductorPage {
             console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
             this.noRequiereDescarga = true;
         } else {
-            if (this.enVivo) { // Esto es una warrerida que espero poder quitar pronto.
+           /* if (this.enVivo) { // Esto es una warrerida que espero poder quitar pronto.
                 nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
             }
-            else {
+            else {*/
                 nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
-            }
+           // }
             console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
             this.noRequiereDescarga = false;
         };

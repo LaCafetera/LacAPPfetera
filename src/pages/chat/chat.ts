@@ -58,7 +58,7 @@ export class ChatPage {
                 }
             },
             err => {
-                Dialogs.alert('Error actualizando chat', 'Oh oh...');
+                //Dialogs.alert('Error actualizando chat', 'Oh oh...');
                 console.log ("[CHAT] Error actualizando chat: " + err)
             }
         );       
