@@ -72,8 +72,8 @@ export class DescargaCafetera {
     descargarFichero(evento){
         let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+this.fileDownload+"/download";
       /////  let audio_en_desc : string  = "https://api.spreaker.com/download/episode/"+this.fileDownload+".mp3";
-        let uri : string = encodeURI(audio_en_desc);
-        let fileURL:string = this.DIRDESTINO + this.fileDownload + ".mp3";
+        //let uri : string = encodeURI(audio_en_desc);
+        let fileURL:string = this.DIRDESTINO + this.fileDownload /* + ".mp3" */;
         console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
         if (this.icono == 'cloud-download' || this.icono == 'ios-archive'){
             console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
@@ -83,7 +83,7 @@ export class DescargaCafetera {
                     console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + val);
                     if(Network.type === "wifi" || !val  ) {
                         console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.DIRDESTINO );
-                        this.fileTransfer.download( uri, fileURL, true, {}).then(() => {
+                        this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                             console.log("[descarga.components.descargarFichero]  Descarga completa.");
                           //  this.porcentajeDescarga.emit({porcentaje: 0});
                             this.ficheroDescargado.emit({existe: true});
@@ -91,12 +91,22 @@ export class DescargaCafetera {
                             this.icono = 'trash';
                             this.msgDescarga('Descarga completa');
                             this.descargando = false;
+                            //if (this.platform.is("ios")){
+                                File.moveFile(this.DIRDESTINO, this.fileDownload,this.DIRDESTINO, this.fileDownload+".mp3" )
+                                .then(()=>{
+                                    console.log ("[Descarga.components.descargarFichero] Fichero renombrado correctamente");
+                                })
+                                .catch((error) =>{
+                                    console.log ("[Descarga.components.descargarFichero] error renombrando fichero: " + error);
+                                })
+                                    ;
+                            //}
                         }, (error) => {
                             if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
                                 Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
                                 console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                 console.log("[descarga.components.descargarFichero] download error target " + error.target);
-                                console.log("[descarga.components.descargarFichero] download error code" + error.code);
+                                console.log("[descarga.components.descargarFichero] " + error.body);
                           //      this.porcentajeDescarga.emit({porcentaje: 0});
                             }
                             this.descargando = false;

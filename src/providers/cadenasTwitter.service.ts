@@ -18,7 +18,7 @@ export class CadenasTwitterService {
         let siguienteEspacio: number;
         let siguienteComa: number;
         let siguientePos:number;
-        let restoCadena:string;
+        //let restoCadena:string;
 
         this.listaCadenas = new Array();
         while (hayMasUsuarios != -1){

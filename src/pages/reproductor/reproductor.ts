@@ -407,7 +407,7 @@ export class ReproductorPage {
         //let meVoyPorAqui: number = 0;
         if (fichero.existe ){
             nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
-            console.log("[ficheroDescargado] EL fichero existe. Reproduciendo descarga");
+            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga");
             this.noRequiereDescarga = true;
         } else {
            /* if (this.enVivo) { // Esto es una warrerida que espero poder quitar pronto.
@@ -416,11 +416,11 @@ export class ReproductorPage {
             else {*/
                 nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
            // }
-            console.log("[ficheroDescargado] EL fichero no existe. Reproduciendo de red");
+            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero no existe. Reproduciendo de red");
             this.noRequiereDescarga = false;
         };
         if (this.audioEnRep != null){
-            console.log("[ficheroDescargado] Segunda o más vez que entramos.");
+            console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos.");
             if (this.audioEnRep != nombrerep){
                 /*if (this.audioEnRep.includes(this.episodio)) {
                     this.reproductor.getCurrentPosition().then((position)=>{
@@ -433,7 +433,7 @@ export class ReproductorPage {
                 this.audioEnRep = nombrerep;
                 if (this.reproductor == null) {
                     this.reproductor = new Player(this.audioEnRep, this._configuracion);
-                    console.log("[ficheroDescargado] reproductor es nulo");
+                    console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
                 } else {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
                     if (this.reproduciendo && (Network.type === 'wifi' || !this.soloWifi)){
@@ -441,18 +441,18 @@ export class ReproductorPage {
 						this.reproduciendo = true;
                         this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep);
-                        console.log("[ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
+                        console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
                 // this.actualizaPosicion();//*1000);
             }
         }
         else {
-            console.log("[ficheroDescargado] Primera vez que entramos.");
+            console.log("[REPRODUCTOR.ficheroDescargado] Primera vez que entramos.");
             this.audioEnRep = nombrerep;
             if (this.reproductor == null) {
                 this.reproductor = new Player(this.audioEnRep, this._configuracion);
-                console.log("[ficheroDescargado] reproductor es nulo");
+                console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
                 this.parche = true;
             }
             else {

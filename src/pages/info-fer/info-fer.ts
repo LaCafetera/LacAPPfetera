@@ -34,6 +34,12 @@ export class InfoFerPage {
             });
      //   }
     }
+
+    ngOnDestroy(){
+        if (this.dirJingle != null) {
+            this.dirJingle.release();
+        }
+    }
     
     reproduceJingle (){
         if (this.dirJingle != null){

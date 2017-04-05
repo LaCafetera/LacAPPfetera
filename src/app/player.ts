@@ -149,7 +149,9 @@ export class Player {
 		this.reproductor.getCurrentPosition()
 			.then((pos)=>{
 				console.log("[PLAYER.release] Recibida posición " + pos * 1000);
-				this._configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                if (pos > 0) {
+				    this._configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                }
 			})
 			.catch ((err)=> {
 				console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
