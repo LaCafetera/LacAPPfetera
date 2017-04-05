@@ -46,8 +46,8 @@ export class DescargaCafetera {
     ngOnInit(){
        // this.porcentajeDescarga.emit({porcentaje: 0});
         if (this.fileDownload != null){
-            File.checkFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
-                console.log("[DescargaCafetera] El fichero " + this.fileDownload + '.mp3 existe.');
+            File.checkFile(this.DIRDESTINO, this.fileDownload /*+ '.mp3'*/).then(()=>{
+                console.log("[DescargaCafetera] El fichero " + this.fileDownload + ' existe.');
                 this.icono = 'trash';
                 this.ficheroDescargado.emit({existe: true});
             }, (err) => {
@@ -86,20 +86,19 @@ export class DescargaCafetera {
                         this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                             console.log("[descarga.components.descargarFichero]  Descarga completa.");
                           //  this.porcentajeDescarga.emit({porcentaje: 0});
+                            /*if (this.platform.is("ios")){
+                            File.moveFile(this.DIRDESTINO, this.fileDownload,this.DIRDESTINO, this.fileDownload+".mp3" )
+                            .then(()=>{
+                                console.log ("[Descarga.components.descargarFichero] Fichero renombrado correctamente");
+                            })
+                            .catch((error) =>{
+                                console.log ("[Descarga.components.descargarFichero] error renombrando fichero: " + error.code);
+                            });*/
                             this.ficheroDescargado.emit({existe: true});
                             this.porcentajeDescargado = 0;
                             this.icono = 'trash';
                             this.msgDescarga('Descarga completa');
                             this.descargando = false;
-                            //if (this.platform.is("ios")){
-                                File.moveFile(this.DIRDESTINO, this.fileDownload,this.DIRDESTINO, this.fileDownload+".mp3" )
-                                .then(()=>{
-                                    console.log ("[Descarga.components.descargarFichero] Fichero renombrado correctamente");
-                                })
-                                .catch((error) =>{
-                                    console.log ("[Descarga.components.descargarFichero] error renombrando fichero: " + error);
-                                })
-                                    ;
                             //}
                         }, (error) => {
                             if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
@@ -135,7 +134,7 @@ export class DescargaCafetera {
                 this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
                 this.msgDescarga ("Cancelando descarga");
           //      this.porcentajeDescarga.emit({porcentaje: 0});
-                this.borrarDescarga(this.fileDownload + ".mp3");
+                this.borrarDescarga(this.fileDownload /* + ".mp3"*/);
             }
         }
         else if (this.icono == 'trash') {
@@ -143,7 +142,7 @@ export class DescargaCafetera {
             if (confirm('El fichero ya ha sido descargado. \n ¿Desea borrarlo?')) {
                 //reproductor.stop();
                 console.log("[descarga.components.descargarFichero] Confirmado borrado.")
-                this.borrarDescarga(this.fileDownload + ".mp3");
+                this.borrarDescarga(this.fileDownload /*+ ".mp3"*/);
             //inicializaReproductor (episodio_id + ".mp3");
             } else {
                 console.log("[descarga.components.descargarFichero] Rechazado borrado.")
@@ -156,7 +155,7 @@ export class DescargaCafetera {
     }
 
     borrarDescarga (fichero:string) {
-        File.removeFile(this.DIRDESTINO, this.fileDownload + '.mp3').then(()=>{
+        File.removeFile(this.DIRDESTINO, this.fileDownload /*+ '.mp3'*/).then(()=>{
             console.log("[DescargaCafetera] El fichero " + fichero + '.se ha eliminado.');
             this.icono = 'cloud-download';
             this.ficheroDescargado.emit({existe: false});

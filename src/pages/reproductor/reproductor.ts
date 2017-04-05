@@ -406,7 +406,7 @@ export class ReproductorPage {
         let nombrerep: string;
         //let meVoyPorAqui: number = 0;
         if (fichero.existe ){
-            nombrerep = cordova.file.dataDirectory + this.episodio + '.mp3';
+            nombrerep = cordova.file.dataDirectory + this.episodio;// + '.mp3';
             console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga");
             this.noRequiereDescarga = true;
         } else {
