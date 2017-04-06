@@ -1,16 +1,18 @@
-import { MediaPlugin } from 'ionic-native';
+import { MediaPlugin, File } from 'ionic-native';
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { ConfiguracionService } from '../providers/configuracion.service';
 
+declare var cordova: any;
+
 @Component({
-  providers: [ConfiguracionService]
+  providers: [ConfiguracionService, File]
 })
 
 export class Player {
 
     private reproductor: MediaPlugin;
 
-    private capitulo: string;
+    private capitulo: string ="";
     private descargado:boolean = false;
     //private reproduciendo:boolean = false;
     private statusRep:number;
@@ -27,9 +29,17 @@ export class Player {
     public MEDIA_NONE = MediaPlugin.MEDIA_NONE;
 
     seekPdte:boolean = false;
+    ubicacionAudio:string ="";
 
     constructor(audio:string, private _configuracion: ConfiguracionService){
-        this.creaReproductor (audio);
+        console.log("[PLAYER] recibida petición de audio: "+audio);
+        File.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
+            .then((entry)=>{
+                this.ubicacionAudio = entry.toInternalURL();
+                this.creaReproductor (audio);   
+            })
+            .catch((error)=>{console.log("[PLAYER] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
+
     }
 
     private creaReproductor (audio){
@@ -40,53 +50,57 @@ export class Player {
                 let capitulo = this.dameCapitulo();
                 this._configuracion.getTimeRep(this.dameCapitulo())
                 .then((val)=> {
-                    console.log("[PLAYER.onStatusUpdate] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
+                    console.log("[PLAYER.creaReproductor] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
                     if (val != null && Number(val) > 0){
                         this.seekTo (Number(val));
                     }
-                    //this.actualizaPosicion();
                 }).catch(()=>{
-                    console.log("[PLAYER.onStatusUpdate] Error recuperando posición de la reproducción.");
+                    console.log("[PLAYER.creaReproductor] Error recuperando posición de la reproducción.");
                 });
                 this.seekPdte = false;
             }
         });
-   /*     const onError = ((err) => {
-            console.log ("[PLAYER.creaReproductor] Error creando reproductor " + err.message);
-        });
-*/
-        this.reproductor = new MediaPlugin (audio, onStatusUpdate);
+        if (audio.includes('mp3')){
+            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ this.ubicacionAudio + this.dameCapitulo() + ".mp3");
+            this.reproductor = new MediaPlugin (this.ubicacionAudio + this.dameCapitulo() + ".mp3", onStatusUpdate);
+        }
+        else {
+            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ audio);
+            this.reproductor = new MediaPlugin (audio, onStatusUpdate);
+        }
     }
 
     dameStatus(){
         return this.statusRep;
     }
 
+    traduceAudio(audio):string{
+        return (audio.includes('mp3')?this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3":audio);
+    }
+
     dameCapitulo():string{
+        return (this.extraeCapitulo(this.capitulo));
+    }
+
+    extraeCapitulo(capituloEntrada):string{
         let inicio:number;
         let fin:number;
-        console.log("[PLAYER.dameCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
-        if (this.capitulo != null){
-            if (this.capitulo.includes('http')){
-                fin = this.capitulo.length-5;
+        console.log("[PLAYER.extraeCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
+        if (capituloEntrada != null){
+            if (capituloEntrada.includes('play')){
+                fin = capituloEntrada.length-5;
             }
             else {
-                fin = this.capitulo.length-4;
+                fin = capituloEntrada.length-4;
             }
-            inicio = this.capitulo.substring(0, fin).lastIndexOf("/")+1;
-            console.log("[PLAYER.dameCapitulo] Devolviendo "+ this.capitulo.substring(inicio, fin));
-            return (this.capitulo.substring(inicio, fin));
+            inicio = capituloEntrada.substring(0, fin).lastIndexOf("/")+1;
+            console.log("[PLAYER.extraeCapitulo] Devolviendo "+ capituloEntrada.substring(inicio, fin));
+            return (capituloEntrada.substring(inicio, fin));
         }
         else {
-            console.log("[PLAYER.dameCapitulo] Devolviendo cadena vacía");
+            console.log("[PLAYER.extraeCapitulo] Devolviendo cadena vacía");
             return ("");
         }
-        /*console.log("[PLAYER] Longitud: "+ this.capitulo.length);
-        console.log("[PLAYER] Inicio: "+ inicio);
-        console.log("[PLAYER] FIN : " + fin);
-        console.log("[PLAYER] Capítulo: " + this.capitulo);
-        console.log("[PLAYER] incluye http: " + this.capitulo.includes('http'));
-        console.log ("[PLAYER] Capítulo vale " + this.capitulo.substring(inicio, fin));*/
     }
 
     capDescargado (idDescargado){
@@ -108,7 +122,10 @@ export class Player {
     play(audio){
         //let repeticiones:number = 1;
         //let sonarBloqueado:boolean = true;
+        console.log ("[PLAYER.play] Recibida petición de reproducción de "+ audio );
 		let capitulo = this.dameCapitulo();
+        audio = this.traduceAudio(audio);
+        console.log ("[PLAYER.play] traducimos audio a reproducir a "+ audio );
         if (this.reproduciendoEste(audio))
         {
             console.log ("[PLAYER.play] Play normal");
@@ -116,10 +133,13 @@ export class Player {
         }
         else{
             console.log ("[PLAYER.play] Modificado audio");
+            if (this.reproductor == null) {
+                console.log ("[PLAYER.play] **************** ERROR. VAS A PEDIR POSICIÓN DE REPRODUCCIÓN A UN REPRODUCTOR NULO ******************** ");
+            }
 			this.reproductor.getCurrentPosition()
 				.then((pos)=>{
-					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición ");
-                    if (pos > 0){
+					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
+                    if (pos > 0 && capitulo != ""){
 					    this._configuracion.setTimeRep(capitulo, pos * 1000);
                     }
 				})

@@ -222,8 +222,6 @@ export class ReproductorPage {
         else{
             console.log("[reproductor] No es en vivo.");
         }
-
-     //   console.log ("[reproductor] Esto " + this.platform.is('ios')?"sí":"no" + "es ios.");
     }
 
 
@@ -373,27 +371,8 @@ export class ReproductorPage {
             })
             .catch((error) => {
                 console.log ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)
-            }); //Esto es una "promise"
-//////        if (confirm('¡Ayudanos twitteando la dirección del programa!')){
-//////            SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio);
-//////        }
+            }); 
     }
-
-////    actualizaPorcentaje{
-////        this.porcentajeDescargado = evento.porcentaje;
-////        console.log ("[actualizaPorcentaje] Escrito en porcentajeDescargado: "+ this.porcentajeDescargado);
-       /* if(this.timerDescarga == 0){
-            this.timerDescarga = setInterval(() =>{
-                console.log ("[actualizaPorcentaje] timerDescarga: "+ this.porcentajeDescargado);
-                if (this.porcentajeDescargado == 0){
-                    clearInterval(this.timerDescarga);
-                    console.log ("[actualizaPorcentaje] timerDescarga-> "+ this.timerDescarga);
-                    this.timerDescarga = 0;
-                    console.log ("[actualizaPorcentaje] clearInterval *********************************** ");
-                }
-            }, 1000);
-        }*/
-////    }
 
     muestraDetalle(myEvent) {
         //let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
@@ -406,29 +385,17 @@ export class ReproductorPage {
         let nombrerep: string;
         //let meVoyPorAqui: number = 0;
         if (fichero.existe ){
-            nombrerep = cordova.file.dataDirectory + this.episodio;// + '.mp3';
-            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga");
+            nombrerep = encodeURI(cordova.file.dataDirectory + this.episodio + '.mp3');
+            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga. " + nombrerep + " . ");
             this.noRequiereDescarga = true;
         } else {
-           /* if (this.enVivo) { // Esto es una warrerida que espero poder quitar pronto.
-                nombrerep = 'https://api.spreaker.com/listen/episode/'+this.episodio+'/http';
-            }
-            else {*/
-                nombrerep = 'https://api.spreaker.com/v2/episodes/'+this.episodio+'/play';
-           // }
-            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero no existe. Reproduciendo de red");
+            nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play');
+            console.log("[REPRODUCTOR.ficheroDescargado] EL fichero no existe. Reproduciendo de red. " + nombrerep + " . ");
             this.noRequiereDescarga = false;
         };
         if (this.audioEnRep != null){
             console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos.");
             if (this.audioEnRep != nombrerep){
-                /*if (this.audioEnRep.includes(this.episodio)) {
-                    this.reproductor.getCurrentPosition().then((position)=>{
-                        meVoyPorAqui = position;
-                        console.log("[ficheroDescargado] Recibido que se va por "+ meVoyPorAqui);
-                    });
-                    console.log("[ficheroDescargado] El mismo fichero pero recién descargado (o recién borrado).");
-                }*/
                 this.reproductor.release();
                 this.audioEnRep = nombrerep;
                 if (this.reproductor == null) {
@@ -444,7 +411,6 @@ export class ReproductorPage {
                         console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }
-                // this.actualizaPosicion();//*1000);
             }
         }
         else {
