@@ -36,7 +36,7 @@ export class Player {
         File.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
-                this.creaReproductor (audio);   
+                this.creaReproductor (audio);
             })
             .catch((error)=>{console.log("[PLAYER] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
 
@@ -61,8 +61,8 @@ export class Player {
             }
         });
         if (audio.includes('mp3')){
-            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ this.ubicacionAudio + this.dameCapitulo() + ".mp3");
-            this.reproductor = new MediaPlugin (this.ubicacionAudio + this.dameCapitulo() + ".mp3", onStatusUpdate);
+            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
+            this.reproductor = new MediaPlugin (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate);
         }
         else {
             console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ audio);
