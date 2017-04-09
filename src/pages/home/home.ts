@@ -1,7 +1,9 @@
 import { Component } from "@angular/core";
 
-import { NavController, Events, MenuController } from "ionic-angular";
-import { Dialogs, BackgroundMode, MusicControls } from "ionic-native";
+import { NavController, Events, MenuController } from 'ionic-angular';
+import { Dialogs } from '@ionic-native/dialogs';
+import { BackgroundMode } from '@ionic-native/background-mode';
+import { MusicControls } from '@ionic-native/music-controls';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 //import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -14,7 +16,7 @@ import { Player } from "../../app/player";
 @Component({
   selector: "page-home",
   templateUrl: "home.html",
-  providers: [EpisodiosService/*, ConfiguracionService*/]
+  providers: [EpisodiosService, BackgroundMode, Dialogs/*, ConfiguracionService*/]
 })
 
 export class HomePage {
@@ -31,7 +33,7 @@ export class HomePage {
 
 
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController/*, private _configuracion: ConfiguracionService*/) {
+    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs/*, private _configuracion: ConfiguracionService*/) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
@@ -47,7 +49,7 @@ export class HomePage {
 
     ionViewDidLoad() {
         console.log("[HOME.ionViewDidLoad] Entrando" );
-        BackgroundMode.setDefaults({title: "La cAPPfetera",
+        this.backgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
@@ -79,7 +81,7 @@ export class HomePage {
             },
             err => {
                 console.log(err);
-                Dialogs.alert ("[HOME.ionViewDidLoad] Error descargando episodios" + err, "Error");
+                this.dialogs.alert ("[HOME.ionViewDidLoad] Error descargando episodios" + err, "Error");
             }
         );
     }
@@ -113,7 +115,7 @@ export class HomePage {
             err => {
                 event.complete();
                 console.log(err);
-                Dialogs.alert ("Error descargando episodios" + err, "Error");
+                this.dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
     }
@@ -161,7 +163,7 @@ export class HomePage {
             err => {
                 event.complete();
                 console.log(err);
-                Dialogs.alert ("Error descargando episodios" + err, "Error");
+                this.dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
     }

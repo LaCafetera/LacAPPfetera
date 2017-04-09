@@ -1,5 +1,8 @@
 import {Component, Input, Output, EventEmitter } from '@angular/core';
-import { File, Transfer, Dialogs, Network } from 'ionic-native';
+import { File } from '@ionic-native/file';
+import { Dialogs } from '@ionic-native/dialogs';
+import { Network } from '@ionic-native/network';
+import { Transfer, TransferObject} from '@ionic-native/transfer';
 import { Events, ToastController } from 'ionic-angular';
 
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -26,7 +29,7 @@ export class DescargaCafetera {
     @Output() ficheroDescargado = new EventEmitter();
 
 
-    fileTransfer = new Transfer();
+    //fileTransfer = new Transfer();
     descargando:boolean = false;
     icono: string;
 
@@ -43,14 +46,20 @@ export class DescargaCafetera {
     porcentajeAnterior:number = 0;
     /***** Hasta aquí ****************/
 
-    constructor(public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService) {};
+    constructor(public events: Events, 
+                public toastCtrl: ToastController, 
+                private _configuracion: ConfiguracionService, 
+                private file: File, 
+                private network: Network, 
+                private dialogs: Dialogs, 
+                private transfer: Transfer ) {};
 
     ngOnInit(){
        // this.porcentajeDescarga.emit({porcentaje: 0});
-       File.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
+       this.file.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
             .then((entry)=>{this.dirdestino = entry.toInternalURL();
                     if (this.fileDownload != null){
-                        File.checkFile(this.dirdestino, this.fileDownload + '.mp3').then(()=>{
+                        this.file.checkFile(this.dirdestino, this.fileDownload + '.mp3').then(()=>{
                             console.log("[DescargaCafetera] El fichero " + this.fileDownload + ' existe.');
                             this.icono = 'trash';
                             this.ficheroDescargado.emit({existe: true});
@@ -77,6 +86,7 @@ export class DescargaCafetera {
 
     descargarFichero(evento){
         let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+this.fileDownload+"/download";
+        const fileTransfer: TransferObject = this.transfer.create();
       /////  let audio_en_desc : string  = "https://api.spreaker.com/download/episode/"+this.fileDownload+".mp3";
         //let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.dirdestino + this.fileDownload + ".mp3" ;
@@ -86,10 +96,10 @@ export class DescargaCafetera {
             if (!this.descargando){
                 this._configuracion.getWIFI()
                 .then((val)=> {
-                    console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + val);
-                    if(Network.type === "wifi" || !val  ) {
+                    console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
+                    if(this.network.type === "wifi" || !val  ) {
                         console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.dirdestino );
-                        this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
+                        fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                             console.log("[descarga.components.descargarFichero]  Descarga completa.");
                             this.ficheroDescargado.emit({existe: true});
                             this.porcentajeDescargado = 0;
@@ -98,7 +108,7 @@ export class DescargaCafetera {
                             this.descargando = false;
                         }, (error) => {
                             if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
-                                Dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
+                                this.dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
                                 console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                 console.log("[descarga.components.descargarFichero] download error target " + error.target);
                                 console.log("[descarga.components.descargarFichero] " + error.body);
@@ -113,7 +123,7 @@ export class DescargaCafetera {
                 }).catch(()=>{
                     console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
                 });
-                this.fileTransfer.onProgress((progress) => {
+                fileTransfer.onProgress((progress) => {
                     this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
                     if (this.porcentajeAnterior != this.porcentajeDescargado){
                         this.porcentajeAnterior = this.porcentajeDescargado;
@@ -121,7 +131,7 @@ export class DescargaCafetera {
                 })
             }
             else{
-                this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
+                fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
                 this.msgDescarga ("Cancelando descarga");
                 this.borrarDescarga(this.fileDownload  + ".mp3");
             }
@@ -143,7 +153,7 @@ export class DescargaCafetera {
     }
 
     borrarDescarga (fichero:string) {
-        File.removeFile(this.dirdestino, this.fileDownload + '.mp3').then(()=>{
+        this.file.removeFile(this.dirdestino, this.fileDownload + '.mp3').then(()=>{
             console.log("[DescargaCafetera] El fichero " + fichero + '.se ha eliminado.');
             this.icono = 'cloud-download';
             this.ficheroDescargado.emit({existe: false});

@@ -7,7 +7,11 @@ ionic plugin add cordova-plugin-file-transfer*/
 
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
-import { SocialSharing, Dialogs, MusicControls, Network } from 'ionic-native';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { Dialogs } from '@ionic-native/dialogs';
+import { Network } from '@ionic-native/network';
+import { MusicControls } from '@ionic-native/music-controls';
+
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
@@ -28,7 +32,7 @@ declare var cordova: any
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network]
 })
 export class ReproductorPage {
 
@@ -77,7 +81,18 @@ export class ReproductorPage {
     pagChat:any=ChatPage;
 
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private episodiosService: EpisodiosService, public popoverCtrl: PopoverController, public events: Events, public toastCtrl: ToastController, private _configuracion: ConfiguracionService, public cadenaTwitter: CadenasTwitterService) {
+    constructor(public navCtrl: NavController, 
+                public navParams: NavParams, 
+                public platform : Platform, 
+                private episodiosService: EpisodiosService, 
+                public popoverCtrl: PopoverController, 
+                public events: Events, 
+                public toastCtrl: ToastController, 
+                private _configuracion: ConfiguracionService, 
+                public cadenaTwitter: CadenasTwitterService,
+                private dialogs: Dialogs,
+                private socialsharing: SocialSharing,
+                private network: Network) {
 
         this.capItem = this.navParams.get('episodio');
         this.episodio = this.capItem.episode_id;
@@ -88,18 +103,20 @@ export class ReproductorPage {
         this.mscControl = this.navParams.get('controlador');
         this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
-        //this.dirTwitter = this.navParams.get('enlaceTwitter') + "/live" ; //--> Versión 2
         this.dirTwitter = this.navParams.get('enlaceTwitter');// + "?f=tweets" ;
-        //console.log("[reproductor] Enviado como episodio: " + this.episodioDescarga + "(" + this.episodio +")  porque enVivo vale " + this.enVivo);
         this.titulo = this.capItem.title;
         this.descripcion = this.capItem.description;
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
 
+        if (this.mscControl ==null) {
+            this.mscControl = new MusicControls ();
+        }
+
         this._configuracion.getTwitteado(this.episodio)
         .then((val)=> {
-            console.log("[REPRODUCTOR.constructor] recibida verifiación de twitteado " + val + " para el capítulo " + this.episodio );
+        //    console.log("[REPRODUCTOR.constructor] recibida verificación de twitteado " + val + " para el capítulo " + this.episodio );
             if (val == null){ //Si es null nunca se ha guardado nada, con lo que no hemos preguntado.
                 this.twitteaCapitulo ();
                 this._configuracion.setTwitteado(this.episodio);
@@ -136,7 +153,7 @@ export class ReproductorPage {
         });
 
         console.log ("[reproductor-2] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
-        this.mscControl = MusicControls.create({
+        this.mscControl.create({
             track       : this.capItem.title,        // optional, default : ''
             artist      : 'Radiocable.com',             // optional, default : ''
             cover       : this.capItem.image_url,      // optional, default : nothing
@@ -150,10 +167,14 @@ export class ReproductorPage {
 
             // Android only, optional
             // text displayed in the status bar when the notification (and the ticker) are updated
-            ticker    : 'Bienvenido a Sherwood'
+            ticker    : 'Bienvenido a Sherwood',
+             // iOS only, optional
+            album : 'Bienvenido a Sherwood',
+            duration: 0,
+            elapsed: 0
         });
 
-        MusicControls.subscribe().subscribe(action => {
+        this.mscControl.subscribe().subscribe(action => {
             switch(action) {
                 case 'music-controls-next':
                     this.adelanta();
@@ -175,15 +196,15 @@ export class ReproductorPage {
                     this.platform.exitApp();
                     break;
 
+                case 'music-controls-media-button' :
             // External controls (iOS only)
-            case 'music-controls-toggle-play-pause' :
+                case 'music-controls-toggle-play-pause' :
                     this.playPause();
                     console.log("[REPRODUCTOR.MusicControls] music-controls-toggle-play-pause");
                     break;
 
                 // Headset events (Android only)
                 // All media button events are listed below
-               // case 'music-controls-media-button' :
                     // Do something
                 //    break;
                 case 'music-controls-headset-unplugged':
@@ -198,7 +219,7 @@ export class ReproductorPage {
                     break;
             }
         });
-        MusicControls.listen();
+        this.mscControl.listen();
 
         console.log("[reproductor] EnVivo vale "+ this.enVivo);
 
@@ -266,7 +287,8 @@ export class ReproductorPage {
                     clearInterval(this.timer);
                     this.iconoPlayPause = 'play';
                     this.reproduciendo = false;
-                    MusicControls.updateIsPlaying(this.reproduciendo);
+                    this.mscControl.updateIsPlaying(this.reproduciendo);
+                    this.mscControl.updateDismissable(true);
                     if (status == this.reproductor.MEDIA_STOPPED){
                         console.log ("[REPRODUCTOR.iniciaContadorRep] Poniendo la posición del reproductor a 0");
                         this.posicionRep = 0;
@@ -284,8 +306,8 @@ export class ReproductorPage {
     }
 
     playPause(){
-        let descargaPermitida = (Network.type === "wifi" || !this.soloWifi);
-        console.log ("[Descarga.components.descargarFichero] La conexión es " + Network.type + " y la obligación de tener wifi es " + this.soloWifi);
+        let descargaPermitida = (this.network.type === "wifi" || !this.soloWifi);
+        console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.reproductor != null){
             if (this.reproduciendo) {
                 clearInterval(this.timer);
@@ -301,7 +323,7 @@ export class ReproductorPage {
                 this.reproduciendo=false;
             }
             else {
-                console.log("[reproductor.playpause] tipo de conexión: " + Network.type + " noRequiereDescarga " + this.noRequiereDescarga);
+                console.log("[reproductor.playpause] tipo de conexión: " + this.network.type + " noRequiereDescarga " + this.noRequiereDescarga);
                 if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep);
                     this.iconoPlayPause = 'pause';
@@ -313,9 +335,10 @@ export class ReproductorPage {
                 }
             }
             console.log("[reproductor.playpause] actualizando status control remoto");
-            MusicControls.updateIsPlaying(this.reproduciendo);
+            this.mscControl.updateIsPlaying(this.reproduciendo);
+            this.mscControl.updateDismissable(true);
         }
-        else Dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
+        else this.dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
     }
 
     actualizaPosicion(){
@@ -347,7 +370,7 @@ export class ReproductorPage {
             chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
         }
 
-        SocialSharing.shareWithOptions(options).then(() => {
+        this.socialsharing.shareWithOptions(options).then(() => {
             console.log("[REPRODUCTOR.compartir] enviado Ok"); // On Android apps mostly return false even while it's true
         }).catch(() => {
             console.log("[REPRODUCTOR.compartir] enviado KO");
@@ -355,11 +378,11 @@ export class ReproductorPage {
     }
 
     twitteaCapitulo(){
-        Dialogs.confirm('¡Ayudanos twitteando la dirección del programa!', '¡Ayudanos!', ['¡Café para todos!', 'Mejor no'])
+        this.dialogs.confirm('¡Ayudanos twitteando la dirección del programa!', '¡Ayudanos!', ['¡Café para todos!', 'Mejor no'])
             .then((respuesta) => {
                 console.log ("[REPRODUCTOR.twitteaCapitulo] Recibida respuesta: " + respuesta);
                 if (respuesta == 1) {// café para todos
-                    SocialSharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
+                    this.socialsharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
                         .then((respuesta) => {
                             console.log ("[REPRODUCTOR.twitteaCapitulo] Twitteo OK: " + respuesta);
                         })
@@ -403,7 +426,7 @@ export class ReproductorPage {
                     console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
                 } else {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.MEDIA_RUNNING);
-                    if (this.reproduciendo && (Network.type === 'wifi' || !this.soloWifi)){
+                    if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
                         this.iconoPlayPause = 'pause';
 						this.reproduciendo = true;
                         this.iniciaContadorRep();
@@ -435,7 +458,8 @@ export class ReproductorPage {
                 }
             }
         }
-		MusicControls.updateIsPlaying(this.reproduciendo);
+		this.mscControl.updateIsPlaying(this.reproduciendo);
+        this.mscControl.updateDismissable(true);
     }
 
     meGustasMucho(){

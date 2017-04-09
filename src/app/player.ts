@@ -1,4 +1,5 @@
-import { MediaPlugin, File } from 'ionic-native';
+import { File } from '@ionic-native/file';
+import { MediaPlugin, MediaObject } from '@ionic-native/media';
 import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { ConfiguracionService } from '../providers/configuracion.service';
 
@@ -10,63 +11,72 @@ declare var cordova: any;
 
 export class Player {
 
-    private reproductor: MediaPlugin;
+    private repPlugin: MediaPlugin;
+    private repObject: MediaObject;
 
     private capitulo: string ="";
     private descargado:boolean = false;
     //private reproduciendo:boolean = false;
     private statusRep:number;
 
-    public MEDIA_RUNNING = MediaPlugin.MEDIA_RUNNING;
-    public MEDIA_PAUSED = MediaPlugin.MEDIA_PAUSED;
-    public MEDIA_STARTING = MediaPlugin.MEDIA_STARTING;
-    public MEDIA_STOPPED = MediaPlugin.MEDIA_STOPPED;
+    public MEDIA_RUNNING = this.repPlugin.MEDIA_RUNNING;
+    public MEDIA_PAUSED = this.repPlugin.MEDIA_PAUSED;
+    public MEDIA_STARTING = this.repPlugin.MEDIA_STARTING;
+    public MEDIA_STOPPED = this.repPlugin.MEDIA_STOPPED;
 
-    public MEDIA_ERR_ABORTED = MediaPlugin.MEDIA_ERR_ABORTED;
-    public MEDIA_ERR_DECODE = MediaPlugin.MEDIA_ERR_DECODE;
-    public MEDIA_ERR_NETWORK = MediaPlugin.MEDIA_ERR_NETWORK;
-    public MEDIA_ERR_NONE_SUPPORTED = MediaPlugin.MEDIA_ERR_NONE_SUPPORTED;
-    public MEDIA_NONE = MediaPlugin.MEDIA_NONE;
+    public MEDIA_ERR_ABORTED = this.repPlugin.MEDIA_ERR_ABORTED;
+    public MEDIA_ERR_DECODE = this.repPlugin.MEDIA_ERR_DECODE;
+    public MEDIA_ERR_NETWORK = this.repPlugin.MEDIA_ERR_NETWORK;
+    public MEDIA_ERR_NONE_SUPPORTED = this.repPlugin.MEDIA_ERR_NONE_SUPPORTED;
+    public MEDIA_NONE = this.repPlugin.MEDIA_NONE;
 
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
 
     constructor(audio:string, private _configuracion: ConfiguracionService){
         console.log("[PLAYER] recibida petición de audio: "+audio);
-        File.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
+        let file = new File();
+        file.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
-                this.creaReproductor (audio);
+                this.crearepPlugin (audio);
             })
             .catch((error)=>{console.log("[PLAYER] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-
+        this.repPlugin = new MediaPlugin ();
     }
 
-    private creaReproductor (audio){
+    private crearepPlugin (audio){
         const onStatusUpdate = ((status) =>{
             this.statusRep = status
-            console.log("[PLAYER.creaReproductor] actualizado status de la reproducción a " + status);
-            if (this.seekPdte && status == MediaPlugin.MEDIA_RUNNING){
+            console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status);
+            if (this.seekPdte && status == this.repPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
                 this._configuracion.getTimeRep(this.dameCapitulo())
                 .then((val)=> {
-                    console.log("[PLAYER.creaReproductor] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
+                    console.log("[PLAYER.crearepPlugin] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
                     if (val != null && Number(val) > 0){
                         this.seekTo (Number(val));
                     }
                 }).catch(()=>{
-                    console.log("[PLAYER.creaReproductor] Error recuperando posición de la reproducción.");
+                    console.log("[PLAYER.crearepPlugin] Error recuperando posición de la reproducción.");
                 });
                 this.seekPdte = false;
             }
         });
         if (audio.includes('mp3')){
-            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
-            this.reproductor = new MediaPlugin (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate);
+            console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
+            this.repPlugin.create (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate)
+            .then((objeto)=> {
+                this.repObject = objeto;
+            })
+            .catch((error)=> {
+                console.log("[PLAYER.crearepPlugin] Error creando reproductor:"+ error); 
+            })
+
         }
         else {
-            console.log("[PLAYER.creaReproductor] Tratando de reproducir:"+ audio);
-            this.reproductor = new MediaPlugin (audio, onStatusUpdate);
+            console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
+            this.repPlugin.create (audio, onStatusUpdate);
         }
     }
 
@@ -108,11 +118,11 @@ export class Player {
     }
 
     getCurrentPosition(){
-        return this.reproductor.getCurrentPosition();
+        return this.repObject.getCurrentPosition();
     }
 
     getCurrentAmplitude(){
-        return this.reproductor.getCurrentAmplitude();
+        return this.repObject.getCurrentAmplitude();
     }
 
     reproduciendoEste(audio):boolean{
@@ -129,14 +139,14 @@ export class Player {
         if (this.reproduciendoEste(audio))
         {
             console.log ("[PLAYER.play] Play normal");
-            this.reproductor.play(); //this.reproductor.play([repeticiones, sonarBloqueado]);
+            this.repObject.play(); //this.repPlugin.play([repeticiones, sonarBloqueado]);
         }
         else{
             console.log ("[PLAYER.play] Modificado audio");
-            if (this.reproductor == null) {
-                console.log ("[PLAYER.play] **************** ERROR. VAS A PEDIR POSICIÓN DE REPRODUCCIÓN A UN REPRODUCTOR NULO ******************** ");
+            if (this.repObject == null) {
+                console.log ("[PLAYER.play] **************** ERROR. VAS A PEDIR POSICIÓN DE REPRODUCCIÓN A UN repObject NULO ******************** ");
             }
-			this.reproductor.getCurrentPosition()
+			this.repObject.getCurrentPosition()
 				.then((pos)=>{
 					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
                     if (pos > 0 && capitulo != ""){
@@ -146,27 +156,25 @@ export class Player {
 				.catch ((err)=> {
 					console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
 				});
-            this.reproductor.stop();
-            this.reproductor.release();
-            this.creaReproductor (audio);
+            this.repObject.stop();
+            this.repObject.release();
+            this.crearepPlugin (audio);
             this.capitulo = audio;
-			this.reproductor.play();
+			this.repObject.play();
             this.seekPdte = true;
         }
-        //this.reproduciendo = true;
     }
 
     resume(){
-        this.reproductor.play();
+        this.repObject.play();
     }
 
     pause(){
-        this.reproductor.pause();
-        //this.reproduciendo = false;
+        this.repObject.pause();
     }
 
     release(){
-		this.reproductor.getCurrentPosition()
+		this.repObject.getCurrentPosition()
 			.then((pos)=>{
 				console.log("[PLAYER.release] Recibida posición " + pos * 1000);
                 if (pos > 0) {
@@ -176,7 +184,7 @@ export class Player {
 			.catch ((err)=> {
 				console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
 			});
-        this.reproductor.release();
+        this.repObject.release();
         //this.reproduciendo = false;
     }
 
@@ -198,15 +206,15 @@ export class Player {
     }
 
     seekTo(milisegundos:number){
-        this.reproductor.seekTo(milisegundos);
+        this.repObject.seekTo(milisegundos);
     }
 
     setVolume(volumen){
-        this.reproductor.setVolume(volumen);
+        this.repObject.setVolume(volumen);
     }
 
     stop(){
-        this.reproductor.stop();
+        this.repObject.stop();
         //this.reproduciendo = false;
     }
 

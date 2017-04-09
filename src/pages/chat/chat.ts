@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { EpisodiosService } from '../../providers/episodios-service';
-import { Dialogs } from 'ionic-native';
+//import { Dialogs } from 'ionic-native';
 
 /*
   Generated class for the Chat page.

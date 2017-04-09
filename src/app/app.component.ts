@@ -1,7 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, ToastController } from 'ionic-angular';
-import { StatusBar, Splashscreen } from 'ionic-native';
-import { Contacts, Contact, ContactField, ContactName, ContactAddress, ContactFindOptions } from 'ionic-native';
+import { StatusBar} from '@ionic-native/status-bar';
+import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { InAppBrowser} from '@ionic-native/in-app-browser'
 
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -9,7 +11,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 
 @Component({
   templateUrl: 'app.html',
-  providers: [ConfiguracionService]
+  providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts, InAppBrowser]
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
@@ -23,14 +25,20 @@ export class MyApp {
 
   rootPage = HomePage;
 
-  constructor(public platform: Platform, private _configuracion: ConfiguracionService, public toastCtrl: ToastController) {
+  constructor(public platform: Platform, 
+              private _configuracion: ConfiguracionService, 
+              public toastCtrl: ToastController, 
+              private barraEstado: StatusBar, 
+              private splashscreen: SplashScreen, 
+              private contacts: Contacts,
+              private iab: InAppBrowser) {
 
     this.availableThemes = this._configuracion.availableThemes;
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      StatusBar.styleDefault();
-      Splashscreen.hide();
+      this.barraEstado.styleDefault();
+      this.splashscreen.hide();
     });
   }
 
@@ -50,9 +58,9 @@ export class MyApp {
         this.chosenTheme = val;
         console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
         if (this.platform.is("ios")){
-          StatusBar.overlaysWebView(true);
+          this.barraEstado.overlaysWebView(true);
         }
-        StatusBar.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+        this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
         //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
       });
     }
@@ -78,12 +86,12 @@ export class MyApp {
 
     cafeteaAgenda(){
       let telefono:string = '627002002';
-      let contact: Contact = Contacts.create();
+      let contact = this.contacts.create();
       let options = new ContactFindOptions();
       options.filter = telefono;
       options.multiple = false;
       //options.desiredFields = ["ContactName"];
-      Contacts.find(["phoneNumbers"], options)
+      this.contacts.find(["phoneNumbers"], options)
         .then((contacts) => {
           if (contacts.length == 0){
             console.log("[app.component.cafeteaAgenda] Guardando en agenda ");
@@ -102,6 +110,10 @@ export class MyApp {
             console.log("[app.component.cafeteaAgenda] Guardando en agenda "+ error.message);
             this.msgDescarga ("Se ha producido un error " + error.message);
         });
+    }
+
+    loginSpreaker(){
+      /*const browser = */this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100');
     }
 
 }
