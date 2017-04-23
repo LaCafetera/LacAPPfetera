@@ -470,32 +470,44 @@ export class ReproductorPage {
 
     meGustasMucho(){
         this._configuracion.dameUsuario()
-        .then ((data) => {
-            if (this.episodioLike){
-                console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de dislike para usuario " + data);
-                this.episodiosService.episodioDislike(this.episodio, data ).subscribe(
-                    data => {
-                        console.log("[REPRODUCTOR.meGustasMucho] eliminando like:");// + JSON.stringify(data));
-                        this.episodioLike = false;
-                        this.colorLike = "";
-                    },
-                    err => {
-                        console.log("[REPRODUCTOR.meGustasMucho] Error eliminando like al episodio:" + err);
+        .then ((dataUsuario) => {
+            if (dataUsuario != null){
+                this._configuracion.dameToken()
+                .then ((dataToken) => {
+                    if (this.episodioLike){
+                        console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de dislike para usuario " + dataUsuario);
+                        this.episodiosService.episodioDislike(this.episodio, dataUsuario, dataToken ).subscribe(
+                            data => {
+                                console.log("[REPRODUCTOR.meGustasMucho] eliminando like:");// + JSON.stringify(data));
+                                this.episodioLike = false;
+                                this.colorLike = "";
+                            },
+                            err => {
+                                console.log("[REPRODUCTOR.meGustasMucho] Error eliminando like al episodio:" + err);
+                            }
+                        );
                     }
-                );
+                    else {
+                        console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like para usuario " + dataUsuario);
+                        this.episodiosService.episodioLike(this.episodio, dataUsuario, dataToken).subscribe(
+                            data => {
+                                console.log("[REPRODUCTOR.meGustasMucho] Aceptado el like:" + JSON.stringify(data));
+                                this.episodioLike = true;
+                                this.colorLike = "danger";
+                            },
+                            err => {
+                                console.log("[REPRODUCTOR.meGustasMucho] Error mandando like al episodio:" + err);
+                            }
+                        );
+                    }
+                })
+                .catch ((error) => {
+                    console.log("[REPRODUCTOR.meGustasMucho] Error descargando token:" + error);
+                    this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+                });
             }
             else {
-                console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de like para usuario " + data);
-                this.episodiosService.episodioLike(this.episodio, data).subscribe(
-                    data => {
-                        console.log("[REPRODUCTOR.meGustasMucho] Aceptado el like:" + JSON.stringify(data));
-                        this.episodioLike = true;
-                        this.colorLike = "danger";
-                    },
-                    err => {
-                        console.log("[REPRODUCTOR.meGustasMucho] Error mandando like al episodio:" + err);
-                    }
-                );
+                this.msgDescarga ("Error extrayendo usuario de Spreaker.");
             }
         })
         .catch (() => {

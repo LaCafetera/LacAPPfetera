@@ -179,8 +179,8 @@ export class ConfiguracionService {
                         console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] solicitando datos de usuario.");
                         this.episodioSrvc.whoAMi(data).subscribe(
                             data => {
-                                console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] recibido " + data.response.user);
-                                this.storage.set ("usuarioSpreaker", data.response.user.username);
+                                console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] recibido " + JSON.stringify(data.response.user));
+                                this.storage.set ("usuarioSpreaker", data.response.user.user_id);
                             },
                             err => {
                                 console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] Error solicitando datos de usuario:" + err);
@@ -196,6 +196,10 @@ export class ConfiguracionService {
                 resolve(0);
             }); 
         });
+    }
+
+    dameToken ():Promise<any>{
+        return (this.storage.get ("tokenSpreaker"));
     }
 
     dameUsuario ():Promise<any>{

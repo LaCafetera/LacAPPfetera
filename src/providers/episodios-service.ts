@@ -124,14 +124,20 @@ export class EpisodiosService {
         return episodiosJSON;
     }
 
-    episodioLike(episodio_id:string, usuario: string){
-        console.log("[EPISODIOS-SERVICE.episodioLike] Solicitado envío like para el episodio "+ episodio_id);
-        return this.http.get('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id).map(res => res.json());
+    episodioLike(episodio_id:string, usuario: string, token: string){
+        console.log("[EPISODIOS-SERVICE.episodioLike] Solicitado envío like para el episodio "+ episodio_id + " con token " + token);
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        headers.append('Content-Type', 'application/json');
+        return this.http.put('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, "null", {headers: headers}).map(res => res.json());
     }
 
-    episodioDislike(episodio_id:string, usuario: string){
+    episodioDislike(episodio_id:string, usuario: string, token: string){
         console.log("[EPISODIOS-SERVICE.episodioDislike] Solicitado envío dislike para el episodio "+ episodio_id);
-        return this.http.get('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id).map(res => res.json());
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        headers.append('Content-Type', 'application/json');
+        return this.http.put('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, "null", {headers: headers}).map(res => res.json());
     }
 
 
@@ -139,21 +145,8 @@ export class EpisodiosService {
     whoAMi(token: string):Observable<any>{
         let headers = new Headers();
         console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token " + token);
-        /*this._configuracion.getTokenSpreaker()
-        .then ((token) => {
-            if (token != null){*/
         headers.append ('Authorization', 'Bearer ' + token);
-        return(this.http.post('https://api.spreaker.com/v2/me', "null", {headers: headers}).map(res => res.json()));
-        
-           /* }
-            else {
-                console.log("[EPISODIOS-SERVICE.whoAMi] No hay token guardado");
-                return(null);
-            }
-        })
-        .catch ((error) => {
-            console.log("[EPISODIOS-SERVICE.whoAMi] Error recuperando token");
-            return(null);
-        }*/
+        headers.append('Content-Type', 'application/json');
+        return(this.http.get('https://api.spreaker.com/v2/me', {headers: headers}).map(res => res.json()));
     }
 }
