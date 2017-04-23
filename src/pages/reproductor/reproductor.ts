@@ -478,7 +478,7 @@ export class ReproductorPage {
                         console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de dislike para usuario " + dataUsuario);
                         this.episodiosService.episodioDislike(this.episodio, dataUsuario, dataToken ).subscribe(
                             data => {
-                                console.log("[REPRODUCTOR.meGustasMucho] eliminando like:");// + JSON.stringify(data));
+                                console.log("[REPRODUCTOR.meGustasMucho] eliminando like:" + JSON.stringify(data));
                                 this.episodioLike = false;
                                 this.colorLike = "";
                             },

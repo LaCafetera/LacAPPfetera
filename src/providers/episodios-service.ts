@@ -137,7 +137,7 @@ export class EpisodiosService {
         let headers = new Headers();
         headers.append ('Authorization', 'Bearer ' + token);
         headers.append('Content-Type', 'application/json');
-        return this.http.put('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, "null", {headers: headers}).map(res => res.json());
+        return this.http.delete('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, {headers: headers}).map(res => res.json());
     }
 
 
