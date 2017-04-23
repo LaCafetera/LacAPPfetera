@@ -69,3 +69,4 @@ export class InfoFerPage {
         else alert("Es nulo");
     }
 }
+

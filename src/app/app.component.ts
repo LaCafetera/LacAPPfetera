@@ -164,3 +164,4 @@ export class MyApp {
       this._configuracion.setTokenSpreaker("");
     }
 }
+

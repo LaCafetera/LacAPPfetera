@@ -205,5 +205,4 @@ export class ConfiguracionService {
     dameUsuario ():Promise<any>{
         return (this.storage.get ("usuarioSpreaker"));
     }
-
 }

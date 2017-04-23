@@ -150,3 +150,4 @@ export class EpisodiosService {
         return(this.http.get('https://api.spreaker.com/v2/me', {headers: headers}).map(res => res.json()));
     }
 }
+
