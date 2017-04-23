@@ -1,0 +1,53 @@
+<div [class]="chosenTheme">
+
+    <ion-menu type="push" [content]="content">
+        <ion-header>
+            <ion-toolbar>
+                <ion-title>Menú Cafetero</ion-title>
+            </ion-toolbar>
+        </ion-header>
+
+        <ion-content>
+
+            <ion-item>
+                <ion-label>
+                    <ion-icon name="color-palette"></ion-icon> Tema</ion-label>
+                <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
+                    <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
+                        {{theme.prettyName}}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+
+            <ion-item>
+                <ion-label> Descarga sólo con wifi</ion-label>
+                <ion-toggle [(ngModel)]="soloWifi" (ionChange)="setWIFI($event)"></ion-toggle>
+            </ion-item>
+
+            <ion-item>
+                <button ion-button full (click)="cafeteaAgenda()">Danos de alta en tu agenda</button>
+            </ion-item>
+
+            <ion-item>
+                <!--a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a-->
+                <a href="http://telegram.me/cafeterabetatest" ion-button full>Síguenos en Telegram</a>
+            </ion-item>
+
+            <ion-item >
+                <button ion-button full (click)="loginSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
+                <button ion-button full (click)="logoutSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button>
+            </ion-item>
+
+            <ion-item>
+                <p>Versión de la APP: 18/04/2017</p>
+            </ion-item>
+
+            <button ion-button round menuClose>Cerrar</button>
+        </ion-content>
+
+    </ion-menu>
+
+    <ion-nav [root]="rootPage" main #content swipeBackEnabled="false">
+    </ion-nav>
+
+</div>
