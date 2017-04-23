@@ -1,4 +1,3 @@
-<!--ion-split-pane when="(min-width: 550px)"-->
 <div [class]="chosenTheme">
 
     <ion-menu type="push" [content]="content">
@@ -34,12 +33,13 @@
                 <a href="http://telegram.me/cafeterabetatest" ion-button full>Síguenos en Telegram</a>
             </ion-item>
 
-            <ion-item>
-                <button ion-button full (click)="loginSpreaker()">Loguéate en Spreaker</button>
+            <ion-item >
+                <button ion-button full (click)="loginSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
+                <button ion-button full (click)="logoutSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button>
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 09/04/2017</p>
+                <p>Versión de la APP: 18/04/2017</p>
             </ion-item>
 
             <button ion-button round menuClose>Cerrar</button>
@@ -51,4 +51,3 @@
     </ion-nav>
 
 </div>
-<!--/ion-split-pane-->

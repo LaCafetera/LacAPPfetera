@@ -1,54 +1,57 @@
+import { Injectable, Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { MediaPlugin, MediaObject } from '@ionic-native/media';
-import { Component/*, Output, EventEmitter*/ } from '@angular/core';
 import { ConfiguracionService } from '../providers/configuracion.service';
 
-declare var cordova: any;
+//declare var cordova: any;
 
+@Injectable()
 @Component({
-  providers: [ConfiguracionService, File]
+    providers: [File, MediaPlugin]
 })
 
 export class Player {
 
-    private repPlugin: MediaPlugin;
+  //  private repPlugin: MediaPlugin;
     private repObject: MediaObject;
+    private _configuracion: ConfiguracionService;
 
     private capitulo: string ="";
     private descargado:boolean = false;
     //private reproduciendo:boolean = false;
     private statusRep:number;
+/*
+    public MEDIA_RUNNING = 0; // this.repPlugin.MEDIA_RUNNING;
+    public MEDIA_PAUSED = 0; // this.repPlugin.MEDIA_PAUSED;
+    public MEDIA_STARTING = 0; // this.repPlugin.MEDIA_STARTING;
+    public MEDIA_STOPPED = 0; // this.repPlugin.MEDIA_STOPPED;
 
-    public MEDIA_RUNNING = this.repPlugin.MEDIA_RUNNING;
-    public MEDIA_PAUSED = this.repPlugin.MEDIA_PAUSED;
-    public MEDIA_STARTING = this.repPlugin.MEDIA_STARTING;
-    public MEDIA_STOPPED = this.repPlugin.MEDIA_STOPPED;
-
-    public MEDIA_ERR_ABORTED = this.repPlugin.MEDIA_ERR_ABORTED;
-    public MEDIA_ERR_DECODE = this.repPlugin.MEDIA_ERR_DECODE;
-    public MEDIA_ERR_NETWORK = this.repPlugin.MEDIA_ERR_NETWORK;
-    public MEDIA_ERR_NONE_SUPPORTED = this.repPlugin.MEDIA_ERR_NONE_SUPPORTED;
-    public MEDIA_NONE = this.repPlugin.MEDIA_NONE;
-
+    public MEDIA_ERR_ABORTED = 0; // this.repPlugin.MEDIA_ERR_ABORTED;
+    public MEDIA_ERR_DECODE = 0; // this.repPlugin.MEDIA_ERR_DECODE;
+    public MEDIA_ERR_NETWORK =  0; //this.repPlugin.MEDIA_ERR_NETWORK;
+    public MEDIA_ERR_NONE_SUPPORTED = 0; // this.repPlugin.MEDIA_ERR_NONE_SUPPORTED;
+    public MEDIA_NONE = 0; // this.repPlugin.MEDIA_NONE;
+*/
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
 
-    constructor(audio:string, private _configuracion: ConfiguracionService){
-        console.log("[PLAYER] recibida petición de audio: "+audio);
-        let file = new File();
-        file.resolveLocalFilesystemUrl(cordova.file.dataDirectory)
+    constructor(/*private repObject: MediaObject, */public repPlugin: MediaPlugin, private file: File){
+
+        file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
-                this.crearepPlugin (audio);
+                //this.crearepPlugin (audio);
             })
             .catch((error)=>{console.log("[PLAYER] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-        this.repPlugin = new MediaPlugin ();
+//        this.repPlugin = new MediaPlugin ();
     }
 
-    private crearepPlugin (audio){
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService): Promise<any>{
+        console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
+        this._configuracion = configuracion;
         const onStatusUpdate = ((status) =>{
             this.statusRep = status
-            console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status);
+            console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.repPlugin.MEDIA_RUNNING);
             if (this.seekPdte && status == this.repPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
                 this._configuracion.getTimeRep(this.dameCapitulo())
@@ -65,23 +68,28 @@ export class Player {
         });
         if (audio.includes('mp3')){
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
-            this.repPlugin.create (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate)
-            .then((objeto)=> {
-                this.repObject = objeto;
-            })
-            .catch((error)=> {
-                console.log("[PLAYER.crearepPlugin] Error creando reproductor:"+ error); 
-            })
-
+            return(this.repPlugin.create (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate));
         }
         else {
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
-            this.repPlugin.create (audio, onStatusUpdate);
+            return(this.repPlugin.create (audio, onStatusUpdate));
         }
     }
 
     dameStatus(){
         return this.statusRep;
+    }
+
+    dameStatusRep(){
+        return this.repPlugin.MEDIA_RUNNING;
+    }
+
+    dameStatusPause(){
+        return this.repPlugin.MEDIA_PAUSED;
+    }
+
+    dameStatusStop(){
+        return this.repPlugin.MEDIA_STOPPED;
     }
 
     traduceAudio(audio):string{
@@ -130,8 +138,6 @@ export class Player {
     }
 
     play(audio){
-        //let repeticiones:number = 1;
-        //let sonarBloqueado:boolean = true;
         console.log ("[PLAYER.play] Recibida petición de reproducción de "+ audio );
 		let capitulo = this.dameCapitulo();
         audio = this.traduceAudio(audio);
@@ -143,25 +149,31 @@ export class Player {
         }
         else{
             console.log ("[PLAYER.play] Modificado audio");
-            if (this.repObject == null) {
-                console.log ("[PLAYER.play] **************** ERROR. VAS A PEDIR POSICIÓN DE REPRODUCCIÓN A UN repObject NULO ******************** ");
+            if (this.repObject != null) {
+                this.repObject.getCurrentPosition()
+                    .then((pos)=>{
+                        console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
+                        if (pos > 0 && capitulo != ""){
+                            this._configuracion.setTimeRep(capitulo, pos * 1000);
+                        }
+                    })
+                    .catch ((err)=> {
+                        console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
+                    });
+                this.repObject.stop();
+                this.repObject.release();
             }
-			this.repObject.getCurrentPosition()
-				.then((pos)=>{
-					console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
-                    if (pos > 0 && capitulo != ""){
-					    this._configuracion.setTimeRep(capitulo, pos * 1000);
-                    }
-				})
-				.catch ((err)=> {
-					console.log ("[PLAYER.play] Recibido error al pedir posición de reproducción: " + err);
-				});
-            this.repObject.stop();
-            this.repObject.release();
-            this.crearepPlugin (audio);
             this.capitulo = audio;
-			this.repObject.play();
             this.seekPdte = true;
+            this.crearepPlugin (audio, this._configuracion)
+            .then((objeto)=> {
+                console.log("[PLAYER.play] Objeto reproductor creado " + objeto); 
+                this.repObject = objeto;
+			    this.repObject.play();
+            })
+            .catch((error)=> {
+                console.log("[PLAYER.crearepPlugin] Error creando reproductor: "+ error); 
+            })
         }
     }
 
@@ -189,20 +201,28 @@ export class Player {
     }
 
     adelantaRep(){
-        this.getCurrentPosition().then((position)=>{
-            this.seekTo((position+15)*1000);
-        });
+        this.getCurrentPosition()
+            .then((position)=>{
+                this.seekTo((position+15)*1000);
+            })
+            .catch(() =>{
+                console.log("[PLAYER.retrocedeRep] Error retrocediendo.")
+            });
     }
 
     retrocedeRep(){
-        this.getCurrentPosition().then((position)=>{
-            if (position>15){
-                this.seekTo((position-15)*1000);
-            }
-            else{
-                this.seekTo(0);
-            }
-        });
+        this.getCurrentPosition()
+            .then((position)=>{
+                if (position>15){
+                    this.seekTo((position-15)*1000);
+                }
+                else{
+                    this.seekTo(0);
+                }
+            })
+            .catch(() =>{
+                console.log("[PLAYER.retrocedeRep] Error retrocediendo.")
+            });
     }
 
     seekTo(milisegundos:number){

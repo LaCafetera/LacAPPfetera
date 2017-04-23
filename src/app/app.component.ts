@@ -17,7 +17,8 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   soloWifi:boolean = false;
-  prueba: any;
+  // prueba: any;
+  conectadoASpreaker: boolean = false;
 
   chosenTheme: String;
   //modoNoche:boolean = false;
@@ -38,19 +39,33 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.barraEstado.styleDefault();
-      this.splashscreen.hide();
     });
   }
 
     ngOnInit() {
-      console.log ('[app.component.ngOnInit]');
+      //console.log ('[app.component.ngOnInit]');
 
+      this.splashscreen.hide();
       this._configuracion.getWIFI()
         .then((val)=> {
           this.soloWifi = val==true;
-          console.log("[app.component.ngOnInit] val vale "+ val);
+          console.log("[app.component.ngOnInit] getWIFI vale "+ val);
         }).catch(()=>{
           console.log("[app.component.ngOnInit] Error recuperando valor WIFI");
+          this.soloWifi=false;
+      });
+
+      this._configuracion.getTokenSpreaker()
+        .then((val)=> {
+          if (val == null || val == 0){
+            this.conectadoASpreaker = false;
+          }
+          else {
+            this.conectadoASpreaker = true;
+          }
+          console.log("[app.component.ngOnInit] getTokenSpreaker vale "+ val);
+        }).catch(()=>{
+          console.log("[app.component.ngOnInit] Error recuperando valor token Spreaker");
           this.soloWifi=false;
       });
 
@@ -112,8 +127,40 @@ export class MyApp {
         });
     }
 
+//Recibido http://localhost:8100/#access_token=bbcb70c068334b8fe067b34f69e5d318a45fb37a&expires_in=r&token_type=Bearer&scope=basic&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST"
+
     loginSpreaker(){
-      /*const browser = */this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100');
+      /*const browser = *///this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100');
+      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+                                    '_blank', 
+                                    'location=no,clearsessioncache=yes,clearcache=yes');
+      browser.on('loadstart')
+        .subscribe((event) => {
+          if ((event.url).indexOf("http://localhost:8100") === 0) {
+            //browser.removeEventListener("exit", (event) => {});
+            browser.close();
+            let responseParameters = ((event.url).split("#")[1]).split("&");
+            console.log ("[APP.loginSpreaker] Recibido " + event.url);
+            let parsedResponse = {};
+            for (let i = 0; i < responseParameters.length; i++) {
+              parsedResponse[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+            }
+            if (parsedResponse["access_token"] !== undefined && parsedResponse["access_token"] !== null) {
+              console.log ("[APP.loginSpreaker] Login  OK");
+              this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
+            } else {
+              console.log ("[APP.loginSpreaker] Login  KO");
+            }
+          }
+        });
+      browser.on("exit")
+        .subscribe((event) =>{
+          console.log ("[APP.loginSpreaker] Login cancelado.");
+        });
     }
 
+    logoutSpreaker(){
+      console.log ("[APP.logoutSpreaker] Pdte.");
+      this._configuracion.setTokenSpreaker("");
+    }
 }

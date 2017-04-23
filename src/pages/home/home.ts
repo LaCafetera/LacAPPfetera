@@ -48,7 +48,7 @@ export class HomePage {
     }
 
     ionViewDidLoad() {
-        console.log("[HOME.ionViewDidLoad] Entrando" );
+        //console.log("[HOME.ionViewDidLoad] Entrando" );
         this.backgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
@@ -62,7 +62,7 @@ export class HomePage {
                     this.items = data.episode;
                 }
                 else {
-                     this.items.push(data.episode);
+                    this.items.push(data.episode);
                     let ordenado = this.items;
                     let mapped = ordenado.map((el, i) => {
                         return { index: i, value: el.episode_id };

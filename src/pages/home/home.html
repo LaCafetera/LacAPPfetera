@@ -1,10 +1,11 @@
 <ion-header>
     <ion-navbar color=(color)>
 
-        <button ion-button left menuToggle icon-only>
-        	<ion-icon name="menu"></ion-icon>
-        </button>
-
+        <!--ion-nav-buttons left-->
+        	<button ion-icon menuToggle icon-only left>
+                <ion-icon name="menu"></ion-icon>
+            </button>
+        <!--/ion-nav-buttons-->
         <ion-title>
             La cAPPfetera
         </ion-title>
@@ -34,13 +35,13 @@
             </ion-row>
 
             <ion-row (click)="pushPage(item)">
-                <ion-col width-33>
+                <ion-col col-4>
                     <div id="imagen">
                         <img [src]="item.image_url" />
                     </div>
                 </ion-col>
 
-                <ion-col width-66>
+                <ion-col col-8>
                     <div class="texto">
                         <div *ngIf="item.type!='LIVE'">
                             <h3>{{ item.title | eliminaHashtag }}</h3>
@@ -59,23 +60,23 @@
             </ion-row>
 
             <ion-row class="iconos" (click)="pushPage(item)">
-                <ion-col width-40>
+                <ion-col col-5>
                     <p>{{ item.published_at |tiempoHastaAhora }}</p>
                 </ion-col>
 
-                <ion-col width-25 icon-left>
+                <ion-col col-3 icon-left>
                     <ion-icon name='chatbubbles'></ion-icon>
                     {{ item.messages_count}}
                     <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 
-                <ion-col width-25 icon-left>
+                <ion-col col-3 icon-left>
                     <ion-icon name='heart'></ion-icon>
                     {{ item.likes_count}}
                     <!-- Valor escrito a mano para maquetar -->
                 </ion-col>
 
-                <ion-col width-10 icon-right text-center>
+                <ion-col col-1 icon-right text-center>
                     <ion-icon name="play" *ngIf="item.episode_id==capEnRep"></ion-icon>
                 </ion-col>
             </ion-row>
