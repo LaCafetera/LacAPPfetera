@@ -1,0 +1,142 @@
+<!--
+  Generated template for the Reproductor page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+    <ion-navbar>
+      <ion-title>La cAPPfetera</ion-title>
+
+      <ion-buttons end>
+        <button ion-button right icon-only (click)="muestraDetalle($event)">
+          <ion-icon name='cafe'></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
+
+</ion-header>
+
+<ion-split-pane when="(min-width: 550px)">
+
+    <ion-content main>
+      <ion-card class="reproductor">
+
+        <div id="titular">
+          <ion-card-title text-center>
+            <a [href]="dirTwitter">{{titulo | muestraHashtag}}</a>
+            <div id="subTitulo">
+              <p *ngFor="let item of tituloObj">
+                  {{item.cadena | eliminaHashtag}}
+                <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+              </p>
+            </div>
+          </ion-card-title>
+        </div>
+
+        <div id="imagen-cap">
+          <!--ion-img src={{imagen}}></ion-img-->
+          <img [src]="imagen">
+        </div>
+
+        <ion-card-content>
+
+          <ion-row id="botonera" no-padding center *ngIf="!enVivo">
+            <!-- Botonera de reproducción, se muestra con capítulos en diferido -->
+            <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
+            <ion-col text-center col-4 offset-20 no-padding>
+              <button ion-button outline round (click)="retrasa()">
+                <ion-icon name=rewind></ion-icon>
+              </button>
+            </ion-col>
+
+            <ion-col text-center col-2 no-padding>
+              <button ion-button outline round (click)="playPause()">
+                <ion-icon name={{iconoPlayPause}}></ion-icon>
+              </button>
+            </ion-col>
+
+            <ion-col text-center col-2 no-padding>
+              <button ion-button outline round (click)="adelanta()">
+                <ion-icon name=fastforward></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+          <!-- /Botonera de reproducción -->
+
+          <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
+            <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
+            <div id="tiempo-lleva">
+              <ion-label range-left>{{posicionRepStr}}</ion-label>
+            </div>
+            <div id="tiempo-falta">
+              <ion-label range-right>{{tamanyoStr}}</ion-label>
+            </div>
+          </div>
+
+          <!-- Botón de reproducción para capítulos en directo -->
+          <ion-row data-role="fieldcontain" id="enVivo" name="barra" *ngIf="enVivo">
+            <ion-col col-4 offset-33 text-center no-padding icon-right>
+              <button ion-button color=danger (click)="playPause()">
+                EN VIVO
+                <ion-icon name={{iconoPlayPause}}></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+          <!-- /Botón de reproducción para capítulos en directo -->
+
+          <div data-role="content" id="fechaEmision"></div>
+
+          <ion-row class="social" no-padding text-center>
+            <!-- Botones corazón, descarga, compartir y chat -->
+
+            <ion-col col-3>
+              <button ion-button clear (click)='meGustasMucho()'>
+                <ion-icon name='heart' [color]='colorLike'></ion-icon>
+                <!--ion-icon name='heart' color='danger'></ion-icon-->
+              </button>
+            </ion-col>
+
+            <ion-col col-3>
+              <!-- Botón para diseño, comentar para que funcione la descarga -->
+              <!-- <button ion-button clear (click)="compartir()"> -->
+              <!-- <ion-icon name='cloud-download'></ion-icon> -->
+              <!-- </button> -->
+
+              <!-- Descarga del programa, ocultada para diseño -->
+              <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
+              </descargaCafetera>
+
+            </ion-col>
+
+            <ion-col col-3>
+              <button ion-button clear (click)="compartir()">
+                <ion-icon name='share'></ion-icon>
+              </button>
+            </ion-col>
+
+            <ion-col col-3 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
+              <button ion-button clear>
+                <ion-icon name='chatbubbles'></ion-icon>
+              </button>
+            </ion-col>
+
+          </ion-row>
+          <!-- /Botones corazón, descarga, compartir y chat -->
+
+          <!--div class="progress-outer" *ngIf="porcentajeDescargado!=0">
+          <div class="progress-inner" [style.width]="porcentajeDescargado+'%'">
+              {{porcentajeDescargado}}%
+          </div>
+          </div-->
+
+        </ion-card-content>
+
+      </ion-card>
+
+    </ion-content>
+
+    <!--ion-nav [root]="pagChat" [rootParams]="{episodioMsg: episodio}" #content></ion-nav-->
+
+</ion-split-pane>

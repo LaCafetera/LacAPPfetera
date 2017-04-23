@@ -1,0 +1,34 @@
+<!--
+  Generated template for the Chat page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+    <ion-navbar>
+        <ion-title>La cAPPfetera</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="chat">
+    <ion-card class="comentario" *ngFor="let item of items">
+        <ion-item>
+            <ion-avatar item-left>
+                <div *ngIf="item.author_image_original_url != null">
+                    <img [src]="item.author_image_original_url" />
+                </div>
+                <div *ngIf="item.author_image_original_url == null">
+                    <img src="assets/icon/icon.png" />
+                </div>
+            </ion-avatar>
+            <h3>{{ item.author_fullname }}</h3>
+            <p>{{ item.created_at |tiempoHastaAhora }}</p>
+        </ion-item>
+        <ion-card-content>
+            <p>{{ item.text }}</p>
+        </ion-card-content>
+    </ion-card>
+    <ion-infinite-scroll (ionInfinite)="quieroMas($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>
