@@ -45,19 +45,19 @@
           <ion-row id="botonera" no-padding center *ngIf="!enVivo">
             <!-- Botonera de reproducción, se muestra con capítulos en diferido -->
             <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
-            <ion-col text-center col-4 offset-20 no-padding>
+            <ion-col text-center no-padding>
               <button ion-button outline round (click)="retrasa()">
                 <ion-icon name=rewind></ion-icon>
               </button>
             </ion-col>
 
-            <ion-col text-center col-4 no-padding>
+            <ion-col text-center no-padding>
               <button ion-button outline round (click)="playPause()">
                 <ion-icon name={{iconoPlayPause}}></ion-icon>
               </button>
             </ion-col>
 
-            <ion-col text-center col-4 no-padding>
+            <ion-col text-center no-padding>
               <button ion-button outline round (click)="adelanta()">
                 <ion-icon name=fastforward></ion-icon>
               </button>
@@ -140,4 +140,3 @@
     <!--ion-nav [root]="pagChat" [rootParams]="{episodioMsg: episodio}" #content></ion-nav-->
 
 </ion-split-pane>
-
