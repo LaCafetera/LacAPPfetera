@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { SocialSharing } from '@ionic-native/social-sharing';
 import { EpisodiosService } from '../../providers/episodios-service';
+import { ConfiguracionService } from '../../providers/configuracion.service';
+import { NgForm } from '@angular/forms';
+
 //import { Dialogs } from 'ionic-native';
 
 /*
@@ -12,23 +16,30 @@ import { EpisodiosService } from '../../providers/episodios-service';
 @Component({
   selector: 'page-chat',
   templateUrl: 'chat.html',
-  providers: [EpisodiosService]
+  providers: [EpisodiosService, SocialSharing, ConfiguracionService]
 })
 export class ChatPage {
     episodio: string;
     items: Array<any>;
     timer:any;
+    mensajeTxt:string="";
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private episodiosService: EpisodiosService) {
+  constructor(public navCtrl: NavController, 
+              public navParams: NavParams, 
+              private episodiosService: EpisodiosService,
+              private socialsharing: SocialSharing,
+              private _configuracion: ConfiguracionService, 
+              public toastCtrl: ToastController ) {
+
     this.episodio = this.navParams.get('episodioMsg');
     this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
-            data => {
-                this.items=data.response.items;
-            },
-            err => {
-                alert(err);
-            }
-        );       
+        data => {
+            this.items=data.response.items;
+        },
+        err => {
+            alert(err);
+        }
+    );       
   }
   
       ngOnDestroy(){
@@ -89,7 +100,57 @@ export class ChatPage {
         );
     }
 
+    enviarComentario(){
+        console.log ("[CHAT.enviarComentario] Solicitado envío " + this.mensajeTxt );
 
+        this._configuracion.dameUsuario()
+        .then ((dataUsuario) => {
+            if (dataUsuario != null){
+                this._configuracion.dameToken()
+                .then ((dataToken) => {
+                        console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);
+                        this.episodiosService.enviaComentarios(this.episodio, dataUsuario, dataToken,  this.mensajeTxt).subscribe(
+                            data => {
+                                console.log("[[CHAT.enviarComentario] Mensaje enviado" + JSON.stringify(data));
+                            },
+                            err => {
+                                console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
+                            }
+                        );
+                })
+                .catch ((error) => {
+                    console.log("[CHAT.enviarComentario] Error descargando token:" + error);
+                    this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+                });
+            }
+            else {
+                this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+            }
+        })
+        .catch (() => {
+            this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
+        });
+    }
+
+    twittearComentario(formulario: NgForm){
+        console.log ("[CHAT.twittearComentario] Solicitado envío");
+        this.socialsharing.shareViaTwitter(formulario.value.mensaje)
+        .then((respuesta) => {
+            console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
+        })
+        .catch((error) => {
+            console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
+        });
+    }
+    
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000,
+            cssClass: 'msgDescarga'
+        });
+        toast.present();
+    }
 
 }
 

@@ -28,8 +28,23 @@
             <p>{{ item.text }}</p>
         </ion-card-content>
     </ion-card>
+
     <ion-infinite-scroll (ionInfinite)="quieroMas($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
 </ion-content>
+
+    <ion-footer>
+        <ion-row>
+            <ion-col>
+                <ion-item>
+                    <ion-textarea type="text" name="mensaje"  placeholder="¡Exprésate!" [(ngModel)]="mensajeTxt"></ion-textarea>
+                </ion-item>
+            </ion-col>
+            <ion-col>
+                <button ion-button block (click)="enviarComentario(formulario)">Enviar</button>
+                <button ion-button block (click)="twittearComentario(formulario)">Twittear</button>
+            </ion-col>
+        </ion-row>
+    </ion-footer>
 

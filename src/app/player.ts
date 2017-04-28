@@ -46,7 +46,7 @@ export class Player {
 //        this.repPlugin = new MediaPlugin ();
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService): Promise<any>{
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
         console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
         this._configuracion = configuracion;
         const onStatusUpdate = ((status) =>{
@@ -165,15 +165,15 @@ export class Player {
             }
             this.capitulo = audio;
             this.seekPdte = true;
-            this.crearepPlugin (audio, this._configuracion)
-            .then((objeto)=> {
-                console.log("[PLAYER.play] Objeto reproductor creado " + objeto); 
-                this.repObject = objeto;
+            this.repObject = this.crearepPlugin (audio, this._configuracion);
+/*            .then((objeto)=> {*/
+                console.log("[PLAYER.play] Objeto reproductor creado."); 
+/*                this.repObject = objeto;*/
 			    this.repObject.play();
-            })
+/*            })
             .catch((error)=> {
                 console.log("[PLAYER.crearepPlugin] Error creando reproductor: "+ error); 
-            })
+            })*/
         }
     }
 

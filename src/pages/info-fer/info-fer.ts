@@ -23,13 +23,13 @@ export class InfoFerPage {
     esAndroid:boolean;
     
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private mensaje: Dialogs) {
-        this.repPlugin.create ('http://www.xpress.es/radiocable/audio/jingle-cafetera-tennesse.mp3')
+        this.dirJingle = this.repPlugin.create ('http://www.xpress.es/radiocable/audio/jingle-cafetera-tennesse.mp3')/*
             .then((objeto)=> {
                 this.dirJingle = objeto;
             })
             .catch((error)=> {
                 console.log("[PLAYER.crearepPlugin] Error creando reproductor:"+ error); 
-            });
+            });*/
     }
 
     ionViewDidLoad() {
@@ -46,7 +46,8 @@ export class InfoFerPage {
 
     ngOnDestroy(){
         if (this.dirJingle != null) {
-            this.dirJingle.play();
+            this.dirJingle.stop();
+            this.dirJingle.release();
         }
     }
     

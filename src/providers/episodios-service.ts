@@ -124,6 +124,15 @@ export class EpisodiosService {
         return episodiosJSON;
     }
 
+    enviaComentarios (episodio_id:string, usuario: string, token: string, comentario:string){
+        console.log("[EPISODIOS-SERVICE.enviaComentarios] Solicitado envío de comentario para el episodio "+ episodio_id + " con token " + token);
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        headers.append('Content-Type', 'application/json');
+        let mensaje = JSON.stringify ({text: comentario});
+        return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages', mensaje, {headers: headers}).map(res => res.json());
+    }
+
     episodioLike(episodio_id:string, usuario: string, token: string){
         console.log("[EPISODIOS-SERVICE.episodioLike] Solicitado envío like para el episodio "+ episodio_id + " con token " + token);
         let headers = new Headers();
