@@ -27,26 +27,26 @@
 
     <ion-list>
         <ion-card *ngFor="let item of items" text-wrap>
-            <ion-row class="hashtag" *ngIf="item.title.indexOf('#')> -1">
+            <ion-row class="hashtag" *ngIf="item.objeto.title.indexOf('#')> -1">
                 <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
                 <ion-col>
-                    <a [href]="dameEnlace(item.title)">{{ item.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a>
+                    <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a>
                 </ion-col>
             </ion-row>
 
             <ion-row (click)="pushPage(item)">
                 <ion-col col-4>
                     <div id="imagen">
-                        <img [src]="item.image_url" />
+                        <img [src]="item.objeto.image_url" />
                     </div>
                 </ion-col>
 
                 <ion-col col-8>
                     <div class="texto">
-                        <div *ngIf="item.type!='LIVE'">
-                            <h3>{{ item.title | eliminaHashtag }}</h3>
+                        <div *ngIf="item.objeto.type!='LIVE'">
+                            <h3>{{ item.objeto.title | eliminaHashtag }}</h3>
                         </div>
-                        <div class="capDirecto" *ngIf="item.type=='LIVE'">
+                        <div class="capDirecto" *ngIf="item.objeto.type=='LIVE'">
                             <!-- Muestra el icono y el texto en directo -->
                             <div class="iconoCD">
                                 <ion-icon name="ios-radio-outline"></ion-icon>
@@ -61,23 +61,22 @@
 
             <ion-row class="iconos" (click)="pushPage(item)">
                 <ion-col col-5>
-                    <p>{{ item.published_at |tiempoHastaAhora }}</p>
+                    <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
                 </ion-col>
 
                 <ion-col col-3 icon-left>
                     <ion-icon name='chatbubbles'></ion-icon>
-                    {{ item.messages_count}}
-                    <!-- Valor escrito a mano para maquetar -->
+                    {{ item.objeto.messages_count}}
                 </ion-col>
 
                 <ion-col col-3 icon-left>
-                    <ion-icon name='heart'></ion-icon>
-                    {{ item.likes_count}}
-                    <!-- Valor escrito a mano para maquetar -->
+                    <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
+                    <ion-icon name='heart' *ngIf='item.like' color='danger'></ion-icon>
+                    {{ item.objeto.likes_count}}
                 </ion-col>
 
                 <ion-col col-1 icon-right text-center>
-                    <ion-icon name="play" *ngIf="item.episode_id==capEnRep"></ion-icon>
+                    <ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
                 </ion-col>
             </ion-row>
         </ion-card>

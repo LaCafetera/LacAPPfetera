@@ -34,15 +34,17 @@
             </ion-item>
 
             <ion-item >
-                <button ion-button full (click)="loginSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
-                <button ion-button full (click)="logoutSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button>
+                <!--button ion-button full (click)="conexionSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
+                <button ion-button full (click)="conexionSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button-->
+                <ion-label> Conectado a Spreaker</ion-label>
+                <ion-toggle [(ngModel)]="conectadoASpreaker" (ionChange)="conexionSpreaker($event)"></ion-toggle>
             </ion-item>
 
             <ion-item>
-                <p>Versión de la APP: 28/04/2017</p>
+                <p>Versión de la APP: 02/05/2017</p>
             </ion-item>
 
-            <button ion-button round menuClose>Cerrar</button>
+            <!--button ion-button round menuClose>Cerrar</button-->
         </ion-content>
 
     </ion-menu>

@@ -1,18 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-//import { ConfiguracionService } from './configuracion.service';
 
  import {Observable} from 'rxjs/Observable';
  
 
 import 'rxjs/add/operator/map';
 
-/*
-  Generated class for the EpisodiosService provider.
 
-  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
-  for more info on providers and Angular 2 DI.
-*/
 @Injectable()
 export class EpisodiosService {
 
@@ -24,42 +18,10 @@ export class EpisodiosService {
         return [[Http]];
     }
 
-    //cantidad = 3;
-
     meVigilan:Observable<any>;
-//    token: string;
 
-
-    constructor(public http: Http /*, private _configuracion: ConfiguracionService*/) {
+    constructor(public http: Http) {
         this.meVigilan = new Observable();
-    }
-
-    dameEpisodios(){
-        this.meVigilan = Observable.create(observer => {
-           // let posicion:number = 0;
-           //  this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json()).subscribe(  //Live
-           this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes').map(res => res.json()).subscribe(
-                data => {
-                    data.response.items.forEach((capitulo, elemento, array) => {
-                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
-                            data => {
-                             /*   if (posicion ++ == 0){
-                                    data.response.episode.type="LIVE";
-                                }*/
-                                observer.next (data.response);
-                            },
-                            err => {
-                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
-                            }
-                        )}
-                    );
-                },
-                err => {
-                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
-                }
-            );
-        });
-        return (this.meVigilan);
     }
 
     dameEpisodios2(){ //Esto se usa para pruebas....
@@ -68,15 +30,39 @@ export class EpisodiosService {
         return episodiosJSON;
     }
 
-    dameMasEpisodios(ultimocap){
-        console.log("[EPISODIOS-SERVICE] Solicitados audios más allá del "+ ultimocap  );
+    dameEpisodios(usuario:string, token:string, ultimocap: string, numCaps: number){
+        // let direccion = https://api.spreaker.com/v2/shows/1341125/episodes //--> LIVE
+        let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
+        if (ultimocap != null) {
+            direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
+        } 
+        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );
+        console.log("[EPISODIOS-SERVICE.dameEpisodios] "+ direccion  );
         return Observable.create(observer => {
-            this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id='+ultimocap).map(res => res.json()).subscribe(
+            this.http.get(direccion).map(res => res.json()).subscribe(
                 data => {
                     data.response.items.forEach((capitulo, elemento, array) => {
                         this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
                             data => {
-                                observer.next (data.response);
+                                if (token!= null) {
+                                    this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
+                                    .subscribe (
+                                        espureo=>{ 
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: true});
+                                        },
+                                        error=>{
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: false});
+                                        }
+                                    )
+                                }
+                                else{
+                                    observer.next ({objeto:data.response.episode,
+                                                    like: false});
+                                }
                             },
                             err => {
                                 console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
@@ -94,6 +80,7 @@ export class EpisodiosService {
     }
 
     dameDetalleEpisodio(episodio_id){
+        //console.log("[EPISODIOS-SERVICE.dameDetalleEpisodio] Entrando para episodio " + episodio_id );
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id).map(res => res.json());
         return episodiosJSON;
         /*
@@ -128,9 +115,8 @@ export class EpisodiosService {
         console.log("[EPISODIOS-SERVICE.enviaComentarios] Solicitado envío de comentario para el episodio "+ episodio_id + " con token " + token);
         let headers = new Headers();
         headers.append ('Authorization', 'Bearer ' + token);
-        headers.append('Content-Type', 'application/json');
-        let mensaje = JSON.stringify ({text: comentario});
-        return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages', mensaje, {headers: headers}).map(res => res.json());
+        return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages?text='+comentario, null, {headers: headers}).map(res => res.json());
+
     }
 
     episodioLike(episodio_id:string, usuario: string, token: string){
@@ -149,14 +135,35 @@ export class EpisodiosService {
         return this.http.delete('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, {headers: headers}).map(res => res.json());
     }
 
-
-// https://www.joshmorony.com/integrating-ionic-2-with-the-dropbox-api-part-1/
-    whoAMi(token: string):Observable<any>{
+    episodioDimeSiLike(episodio_id:string, usuario:string, token:string){
+        console.log("[EPISODIOS-SERVICE.episodioDimeSiLike] Consultando si gusta o no gusta el episodio "+ episodio_id);
         let headers = new Headers();
-        console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token " + token);
         headers.append ('Authorization', 'Bearer ' + token);
         headers.append('Content-Type', 'application/json');
-        return(this.http.get('https://api.spreaker.com/v2/me', {headers: headers}).map(res => res.json()));
+        return this.http.get('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, {headers: headers}).map(res => res.json());
+    }
+
+    whoAMi(token: string):Observable<any>{
+        if (token == null || token == ""){
+            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token vacío. Devuelvo null");
+            Observable.empty();
+        }
+        else {
+            let headers = new Headers();
+            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token " + token);
+            headers.append ('Authorization', 'Bearer ' + token);
+            headers.append('Content-Type', 'application/json');
+            return(this.http.get('https://api.spreaker.com/v2/me', {headers: headers}).map(res => res.json()));
+        }
+    }
+
+    solicitaTokenViaCode (code: string){
+        console.log("[EPISODIOS-SERVICE.solicitaTokenViaCode] Solicitado token para código recibido: "+ code);
+        let gt = "grant_type=authorization_code";
+        let cID = "client_id=1093";
+        let cs = "client_secret=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST";
+        let ru = "redirect_uri=http://localhost:8100";
+        return this.http.post('https://api.spreaker.com/oauth2/token?' + cID + '&' + cs + '&' + gt + '&' + ru + '&code=' + code, null).map(res => res.json());
     }
 }
 

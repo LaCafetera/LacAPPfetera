@@ -86,7 +86,11 @@ export class ReproductorPage {
                 private network: Network,
                 private player: Player) {
 
-        this.capItem = this.navParams.get('episodio');
+        this.capItem = this.navParams.get('episodio').objeto;
+        this.episodioLike = this.navParams.get('episodio').like;
+        if(this.episodioLike){
+            this.colorLike = "danger";
+        }
         this.episodio = this.capItem.episode_id;
         this.httpAudio = this.capItem.site_url;
         this.imagen = this.capItem.image_url;

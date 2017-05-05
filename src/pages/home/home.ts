@@ -6,7 +6,7 @@ import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
 
 import { EpisodiosService } from "../../providers/episodios-service";
-//import { ConfiguracionService } from '../../providers/configuracion.service';
+import { ConfiguracionService } from '../../providers/configuracion.service';
 
 import { InfoFerPage } from "../info-fer/info-fer";
 import { ReproductorPage } from "../reproductor/reproductor";
@@ -31,9 +31,10 @@ export class HomePage {
 
     hashtag:string ="";
 
+    numCapsXDescarga: number = 10;
 
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs/*, private _configuracion: ConfiguracionService*/) {
+    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs, private _configuracion: ConfiguracionService) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
@@ -54,18 +55,56 @@ export class HomePage {
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
         // BackgroundMode.enable();
-        this.episodiosService.dameEpisodios().subscribe(
+        this.cargaUsuarioParaProgramas(null);
+    }
+    
+    cargaUsuarioParaProgramas (episodio:string){
+        this._configuracion.dameUsuario()
+        .then ((dataUsuario) => {
+            console.log("[HOME.cargaUsuarioParaProgramas] dataUsuario " + dataUsuario);
+            if (dataUsuario != null){
+                this._configuracion.dameToken()
+                .then ((dataToken) => {
+                    console.log("[HOME.cargaUsuarioParaProgramas] dataToken " + dataToken);
+                    if (dataToken != null) {
+                        console.log("[HOME.cargaUsuarioParaProgramas] Usuario: " + dataUsuario + " token:" + dataToken);
+                        this.cargaProgramas(dataUsuario, dataToken, episodio);
+                    }
+                    else {
+                        console.log("[HOME.cargaUsuarioParaProgramas] El usuario no está logueado");
+                        this.cargaProgramas(null, null, episodio);
+                    }
+                })
+                .catch ((error) => {
+                    console.log("[HOME.cargaUsuarioParaProgramas] Error descargando token:" + error);
+                    this.cargaProgramas(null, null, episodio);
+                });
+            }
+            else {
+                console.log("[HOME.cargaUsuarioParaProgramas] El usuario no está logueado");
+                this.cargaProgramas(null, null, episodio);
+            }
+        })
+        .catch ((error) => {
+            console.log("[HOME.cargaUsuarioParaProgramas] Error descargando usuario:" + error);
+            this.cargaProgramas(null, null, episodio);
+        });
+    }
+
+    cargaProgramas (usuario:string, token:string, episodio:string){
+        this.episodiosService.dameEpisodios(usuario, token, episodio, this.numCapsXDescarga).subscribe(
             data => {
                 //this.items=data.response.items;
-                //console.log("[HOME.ionViewDidLoad] Recibido " + JSON.stringify(data));
+                //console.log("[HOME.cargaProgramas] Recibido " + JSON.stringify(data));
+                //console.log("[HOME.cargaProgramas] like vale  " + data.like + " para el cap "+ data.objeto.episode_id) ;
                 if (this.items == null){
-                    this.items = data.episode;
+                    this.items = data;
                 }
                 else {
-                    this.items.push(data.episode);
+                    this.items.push(data);
                     let ordenado = this.items;
                     let mapped = ordenado.map((el, i) => {
-                        return { index: i, value: el.episode_id };
+                        return { index: i, value: el.objeto.episode_id };
                     });
 
                     // ordenando el array mapeado conteniendo los valores reducidos
@@ -80,8 +119,8 @@ export class HomePage {
                 }
             },
             err => {
-                console.log(err);
-                this.dialogs.alert ("[HOME.ionViewDidLoad] Error descargando episodios" + err, "Error");
+                console.log("[HOME.cargaProgramas] Error descargando episodio: " + err.message);
+                this.dialogs.alert ("[HOME.cargaProgramas] Error descargando episodios" + err, "Error");
             }
         );
     }
@@ -97,27 +136,11 @@ export class HomePage {
                                             player:     this.reproductor,
                                             controlador:this.mscControl,
                                        //     soloWifi:this.soloWifi,
-                                            enlaceTwitter: this.dameEnlace(item.title)});
+                                            enlaceTwitter: this.dameEnlace(item.objeto.title)});
   }
 
     recalentarCafe(event){
-        this.episodiosService.dameMasEpisodios(this.items[this.items.length-1].episode_id).subscribe(
-            data => {
-                //this.items=this.items.concat(data.response.items);
-                this.items.push(data.episode);
-                // *******************************************************************       ESto hay que arreglarlo
-                //if (data.response.items.length == 0) { // no quedan más capítulos
-                //    event.enable(false);
-                //}
-                //console.log("[HOME.recalentarCafe] Recibidos "+data.response.items.length+" nuevos elementos. Ahora la lista tiene "+ this.items.length + " elementos");
-                // event.complete();
-            },
-            err => {
-                event.complete();
-                console.log(err);
-                this.dialogs.alert ("Error descargando episodios" + err, "Error");
-            }
-        );
+        this.cargaUsuarioParaProgramas(this.items[this.items.length-1].objeto.episode_id);
     }
 
     lanzaTwitter(cap:string){
@@ -143,26 +166,25 @@ export class HomePage {
     }
 
   hacerCafe(event){
-      this.episodiosService.dameEpisodios().subscribe(
+      this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
             data => {
-                let longArray = data.response.items.length;
-                let i:number=0;
-                while (data.response.items[i].episode_id != this.items[0].episode_id && (i+1) < longArray) {
-                    i++;
-                }
-                if (i>0){
-                    this.items = data.response.items.slice(0,i).concat(this.items);
-                    console.log("[HOME] Se han encontrado " + i + " nuevos capítulo");
+                //console.log("[HOME.hacerCafe] " + JSON.stringify (data));
+                //let longArray = data.objeto.items.length;
+                //let i:number=0;
+                if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
+                    this.items = this.items.concat (data, this.items);
+                    console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
                 }
                 else{
                     //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
-                    this.items = data.response.items.slice(0,1).concat(this.items.slice(1));
+                    this.items = this.items.concat (data, this.items.slice(1));
+                  //  console.log("[HOME.hacerCafe] item[0] " + this.items[0]);
                 }
                 event.complete();
             },
             err => {
                 event.complete();
-                console.log(err);
+                console.log("[HOME.hacerCafe] Error haciendo café: " + err);
                 this.dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );

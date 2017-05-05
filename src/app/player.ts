@@ -72,7 +72,7 @@ export class Player {
         }
         else {
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
-            return(this.repPlugin.create (audio, onStatusUpdate));
+            return(this.repPlugin.create (audio+".mp3?application_id=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST", onStatusUpdate));
         }
     }
 
@@ -106,7 +106,7 @@ export class Player {
         console.log("[PLAYER.extraeCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
         if (capituloEntrada != null){
             if (capituloEntrada.includes('play')){
-                fin = capituloEntrada.length-5;
+                fin = capituloEntrada.length-9;
             }
             else {
                 fin = capituloEntrada.length-4;

@@ -168,14 +168,29 @@ export class ConfiguracionService {
     setTokenSpreaker (token: string){
         console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Guardando token login spreaker " + token);
         this.storage.set ("tokenSpreaker", token);
+        if (token != null){
+            this.episodioSrvc.whoAMi(token).subscribe(
+            data => {
+                console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Solicitado usuario recibo " + JSON.stringify(data.response.user));
+                this.storage.set ("usuarioSpreaker", data.response.user.user_id);
+            },
+            err => {
+                console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Error solicitando datos de usuario:" + err);
+            });
+        }
+        else
+        {   
+            console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Borro el usuario ya que he borrado el token");
+            this.storage.set ("usuarioSpreaker", null);
+        }
     }
 
     getTokenSpreaker ():Promise<any>{
         return new Promise ((resolve,reject) =>{
             this.storage.get ("tokenSpreaker")
             .then ((data) => {
-                    console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Enviado "+ data);
-                    if (data != ""){
+                    console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Enviado "+ data + " tipo " + typeof data);
+                    if (data != null && data != ""){
                         console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] solicitando datos de usuario.");
                         this.episodioSrvc.whoAMi(data).subscribe(
                             data => {
@@ -203,6 +218,7 @@ export class ConfiguracionService {
     }
 
     dameUsuario ():Promise<any>{
+        console.log ("[CONFIGURACION.SERVICE.dameUsuario] Entrando");
         return (this.storage.get ("usuarioSpreaker"));
     }
 }

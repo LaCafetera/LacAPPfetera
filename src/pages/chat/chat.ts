@@ -108,6 +108,7 @@ export class ChatPage {
             if (dataUsuario != null){
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
+                    if (dataToken = "") {
                         console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);
                         this.episodiosService.enviaComentarios(this.episodio, dataUsuario, dataToken,  this.mensajeTxt).subscribe(
                             data => {
@@ -117,6 +118,10 @@ export class ChatPage {
                                 console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
                             }
                         );
+                    }
+                    else {
+                        this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
+                    }
                 })
                 .catch ((error) => {
                     console.log("[CHAT.enviarComentario] Error descargando token:" + error);
