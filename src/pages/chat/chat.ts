@@ -106,13 +106,16 @@ export class ChatPage {
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
             if (dataUsuario != null){
+                console.log ("[CHAT.enviarComentario] recibido usuario " + dataUsuario );
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
-                    if (dataToken = "") {
+                    console.log ("[CHAT.enviarComentario] recibido token " + dataToken );
+                    if (dataToken != null) {
                         console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);
                         this.episodiosService.enviaComentarios(this.episodio, dataUsuario, dataToken,  this.mensajeTxt).subscribe(
                             data => {
                                 console.log("[[CHAT.enviarComentario] Mensaje enviado" + JSON.stringify(data));
+                                this.mensajeTxt = null;
                             },
                             err => {
                                 console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
