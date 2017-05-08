@@ -116,7 +116,7 @@
               </button>
             </ion-col>
 
-            <ion-col col-3 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio}">
+            <ion-col col-3 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio, hashtag:titulo | muestraHashtag}">
               <button ion-button clear>
                 <ion-icon name='chatbubbles'></ion-icon>
               </button>

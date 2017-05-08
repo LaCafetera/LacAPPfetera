@@ -30,20 +30,24 @@
     </ion-card>
 
     <ion-infinite-scroll (ionInfinite)="quieroMas($event)">
-        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        <ion-infinite-scroll-content></ion-infinite-scroll-content> 
     </ion-infinite-scroll>
 </ion-content>
 
-    <ion-footer>
-        <ion-row>
-            <ion-col>
+    <ion-footer class="chat">
+        <ion-row no-padding text-center class="comentario">
+            <ion-col col-10>
                 <ion-item>
                     <ion-textarea type="text" name="mensaje"  placeholder="¡Exprésate!" [(ngModel)]="mensajeTxt"></ion-textarea>
                 </ion-item>
             </ion-col>
-            <ion-col>
-                <button ion-button block (click)="enviarComentario(formulario)">Enviar</button>
-                <button ion-button block (click)="twittearComentario(formulario)">Twittear</button>
+            <ion-col col-2>
+                <button ion-button block (click)="enviarComentario(formulario)">
+                    <ion-icon name='send' [color]=''></ion-icon>
+                </button>
+                <button ion-button block (click)="twittearComentario(formulario)">
+                    <ion-icon name='logo-twitter' [color]=''></ion-icon>
+                </button>
             </ion-col>
         </ion-row>
     </ion-footer>

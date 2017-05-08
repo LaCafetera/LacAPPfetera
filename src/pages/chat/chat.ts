@@ -3,7 +3,6 @@ import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
-import { NgForm } from '@angular/forms';
 
 //import { Dialogs } from 'ionic-native';
 
@@ -20,6 +19,7 @@ import { NgForm } from '@angular/forms';
 })
 export class ChatPage {
     episodio: string;
+    hashtag: string;
     items: Array<any>;
     timer:any;
     mensajeTxt:string="";
@@ -32,6 +32,8 @@ export class ChatPage {
               public toastCtrl: ToastController ) {
 
     this.episodio = this.navParams.get('episodioMsg');
+    this.hashtag = this.navParams.get('hashtag');
+    console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
     this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
         data => {
             this.items=data.response.items;
@@ -140,11 +142,12 @@ export class ChatPage {
         });
     }
 
-    twittearComentario(formulario: NgForm){
+    twittearComentario(){
         console.log ("[CHAT.twittearComentario] Solicitado envío");
-        this.socialsharing.shareViaTwitter(formulario.value.mensaje)
+        this.socialsharing.shareViaTwitter(this.hashtag + " " + this.mensajeTxt)
         .then((respuesta) => {
             console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
+            this.mensajeTxt = null;
         })
         .catch((error) => {
             console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);

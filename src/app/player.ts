@@ -106,7 +106,7 @@ export class Player {
         console.log("[PLAYER.extraeCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
         if (capituloEntrada != null){
             if (capituloEntrada.includes('play')){
-                fin = capituloEntrada.length-9;
+                fin = capituloEntrada.length-5;
             }
             else {
                 fin = capituloEntrada.length-4;

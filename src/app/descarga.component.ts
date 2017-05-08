@@ -109,6 +109,7 @@ export class DescargaCafetera {
                         console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
                         if(this.network.type === "wifi" || !val  ) {
                             console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.dirdestino );
+                            this.msgDescarga("Descargando audio.")
                             fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                                 console.log("[descarga.components.descargarFichero]  Descarga completa.");
                                 this.ficheroDescargado.emit({existe: true});
@@ -119,10 +120,10 @@ export class DescargaCafetera {
                             })
                             .catch((error) => {
                                 if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
-                                    this.dialogs.alert("Error en Descargarga. Código de error " + error.code, 'Error');
                                     console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                     console.log("[descarga.components.descargarFichero] download error target " + error.target);
                                     console.log("[descarga.components.descargarFichero] " + error.body);
+                                    this.msgDescarga("Error en Descargar. Código de error " + error.code);
                                 }
                                 this.descargando = false;
                             });

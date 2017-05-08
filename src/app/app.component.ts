@@ -186,6 +186,7 @@ export class MyApp {
                   (error) => {
                     console.log ("[APP.loginSpreaker] Login  KO " + error);
                     this.conectadoASpreaker = false;
+                    this.msgDescarga("La conexión no se ha completado.")
                   });
               } else {
                 if (parsedResponse["code"] !== undefined && parsedResponse["code"] !== null) { //conexión vía Google+
@@ -196,16 +197,19 @@ export class MyApp {
                       this._configuracion.setTokenSpreaker(data.access_token);
                       console.log ("[APP.loginSpreaker] Login vía Google+ OK");
                       this.conectadoASpreaker = true;
+                      this.msgDescarga("La conexión se ha realizado.")
                     }
                   },
                   (error) => {
                     console.log ("[APP.loginSpreaker] Login  KO " + error);
                     this.conectadoASpreaker = false;
+                    this.msgDescarga("La conexión no se ha completado.")
                   });
                 }
                 else {
                   console.log ("[APP.loginSpreaker] Login  KO");
                   this.conectadoASpreaker = false;
+                  this.msgDescarga("La conexión no se ha completado.")
                 }
               }
             }
