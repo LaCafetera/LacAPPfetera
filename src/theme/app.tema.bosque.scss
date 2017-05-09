@@ -53,6 +53,11 @@
         ion-icon {
           color: $bosque-light;
         }
+
+        .likesi {
+          color: $bosque-danger;
+        }
+
         p {
           color: $bosque-light;
         }
@@ -140,23 +145,36 @@
       }
   }
 
-
-  // ******************************************************************* Estilos página de chat chat.html
+// ******************************************************************* Estilos página de chat chat.html
     .comentario {
       ion-item {
         background-color: $bosque-fondoCard;
 
         h3 {
-          color: $bosque-primary;
+          color: $bosque-danger;
         }
         p {
-          color: $bosque-light;
+          color: $bosque-primary;
         }
       }
 
       .card-content p{
         color: $bosque-primary;
         border-top: solid 1px $bosque-light;
+      }
+    }
+
+    .cajaTexto {
+      border-top: solid 1px $bosque-primary;
+      background-color: $bosque-light;
+
+      .item-textarea {
+        color: $bosque-primary;
+        background-color: $bosque-light;
+      }
+
+      .button {
+         color: $bosque-primary;
       }
     }
 }

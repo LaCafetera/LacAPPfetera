@@ -1,5 +1,6 @@
 page-chat {
   .comentario {
+    /* cada comentario */
     h3 {
       font-size: 1.6rem;
     }
@@ -10,4 +11,27 @@ page-chat {
       padding-top: 6px;
     }
   }
+
+  .cajaTexto {
+    height: 90px;
+
+    .txt {
+      height: 80px;
+    }
+
+    .button {
+      /* Botones más grandes */
+      height: 35px;
+      width: 50%;
+
+      .envio {
+        font-size: 3.2rem;
+      }
+
+      .logoTW {
+        font-size: 2.5rem;
+      }
+    }
+  }
+
 }

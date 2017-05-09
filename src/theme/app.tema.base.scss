@@ -62,6 +62,10 @@
           /* Iconos */
           color: $base-primary;
         }
+
+        .likesi {
+          color: $base-danger;
+        }
       }
     }
   }
@@ -162,6 +166,20 @@
       .card-content p{
         color: $base-primary;
         border-top: solid 1px $base-light;
+      }
+    }
+
+    .cajaTexto {
+      border-top: solid 1px $base-primary;
+      background-color: $base-light;
+
+      .item-textarea {
+        color: $base-primary;
+        background-color: $base-light;
+      }
+
+      .button {
+         color: $base-primary;
       }
     }
 }

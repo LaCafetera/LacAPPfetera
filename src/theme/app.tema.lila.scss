@@ -53,6 +53,10 @@
         ion-icon {
           color: $lila-primary;
         }
+
+        .likesi {
+          color: $lila-danger;
+        }
       }
     }
   }
@@ -143,16 +147,30 @@
         background-color: $lila-fondoCard;
 
         h3 {
-          color: $lila-primary;
+          color: $lila-danger;
         }
         p {
-          color: $lila-secondary;
+          color: $lila-primary;
         }
       }
 
       .card-content p{
         color: $lila-primary;
-        border-top: solid 1px $lila-secondary;
+        border-top: solid 1px $lila-light;
+      }
+    }
+
+    .cajaTexto {
+      border-top: solid 1px $lila-primary;
+      background-color: $lila-light;
+
+      .item-textarea {
+        color: $lila-primary;
+        background-color: $lila-light;
+      }
+
+      .button {
+         color: $lila-primary;
       }
     }
 }
