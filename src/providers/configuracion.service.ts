@@ -98,11 +98,11 @@ export class ConfiguracionService {
     }
 
     setTimeRep (cap: string, pos:number){
+        console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos);
         if (cap == null || pos == null){
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No puedo guardar un valor nulo")
         }
         else {
-        //console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos);
             this.storage.set ("pos_"+cap, pos);
         }
     }
@@ -120,7 +120,7 @@ export class ConfiguracionService {
                 this.storage.get ("pos_"+cap)
                 .then (
                     data=> {
-            //           console.log ("[CONFIGURACION.SERVICE.getTimeRep] Enviado "+ data);
+                        console.log ("[CONFIGURACION.SERVICE.getTimeRep] Enviado "+ data);
                         resolve(data);
                     },
                     error=> {

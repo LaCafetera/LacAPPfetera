@@ -22,6 +22,7 @@ export class MyApp {
   conectadoASpreaker: boolean = false;
 
   chosenTheme: String;
+  iniciando: boolean = true;
   //modoNoche:boolean = false;
     availableThemes: {className: string, prettyName: string}[];
 
@@ -137,9 +138,12 @@ export class MyApp {
         this.logoutSpreaker();
       }
       else {
-        console.log("[app.component.conexionSpreaker] Estoy desconectado a Spreaker así que conecto");
-        this.loginSpreaker();
+        if (!this.iniciando){
+          console.log("[app.component.conexionSpreaker] Estoy desconectado a Spreaker así que conecto");
+          this.loginSpreaker();
+        }
       }
+      this.iniciando= false;
     }
 
     loginSpreaker(){

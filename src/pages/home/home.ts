@@ -126,7 +126,7 @@ export class HomePage {
     }
 
     ngOnDestroy(){
-        this.reproductor.release();
+        this.reproductor.release(this._configuracion);
         //this.mscControl.destroy(); <-- Revisar esto que no funciona.
         //.destroy(); // onSuccess, onError
     }

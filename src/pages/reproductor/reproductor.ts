@@ -189,11 +189,11 @@ export class ReproductorPage {
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-previous");
                         break;
                     case 'music-controls-pause':
-                        this.playPause();
+                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-pause");
                         break;
                     case 'music-controls-play':
-                        this.playPause();
+                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-play");
                         break;
                     case 'music-controls-destroy':
@@ -203,7 +203,7 @@ export class ReproductorPage {
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
                     case 'music-controls-toggle-play-pause' :
-                        this.playPause();
+                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-toggle-play-pause");
                         break;
 
@@ -313,7 +313,7 @@ export class ReproductorPage {
         }, 1000);
     }
 
-    playPause(){
+    playPause(configuracion: ConfiguracionService){
         let descargaPermitida = (this.network.type === "wifi" || !this.soloWifi);
         console.log ("[REPORDUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi);
         if (this.reproductor != null){
@@ -321,7 +321,7 @@ export class ReproductorPage {
                 clearInterval(this.timer);
                 if (this.enVivo){
                     this.reproductor.stop();
-                    this.reproductor.release();
+                    this.reproductor.release(configuracion);
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
                 else {
@@ -332,7 +332,7 @@ export class ReproductorPage {
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
-                    this.reproductor.play(this.audioEnRep);
+                    this.reproductor.play(this.audioEnRep, this._configuracion);
                     this.iconoPlayPause = 'pause';
                     this.iniciaContadorRep();
                     this.reproduciendo = true;
@@ -426,20 +426,20 @@ export class ReproductorPage {
             this.noRequiereDescarga = false;
         };
         if (this.audioEnRep != null){
-            console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos.");
+            console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos. AudioEnRep vale " + this.audioEnRep);
             if (this.audioEnRep != nombrerep){
-                this.reproductor.release();
+                this.reproductor.release(this._configuracion);
                 this.audioEnRep = nombrerep;
                 if (this.reproductor == null) {
-                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
                     console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
+                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
                 } else {
                     this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                     if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
                         this.iconoPlayPause = 'pause';
 						this.reproduciendo = true;
                         this.iniciaContadorRep();
-                        this.reproductor.play(this.audioEnRep);
+                        this.reproductor.play(this.audioEnRep, this._configuracion);
                         console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
                 }

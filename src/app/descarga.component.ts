@@ -101,6 +101,7 @@ export class DescargaCafetera {
         //let uri : string = encodeURI(audio_en_desc);
         let fileURL:string = this.dirdestino + this.fileDownload + ".mp3" ;
         console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
+        console.log ("[Descarga.components.descargarFichero] Descargando " + fileURL);
         if (this.icono == 'cloud-download' || this.icono == 'ios-archive'){
             console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
             if (!this.descargando){
@@ -112,14 +113,20 @@ export class DescargaCafetera {
                             this.msgDescarga("Descargando audio.")
                             fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                                 console.log("[descarga.components.descargarFichero]  Descarga completa.");
-                                this.ficheroDescargado.emit({existe: true});
-                                this.porcentajeDescargado = 0;
                                 this.icono = 'trash';
-                                this.msgDescarga('Descarga completa');
+                                console.log("[descarga.components.descargarFichero]  icono cambiado.");
+                                this.ficheroDescargado.emit({existe: true});
+                                console.log("[descarga.components.descargarFichero]  Mensaje emitido.");
+                                this.porcentajeDescargado = 0;
+                                console.log("[descarga.components.descargarFichero]  Porcentaje a cero.");
                                 this.descargando = false;
+                                console.log("[descarga.components.descargarFichero]  DEscargando false.");
+                                this.msgDescarga('Descarga completa');
+                                console.log("[descarga.components.descargarFichero]  Mensaje enviado.");
                             })
                             .catch((error) => {
                                 if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
+                                    console.log("[descarga.components.descargarFichero] KAgada " + error);
                                     console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                     console.log("[descarga.components.descargarFichero] download error target " + error.target);
                                     console.log("[descarga.components.descargarFichero] " + error.body);

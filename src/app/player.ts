@@ -14,7 +14,7 @@ export class Player {
 
   //  private repPlugin: MediaPlugin;
     private repObject: MediaObject;
-    private _configuracion: ConfiguracionService;
+  //  private _configuracion: ConfiguracionService;
 
     private capitulo: string ="";
     private descargado:boolean = false;
@@ -48,13 +48,13 @@ export class Player {
 
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
         console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
-        this._configuracion = configuracion;
+        //this._configuracion = configuracion;
         const onStatusUpdate = ((status) =>{
             this.statusRep = status
             console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.repPlugin.MEDIA_RUNNING);
             if (this.seekPdte && status == this.repPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
-                this._configuracion.getTimeRep(this.dameCapitulo())
+                configuracion.getTimeRep(this.dameCapitulo())
                 .then((val)=> {
                     console.log("[PLAYER.crearepPlugin] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
                     if (val != null && Number(val) > 0){
@@ -137,7 +137,7 @@ export class Player {
         return (audio == this.capitulo);
     }
 
-    play(audio){
+    play(audio: string, configuracion: ConfiguracionService){
         console.log ("[PLAYER.play] Recibida petición de reproducción de "+ audio );
 		let capitulo = this.dameCapitulo();
         audio = this.traduceAudio(audio);
@@ -154,7 +154,7 @@ export class Player {
                     .then((pos)=>{
                         console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
                         if (pos > 0 && capitulo != ""){
-                            this._configuracion.setTimeRep(capitulo, pos * 1000);
+                            configuracion.setTimeRep(capitulo, pos * 1000);
                         }
                     })
                     .catch ((err)=> {
@@ -165,7 +165,7 @@ export class Player {
             }
             this.capitulo = audio;
             this.seekPdte = true;
-            this.repObject = this.crearepPlugin (audio, this._configuracion);
+            this.repObject = this.crearepPlugin (audio, configuracion);
 /*            .then((objeto)=> {*/
                 console.log("[PLAYER.play] Objeto reproductor creado."); 
 /*                this.repObject = objeto;*/
@@ -185,18 +185,20 @@ export class Player {
         this.repObject.pause();
     }
 
-    release(){
-		this.repObject.getCurrentPosition()
-			.then((pos)=>{
-				console.log("[PLAYER.release] Recibida posición " + pos * 1000);
-                if (pos > 0) {
-				    this._configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
-                }
-			})
-			.catch ((err)=> {
-				console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
-			});
-        this.repObject.release();
+    release(configuracion: ConfiguracionService){
+        if (this.repObject != null){
+            this.repObject.getCurrentPosition()
+                .then((pos)=>{
+                    console.log("[PLAYER.release] Recibida posición " + pos * 1000);
+                    if (pos > 0) {
+                        configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                    }
+                })
+                .catch ((err)=> {
+                    console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
+                });
+            this.repObject.release();
+        }
         //this.reproduciendo = false;
     }
 
