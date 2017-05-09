@@ -161,12 +161,11 @@
     }
 
     .cajaTexto {
-      border-top: solid 1px $lila-primary;
-      background-color: $lila-light;
+      border-top: solid 1px $lila-light;
 
       .item-textarea {
         color: $lila-primary;
-        background-color: $lila-light;
+        border: solid 1px $lila-light;
       }
 
       .button {

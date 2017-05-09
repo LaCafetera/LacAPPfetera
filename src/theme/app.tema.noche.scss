@@ -161,12 +161,11 @@
     }
 
     .cajaTexto {
-      border-top: solid 1px $noche-primary;
-      background-color: $noche-light;
+      border-top: solid 1px $noche-light;
 
       .item-textarea {
         color: $noche-primary;
-        background-color: $noche-light;
+        border: solid 1px $noche-light;
       }
 
       .button {
