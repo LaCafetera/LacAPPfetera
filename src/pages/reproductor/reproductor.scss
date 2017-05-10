@@ -1,13 +1,5 @@
 page-reproductor {
 
-  @media screen and (min-width: 550px) {
-    // para el split view
-    .reproductor {
-    }
-    .chat {
-    }
-  }
-
   .scroll {
       height: 100% !important
   }
@@ -114,20 +106,45 @@ page-reproductor {
         }
       }
     }
+  }
 
-    // .progress-outer {
-    //     width: 96%;
-    //     margin: 10px 2%;
-    //     padding: 3px;
-    //     text-align: center;
-    //     border-radius: 20px;
-    // }
-    // .progress-inner {
-    //     min-width: 15%;
-    //     white-space: nowrap;
-    //     overflow: hidden;
-    //     padding: 5px;
-    //     border-radius: 20px;
-    // }
+  @media screen and (min-width: 44em) {
+    // iPad Vertical
+
+  }
+
+  @media screen and (min-width: 64em) {
+    // iPad Horizontal
+
+    .reproductor {
+      #imagen-cap {
+        /* div contiene imagen del capítulo */
+        float: left;
+        padding-left: 5%;
+        width: 50%;
+      }
+
+      #botonera {
+        /* botonera completa de reproducción en diferido */
+        float: left;
+        margin-top: 10%;
+        width: 50%;
+      }
+
+      #barra_reprod {
+        /* div barra de reproducción, para poder bajar los otros */
+        float:left;
+        width: 45%;
+        padding-left: 5%;
+        clear: none;
+      }
+
+      .social {
+        float: left;
+        margin-top: 10%;
+        width: 40%;
+        margin-left: 5%;
+      }
+    }
   }
 }
