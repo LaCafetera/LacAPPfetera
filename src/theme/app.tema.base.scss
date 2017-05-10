@@ -23,6 +23,39 @@
     color: $base-primary;
   }
 
+// ******************************************************************* Estilos del menú cafetero app.html
+
+  .menuCafetero {
+
+    ion-label {
+      /* Etiquetas de las opciones */
+      color: $base-primary;
+    }
+
+    ion-select {
+      /* Opción seleccionada de tema */
+      color: $base-primary;
+    }
+
+    .toggle-checked {
+      /* botones deslizantes */
+      background-color: $base-primary;
+    }
+
+    .button {
+      /* Botones pulsables */
+      border: solid 1px $base-primary;
+      color: $base-primary;
+      background-color: $base-light;
+    }
+
+    .version p {
+      /* versión de la App */
+      color: $base-dark;
+    }
+
+  }
+
 // ******************************************************************* Estilos página listado de capítulos home.html
 
   ion-list {

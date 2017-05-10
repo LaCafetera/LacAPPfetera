@@ -22,6 +22,39 @@
     color: $noche-primary;
   }
 
+  // ******************************************************************* Estilos del menú cafetero app.html
+
+    .menuCafetero {
+
+      ion-label {
+        /* Etiquetas de las opciones */
+        color: $noche-dark;
+      }
+
+      ion-select {
+        /* Opción seleccionada de tema */
+        color: $noche-dark;
+      }
+
+      .toggle-checked {
+        /* botones deslizantes */
+        background-color: $noche-dark;
+      }
+
+      .button {
+        /* Botones pulsables */
+        border: solid 1px $noche-primary;
+        color: $noche-primary;
+        background-color: $noche-light;
+      }
+
+      .version p {
+        /* versión de la App */
+        color: $noche-dark;
+      }
+
+    }
+
 // ******************************************************************* Estilos página listado de capítulos home.html
 
   ion-list {

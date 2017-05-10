@@ -22,3 +22,25 @@
 a:link, a:visited { // Todos los enlaces de la app sin subrayado
   text-decoration: none;
 }
+
+// ******************************************************************* Estilos del menú cafetero app.html
+
+  .menuCafetero {
+
+    ion-label {
+      /* Etiquetas de las opciones */
+      font-size: 0.9em;
+    }
+
+    .button {
+      /* Botones pulsables */
+      border-radius: 5px;
+    }
+
+    .version p {
+      /* versión de la App */
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+  }

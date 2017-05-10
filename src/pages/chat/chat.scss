@@ -2,34 +2,42 @@ page-chat {
   .comentario {
     /* cada comentario */
     h3 {
+      /* nombre de usuario */
       font-size: 1.6rem;
     }
     p {
-      font-size: 1.2rem;
+      /* comentario de usuario */
+      font-size: 1.4rem;
     }
     .card-content p{
+      /* esacio bajo la línea */
       padding-top: 6px;
     }
   }
 
   .cajaTexto {
+    /* Área de escritura */
     height: 90px;
     padding-top: 5px;
     padding-left: 5px;
 
     .item-textarea {
+      /* caja de texto */
       border-radius: 5px;
     }
 
     .button {
+      /* botones */
       height: 30px;
       width: 50%;
 
       .envio {
+        /* botón enviar */
         font-size: 3.2rem;
       }
 
       .logoTW {
+        /* botón Twitter */
         font-size: 2.2rem;
       }
     }
