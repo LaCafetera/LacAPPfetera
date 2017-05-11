@@ -57,7 +57,7 @@ page-reproductor {
      .button {
         margin-left: auto;
         margin-right: auto;
-        width: 100%;
+        width: 38%;
         font-size: 1.3rem;
         font-weight: bold;
         color: white;
@@ -81,7 +81,7 @@ page-reproductor {
       /* div barra de reproducción, para poder bajar los otros */
       width: 100%;
       clear: both;
-    }
+
       #tiempo-lleva {
         /* div con el tiempo de reproducción */
         float: left;
@@ -90,6 +90,7 @@ page-reproductor {
         /* div con el tiempo de restante */
         float: right;
       }
+    }
 
     .social {
       /* líneas de separación sup e inf en botonera social */
@@ -108,9 +109,67 @@ page-reproductor {
     }
   }
 
-  @media screen and (min-width: 44em) {
-    // iPad Vertical
+  @media screen and (min-width: 35em) {
+    // Móvil 4" Horizontal
+    .reproductor {
+      height: 74%;
 
+      #titular {
+        /* div para centrar el titular en la tarjeta y separarlo */
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0%;
+        margin-bottom: 2%;
+      }
+
+      #imagen-cap {
+        /* div contiene imagen del capítulo */
+        float: left;
+        padding-left: 5%;
+        width: 29%;
+      }
+
+      #enVivo {
+        /* botón de reproducción en vivo */
+        margin-top: 2%;
+        margin-bottom: 15%;
+      }
+
+      #botonera {
+        /* botonera completa de reproducción en diferido */
+        float: left;
+        margin-top: -3%;
+        margin-left: 10%;
+        width: 50%;
+      }
+
+      #barra_reprod {
+        float:left;
+        width: 30%;
+        margin-left: 20%;
+        clear: none;
+
+
+        #tiempo-lleva {
+          position: relative;
+          top: -40px;
+          left: -65px;
+        }
+        #tiempo-falta {
+          position: relative;
+          top: -40px;
+          left: 65px;
+        }
+      }
+
+      .social {
+        float: left;
+        margin-top: -7%;
+        width: 50%;
+        margin-left: 10%;
+      }
+    }
   }
 
   @media screen and (min-width: 64em) {
@@ -147,4 +206,5 @@ page-reproductor {
       }
     }
   }
+
 }
