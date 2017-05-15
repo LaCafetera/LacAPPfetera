@@ -194,11 +194,18 @@
     }
 
     .cajaTexto {
+      color: $lila-primary;
       border-top: solid 1px $lila-light;
+      background-color: $lila-light;
 
       .item-textarea {
         color: $lila-primary;
-        border: solid 1px $lila-light;
+        border: solid 1px $lila-primary;
+        background-color: $lila-light;
+
+        .text-input::placeholder {
+          color: $lila-primary;
+        }
       }
 
       .button {

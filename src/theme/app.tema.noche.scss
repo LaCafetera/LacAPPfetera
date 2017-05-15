@@ -194,11 +194,18 @@
     }
 
     .cajaTexto {
+      color: $noche-primary;
       border-top: solid 1px $noche-light;
+      background-color: $noche-light;
 
       .item-textarea {
         color: $noche-primary;
-        border: solid 1px $noche-light;
+        border: solid 1px $noche-primary;
+        background-color: $noche-light;
+
+        .text-input::placeholder {
+          color: $noche-primary;
+        }
       }
 
       .button {
