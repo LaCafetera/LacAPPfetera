@@ -20,9 +20,9 @@ export class MyApp {
   soloWifi:boolean = false;
   // prueba: any;
   conectadoASpreaker: boolean = false;
+  iniciando: boolean = false;
 
   chosenTheme: String;
-  iniciando: boolean = true;
   //modoNoche:boolean = false;
     availableThemes: {className: string, prettyName: string}[];
 
@@ -65,6 +65,7 @@ export class MyApp {
           }
           else {
             this.conectadoASpreaker = true;
+            this.iniciando = true;
           }
           console.log("[app.component.ngOnInit] getTokenSpreaker vale "+ val + " type " + typeof val);
         }).catch(()=>{
@@ -154,9 +155,9 @@ export class MyApp {
         .subscribe((event) => {
           let responseParameters;
           console.log ("[APP.loginSpreaker] URL recibido: " + event.url + " tipo " + event.type );
-          if ((event.url).indexOf("http://localhost:8100") === 0 || //Spreaker
-              (event.url).indexOf("https://api.twitter.com/oauth/authorize") === 0 || //Twitter
-               (event.url).indexOf("https://www.spreaker.com/google/connect/return") === 0 // Google+ 
+          if ((event.url).indexOf("http://localhost:8100") === 0  //Spreaker
+            //||  (event.url).indexOf("https://api.twitter.com/oauth/authorize") === 0 || //Twitter
+            //  || (event.url).indexOf("https://www.spreaker.com/google/connect/return") === 0 // Google+ 
               ) {
             //browser.removeEventListener("exit", (event) => {});
             browser.close();
@@ -218,7 +219,16 @@ export class MyApp {
               }
             }
           }
-        });
+
+          //Twitter
+      /*    if ((event.url).indexOf("https://www.spreaker.com/twitter/connect/return") === 0){
+            let browserTwit = this.iab.create(event.url, '_blank', 'location=no,clearsessioncache=yes,clearcache=yes');
+            browserTwit.on('loadstart')
+            .subscribe((event2) => {
+              console.log ("[APP.loginSpreaker] browserTwit: URL recibido: " + event2.url + " tipo " + event2.type );
+            });
+          }
+       */ });
     /*  browser.on("exit") //comento esto, porque cuando conectas con un servicio que ya te "conoce" directamente cierra la web (Twitter) y lo considero como cancelado, por esto.
         .subscribe((event) =>{
           console.log ("[APP.loginSpreaker] Login cancelado. type: " + event.type + " url " + event.url + " code " + event.code + " message " + event.message);

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef} from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -12,9 +12,9 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 @Component({
     selector: 'descargaCafetera',
     template: `<button ion-button clear large (click)="descargarFichero()">
-                    <ion-icon icon-left name={{icono}}>
-                        <div *ngIf="this.porcentajeDescargado != 0">
-                            <h3>{{this.porcentajeDescargado}}%</h3>
+                    <ion-icon icon-left [name]="icono">
+                        <div *ngIf="porcentajeDescargado != 0">
+                            <h3>{{porcentajeDescargado}}%</h3>
                         </div>
                     </ion-icon>
                 </button>`,
@@ -25,9 +25,10 @@ export class DescargaCafetera {
 
     @Input() fileDownload: string;
     @Output() ficheroDescargado = new EventEmitter();
-   //@Input() fileExists: string;
-   /* @Output() porcentajeDescarga = new EventEmitter();*/
+   /*@Input() fileExists: string;
+    @Output() porcentajeDescarga = new EventEmitter();
 
+    }*/
 
     //fileTransfer = new Transfer();
     descargando:boolean = false;
@@ -38,7 +39,7 @@ export class DescargaCafetera {
     dirdestino:string;
 
     porcentajeDescargado:number = 0;
-    porcentajeAnterior:number = 0;
+    porcentajeCalculado:number = 0;
 
     constructor(public events: Events, 
                 public toastCtrl: ToastController, 
@@ -46,7 +47,8 @@ export class DescargaCafetera {
                 private file: File, 
                 private network: Network, 
                 private dialogs: Dialogs, 
-                private transfer: Transfer ) {};
+                private transfer: Transfer,
+                private chngDetector: ChangeDetectorRef ) {};
 
     ngOnInit(){
        // this.porcentajeDescarga.emit({porcentaje: 0});
@@ -71,7 +73,7 @@ export class DescargaCafetera {
                     .catch((err) => {
                         this.icono = 'cloud-download';
                         this.ficheroDescargado.emit({existe: false});
-                            console.log("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que  no existe.");
+                            console.log("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que no existe.");
                     });
                 }
                 else {
@@ -114,19 +116,14 @@ export class DescargaCafetera {
                             fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                                 console.log("[descarga.components.descargarFichero]  Descarga completa.");
                                 this.icono = 'trash';
-                                console.log("[descarga.components.descargarFichero]  icono cambiado.");
                                 this.ficheroDescargado.emit({existe: true});
-                                console.log("[descarga.components.descargarFichero]  Mensaje emitido.");
                                 this.porcentajeDescargado = 0;
-                                console.log("[descarga.components.descargarFichero]  Porcentaje a cero.");
                                 this.descargando = false;
-                                console.log("[descarga.components.descargarFichero]  DEscargando false.");
                                 this.msgDescarga('Descarga completa');
-                                console.log("[descarga.components.descargarFichero]  Mensaje enviado.");
                             })
                             .catch((error) => {
                                 if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
-                                    console.log("[descarga.components.descargarFichero] KAgada " + error);
+                                    console.log("[descarga.components.descargarFichero] Kagada " + error);
                                     console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                     console.log("[descarga.components.descargarFichero] download error target " + error.target);
                                     console.log("[descarga.components.descargarFichero] " + error.body);
@@ -143,9 +140,12 @@ export class DescargaCafetera {
                         console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
                     });
                 fileTransfer.onProgress((progress) => {
-                    this.porcentajeDescargado = Math.round(((progress.loaded / progress.total) * 100));
-                    if (this.porcentajeAnterior != this.porcentajeDescargado){
-                        this.porcentajeAnterior = this.porcentajeDescargado;
+                    this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
+                    if (this.porcentajeCalculado != this.porcentajeDescargado){
+                        console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
+                        this.porcentajeDescargado = this.porcentajeCalculado;
+                        this.chngDetector.detectChanges();
+               //         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado});
                     }
                 })
             }
@@ -168,6 +168,9 @@ export class DescargaCafetera {
             .catch (() => {
                 console.log("[descarga.components.descargarFichero] Rechazada opción de borrado.")
             })
+        }
+        else if (this.icono == 'bug') {
+            this.msgDescarga("No se puede realizar la descarga.");
         }
         else {
             this.msgDescarga("No se permite descargar una emisión en vivo.");
