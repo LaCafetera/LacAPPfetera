@@ -38,11 +38,11 @@
     <ion-row no-padding text-center>
         <ion-col col-10>
             <ion-item>
-                <ion-textarea type="text" name="mensaje" placeholder="¡Exprésate!" [(ngModel)]="mensajeTxt"></ion-textarea>
+                <ion-textarea type="text" name="mensaje" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="¡Exprésate!" [(ngModel)]="mensajeTxt"></ion-textarea>
             </ion-item>
         </ion-col>
         <ion-col col-2>
-            <button ion-button clear (click)="enviarComentario(formulario)">
+            <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario)">
                 <ion-icon name='send' class="envio"></ion-icon>
             </button>
             <button ion-button clear (click)="twittearComentario(formulario)">
