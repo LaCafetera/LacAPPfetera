@@ -22,6 +22,7 @@
     "@ionic-native/dialogs": "^3.4.4",
     "@ionic-native/file": "^3.4.4",
     "@ionic-native/in-app-browser": "^3.4.4",
+    "@ionic-native/keyboard": "^3.9.2",
     "@ionic-native/media": "^3.4.4",
     "@ionic-native/music-controls": "^3.4.4",
     "@ionic-native/network": "^3.4.4",

@@ -36,7 +36,7 @@ export class EpisodiosService {
         if (ultimocap != null) {
             direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
         } 
-        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );
+        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios m�s all� del "+ ultimocap  );
         console.log("[EPISODIOS-SERVICE.dameEpisodios] "+ direccion  );
         return Observable.create(observer => {
             this.http.get(direccion).map(res => res.json()).subscribe(
@@ -48,12 +48,12 @@ export class EpisodiosService {
                                     this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
                                     .subscribe (
                                         espureo=>{ 
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el cap�tulo " + capitulo.episode_id );
                                             observer.next ({objeto:data.response.episode,
                                                             like: true});
                                         },
                                         error=>{
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el cap�tulo " + capitulo.episode_id);
                                             observer.next ({objeto:data.response.episode,
                                                             like: false});
                                         }
@@ -116,7 +116,13 @@ export class EpisodiosService {
         let headers = new Headers();
         headers.append ('Authorization', 'Bearer ' + token);
         return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages?text='+comentario, null, {headers: headers}).map(res => res.json());
-
+    }
+	
+	borraComentarios  (episodio_id:string, usuario: string, token: string, message_id: string){
+        console.log("[EPISODIOS-SERVICE.borraComentarios] Solicitado borrar el comentario " + message_id + "para el episodio "+ episodio_id + " con token " + token);
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        return this.http.delete('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages/'+message_id, {headers: headers}).map(res => res.json());
     }
 
     episodioLike(episodio_id:string, usuario: string, token: string){
@@ -143,9 +149,14 @@ export class EpisodiosService {
         return this.http.get('https://api.spreaker.com/v2/users/'+usuario+'/likes/'+episodio_id, {headers: headers}).map(res => res.json());
     }
 
+    yTuDeQuienEres(user_id:string){
+        console.log("[EPISODIOS-SERVICE.yTuDeQuienEres] Solicitando info de "+ user_id);
+        return this.http.get('https://api.spreaker.com/v2/users/'+user_id).map(res => res.json());
+    }
+
     whoAMi(token: string):Observable<any>{
         if (token == null || token == ""){
-            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token vacío. Devuelvo null");
+            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token vac�o. Devuelvo null");
             Observable.empty();
         }
         else {
@@ -166,4 +177,6 @@ export class EpisodiosService {
         return this.http.post('https://api.spreaker.com/oauth2/token?' + cID + '&' + cs + '&' + gt + '&' + ru + '&code=' + code, null).map(res => res.json());
     }
 }
+
+
 

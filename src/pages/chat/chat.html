@@ -1,6 +1,5 @@
 <!--
   Generated template for the Chat page.
-
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
@@ -13,7 +12,7 @@
 <ion-content class="chat">
     <ion-card class="comentario" *ngFor="let item of items">
         <ion-item>
-            <ion-avatar item-left>
+            <ion-avatar item-left  (click)="muestraDatosUsuario(item.user_id)">
                 <div *ngIf="item.author_image_original_url != null">
                     <img [src]="item.author_image_original_url" />
                 </div>
@@ -23,6 +22,9 @@
             </ion-avatar>
             <h3>{{ item.author_fullname }}</h3>
             <p>{{ item.created_at |tiempoHastaAhora }}</p>
+			<button ion-button item-right clear *ngIf="item.author_id == usuario_id" (click)="borrarComentario(item)">
+                <ion-icon name='trash' class="envio"></ion-icon>
+            </button>
         </ion-item>
         <ion-card-content>
             <p>{{ item.text }}</p>
@@ -38,7 +40,7 @@
     <ion-row no-padding text-center>
         <ion-col col-10>
             <ion-item>
-                <ion-textarea type="text" name="mensaje" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="¡Exprésate!" [(ngModel)]="mensajeTxt"></ion-textarea>
+                <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
             </ion-item>
         </ion-col>
         <ion-col col-2>
