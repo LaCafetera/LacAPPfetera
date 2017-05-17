@@ -99,15 +99,8 @@
             </ion-col>
 
             <ion-col col-3>
-              <!-- Botón para diseño, comentar para que funcione la descarga -->
-              <!-- <button ion-button clear (click)="compartir()"> -->
-              <!-- <ion-icon name='cloud-download'></ion-icon> -->
-              <!-- </button> -->
-
-              <!-- Descarga del programa, ocultada para diseño -->
               <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
               </descargaCafetera>
-
             </ion-col>
 
             <ion-col col-3>
