@@ -11,13 +11,15 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 
 @Component({
     selector: 'descargaCafetera',
-    template: `<button ion-button clear large (click)="descargarFichero()">
+    template: `<button ion-button clear (click)="descargarFichero()">
                     <ion-icon icon-left [name]="icono">
-                        <div *ngIf="porcentajeDescargado != 0">
-                            <h3>{{porcentajeDescargado}}%</h3>
-                        </div>
+
                     </ion-icon>
-                </button>`,
+                </button>
+                <div class="porcentaje" *ngIf="porcentajeDescargado != 0">
+                    <p>{{porcentajeDescargado}}%</p>
+                </div>
+                `,
     providers: [File, Transfer, ConfiguracionService, Dialogs, Network]
 })
 
@@ -41,12 +43,12 @@ export class DescargaCafetera {
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
 
-    constructor(public events: Events, 
-                public toastCtrl: ToastController, 
-                private _configuracion: ConfiguracionService, 
-                private file: File, 
-                private network: Network, 
-                private dialogs: Dialogs, 
+    constructor(public events: Events,
+                public toastCtrl: ToastController,
+                private _configuracion: ConfiguracionService,
+                private file: File,
+                private network: Network,
+                private dialogs: Dialogs,
                 private transfer: Transfer,
                 private chngDetector: ChangeDetectorRef ) {};
 
@@ -161,7 +163,7 @@ export class DescargaCafetera {
             .then ((respuesta)=> {
                 //reproductor.stop();
                 console.log("[descarga.components.descargarFichero] Confirmación de borrado:" + respuesta);
-                if (respuesta == 1){                    
+                if (respuesta == 1){
                     this.borrarDescarga(this.fileDownload + ".mp3");
                 }
             })
@@ -190,4 +192,3 @@ export class DescargaCafetera {
             });
     }
 }
-
