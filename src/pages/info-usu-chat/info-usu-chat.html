@@ -17,40 +17,40 @@
 
 <ion-content >
 
-  <ion-card>
+  <ion-card >
 
-    <!--img [src]="{{item.image_url}}"/-->
+    <img [src]="user.image_url"/>
 
     <ion-card-content>
       <ion-card-title>
-        {{item.fullname}}
+        {{user.fullname}}
       </ion-card-title>
       <p>
-        {{item.description}}
+        {{user.description}}
       </p>
     </ion-card-content>
 
     <ion-item>
       <ion-icon name='facebook' item-start style="color: #d03e84"></ion-icon>
-      {{item.facebook_permalink}}
+      {{user.facebook_permalink}}
       <!--ion-badge item-end>9</ion-badge-->
     </ion-item>
 
     <ion-item>
       <ion-icon name='logo-twitter' item-start style="color: #55acee"></ion-icon>
-      {{item.twitter_username}}
+      {{user.twitter_username}}
       <!--ion-badge item-end>260k</ion-badge-->
     </ion-item>
 
     <ion-item>
 
       Folowers
-      <ion-badge item-end>{{item.followers_count}}</ion-badge>
+      <ion-badge item-end>{{user.followers_count}}</ion-badge>
     </ion-item>
 
     <ion-item>
       Siguiendo
-      <ion-badge item-end>{{item.followings_count}}</ion-badge>
+      <ion-badge item-end>{{user.followings_count}}</ion-badge>
     </ion-item>
 
   </ion-card>
