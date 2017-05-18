@@ -161,8 +161,11 @@
       border-bottom: solid 1px $bosque-primary;
       background-color: $bosque-light;
 
-     .button {
+      .button {
         color: $bosque-primary;
+      }
+      .porcentaje p {
+        color: $bosque-danger;
       }
     }
 
@@ -187,6 +190,9 @@
           color: $bosque-danger;
         }
         p {
+          color: $bosque-primary;
+        }
+        .button {
           color: $bosque-primary;
         }
       }

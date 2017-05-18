@@ -157,8 +157,11 @@
       border-bottom: solid 1px $noche-primary;
       background-color: $noche-light;
 
-     .button {
+      .button {
         color: $noche-primary;
+      }
+      .porcentaje p {
+        color: $noche-danger;
       }
     }
 
@@ -183,6 +186,9 @@
           color: $noche-danger;
         }
         p {
+          color: $noche-primary;
+        }
+        .button {
           color: $noche-primary;
         }
       }

@@ -161,8 +161,11 @@
       border-bottom: solid 1px $cafe-primary;
       background-color: $cafe-light;
 
-     .button {
+      .button {
         color: $cafe-primary;
+      }
+      .porcentaje p {
+        color: $cafe-danger;
       }
     }
 
@@ -187,6 +190,9 @@
           color: $cafe-danger;
         }
         p {
+          color: $cafe-primary;
+        }
+        .button {
           color: $cafe-primary;
         }
       }

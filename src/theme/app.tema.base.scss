@@ -166,8 +166,12 @@
       border-bottom: solid 1px $base-primary;
       background-color: $base-light;
 
-     .button {
+      .button {
         color: $base-primary;
+      }
+      .porcentaje p {
+        color: $base-danger;
+        background-color: $base-light;
       }
     }
 
@@ -192,6 +196,9 @@
           color: $base-danger;
         }
         p {
+          color: $base-primary;
+        }
+        .button {
           color: $base-primary;
         }
       }
