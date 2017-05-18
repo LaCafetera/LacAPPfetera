@@ -10,6 +10,14 @@ page-chat {
       /* comentario de usuario */
       font-size: 1.4rem;
     }
+    .button {
+      height: 35px;
+      padding-top: 12px;
+
+      ion-icon {
+        font-size: 3rem;
+      }
+    }
     .card-content p{
       /* esacio bajo la línea */
       padding-top: 6px;
