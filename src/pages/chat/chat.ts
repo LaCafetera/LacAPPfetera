@@ -243,7 +243,7 @@ export class ChatPage {
     }
 
     muestraDatosUsuario(user_id){
-        console.log("[CHAT.muestraDatosUser] ¡Click!");
+        console.log("[CHAT.muestraDatosUser] Usuario " + user_id);
         this.navCtrl.push(InfoUsuChatPage, {usuario: user_id});
     }
 }
