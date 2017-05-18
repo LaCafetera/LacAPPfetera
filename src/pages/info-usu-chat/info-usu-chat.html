@@ -1,0 +1,58 @@
+<!--
+  Generated template for the InfoUsuChat page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>
+      La cAPPfetera
+    </ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content >
+
+  <ion-card>
+
+    <!--img [src]="{{item.image_url}}"/-->
+
+    <ion-card-content>
+      <ion-card-title>
+        {{item.fullname}}
+      </ion-card-title>
+      <p>
+        {{item.description}}
+      </p>
+    </ion-card-content>
+
+    <ion-item>
+      <ion-icon name='facebook' item-start style="color: #d03e84"></ion-icon>
+      {{item.facebook_permalink}}
+      <!--ion-badge item-end>9</ion-badge-->
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name='logo-twitter' item-start style="color: #55acee"></ion-icon>
+      {{item.twitter_username}}
+      <!--ion-badge item-end>260k</ion-badge-->
+    </ion-item>
+
+    <ion-item>
+
+      Folowers
+      <ion-badge item-end>{{item.followers_count}}</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      Siguiendo
+      <ion-badge item-end>{{item.followings_count}}</ion-badge>
+    </ion-item>
+
+  </ion-card>
+
+</ion-content>

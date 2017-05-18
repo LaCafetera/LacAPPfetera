@@ -5,6 +5,7 @@ import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Keyboard } from '@ionic-native/keyboard';
+import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 
 //import { Dialogs } from 'ionic-native';
 
@@ -243,6 +244,7 @@ export class ChatPage {
 
     muestraDatosUsuario(user_id){
         console.log("[CHAT.muestraDatosUser] ¡Click!");
+        this.navCtrl.push(InfoUsuChatPage, {usuario: user_id});
     }
 }
 

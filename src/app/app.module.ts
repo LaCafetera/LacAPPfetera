@@ -27,6 +27,7 @@ import { InfoFerPage } from '../pages/info-fer/info-fer';
 import { ReproductorPage } from '../pages/reproductor/reproductor';
 import { DetalleCapituloPage } from '../pages/detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../pages/chat/chat';
+import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
 
 import { DescargaCafetera } from './descarga.component';
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
@@ -44,7 +45,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     ChatPage,
     tiempoHastaAhoraPipe,
     muestraHashtagPipe,
-    eliminaHashtagPipe
+    eliminaHashtagPipe,
+    InfoUsuChatPage
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     InfoFerPage,
     ReproductorPage,
     DetalleCapituloPage,
-    ChatPage
+    ChatPage,
+    InfoUsuChatPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, 
               File, 
