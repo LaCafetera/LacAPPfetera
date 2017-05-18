@@ -12,7 +12,7 @@
 <ion-content class="chat">
     <ion-card class="comentario" *ngFor="let item of items">
         <ion-item>
-            <ion-avatar item-left  (click)="muestraDatosUsuario(item.user_id)">
+            <ion-avatar item-left  (click)="muestraDatosUsuario(item.author_id)">
                 <div *ngIf="item.author_image_original_url != null">
                     <img [src]="item.author_image_original_url" />
                 </div>
