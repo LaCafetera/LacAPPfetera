@@ -27,6 +27,8 @@ export class MyApp {
     availableThemes: {className: string, prettyName: string}[];
 
   rootPage = HomePage;
+  imgItem: string = "assets/icon/icon.png";
+  descripcion: string = "Resistente de Sherwood"
 
   constructor(public platform: Platform, 
               private _configuracion: ConfiguracionService, 
@@ -66,6 +68,7 @@ export class MyApp {
           else {
             this.conectadoASpreaker = true;
             this.iniciando = true;
+            this.actualizaAvatar (val);
           }
           console.log("[app.component.ngOnInit] getTokenSpreaker vale "+ val + " type " + typeof val);
         }).catch(()=>{
@@ -202,6 +205,7 @@ export class MyApp {
                       this._configuracion.setTokenSpreaker(data.access_token);
                       console.log ("[APP.loginSpreaker] Login vía Google+ OK");
                       this.conectadoASpreaker = true;
+                      this.actualizaAvatar(data.access_token);
                       this.msgDescarga("La conexión se ha realizado.")
                     }
                   },
@@ -238,6 +242,27 @@ export class MyApp {
     logoutSpreaker(){
       console.log ("[APP.logoutSpreaker] Desconectando de spreaker.");
       this._configuracion.setTokenSpreaker(null);
+      this.actualizaAvatar(null);
+    }
+
+    actualizaAvatar (token:string){
+      console.log("[APP.actualizaAvatar] Solicitada actualización de avatar con token " + token);
+      if (token != null){
+        this.epService.whoAMi(token).subscribe
+        ((data) => {
+          console.log("[APP.actualizaAvatar] Información recibida " + JSON.stringify(data));
+          this.imgItem = data.response.user.image_url;
+          this.descripcion = data.response.user.fullname;
+          console.log("[APP.actualizaAvatar] Avatar actualizado " + data.response.user.image_url);
+        }),
+        ((error) => {
+            console.log("[APP.actualizaAvatar] Error actualizando Avatar " + error);
+        });
+      }
+      else {
+        this.imgItem = "assets/icon/icon.png";
+        this.descripcion = "Resistente de Sherwood";
+      }
     }
 }
 

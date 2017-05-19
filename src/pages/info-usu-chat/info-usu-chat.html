@@ -43,15 +43,62 @@
     </ion-row>
 
     <ion-row class="rrss" no-padding >
-      <ion-col col-6>
-        <ion-icon name='logo-twitter'></ion-icon>
-        {{user.twitter_username}}
+      <ion-col col-3>
+        <div *ngIf="user.twitter_username == null">
+          <button (click)="sinEnlaceTwitter()" ion-button clear >
+            <ion-icon name="logo-twitter"></ion-icon>
+       <!-- {{user.twitter_username}} -->
+          </button>
+        </div>
+        <div *ngIf="user.twitter_username != null">
+          <a [href]="enlaceTwitter" ion-button clear >
+            <ion-icon name="logo-twitter"></ion-icon>
+       <!-- {{user.twitter_username}} -->
+          </a>
+        </div>
       </ion-col>
 
-      <ion-col col-6>
-        <ion-icon name='logo-facebook'></ion-icon>
-        {{user.facebook_permalink}}
+      <ion-col col-3>
+        <div *ngIf="user.facebook_permalink == null">
+          <button (click)="sinEnlaceFacebook()" ion-button clear  >
+            <ion-icon name="logo-facebook"></ion-icon>
+          </button>
+       <!-- {{user.facebook_permalink}}-->
+        </div>
+        <div *ngIf="user.facebook_permalink != null">
+          <a [href]="user.facebook_permalink" ion-button clear  >
+            <ion-icon name="logo-facebook"></ion-icon>
+       <!-- {{user.facebook_permalink}}-->
+          </a>
+        </div>
       </ion-col>
+
+      <ion-col col-3>
+        <div *ngIf="user.website_url == null">
+          <button (click)="sinEnlaceWeb()" ion-button clear >
+            <ion-icon name="globe"></ion-icon>
+          </button>
+        </div>
+        <div *ngIf="user.website_url != null">
+          <a [href]="user.website_url" ion-button clear >
+            <ion-icon name="globe"></ion-icon>
+          </a>
+        </div>
+      </ion-col>
+
+      <ion-col col-3>
+        <div *ngIf="user.contact_email == null">
+          <button (click)="sinEnlaceMail()" ion-button clear  >
+            <ion-icon name="mail"></ion-icon>
+          </button>
+        </div>
+        <div *ngIf="user.contact_email != null">
+          <a [href]="enlaceMail" ion-button clear  >
+            <ion-icon name="mail"></ion-icon>
+          </a>
+        </div>
+      </ion-col>
+
     </ion-row>
 
   </ion-card>

@@ -36,7 +36,7 @@ export class EpisodiosService {
         if (ultimocap != null) {
             direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
         } 
-        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios m�s all� del "+ ultimocap  );
+        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );
         console.log("[EPISODIOS-SERVICE.dameEpisodios] "+ direccion  );
         return Observable.create(observer => {
             this.http.get(direccion).map(res => res.json()).subscribe(
@@ -48,12 +48,12 @@ export class EpisodiosService {
                                     this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
                                     .subscribe (
                                         espureo=>{ 
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el cap�tulo " + capitulo.episode_id );
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
                                             observer.next ({objeto:data.response.episode,
                                                             like: true});
                                         },
                                         error=>{
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el cap�tulo " + capitulo.episode_id);
+                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
                                             observer.next ({objeto:data.response.episode,
                                                             like: false});
                                         }
@@ -156,7 +156,7 @@ export class EpisodiosService {
 
     whoAMi(token: string):Observable<any>{
         if (token == null || token == ""){
-            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token vac�o. Devuelvo null");
+            console.log("[EPISODIOS-SERVICE.whoAMi] Recibido token vacío. Devuelvo null");
             Observable.empty();
         }
         else {

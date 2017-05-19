@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { /*IonicPage,*/ NavController, NavParams } from 'ionic-angular';
+import { /*IonicPage,*/ NavController, NavParams, ToastController } from 'ionic-angular';
 import { EpisodiosService } from '../../providers/episodios-service';
 
 /**
@@ -18,8 +18,10 @@ export class InfoUsuChatPage {
 
   user_id: string = "";
   user: Array<any>;
+  enlaceTwitter: string = "";
+  enlaceMail: string = "";
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private episodioSrvc: EpisodiosService) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private episodioSrvc: EpisodiosService, private toastCtrl: ToastController, ) {
     this.user = new Array();
     this.user_id = navParams.get("usuario");
     console.log("[InfoUsuChatPage] Recibido usuario " + this.user_id);
@@ -27,6 +29,25 @@ export class InfoUsuChatPage {
         data => {
           this.user = data.response.user;
           console.log("[InfoUsuChatPage] Recibido " + JSON.stringify(this.user));
+
+          if (this.user['image_url'] == null){
+            this.user['image_url'] = 'assets/icon/icon.png';
+          }
+
+          if (this.user['twitter_username'] != null){
+            this.enlaceTwitter = "https://twitter.com/hashtag/"+this.user['twitter_username'];
+          }
+
+          if (this.user['contact_email'] != null){
+            this.enlaceMail = "mailto:"+this.user['contact_email'];
+          }
+          
+          if (this.user['description'] == null) {
+            this.user['description'] = 'Descripción no disponible';
+          }
+          else if (this.user_id == '7074938') {
+            this.user['description'] = this.user['description'] + '. No lo digo, pero en el fondo prefiero Android...';
+          }
         },
         err => {
           console.log("[InfoUsuChatPage] Error descargando datos usuario.")
@@ -36,6 +57,37 @@ export class InfoUsuChatPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad InfoUsuChat');
+  }
+
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000,
+            cssClass: 'msgDescarga'
+        });
+        toast.present();
+    }
+
+  sinEnlaceTwitter(){
+    this.msgDescarga("El usuario no tiene almacenado su usuario de Twitter");
+    console.log("[InfoUsuChatPage.sinEnlaceTwitter] El usuario no tiene almacenado su usuario de Twitter " + this.user['twitter_username']);
+  }
+
+  sinEnlaceFacebook(){
+    this.msgDescarga("El usuario no tiene almacenada su pagina de Facebook");
+    console.log("[InfoUsuChatPage.sinEnlaceFacebook] El usuario no tiene almacenado su usuario de Facebook " + this.user['facebook_permalink']);
+  }
+
+
+  sinEnlaceMail(){
+    this.msgDescarga("El usuario no tiene almacenado su dirección de correo");
+    console.log("[InfoUsuChatPage.sinEnlaceMail] El usuario no tiene almacenado su dirección de correo " + this.user['contact_email']);
+  }
+
+
+  sinEnlaceWeb(){
+    this.msgDescarga("El usuario no tiene almacenada su página web");
+    console.log("[InfoUsuChatPage.sinEnlaceWeb] El usuario no tiene almacenado su página web " + this.user['website_url']);
   }
 
 }

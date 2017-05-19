@@ -9,6 +9,22 @@
 
         <ion-content class="menuCafetero">
 
+
+            <ion-item>
+                <ion-row class="followers" no-padding >
+                    <ion-col col-5> </ion-col>
+                    <ion-col col-1>
+                        <ion-avatar item-center>
+                            <img [src]="imgItem" />
+                        </ion-avatar>
+                    </ion-col>
+                    <ion-col col-5> </ion-col>
+                </ion-row>
+                <ion-col>
+                    <h2>{{descripcion}}</h2>
+                </ion-col>
+            </ion-item>
+
             <ion-item>
                 <ion-label>
                     <ion-icon name="color-palette"></ion-icon> Tema</ion-label>
@@ -30,7 +46,7 @@
 
             <ion-item>
                 <!--a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a-->
-                <a href="http://telegram.me/cafeterabetatest" ion-button full>Síguenos en Telegram</a>
+                <a href="http://telegram.me/cafetera" ion-button full>Síguenos en Telegram</a>
             </ion-item>
 
             <ion-item >
@@ -41,7 +57,7 @@
             </ion-item>
 
             <ion-item class="version">
-                <p>Versión de la APP: 18/05/2017</p>
+                <p>Versión de la APP: 19/05/2017</p>
             </ion-item>
 
             <!--button ion-button round menuClose>Cerrar</button-->
