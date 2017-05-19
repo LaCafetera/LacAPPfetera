@@ -188,37 +188,61 @@
   }
 
 // ******************************************************************* Estilos página de chat chat.html
-    .comentario {
-      ion-item {
-        background-color: $base-fondoCard;
+  .comentario {
+    ion-item {
+      background-color: $base-fondoCard;
 
-        h3 {
-          color: $base-danger;
-        }
-        p {
-          color: $base-primary;
-        }
-        .button {
-          color: $base-primary;
-        }
+      h3 {
+        color: $base-danger;
       }
-
-      .card-content p{
+      p {
         color: $base-primary;
-        border-top: solid 1px $base-light;
       }
-    }
-
-    .cajaTexto {
-      border-top: solid 1px $base-light;
-
-      .item-textarea {
-        color: $base-primary;
-        border: solid 1px $base-light;
-      }
-
       .button {
-         color: $base-primary;
+        color: $base-primary;
       }
     }
+
+    .card-content p{
+      color: $base-primary;
+      border-top: solid 1px $base-light;
+    }
+  }
+
+  .cajaTexto {
+    border-top: solid 1px $base-light;
+
+    .item-textarea {
+      color: $base-primary;
+      border: solid 1px $base-light;
+    }
+
+    .button {
+       color: $base-primary;
+    }
+  }
+
+// ******************************************************************* Estilos página de usuario info-usu-chat.html
+  page-info-usu-chat {
+    .card-title {
+      color: $base-danger;
+    }
+    p {
+      color: $base-primary;
+    }
+    .followers {
+      color: $base-primary;
+
+      ion-badge {
+        background-color: $base-primary;
+      }
+    }
+    .rrss {
+      color: $base-primary;
+
+      ion-icon {
+        color: $base-primary;
+      }
+    }
+  }
 }

@@ -30,28 +30,29 @@
       </p>
     </ion-card-content>
 
-    <ion-item>
-      <ion-icon name='facebook' item-start style="color: #d03e84"></ion-icon>
-      {{user.facebook_permalink}}
-      <!--ion-badge item-end>9</ion-badge-->
-    </ion-item>
+    <ion-row class="followers" no-padding >
+      <ion-col col-6>
+        Seguidores
+        <ion-badge item-end>{{user.followers_count}}</ion-badge>
+      </ion-col>
 
-    <ion-item>
-      <ion-icon name='logo-twitter' item-start style="color: #55acee"></ion-icon>
-      {{user.twitter_username}}
-      <!--ion-badge item-end>260k</ion-badge-->
-    </ion-item>
+      <ion-col col-6>
+        Siguiendo
+        <ion-badge item-end>{{user.followings_count}}</ion-badge>
+      </ion-col>
+    </ion-row>
 
-    <ion-item>
+    <ion-row class="rrss" no-padding >
+      <ion-col col-6>
+        <ion-icon name='logo-twitter'></ion-icon>
+        {{user.twitter_username}}
+      </ion-col>
 
-      Folowers
-      <ion-badge item-end>{{user.followers_count}}</ion-badge>
-    </ion-item>
-
-    <ion-item>
-      Siguiendo
-      <ion-badge item-end>{{user.followings_count}}</ion-badge>
-    </ion-item>
+      <ion-col col-6>
+        <ion-icon name='logo-facebook'></ion-icon>
+        {{user.facebook_permalink}}
+      </ion-col>
+    </ion-row>
 
   </ion-card>
 

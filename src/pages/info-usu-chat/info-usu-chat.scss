@@ -1,3 +1,27 @@
 page-info-usu-chat {
 
+  ion-card-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-transform: capitalize;
+  }
+  p {
+   font-size: 1.3rem;
+  }
+
+  .followers {
+    padding-left: 10px;
+    font-size: 1.3rem;
+    height: 30px;
+  }
+
+  .rrss {
+    padding-left: 10px;
+    font-size: 1.3rem;
+
+    ion-icon {
+      font-size: 3.2rem;
+    }
+  }
+
 }
