@@ -6,8 +6,8 @@ import { ConfiguracionService } from '../../providers/configuracion.service';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Keyboard } from '@ionic-native/keyboard';
 import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
-
-//import { Dialogs } from 'ionic-native';
+// https://www.npmjs.com/package/ng2-emoji
+//import { Ng2EmojiModule } from 'ng2-emoji';
 
 /*
   Generated class for the Chat page.
@@ -36,7 +36,6 @@ export class ChatPage {
               private toastCtrl: ToastController,
               private dialogs: Dialogs,
               private keyboard: Keyboard ) {
-
     this.episodio = this.navParams.get('episodioMsg');
     this.hashtag = this.navParams.get('hashtag');
     console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);

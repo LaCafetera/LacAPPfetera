@@ -15,10 +15,13 @@ import { Contacts } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { InAppBrowser} from '@ionic-native/in-app-browser'
 
+import { Ng2EmojiModule } from 'ng2-emoji';
+
 import { Player } from './player';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
+
 
 import { HttpModule } from '@angular/http';
 import { MyApp } from './app.component';
@@ -51,6 +54,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
   imports: [
     BrowserModule,
     HttpModule,
+    Ng2EmojiModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
   ],

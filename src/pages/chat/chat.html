@@ -27,7 +27,8 @@
             </button>
         </ion-item>
         <ion-card-content>
-            <p>{{ item.text }}</p>
+            <p  class="message-container"  [innerHTML]="item.text | emojis" ></p>
+            <!-- {{ item.text  | emojis}} -->
         </ion-card-content>
     </ion-card>
 

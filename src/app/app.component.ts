@@ -28,6 +28,7 @@ export class MyApp {
 
   rootPage = HomePage;
   imgItem: string = "assets/icon/icon.png";
+  nombreUsu: string = "Proscrito";
   descripcion: string = "Resistente de Sherwood"
 
   constructor(public platform: Platform, 
@@ -158,17 +159,11 @@ export class MyApp {
         .subscribe((event) => {
           let responseParameters;
           console.log ("[APP.loginSpreaker] URL recibido: " + event.url + " tipo " + event.type );
-          if ((event.url).indexOf("http://localhost:8100") === 0  //Spreaker
-            //||  (event.url).indexOf("https://api.twitter.com/oauth/authorize") === 0 || //Twitter
-            //  || (event.url).indexOf("https://www.spreaker.com/google/connect/return") === 0 // Google+ 
-              ) {
+          if ((event.url).indexOf("http://localhost:8100") === 0) {
             //browser.removeEventListener("exit", (event) => {});
             browser.close();
             if ((event.url).indexOf("http://localhost:8100") === 0 ){
               responseParameters = ((event.url).split("#")[1]).split("&");
-            }
-            else {
-              responseParameters = ((event.url).split("?")[1]).split("&");
             }
             console.log ("[APP.loginSpreaker] responseParameters vale " + responseParameters);
             let parsedResponse = {};
@@ -178,61 +173,9 @@ export class MyApp {
             if (parsedResponse["access_token"] !== undefined && parsedResponse["access_token"] !== null) { //conexión vía spreaker
               console.log ("[APP.loginSpreaker] Login vía Spreaker OK");
               this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
-            } else {
-              if (parsedResponse["oauth_token"] !== undefined && parsedResponse["oauth_token"] !== null) { //conexión vía twitter
-                //console.log ("[APP.loginSpreaker] Login vía Twitter OK");
-                //this._configuracion.setTokenSpreaker(parsedResponse["oauth_token"]);
-                this.epService.solicitaTokenViaCode(parsedResponse["code"])
-                  .subscribe ((data) => {
-                    if (data.access_token != null){
-                      console.log ("[APP.loginSpreaker] Recibido de spreaker la siguiente info: " + parsedResponse["oauth_token"] );
-                      this._configuracion.setTokenSpreaker(parsedResponse["oauth_token"]);
-                      console.log ("[APP.loginSpreaker] Login vía Google+ OK");
-                      //this.conectadoASpreaker = true;
-                    }
-                  },
-                  (error) => {
-                    console.log ("[APP.loginSpreaker] Login  KO " + error);
-                    this.conectadoASpreaker = false;
-                    this.msgDescarga("La conexión no se ha completado.")
-                  });
-              } else {
-                if (parsedResponse["code"] !== undefined && parsedResponse["code"] !== null) { //conexión vía Google+
-                  this.epService.solicitaTokenViaCode(parsedResponse["code"])
-                  .subscribe ((data) => {
-                    if (data.access_token != null){
-                      console.log ("[APP.loginSpreaker] Recibido de spreaker la siguiente info: " + JSON.stringify(data) );
-                      this._configuracion.setTokenSpreaker(data.access_token);
-                      console.log ("[APP.loginSpreaker] Login vía Google+ OK");
-                      this.conectadoASpreaker = true;
-                      this.actualizaAvatar(data.access_token);
-                      this.msgDescarga("La conexión se ha realizado.")
-                    }
-                  },
-                  (error) => {
-                    console.log ("[APP.loginSpreaker] Login  KO " + error);
-                    this.conectadoASpreaker = false;
-                    this.msgDescarga("La conexión no se ha completado.")
-                  });
-                }
-                else {
-                  console.log ("[APP.loginSpreaker] Login  KO");
-                  this.conectadoASpreaker = false;
-                  this.msgDescarga("La conexión no se ha completado.")
-                }
-              }
-            }
+            } 
           }
-
-          //Twitter
-      /*    if ((event.url).indexOf("https://www.spreaker.com/twitter/connect/return") === 0){
-            let browserTwit = this.iab.create(event.url, '_blank', 'location=no,clearsessioncache=yes,clearcache=yes');
-            browserTwit.on('loadstart')
-            .subscribe((event2) => {
-              console.log ("[APP.loginSpreaker] browserTwit: URL recibido: " + event2.url + " tipo " + event2.type );
-            });
-          }
-       */ });
+         });
     /*  browser.on("exit") //comento esto, porque cuando conectas con un servicio que ya te "conoce" directamente cierra la web (Twitter) y lo considero como cancelado, por esto.
         .subscribe((event) =>{
           console.log ("[APP.loginSpreaker] Login cancelado. type: " + event.type + " url " + event.url + " code " + event.code + " message " + event.message);
@@ -252,7 +195,8 @@ export class MyApp {
         ((data) => {
           console.log("[APP.actualizaAvatar] Información recibida " + JSON.stringify(data));
           this.imgItem = data.response.user.image_url;
-          this.descripcion = data.response.user.fullname;
+          this.nombreUsu = data.response.user.fullname;
+          this.descripcion = data.response.user.description;
           console.log("[APP.actualizaAvatar] Avatar actualizado " + data.response.user.image_url);
         }),
         ((error) => {
@@ -262,6 +206,7 @@ export class MyApp {
       else {
         this.imgItem = "assets/icon/icon.png";
         this.descripcion = "Resistente de Sherwood";
+        this.nombreUsu = "Proscrito";
       }
     }
 }

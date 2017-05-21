@@ -523,6 +523,7 @@ export class ReproductorPage {
         return true;
     }
 */
+
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
