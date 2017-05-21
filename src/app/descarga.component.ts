@@ -16,7 +16,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 
                     </ion-icon>
                 </button>
-                <div class="porcentaje" *ngIf="porcentajeDescargado != 0">
+                <div class="porcentaje" *ngIf="porcentajeDescargado != 0" (click)="descargarFichero()">
                     <p>{{porcentajeDescargado}}%</p>
                 </div>
                 `,
@@ -54,7 +54,7 @@ export class DescargaCafetera {
 
     ngOnInit(){
        // this.porcentajeDescarga.emit({porcentaje: 0});
-       this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
+       this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 this.dirdestino = entry.toInternalURL();
                 if (this.fileDownload != null) {
