@@ -26,6 +26,17 @@ a:link, a:visited { // Todos los enlaces de la app sin subrayado
 // ******************************************************************* Estilos del menú cafetero app.html
 
   .menuCafetero {
+    ion-avatar img {
+      width: 50px;
+      height: 50px;
+    }
+    h2 {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    h3 {
+      font-size: 1em;
+    }
 
     ion-label {
       /* Etiquetas de las opciones */

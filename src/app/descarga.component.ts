@@ -54,7 +54,7 @@ export class DescargaCafetera {
 
     ngOnInit(){
        // this.porcentajeDescarga.emit({porcentaje: 0});
-       this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+       this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 this.dirdestino = entry.toInternalURL();
                 if (this.fileDownload != null) {
@@ -68,7 +68,7 @@ export class DescargaCafetera {
                         }
                         else {
                             console.log("[Descarga.ngOnInit] El fichero " + this.fileDownload + ' no existe.');
-                            this.icono = 'cloud-download';
+                            this.icono = 'ios-cloud-download'; // Fuerzo a que salga el icono de iOS que mola más :b
                             this.ficheroDescargado.emit({existe: false});
                         }
                     })

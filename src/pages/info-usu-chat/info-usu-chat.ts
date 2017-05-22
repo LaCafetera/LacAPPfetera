@@ -35,18 +35,21 @@ export class InfoUsuChatPage {
           }
 
           if (this.user['twitter_username'] != null){
-            this.enlaceTwitter = "https://twitter.com/hashtag/"+this.user['twitter_username'];
+            this.enlaceTwitter = "https://twitter.com/"+this.user['twitter_username'];
           }
 
           if (this.user['contact_email'] != null){
             this.enlaceMail = "mailto:"+this.user['contact_email'];
           }
-          
+
           if (this.user['description'] == null) {
             this.user['description'] = 'Descripción no disponible';
+            if (this.user_id == '9794942') {
+              this.user['description'] = this.user['description'] + '. Escrito desde mi iPhone';
+            }
           }
-          else if (this.user_id == '7074938') {
-            this.user['description'] = this.user['description'] + '. No lo digo, pero en el fondo prefiero Android...';
+          else if (this.user_id == '9794942') {
+            this.user['description'] = this.user['description'] + '. Escrito desde mi iPhone';
           }
         },
         err => {

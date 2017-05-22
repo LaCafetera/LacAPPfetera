@@ -46,7 +46,7 @@
       <ion-col col-3>
         <div *ngIf="user.twitter_username == null">
           <button (click)="sinEnlaceTwitter()" ion-button clear >
-            <ion-icon name="logo-twitter"></ion-icon>
+            <ion-icon class="inactivo" name="logo-twitter"></ion-icon>
        <!-- {{user.twitter_username}} -->
           </button>
         </div>
@@ -61,7 +61,7 @@
       <ion-col col-3>
         <div *ngIf="user.facebook_permalink == null">
           <button (click)="sinEnlaceFacebook()" ion-button clear  >
-            <ion-icon name="logo-facebook"></ion-icon>
+            <ion-icon class="inactivo" name="logo-facebook"></ion-icon>
           </button>
        <!-- {{user.facebook_permalink}}-->
         </div>
@@ -76,7 +76,7 @@
       <ion-col col-3>
         <div *ngIf="user.website_url == null">
           <button (click)="sinEnlaceWeb()" ion-button clear >
-            <ion-icon name="globe"></ion-icon>
+            <ion-icon class="inactivo" name="globe"></ion-icon>
           </button>
         </div>
         <div *ngIf="user.website_url != null">
@@ -89,7 +89,7 @@
       <ion-col col-3>
         <div *ngIf="user.contact_email == null">
           <button (click)="sinEnlaceMail()" ion-button clear  >
-            <ion-icon name="mail"></ion-icon>
+            <ion-icon class="inactivo" name="mail"></ion-icon>
           </button>
         </div>
         <div *ngIf="user.contact_email != null">
