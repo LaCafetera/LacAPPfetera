@@ -16,14 +16,11 @@
                 <h3>{{descripcion}}</h3>
             </ion-item>
 
-            <ion-item>
-                <ion-label>
-                    <ion-icon name="color-palette"></ion-icon> Tema</ion-label>
-                <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
-                    <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
-                        {{theme.prettyName}}
-                    </ion-option>
-                </ion-select>
+            <ion-item >
+                <!--button ion-button full (click)="conexionSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
+                <button ion-button full (click)="conexionSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button-->
+                <ion-label> Conectado a Spreaker</ion-label>
+                <ion-toggle [(ngModel)]="conectadoASpreaker" (ionChange)="conexionSpreaker($event)"></ion-toggle>
             </ion-item>
 
             <ion-item>
@@ -40,11 +37,14 @@
                 <a href="http://t.me/lacafetera" ion-button full>Síguenos en Telegram</a>
             </ion-item>
 
-            <ion-item >
-                <!--button ion-button full (click)="conexionSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
-                <button ion-button full (click)="conexionSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button-->
-                <ion-label> Conectado a Spreaker</ion-label>
-                <ion-toggle [(ngModel)]="conectadoASpreaker" (ionChange)="conexionSpreaker($event)"></ion-toggle>
+            <ion-item>
+                <ion-label>
+                    <ion-icon name="color-palette"></ion-icon> Elige un tema</ion-label>
+                <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
+                    <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
+                        {{theme.prettyName}}
+                    </ion-option>
+                </ion-select>
             </ion-item>
 
             <ion-item class="version">
