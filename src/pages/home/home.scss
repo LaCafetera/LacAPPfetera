@@ -1,28 +1,4 @@
 page-home {
-  @media screen and (min-width: 44em) {
-    // iPad Vertical a dos columnas
-    ion-list {
-      overflow: hidden;
-    }
-    ion-list >.card {
-      float: left;
-      width: 48%;
-      margin: 5px;
-    }
-    ion-list >.card:nth-child(odd) {
-      clear: left;
-    }
-  }
-
-  @media screen and (min-width: 64em) {
-    // iPad Horizontal a tres columnas
-    ion-list >.card {
-      width: 32%;
-    }
-    ion-list >.card:nth-child(odd) {
-      clear: none;
-    }
-  }
 
   ion-list {
     .card {
@@ -59,6 +35,32 @@ page-home {
             font-size: 1.5rem;
         }
       }
+    }
+  }
+  @media screen and (min-width: 35em) and (max-width: 64em) {
+    // Móvil 4" Horizontal
+  //@media screen and (min-width: 44em) {
+    // iPad Vertical a dos columnas
+    ion-list {
+      overflow: hidden;
+    }
+    ion-list >.card {
+      float: left;
+      width: 48%;
+      margin: 5px;
+    }
+    ion-list >.card:nth-child(odd) {
+      clear: left;
+    }
+  }
+
+  @media screen and (min-width: 64em) {
+    // iPad Horizontal a tres columnas
+    ion-list >.card {
+      width: 32%;
+    }
+    ion-list >.card:nth-child(odd) {
+      clear: none;
     }
   }
 }
