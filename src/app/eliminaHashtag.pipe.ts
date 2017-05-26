@@ -12,7 +12,13 @@ export class eliminaHashtagPipe implements PipeTransform{
                 espacio = value.length;
             }
             cadena = value.substr(0, posHT) + value.substr (espacio);
-            while (cadena.substr(0,1)== ' ' || cadena.substr(0,1)== ',' || cadena.substr(0,1)== '.' || cadena.substr(0,1)== ':' || cadena.substr(0,1)== ';'){
+            while (cadena.substr(0,1)== ' ' || 
+                   cadena.substr(0,1)== ',' || 
+                   cadena.substr(0,1)== '.' || 
+                   cadena.substr(0,1)== ':' || 
+                   cadena.substr(0,1)== ';' || 
+                   cadena.substr(0,1)== '-' || 
+                   cadena.substr(0,1)== '_'){
                 cadena = cadena.substr(1);
             }
      //      console.log("[eliminaHashtagPipe]La cadena sin Hashtag es " + cadena + " La posición del caracter # es " + posHT + " espacio " + espacio);

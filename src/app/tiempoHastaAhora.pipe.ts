@@ -13,8 +13,10 @@ export class tiempoHastaAhoraPipe implements PipeTransform{
         var milisegundosPorDia = milisegundosPorHora * 24;
         var milisegundosPorMes = milisegundosPorDia * 30;
         var milisegundosPorAnyo = milisegundosPorDia * 365;
+        var zonaHoraria = Math.abs(new Date().getTimezoneOffset()/60);
+        console.log("[tiempoHastaAhoraPipe] " + zonaHoraria);
         // En la siguiente línea hay un +1 porque las horas que manda spreaker son las de gmt+0
-        var fechaSegundos = new Date (Number(value.substr(0,4)), Number(value.substr(5,2))-1, Number(value.substr(8,2)), Number(value.substr(11,2))+1, Number(value.substr(14,2)), Number(value.substr(17,2)));
+        var fechaSegundos = new Date (Number(value.substr(0,4)), Number(value.substr(5,2))-1, Number(value.substr(8,2)), Number(value.substr(11,2))+zonaHoraria, Number(value.substr(14,2)), Number(value.substr(17,2)));
         //console.log(value + "|"+ value.substr(0,4)+"|"+value.substr(5,2)+"|"+value.substr(8,2)+"|"+value.substr(11,2)+"|"+value.substr(14,2)+"|"+value.substr(17,2)+"|");
         var valueResultado = "Hace un rato";
 

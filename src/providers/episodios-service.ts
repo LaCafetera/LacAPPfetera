@@ -34,9 +34,9 @@ export class EpisodiosService {
         // let direccion = https://api.spreaker.com/v2/shows/1341125/episodes //--> LIVE
         let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
         if (ultimocap != null) {
+            console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );    
             direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
-        } 
-        console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );
+        }
         console.log("[EPISODIOS-SERVICE.dameEpisodios] "+ direccion  );
         return Observable.create(observer => {
             this.http.get(direccion).map(res => res.json()).subscribe(

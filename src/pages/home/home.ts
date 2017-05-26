@@ -37,7 +37,6 @@ export class HomePage {
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs, private _configuracion: ConfiguracionService) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
-            // user and time are the same arguments passed in `events.publish(user, time)`
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
                 this.mscControl = reproductorIn.controlador;

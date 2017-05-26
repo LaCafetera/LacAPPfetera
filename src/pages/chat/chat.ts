@@ -45,6 +45,7 @@ export class ChatPage {
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
         data => {
             this.items=data.response.items;
+            console.log("[CHAT]: cha recibido: "+ JSON.stringify(data.response.items));
         },
         err => {
             console.log("[CHAT.ionViewDidLoad] Error recuperando chat: " + err)

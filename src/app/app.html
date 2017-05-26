@@ -1,5 +1,4 @@
 <div [class]="chosenTheme">
-
     <ion-menu type="push" [content]="content">
         <ion-header>
             <ion-toolbar>
@@ -38,6 +37,10 @@
             </ion-item>
 
             <ion-item>
+                <a href="http://www.radiocable.com/mecenas.html" ion-button full>Haz te, mecenas</a>
+            </ion-item>
+
+            <ion-item>
                 <ion-label>
                     <ion-icon name="color-palette"></ion-icon> Elige un tema</ion-label>
                 <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
@@ -48,7 +51,7 @@
             </ion-item>
 
             <ion-item class="version">
-                <p>Versión de la APP: 21/05/2017</p>
+                <p>Versión de la APP: 26/05/2017</p>
             </ion-item>
 
             <!--button ion-button round menuClose>Cerrar</button-->
