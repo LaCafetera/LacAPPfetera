@@ -42,7 +42,7 @@
 
             <ion-item>
                 <ion-label>
-                    <ion-icon name="color-palette"></ion-icon> Elige un tema</ion-label>
+                    <ion-icon name="color-palette"></ion-icon>Elige un tema</ion-label>
                 <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
                     <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
                         {{theme.prettyName}}
@@ -51,7 +51,7 @@
             </ion-item>
 
             <ion-item class="version">
-                <p>Versión de la APP: 26/05/2017</p>
+                <p>Versión de la APP: 27/05/2017</p>
             </ion-item>
 
             <!--button ion-button round menuClose>Cerrar</button-->

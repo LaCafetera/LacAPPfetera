@@ -99,15 +99,15 @@
             </ion-col>
 
             <ion-col col-3>
-              <div *ngIf="!enVivo">
-                <descargaCafetera [fileDownload]="episodio" (ficheroDescargado)="ficheroDescargado($event)">
+              <!--div *ngIf="!enVivo"-->
+                <descargaCafetera [fileDownload]="episodio" [enVivo]="enVivo" (ficheroDescargado)="ficheroDescargado($event)">
                 </descargaCafetera>
-              </div>
+              <!--/div>
               <div *ngIf="enVivo">
                 <button ion-button clear (click)="msgDescarga('No es posible descargar reproducciones en vivo')">
                   <ion-icon name='lock' isActive="false"></ion-icon>
                 </button>
-              </div>
+              </div-->
             </ion-col>
 
             <ion-col col-3>
