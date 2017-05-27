@@ -1,4 +1,4 @@
-import { Component/*, Output, EventEmitter*/ } from '@angular/core';
+import { Component, ChangeDetectorRef/*, Output, EventEmitter*/ } from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -84,7 +84,8 @@ export class ReproductorPage {
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
                 private network: Network,
-                private player: Player) {
+                private player: Player,
+                private chngDetector: ChangeDetectorRef ) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.episodioLike = this.navParams.get('episodio').like;
@@ -189,12 +190,12 @@ export class ReproductorPage {
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-previous");
                         break;
                     case 'music-controls-pause':
-                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-pause");
+                        this.playPause(this._configuracion);
                         break;
                     case 'music-controls-play':
-                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-play");
+                        this.playPause(this._configuracion);
                         break;
                     case 'music-controls-destroy':
                         this.platform.exitApp();
@@ -203,8 +204,8 @@ export class ReproductorPage {
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
                     case 'music-controls-toggle-play-pause' :
-                        this.playPause(this._configuracion);
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-toggle-play-pause");
+                        this.playPause(this._configuracion);
                         break;
 
                     // Headset events (Android only)
@@ -212,12 +213,12 @@ export class ReproductorPage {
                         // Do something
                     //    break;
                     case 'music-controls-headset-unplugged':
-                        this.reproductor.pause();
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-unplugged");
+                        this.reproductor.pause();
                         break;
                     case 'music-controls-headset-plugged':
-                        this.reproductor.pause();
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-plugged");
+                        this.reproductor.pause();
                         break;
                     default:
                         break;
@@ -329,6 +330,7 @@ export class ReproductorPage {
                 }
                 this.iconoPlayPause = 'play';
                 this.reproduciendo = false;
+                this.chngDetector.detectChanges();
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
@@ -336,6 +338,8 @@ export class ReproductorPage {
                     this.iconoPlayPause = 'pause';
                     this.iniciaContadorRep();
                     this.reproduciendo = true;
+                    this.chngDetector.detectChanges();
+                    
                 }
                 else{
                     this.msgDescarga ("Sólo tiene permitidas reproducción por streaming con la conexión WIFI activada.");
