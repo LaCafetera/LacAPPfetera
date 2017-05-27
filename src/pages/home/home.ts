@@ -33,6 +33,8 @@ export class HomePage {
 
     numCapsXDescarga: number = 10;
 
+    contadorCapitulos : number = 0;
+    timerVigilaDescargas: number;
 
     constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs, private _configuracion: ConfiguracionService) {
         this.items = new Array();
@@ -91,8 +93,11 @@ export class HomePage {
     }
 
     cargaProgramas (usuario:string, token:string, episodio:string){
+        this.contadorCapitulos = this.numCapsXDescarga;
         this.episodiosService.dameEpisodios(usuario, token, episodio, this.numCapsXDescarga).subscribe(
             data => {
+                this.contadorCapitulos--;
+                console.log("[HOME.cargaProgramas] faltan por descargar " + this.contadorCapitulos + " capítulos");
                 //this.items=data.response.items;
                 //console.log("[HOME.cargaProgramas] Recibido " + JSON.stringify(data));
                 //console.log("[HOME.cargaProgramas] like vale  " + data.like + " para el cap "+ data.objeto.episode_id) ;
@@ -120,6 +125,10 @@ export class HomePage {
             err => {
                 console.log("[HOME.cargaProgramas] Error descargando episodio: " + err.message);
                 this.dialogs.alert ("[HOME.cargaProgramas] Error descargando episodios" + err, "Error");
+                this.contadorCapitulos--;
+                if (this.contadorCapitulos == 0){
+
+                }
             }
         );
     }
@@ -139,7 +148,21 @@ export class HomePage {
   }
 
     recalentarCafe(event){
-        this.cargaUsuarioParaProgramas(this.items[this.items.length-1].objeto.episode_id);
+        let episodio = this.items[this.items.length-1].objeto.episode_id;
+        if (episodio == null){
+            console.log("[HOME.recalentarCafe] Episodio nulo");
+            event.complete();
+        }
+        else {
+            this.cargaUsuarioParaProgramas(episodio);
+            this.timerVigilaDescargas = setInterval(() =>{
+                console.log("[HOME.recalentarCafe] faltan por descargar " + this.contadorCapitulos + " capítulos");
+                if (this.contadorCapitulos == 0){
+                    clearInterval(this.timerVigilaDescargas);
+                    event.complete();
+                }
+            }, 1000);
+        }  
     }
 
     lanzaTwitter(cap:string){
