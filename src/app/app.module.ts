@@ -55,7 +55,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     BrowserModule,
     HttpModule,
     Ng2EmojiModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, { // Esta llave es para poner atrás en lugar de back en el menú de navegación
+      backButtonText: 'Atrás'}),
     IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
@@ -68,17 +69,17 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     ChatPage,
     InfoUsuChatPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, 
-              File, 
-              MediaPlugin, 
-              Dialogs, 
-              SocialSharing, 
-              Network, 
-              MusicControls, 
-              BackgroundMode, 
-              StatusBar, 
-              SplashScreen, 
-              Contacts, 
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
+              File,
+              MediaPlugin,
+              Dialogs,
+              SocialSharing,
+              Network,
+              MusicControls,
+              BackgroundMode,
+              StatusBar,
+              SplashScreen,
+              Contacts,
               InAppBrowser,
               Player,
               ConfiguracionService,
@@ -86,4 +87,3 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
               CadenasTwitterService ]
 })
 export class AppModule {}
-
