@@ -140,6 +140,11 @@
       color: $cafe-primary;
     }
 
+    #botonera .button:active {
+      background-color: $cafe-primary;
+      color: $cafe-light;
+    }
+
     .range-bar {
       background-color: $cafe-light;
     }

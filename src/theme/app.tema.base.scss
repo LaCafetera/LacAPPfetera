@@ -145,6 +145,11 @@
       color: $base-primary;
     }
 
+    #botonera .button:active {
+      background-color: $base-primary;
+      color: $base-light;
+    }
+
     .range-bar {
       background-color: $base-light;
     }

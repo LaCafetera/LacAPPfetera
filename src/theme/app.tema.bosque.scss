@@ -140,6 +140,11 @@
       color: $bosque-primary;
     }
 
+    #botonera .button:active {
+      background-color: $bosque-primary;
+      color: $bosque-light;
+    }
+
     .range-bar {
       background-color: $bosque-light;
     }

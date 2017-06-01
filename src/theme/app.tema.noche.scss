@@ -136,6 +136,11 @@
       color: $noche-primary;
     }
 
+    #botonera .button:active {
+      background-color: $noche-primary;
+      color: $noche-light;
+    }
+
     .range-bar {
       background-color: $noche-light;
     }

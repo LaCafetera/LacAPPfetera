@@ -136,6 +136,11 @@
       color: $lila-primary;
     }
 
+    #botonera .button:active {
+      background-color: $lila-primary;
+      color: $lila-light;
+    }
+
     .range-bar {
       background-color: $lila-light;
     }
