@@ -132,6 +132,7 @@
     #botonera .button {
       /* botones de reproducción diferido */
       border-color: $noche-primary;
+      background-color: $noche-light;
       color: $noche-primary;
     }
 
@@ -218,4 +219,31 @@
          color: $noche-primary;
       }
     }
+
+// ******************************************************************* Estilos página de usuario info-usu-chat.html
+  page-info-usu-chat {
+    .card-title {
+      color: $noche-danger;
+    }
+    p {
+      color: $noche-primary;
+    }
+    .followers {
+      color: $noche-primary;
+
+      ion-badge {
+        background-color: $noche-primary;
+      }
+    }
+    .rrss {
+      color: $noche-primary;
+
+      ion-icon {
+        color: $noche-primary;
+      }
+      .inactivo {
+        color: $noche-light;
+      }
+    }
+  }
 }
