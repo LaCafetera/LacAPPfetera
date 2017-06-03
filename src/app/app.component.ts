@@ -8,6 +8,7 @@ import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from '../providers/episodios-service';
+//import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
 
 
 @Component({
@@ -30,6 +31,7 @@ export class MyApp {
   imgItem: string = "assets/icon/icon.png";
   nombreUsu: string = "Proscrito";
   descripcion: string = "Resistente de Sherwood"
+  datosUsu: Array<any> = null;
 
   constructor(public platform: Platform, 
               private _configuracion: ConfiguracionService, 
@@ -45,13 +47,13 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.barraEstado.styleDefault();
+      this.splashscreen.hide();
     });
   }
 
     ngOnInit() {
       //console.log ('[app.component.ngOnInit]');
 
-      this.splashscreen.hide();
       this._configuracion.getWIFI()
         .then((val)=> {
           this.soloWifi = val==true;
@@ -173,6 +175,7 @@ export class MyApp {
             if (parsedResponse["access_token"] !== undefined && parsedResponse["access_token"] !== null) { //conexión vía spreaker
               console.log ("[APP.loginSpreaker] Login vía Spreaker OK");
               this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
+              this.actualizaAvatar(parsedResponse["access_token"]);
             } 
           }
          });
@@ -197,6 +200,7 @@ export class MyApp {
           this.imgItem = data.response.user.image_url;
           this.nombreUsu = data.response.user.fullname;
           this.descripcion = data.response.user.description;
+          this.datosUsu = data.response.user;
           console.log("[APP.actualizaAvatar] Avatar actualizado " + data.response.user.image_url);
         }),
         ((error) => {

@@ -54,8 +54,8 @@ export class DescargaCafetera {
                 private chngDetector: ChangeDetectorRef ) {};
 
     ngOnInit(){
-       // this.porcentajeDescarga.emit({porcentaje: 0});
-       console.log("[Descarga.ngOnInit] ******************* La carpeta externa de descarga sería " + this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory));
+        // externalDataDirectory --> cdvfile://localhost/files-external/
+        // dataDirectory --> cdvfile://localhost/files/
        if (this.enVivo){
             this.icono = 'lock';
             this.ficheroDescargado.emit({existe: false})

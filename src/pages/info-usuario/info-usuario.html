@@ -1,0 +1,36 @@
+<!--
+  Generated template for the InfoUsuarioPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>
+      La cAPPfetera
+    </ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content >
+
+  <ion-card >
+
+    <img [src]="datosUsu.image_url"/>
+
+  </ion-card>
+
+  <!--form [formGroup]="formulario" (ngSubmit)="actualizarDatosUsu(formulario)"-->
+    <ion-item>
+      <ion-label floating>Nombre completo</ion-label> 
+      <ion-input type="text" name="nombre" ngModel></ion-input>
+    </ion-item> 
+ 
+  <button ion-button block type="submit">
+  </button> 
+   <!--/form-->
+</ion-content>
+

@@ -14,6 +14,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Contacts } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { InAppBrowser} from '@ionic-native/in-app-browser'
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -21,7 +22,6 @@ import { Player } from './player';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
-
 
 import { HttpModule } from '@angular/http';
 import { MyApp } from './app.component';
@@ -31,8 +31,12 @@ import { ReproductorPage } from '../pages/reproductor/reproductor';
 import { DetalleCapituloPage } from '../pages/detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../pages/chat/chat';
 import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
+import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
+import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
 
-import { DescargaCafetera } from './descarga.component';
+import { DescargaCafetera } from '../components/descarga.component';
+import { MenuExtComponent } from '../components/menuext/menuext';
+
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
 import { muestraHashtagPipe } from './muestraHashtag.pipe'
 import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
@@ -49,7 +53,10 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     tiempoHastaAhoraPipe,
     muestraHashtagPipe,
     eliminaHashtagPipe,
-    InfoUsuChatPage
+    InfoUsuChatPage,
+    InfoUsuarioPage,
+    MapaCafeteroPage,
+    MenuExtComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +73,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     ReproductorPage,
     DetalleCapituloPage,
     ChatPage,
-    InfoUsuChatPage
+    MapaCafeteroPage,
+    MenuExtComponent
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, 
               File, 
@@ -79,6 +87,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
               StatusBar, 
               SplashScreen, 
               Contacts, 
+              ScreenOrientation,
               InAppBrowser,
               Player,
               ConfiguracionService,

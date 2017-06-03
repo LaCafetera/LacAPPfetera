@@ -1,12 +1,13 @@
 import { Component } from "@angular/core";
 
-import { NavController, Events, MenuController } from 'ionic-angular';
+import { NavController, Events, MenuController, PopoverController } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
+import { MenuExtComponent } from '../../components/menuext/menuext';
 
 import { InfoFerPage } from "../info-fer/info-fer";
 import { ReproductorPage } from "../reproductor/reproductor";
@@ -36,7 +37,14 @@ export class HomePage {
     contadorCapitulos : number = 0;
     timerVigilaDescargas: number;
 
-    constructor(public navCtrl: NavController, private episodiosService: EpisodiosService, public events: Events, public menuCtrl: MenuController, private backgroundMode: BackgroundMode, private dialogs: Dialogs, private _configuracion: ConfiguracionService) {
+    constructor(public navCtrl: NavController, 
+                private episodiosService: EpisodiosService, 
+                public events: Events, 
+                public menuCtrl: MenuController, 
+                private backgroundMode: BackgroundMode, 
+                private dialogs: Dialogs, 
+                private _configuracion: ConfiguracionService,
+                public popoverCtrl: PopoverController) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             if (reproductorIn != null){
@@ -210,6 +218,17 @@ export class HomePage {
                 this.dialogs.alert ("Error descargando episodios" + err, "Error");
             }
         );
+    }
+
+    abreDatosUsuario() {
+        console.log("************************************************************");
+    }
+
+    muestraMenu(myEvent) {
+        let popover = this.popoverCtrl.create(MenuExtComponent);
+        popover.present({
+            ev: myEvent
+        });
     }
 
 /*------------------------- salir -----------------

@@ -16,8 +16,6 @@
             </ion-item>
 
             <ion-item >
-                <!--button ion-button full (click)="conexionSpreaker()" *ngIf="!conectadoASpreaker">Loguéate en Spreaker</button>
-                <button ion-button full (click)="conexionSpreaker()" *ngIf="conectadoASpreaker">Desconéctate de Spreaker</button-->
                 <ion-label> Conectado a Spreaker</ion-label>
                 <ion-toggle [(ngModel)]="conectadoASpreaker" (ionChange)="conexionSpreaker($event)"></ion-toggle>
             </ion-item>

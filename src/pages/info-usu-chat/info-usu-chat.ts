@@ -44,12 +44,6 @@ export class InfoUsuChatPage {
 
           if (this.user['description'] == null) {
             this.user['description'] = 'Descripción no disponible';
-            if (this.user_id == '9794942') {
-              this.user['description'] = this.user['description'] + '. Escrito desde mi iPhone';
-            }
-          }
-          else if (this.user_id == '9794942') {
-            this.user['description'] = this.user['description'] + '. Escrito desde mi iPhone';
           }
         },
         err => {

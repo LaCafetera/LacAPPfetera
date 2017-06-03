@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 
- import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
  
 
 import 'rxjs/add/operator/map';
@@ -175,6 +175,13 @@ export class EpisodiosService {
         let cs = "client_secret=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST";
         let ru = "redirect_uri=http://localhost:8100";
         return this.http.post('https://api.spreaker.com/oauth2/token?' + cID + '&' + cs + '&' + gt + '&' + ru + '&code=' + code, null).map(res => res.json());
+    }
+
+    actualizaDatosUsuario(usuario: string, token: string, datosUsu:Array<any>){
+        console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Actualizando datos de usuario");
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        return this.http.post('https://api.spreaker.com/v2/users/'+usuario+'?fullname='+datosUsu['nombreCompleto'], null, {headers: headers}).map(res => res.json());
     }
 }
 
