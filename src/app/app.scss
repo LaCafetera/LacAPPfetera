@@ -15,11 +15,13 @@
 //@import "../pages/page1/page1";
 //@import "../pages/page2/page2";
 
-.msgDescarga { // En teoría es para la barra de mensajes negra
+.msgDescarga {
+  // En teoría es para la barra de mensajes negra
   color: #FF0;
 }
 
-a:link, a:visited { // Todos los enlaces de la app sin subrayado
+a:link, a:visited {
+  // Todos los enlaces de la app sin subrayado
   text-decoration: none;
 }
 
@@ -27,29 +29,32 @@ a:link, a:visited { // Todos los enlaces de la app sin subrayado
 
   .menuCafetero {
     ion-avatar img {
+      // Imagen del usuario logeado
       width: 50px;
       height: 50px;
     }
     h2 {
+      // Nombre de usuario
       font-size: 1.2em;
       font-weight: bold;
     }
     h3 {
+      // Descripción si hay
       font-size: 1em;
     }
 
     ion-label {
-      /* Etiquetas de las opciones */
+      // Etiquetas de las opciones
       font-size: 0.9em;
     }
 
     .button {
-      /* Botones pulsables */
+      // Botones pulsables
       border-radius: 5px;
     }
 
     .version p {
-      /* versión de la App */
+      // versión de la App
       font-size: 0.8em;
       font-weight: bold;
     }

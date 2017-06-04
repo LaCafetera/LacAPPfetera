@@ -40,7 +40,7 @@
 
             <ion-item>
                 <ion-label>
-                    <ion-icon name="color-palette"></ion-icon>Elige un tema</ion-label>
+                    <ion-icon name="color-palette"></ion-icon> Elige un tema</ion-label>
                 <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">
                     <ion-option *ngFor='let theme of availableThemes' [value]="theme.className" [selected]="theme.className === chosenTheme">
                         {{theme.prettyName}}
