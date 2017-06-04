@@ -3,6 +3,7 @@ import { PopoverController, NavParams, ViewController, App } from 'ionic-angular
 
 import { InfoFerPage } from "../../pages/info-fer/info-fer";
 import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
+import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
 
 /**
  * Generated class for the MenuExtComponent component.
@@ -14,11 +15,10 @@ import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
   selector: 'menuext',
   template: `
       <ion-list>
-        <ion-list-header>Ionic</ion-list-header>
         <button ion-item (click)="mostrarLaCafetera()">Acerca de La Cafetera</button>
         <button ion-item (click)="mostrarMapaCafetero()">Mapa Cafetero</button>
-        <button ion-item (click)="close()">Showcase</button>
-        <button ion-item (click)="close()">GitHub Repo</button>
+        <button ion-item (click)="mostrarInfoUsuarioSpreaker()">Tú en Spreaker</button>
+        <button ion-item (click)="programasDescargados()">Programas Descargados</button>
       </ion-list>
     `
 })
@@ -26,6 +26,7 @@ export class MenuExtComponent {
 
   infoFer = InfoFerPage;
   mapaCafetero = MapaCafeteroPage;
+  infoUsuario = InfoUsuarioPage;
 
   constructor(public viewCtrl: ViewController, public appCtrl: App) {
     console.log('Hello MenuExtComponent Component');
@@ -34,15 +35,29 @@ export class MenuExtComponent {
   mostrarLaCafetera(){
      console.log('[MENUEXT.mostrarLaCafetera] Abriendo acerca de ');
       this.viewCtrl.dismiss();
+  //    close();
       this.appCtrl.getRootNav().push(this.infoFer);
-    close();
   }
 
   mostrarMapaCafetero(){
      console.log('[MENUEXT.mostrarLaCafetera] Abriendo acerca de ');
       this.viewCtrl.dismiss();
+     // close();
       this.appCtrl.getRootNav().push(this.mapaCafetero);
-    close();
+  }
+
+  mostrarInfoUsuarioSpreaker(){
+     console.log('[MENUEXT.mostrarInfoUsuarioSpreaker] Abriendo acerca de ');
+      this.viewCtrl.dismiss();
+ //     close();
+      this.appCtrl.getRootNav().push(this.infoUsuario);
+  }
+
+  programasDescargados(){
+     console.log('[MENUEXT.programasDescargados] Abriendo acerca de ');
+      this.viewCtrl.dismiss();
+      //this.appCtrl.getRootNav().push(this.infoUsuario);
+  //  close();
   }
 
   close() {

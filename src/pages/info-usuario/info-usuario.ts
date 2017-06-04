@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 
 import { EpisodiosService } from '../../providers/episodios-service';
@@ -22,11 +22,16 @@ export class InfoUsuarioPage {
 //  private formulario: FormGroup;
   datosUsu:Array<any>;
 
+  imgItem: string = "../../assets/icon/icon.png";
+  nombreUsu: string = "Proscrito";
+  descripcion: string = "Resistente de Sherwood"
+
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
               private formBuilder: FormBuilder,
               private episodiosService: EpisodiosService, 
-              private _configuracion: ConfiguracionService ) {    
+              private _configuracion: ConfiguracionService, 
+              public toastCtrl: ToastController) {    
     this.datosUsu = this.navParams.get('datos');
   /*  this.formulario = this.formBuilder.group({
       nombreCompleto: ['']
@@ -77,5 +82,13 @@ export class InfoUsuarioPage {
     */
   }
 
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000,
+            cssClass: 'msgDescarga'
+        });
+        toast.present();
+    }
 
 }

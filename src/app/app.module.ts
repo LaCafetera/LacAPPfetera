@@ -73,6 +73,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     ReproductorPage,
     DetalleCapituloPage,
     ChatPage,
+    InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent
   ],
