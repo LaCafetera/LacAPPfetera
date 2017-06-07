@@ -79,6 +79,10 @@ $range-wp-padding-vertical: 0px;
 $range-ios-bar-height: 4px;
 $range-md-bar-height: 4px;
 $range-wp-bar-height: 4px;
+// ancho del menú flotante
+$popover-ios-width: 300px;
+$popover-md-width: 300px;
+$popover-wp-width: 300px;
 
 // App iOS Variables
 // --------------------------------------------------
@@ -87,6 +91,7 @@ $range-wp-bar-height: 4px;
 $item-ios-thumbnail-size: 90px;
 // Color del botón en click
 $button-ios-outline-background-color-activated: transparent;
+
 // App Material Design Variables
 // --------------------------------------------------
 // Material Design only Sass variables can go here
@@ -95,6 +100,7 @@ $button-ios-outline-background-color-activated: transparent;
 $range-md-knob-width:40px;
 $range-md-knob-background-color:#ddd;
 // --------------------------------------------------
+
 // Windows only Sass variables can go here
 // App Theme
 // --------------------------------------------------
