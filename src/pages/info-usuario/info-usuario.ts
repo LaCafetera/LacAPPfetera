@@ -137,6 +137,7 @@ export class InfoUsuarioPage {
                 this.episodiosService.actualizaDatosUsuario(this.dataUsuario, this.dataToken, camposCabiar).subscribe(
                     data => {
                         console.log("[INFO-USUARIO.actualizarDatosUsu] Mensaje enviado" + JSON.stringify(data));
+                        this.msgDescarga ("Datos actualizados.");
                     },
                     err => {
                         console.log("[INFO-USUARIO.actualizarDatosUsu] Error enviando mensaje:" + err);
