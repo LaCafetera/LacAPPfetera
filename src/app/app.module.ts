@@ -63,7 +63,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     HttpModule,
     Ng2EmojiModule,
     IonicModule.forRoot(MyApp, { // Esta llave es para poner atrás en lugar de back en el menú de navegación
-      backButtonText: 'Atrás'}),
+      backButtonText: ''}),
     IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
