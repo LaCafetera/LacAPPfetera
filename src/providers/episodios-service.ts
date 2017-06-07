@@ -181,7 +181,14 @@ export class EpisodiosService {
         console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Actualizando datos de usuario");
         let headers = new Headers();
         headers.append ('Authorization', 'Bearer ' + token);
-        return this.http.post('https://api.spreaker.com/v2/users/'+usuario+'?fullname='+datosUsu['nombreCompleto'], null, {headers: headers}).map(res => res.json());
+        let parametros: string = "";
+        for (let i=0; i<datosUsu.length; i++){
+            //console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Cambio " + i + " -> " + datosUsu[i]["nombre"] + " - " + datosUsu[i]["valor"]);
+            parametros = parametros.concat(datosUsu[i]["nombre"]).concat('=').concat(datosUsu[i]["valor"]).concat('&');
+        }
+        parametros = parametros.substr(0, parametros.length - 1);
+        console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Quiero enviar " + parametros);
+        return this.http.post('https://api.spreaker.com/v2/users/'+usuario+'?'+parametros, null, {headers: headers}).map(res => res.json());
     }
 }
 

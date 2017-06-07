@@ -33,6 +33,7 @@ import { ChatPage } from '../pages/chat/chat';
 import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
 import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
 import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
+import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
 
 import { DescargaCafetera } from '../components/descarga.component';
 import { MenuExtComponent } from '../components/menuext/menuext';
@@ -56,7 +57,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     InfoUsuChatPage,
     InfoUsuarioPage,
     MapaCafeteroPage,
-    MenuExtComponent
+    MenuExtComponent,
+    CapitulosDescargadosPage
   ],
   imports: [
     BrowserModule,
@@ -76,7 +78,8 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     ChatPage,
     InfoUsuarioPage,
     MapaCafeteroPage,
-    MenuExtComponent
+    MenuExtComponent,
+    CapitulosDescargadosPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,

@@ -4,6 +4,7 @@ import { PopoverController, NavParams, ViewController, App } from 'ionic-angular
 import { InfoFerPage } from "../../pages/info-fer/info-fer";
 import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
 import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
+import { CapitulosDescargadosPage } from "../../pages/capitulos-descargados/capitulos-descargados";
 
 /**
  * Generated class for the MenuExtComponent component.
@@ -27,6 +28,7 @@ export class MenuExtComponent {
   infoFer = InfoFerPage;
   mapaCafetero = MapaCafeteroPage;
   infoUsuario = InfoUsuarioPage;
+  descargados = CapitulosDescargadosPage;
 
   constructor(public viewCtrl: ViewController, public appCtrl: App) {
     console.log('Hello MenuExtComponent Component');
@@ -54,9 +56,9 @@ export class MenuExtComponent {
   }
 
   programasDescargados(){
-     console.log('[MENUEXT.programasDescargados] Abriendo acerca de ');
+     console.log('[MENUEXT.programasDescargados] Abriendo capítulos descargados ');
       this.viewCtrl.dismiss();
-      //this.appCtrl.getRootNav().push(this.infoUsuario);
+      this.appCtrl.getRootNav().push(this.descargados);
   //  close();
   }
 
