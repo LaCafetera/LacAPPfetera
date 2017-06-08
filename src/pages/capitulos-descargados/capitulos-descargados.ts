@@ -35,7 +35,7 @@ export class CapitulosDescargadosPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CapitulosDescargadosPage');
-    this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+/*    this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
     .then((entry) => {
         this.dirdestino = entry.toInternalURL();
         console.log('[CAPITULOS-DESCARGADOS.ionViewDidLoad] Vamos a revisar los archivos que hay en la carpeta ' +this.dirdestino  );
@@ -43,6 +43,36 @@ export class CapitulosDescargadosPage {
         .then((listado)=>{
           console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Los capitulos descargados son " + JSON.stringify(listado));
           this.datosDestino = listado
+
+
+            listado.response.items.forEach((capitulo, elemento, array) => {
+                this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                    data => {
+                        if (token!= null) {
+                            this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
+                            .subscribe (
+                                espureo=>{ 
+                                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
+                                    observer.next ({objeto:data.response.episode,
+                                                    like: true});
+                                },
+                                error=>{
+                                    console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
+                                    observer.next ({objeto:data.response.episode,
+                                                    like: false});
+                                }
+                            )
+                        }
+                        else{
+                            observer.next ({objeto:data.response.episode,
+                                            like: false});
+                        }
+                    },
+                    err => {
+                        console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                    }
+                )}
+
         })
         .catch ((error)=>{
           console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Se ha producido un errrrorrrr listsando episodios" + error.body);
@@ -50,7 +80,7 @@ export class CapitulosDescargadosPage {
     })
     .catch ((error)=>{
       console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error recuperando carpeta de destino: " + error.body);
-    });
+    });*/
   }
 
 }

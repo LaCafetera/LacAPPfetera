@@ -75,6 +75,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     InfoFerPage,
     ReproductorPage,
     DetalleCapituloPage,
+    InfoUsuChatPage,
     ChatPage,
     InfoUsuarioPage,
     MapaCafeteroPage,
