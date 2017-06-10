@@ -7,7 +7,9 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>capitulosDescargados</ion-title>
+    <ion-title>
+            La cAPPfetera
+    </ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -24,7 +26,7 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row (click)="pushPage(item)">
+            <ion-row  (click)="pushPage(item)">
                 <ion-col col-4>
                     <div id="imagen">
                         <img [src]="item.objeto.image_url" />
@@ -49,7 +51,8 @@
                 </ion-col>
             </ion-row>
 
-            <ion-row class="iconos" (click)="pushPage(item)">
+
+            <ion-row class="iconos"  (click)="pushPage(item)">
                 <ion-col col-5>
                     <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
                 </ion-col>
@@ -66,7 +69,8 @@
                 </ion-col>
 
                 <ion-col col-1 icon-right text-center>
-                    <ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
+                    <!--ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon-->
+                    <ion-icon name="play"></ion-icon>
                 </ion-col>
             </ion-row>
         </ion-card>

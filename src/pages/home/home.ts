@@ -47,6 +47,7 @@ export class HomePage {
                 public popoverCtrl: PopoverController) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
+            console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
                 this.mscControl = reproductorIn.controlador;
@@ -54,6 +55,14 @@ export class HomePage {
             if( this.reproductor != null) {
                 this.capEnRep = this.reproductor.dameCapitulo();
             }
+        });
+        events.subscribe("like:modificado", (reproductorIn) => {
+            console.log('[HOME.constructor] Recibido mensaje Like Modificado');
+            /*
+                Valores recibidos:
+                    valorLike booleano, 
+                    episodio: código episodio
+            */
         });
     }
 
@@ -134,9 +143,9 @@ export class HomePage {
                 console.log("[HOME.cargaProgramas] Error descargando episodio: " + err.message);
                 this.dialogs.alert ("[HOME.cargaProgramas] Error descargando episodios" + err, "Error");
                 this.contadorCapitulos--;
-                if (this.contadorCapitulos == 0){
+              /*  if (this.contadorCapitulos == 0){
 
-                }
+                }*/
             }
         );
     }
@@ -225,7 +234,8 @@ export class HomePage {
     }
 
     muestraMenu(myEvent) {
-        let popover = this.popoverCtrl.create(MenuExtComponent);
+        let datosObjeto = {player:     this.reproductor, controlador:this.mscControl}
+        let popover = this.popoverCtrl.create(MenuExtComponent, datosObjeto );
         popover.present({
             ev: myEvent
         });

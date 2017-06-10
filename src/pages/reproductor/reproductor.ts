@@ -489,6 +489,7 @@ export class ReproductorPage {
                                 console.log("[REPRODUCTOR.meGustasMucho] eliminando like:" + JSON.stringify(data));
                                 this.episodioLike = false;
                                 this.colorLike = "";
+                                this.events.publish('like:modificado', {valorLike:this.episodioLike, episodio:this.episodio});
                             },
                             err => {
                                 console.log("[REPRODUCTOR.meGustasMucho] Error eliminando like al episodio:" + err);
@@ -502,6 +503,7 @@ export class ReproductorPage {
                                 console.log("[REPRODUCTOR.meGustasMucho] Aceptado el like:" + JSON.stringify(data));
                                 this.episodioLike = true;
                                 this.colorLike = "danger";
+                                this.events.publish('like:modificado', {valorLike:this.episodioLike, episodio:this.episodio});
                             },
                             err => {
                                 console.log("[REPRODUCTOR.meGustasMucho] Error mandando like al episodio:" + err);

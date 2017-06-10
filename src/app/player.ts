@@ -134,7 +134,8 @@ export class Player {
     }
 
     reproduciendoEste(audio):boolean{
-        return (audio == this.capitulo);
+        console.log ("[PLAYER.reproduciendoEste] que dicen que si es el mismo audio este: "+ audio + " y este: "+ this.capitulo );
+        return (/*audio == this.capitulo || */this.capitulo.includes(audio));
     }
 
     play(audio: string, configuracion: ConfiguracionService){
