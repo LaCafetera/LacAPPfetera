@@ -254,4 +254,28 @@
       }
     }
   }
+
+// ******************************************************************* Estilos página datos Spreaker info-usuario.html
+  page-info-usuario {
+    ion-item {
+      border-bottom: solid 1px $base-light;
+
+      ion-label {
+        // Etiquetas de las opciones
+        color: $base-primary;
+      }
+      ion-input {
+        // Nombre de usuario
+        color: $base-primary;
+      }
+    }
+    
+    .button {
+      /* Botones pulsables */
+      border: solid 1px $base-primary;
+      color: $base-primary;
+      background-color: $base-light;
+    }
+  }
+
 }
