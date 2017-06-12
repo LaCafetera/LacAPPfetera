@@ -27,56 +27,57 @@
             </ion-row>
 
             <ion-row  (click)="pushPage(item)">
-                <ion-col col-4>
+                <ion-col col-3>
                     <div id="imagen">
                         <img [src]="item.objeto.image_url" />
                     </div>
                 </ion-col>
 
-                <ion-col col-8>
-                    <div class="texto">
-                        <div *ngIf="item.objeto.type!='LIVE'">
-                            <h3>{{ item.objeto.title | eliminaHashtag }}</h3>
+                <ion-col col-5 class="datos">
+                    <ion-row>
+                        <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
+                    </ion-row>
+
+                    <ion-row class="iconos" >
+                        <ion-icon name='chatbubbles'></ion-icon>
+                        {{ item.objeto.messages_count}}
+                    </ion-row>
+
+                    <ion-row class="iconos" >
+                        <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
+                        <ion-icon name='heart' *ngIf='item.like' class="likesi"></ion-icon>
+                          {{ item.objeto.likes_count}}
+                    </ion-row>
+                </ion-col>
+
+                <ion-col col-2 text-center>
+                      <!--ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon-->
+                      <ion-icon name="play" class="playBasura"></ion-icon>
+                </ion-col>
+
+                <ion-col col-2 text-center>
+                    <ion-icon name='trash' class="playBasura"></ion-icon>
+                </ion-col>
+
+            </ion-row>
+
+            <ion-row  (click)="pushPage(item)">
+                <div class="texto">
+                    <div *ngIf="item.objeto.type!='LIVE'">
+                        <h3>{{ item.objeto.title | eliminaHashtag }}</h3>
+                    </div>
+                    <div class="capDirecto" *ngIf="item.objeto.type=='LIVE'">
+                        <!-- Muestra el icono y el texto en directo -->
+                        <div class="iconoCD">
+                            <ion-icon name="ios-radio-outline"></ion-icon>
                         </div>
-                        <div class="capDirecto" *ngIf="item.objeto.type=='LIVE'">
-                            <!-- Muestra el icono y el texto en directo -->
-                            <div class="iconoCD">
-                                <ion-icon name="ios-radio-outline"></ion-icon>
-                            </div>
-                            <div class="textoCD">
-                                Directo
-                            </div>
+                        <div class="textoCD">
+                            Directo
                         </div>
                     </div>
-                </ion-col>
+                </div>
             </ion-row>
 
-
-            <ion-row class="iconos"  (click)="pushPage(item)">
-                <ion-col col-4>
-                    <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
-                </ion-col>
-
-                <ion-col col-3 icon-left>
-                    <ion-icon name='chatbubbles'></ion-icon>
-                    {{ item.objeto.messages_count}}
-                </ion-col>
-
-                <ion-col col-2 icon-left>
-                    <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
-                    <ion-icon name='heart' *ngIf='item.like' class="likesi"></ion-icon>
-                    {{ item.objeto.likes_count}}
-                </ion-col>
-
-                <ion-col col-2 icon-right text-center>
-                    <ion-icon name='trash' class="envio"></ion-icon>
-                </ion-col>
-
-                <ion-col col-1 icon-left text-center>
-                    <!--ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon-->
-                    <ion-icon name="play"></ion-icon>
-                </ion-col>
-            </ion-row>
         </ion-card>
     </ion-list>
 </ion-content>
