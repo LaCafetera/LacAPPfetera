@@ -24,4 +24,25 @@ page-info-usu-chat {
     }
   }
 
+  @media screen and (min-width: 35em) and (max-width: 47em) {
+    // Móvil 4" Horizontal
+    ion-card {
+      img {
+        width: 40%;
+        float: left;
+        padding-right: 25px;
+      }
+      .followers {
+        padding-left: 0px;
+      }
+    }
+  }
+
+  @media screen and (min-width: 64em) {
+    // iPad Horizontal
+    ion-card {
+
+    }
+  }
+
 }
