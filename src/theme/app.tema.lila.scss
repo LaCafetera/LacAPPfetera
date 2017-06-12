@@ -274,5 +274,51 @@
       background-color: $lila-light;
     }
   }
+// ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-capitulos-descargados {
+    ion-list {
+      .card {
+        .hashtag {
+          /* Línea y sombra de separación del titular */
+          border-bottom: solid 1px $lila-light;
+          box-shadow: 0px 0px 1px $lila-dark;
+
+          a:active {
+            /* Enlace hashtag pulsado*/
+            color: $lila-light;
+          }
+        }
+        h3 {
+          /* Resto de texto del titular */
+          color: $lila-primary;
+          border-top: solid 1px $lila-light;
+        }
+        p {
+          /* Texto tiempo que hace del capítulo */
+          color: $lila-primary;
+        }
+        #imagen img{
+          /* Imagen del capítulo */
+          box-shadow: 2px 2px 2px $lila-dark;
+        }
+        .iconos {
+          /* Color y borde zona iconos */
+          color: $lila-primary;
+
+          ion-icon {
+            /* Iconos */
+            color: $lila-primary;
+          }
+
+          .likesi {
+            color: $lila-danger;
+          }
+        }
+      }
+      .playBasura {
+        color: $lila-primary;
+      }
+    }
+  }
 
 }

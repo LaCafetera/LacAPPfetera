@@ -57,47 +57,48 @@
   }
 
 // ******************************************************************* Estilos página listado de capítulos home.html
+  page-home {
+    ion-list {
+      .card {
+        .hashtag {
+          /* Línea y sombra de separación del titular */
+          border-bottom: solid 1px $base-light;
+          box-shadow: 0px 0px 1px $base-dark;
 
-  ion-list {
-    .card {
-      .hashtag {
-        /* Línea y sombra de separación del titular */
-        border-bottom: solid 1px $base-light;
-        box-shadow: 0px 0px 1px $base-dark;
-
-        a:active {
-          /* Enlace hashtag pulsado*/
-          color: $base-light;
+          a:active {
+            /* Enlace hashtag pulsado*/
+            color: $base-light;
+          }
         }
-      }
-      h3 {
-        /* Resto de texto del titular */
-        color: $base-primary;
-      }
-      .capDirecto {
-        /* Texto + icono Directo */
-        color: $base-danger;
-      }
-      p {
-        /* Texto tiempo que hace del capítulo */
-        color: $base-primary;
-      }
-      #imagen img{
-        /* Imagen del capítulo */
-        box-shadow: 2px 2px 2px $base-dark;
-      }
-      .iconos {
-        /* Color y borde zona iconos */
-    		border-top: solid 1px $base-light;
-        color: $base-primary;
-
-        ion-icon {
-          /* Iconos */
+        h3 {
+          /* Resto de texto del titular */
           color: $base-primary;
         }
-
-        .likesi {
+        .capDirecto {
+          /* Texto + icono Directo */
           color: $base-danger;
+        }
+        p {
+          /* Texto tiempo que hace del capítulo */
+          color: $base-primary;
+        }
+        #imagen img{
+          /* Imagen del capítulo */
+          box-shadow: 2px 2px 2px $base-dark;
+        }
+        .iconos {
+          /* Color y borde zona iconos */
+      		border-top: solid 1px $base-light;
+          color: $base-primary;
+
+          ion-icon {
+            /* Iconos */
+            color: $base-primary;
+          }
+
+          .likesi {
+            color: $base-danger;
+          }
         }
       }
     }
@@ -269,12 +270,59 @@
         color: $base-primary;
       }
     }
-    
+
     .button {
       /* Botones pulsables */
       border: solid 1px $base-primary;
       color: $base-primary;
       background-color: $base-light;
+    }
+  }
+
+// ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-capitulos-descargados {
+    ion-list {
+      .card {
+        .hashtag {
+          /* Línea y sombra de separación del titular */
+          border-bottom: solid 1px $base-light;
+          box-shadow: 0px 0px 1px $base-dark;
+
+          a:active {
+            /* Enlace hashtag pulsado*/
+            color: $base-light;
+          }
+        }
+        h3 {
+          /* Resto de texto del titular */
+          color: $base-primary;
+          border-top: solid 1px $base-light;
+        }
+        p {
+          /* Texto tiempo que hace del capítulo */
+          color: $base-primary;
+        }
+        #imagen img{
+          /* Imagen del capítulo */
+          box-shadow: 2px 2px 2px $base-dark;
+        }
+        .iconos {
+          /* Color y borde zona iconos */
+          color: $base-primary;
+
+          ion-icon {
+            /* Iconos */
+            color: $base-primary;
+          }
+
+          .likesi {
+            color: $base-danger;
+          }
+        }
+      }
+      .playBasura {
+        color: $base-primary;
+      }
     }
   }
 
