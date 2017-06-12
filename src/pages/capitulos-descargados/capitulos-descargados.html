@@ -8,14 +8,14 @@
 
   <ion-navbar>
     <ion-title>
-            La cAPPfetera
+            Descargados
     </ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content main>
     <ion-list>
         <ion-card *ngFor="let item of items" text-wrap>
             <ion-row class="hashtag" *ngIf="item.objeto.title.indexOf('#')> -1">
@@ -53,7 +53,7 @@
 
 
             <ion-row class="iconos"  (click)="pushPage(item)">
-                <ion-col col-5>
+                <ion-col col-4>
                     <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
                 </ion-col>
 
@@ -62,13 +62,17 @@
                     {{ item.objeto.messages_count}}
                 </ion-col>
 
-                <ion-col col-3 icon-left>
+                <ion-col col-2 icon-left>
                     <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
                     <ion-icon name='heart' *ngIf='item.like' class="likesi"></ion-icon>
                     {{ item.objeto.likes_count}}
                 </ion-col>
 
-                <ion-col col-1 icon-right text-center>
+                <ion-col col-2 icon-right text-center>
+                    <ion-icon name='trash' class="envio"></ion-icon>
+                </ion-col>
+
+                <ion-col col-1 icon-left text-center>
                     <!--ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon-->
                     <ion-icon name="play"></ion-icon>
                 </ion-col>
