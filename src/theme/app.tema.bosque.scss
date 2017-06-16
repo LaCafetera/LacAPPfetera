@@ -56,7 +56,7 @@
     }
 
 // ******************************************************************* Estilos página listado de capítulos home.html
-
+page-home {
   ion-list {
     .card {
       .hashtag {
@@ -97,6 +97,7 @@
       }
     }
   }
+}
 
 // ******************************************************************* Estilos página de reproductor de capítulo reproductor.html
 
@@ -255,4 +256,75 @@
       }
     }
   }
+
+// ******************************************************************* Estilos página datos Spreaker info-usuario.html
+  page-info-usuario {
+    ion-item {
+      border-bottom: solid 1px $bosque-light;
+
+      ion-label {
+        // Etiquetas de las opciones
+        color: $bosque-primary;
+      }
+      ion-input {
+        // Nombre de usuario
+        color: $bosque-primary;
+      }
+    }
+
+    .button {
+      /* Botones pulsables */
+      border: solid 1px $bosque-primary;
+      color: $bosque-primary;
+      background-color: $bosque-light;
+    }
+  }
+
+// ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-capitulos-descargados {
+    ion-list {
+      .card {
+        .hashtag {
+          /* Línea y sombra de separación del titular */
+          border-bottom: solid 1px $bosque-light;
+          box-shadow: 0px 0px 1px $bosque-dark;
+
+          a:active {
+            /* Enlace hashtag pulsado*/
+            color: $bosque-light;
+          }
+        }
+        h3 {
+          /* Resto de texto del titular */
+          color: $bosque-primary;
+          border-top: solid 1px $bosque-light;
+        }
+        p {
+          /* Texto tiempo que hace del capítulo */
+          color: $bosque-primary;
+        }
+        #imagen img{
+          /* Imagen del capítulo */
+          box-shadow: 2px 2px 2px $bosque-dark;
+        }
+        .iconos {
+          /* Color y borde zona iconos */
+          color: $bosque-primary;
+
+          ion-icon {
+            /* Iconos */
+            color: $bosque-primary;
+          }
+
+          .likesi {
+            color: $bosque-danger;
+          }
+        }
+      }
+      .playBasura {
+        color: $bosque-primary;
+      }
+    }
+  }
+
 }

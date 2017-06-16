@@ -1,3 +1,19 @@
 page-info-usuario {
-
+  ion-label {
+    // Etiquetas de las opciones
+    font-size: 0.9em;
+  }
+  ion-input {
+    font-size: 0.9em;
+    font-weight: bold;
+  }
+  .button {
+    /* Botones pulsables */
+    border-radius: 5px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
 }

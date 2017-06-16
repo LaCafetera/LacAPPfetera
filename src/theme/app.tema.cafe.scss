@@ -56,7 +56,7 @@
     }
 
 // ******************************************************************* Estilos página listado de capítulos home.html
-
+page-home {
   ion-list {
     .card {
       .hashtag {
@@ -97,6 +97,7 @@
       }
     }
   }
+}
 
 // ******************************************************************* Estilos página de reproductor de capítulo reproductor.html
 
@@ -255,4 +256,74 @@
       }
     }
   }
+
+// ******************************************************************* Estilos página datos Spreaker info-usuario.html
+  page-info-usuario {
+    ion-item {
+      border-bottom: solid 1px $cafe-light;
+
+      ion-label {
+        // Etiquetas de las opciones
+        color: $cafe-primary;
+      }
+      ion-input {
+        // Nombre de usuario
+        color: $cafe-primary;
+      }
+    }
+
+    .button {
+      /* Botones pulsables */
+      border: solid 1px $cafe-primary;
+      color: $cafe-primary;
+      background-color: $cafe-light;
+    }
+  }
+// ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-capitulos-descargados {
+    ion-list {
+      .card {
+        .hashtag {
+          /* Línea y sombra de separación del titular */
+          border-bottom: solid 1px $cafe-light;
+          box-shadow: 0px 0px 1px $cafe-dark;
+
+          a:active {
+            /* Enlace hashtag pulsado*/
+            color: $cafe-light;
+          }
+        }
+        h3 {
+          /* Resto de texto del titular */
+          color: $cafe-primary;
+          border-top: solid 1px $cafe-light;
+        }
+        p {
+          /* Texto tiempo que hace del capítulo */
+          color: $cafe-primary;
+        }
+        #imagen img{
+          /* Imagen del capítulo */
+          box-shadow: 2px 2px 2px $cafe-dark;
+        }
+        .iconos {
+          /* Color y borde zona iconos */
+          color: $cafe-primary;
+
+          ion-icon {
+            /* Iconos */
+            color: $cafe-primary;
+          }
+
+          .likesi {
+            color: $cafe-danger;
+          }
+        }
+      }
+      .playBasura {
+        color: $cafe-primary;
+      }
+    }
+  }
+
 }
