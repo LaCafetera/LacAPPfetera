@@ -482,7 +482,7 @@ export class ReproductorPage {
             if (dataUsuario != null){
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
-                    if (this.episodioLike){
+                    if (this.episodioLike){ 
                         console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de dislike para usuario " + dataUsuario);
                         this.episodiosService.episodioDislike(this.episodio, dataUsuario, dataToken ).subscribe(
                             data => {

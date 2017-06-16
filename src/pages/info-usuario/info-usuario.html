@@ -8,7 +8,7 @@
 
   <ion-navbar>
     <ion-title>
-      La cAPPfetera
+      Tú en Spreaker
     </ion-title>
   </ion-navbar>
 
@@ -16,41 +16,37 @@
 
 
 <ion-content >
-
   <ion-card >
+    <img [src]="imgItem" (click) = "msgDescarga('¿A que molaría poder cambiar la foto? Pues Spreaker no quiere')"/>
 
-    <img [src]="imgItem"/>
+    <!--form [formGroup]="formulario" (ngSubmit)="actualizarDatosUsu(formulario)"-->
+    <ion-item>
+      <ion-label floating>Nombre completo</ion-label>
+      <ion-input type="text" [(ngModel)]="nombreUsu" required ngModel></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Descripción</ion-label>
+      <ion-input type="text" [(ngModel)]="descripcion" ngModel></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Correo Electrónico</ion-label>
+      <ion-input type="email" [(ngModel)]="emilio" ngModel></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Dirección Web</ion-label>
+      <ion-input type="url" [(ngModel)]="dirWeb" ngModel></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Dirección Facebook</ion-label>
+      <ion-input type="url" [(ngModel)]="dirFacebook" ngModel></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Usuario de Twitter (sin @)</ion-label>
+      <ion-input type="text" [(ngModel)]="usuTwitter" ngModel></ion-input>
+    </ion-item>
+
+    <button ion-button block type="submit"  class="btn btn-success" (click)="actualizarDatosUsu()">Actualizar Datos</button>
+     <!--/form-->
 
   </ion-card>
-
-  <!--form [formGroup]="formulario" (ngSubmit)="actualizarDatosUsu(formulario)"-->
-    <ion-item>
-      <ion-label floating>Nombre completo</ion-label> 
-      <ion-input type="text" [(ngModel)]="nombreUsu" required ngModel></ion-input>
-    </ion-item> 
-    <ion-item>
-      <ion-label floating>Descripción</ion-label> 
-      <ion-input type="text" [(ngModel)]="descripcion" ngModel></ion-input>
-    </ion-item> 
-    <ion-item>
-      <ion-label floating>Correo Electronico</ion-label> 
-      <ion-input type="email" [(ngModel)]="emilio" ngModel></ion-input>
-    </ion-item> 
-    <ion-item>
-      <ion-label floating>Dirección Web</ion-label> 
-      <ion-input type="url" [(ngModel)]="dirWeb" ngModel></ion-input>
-    </ion-item> 
-    <ion-item>
-      <ion-label floating>Dirección Facebook</ion-label> 
-      <ion-input type="url" [(ngModel)]="dirFacebook" ngModel></ion-input>
-    </ion-item> 
-    <ion-item>
-      <ion-label floating>Usuario de Twitter</ion-label> 
-      <ion-input type="text" [(ngModel)]="usuTwitter" ngModel></ion-input>
-    </ion-item> 
- 
-  <button ion-button block type="submit"  class="btn btn-success" (click)="actualizarDatosUsu()">Actualizar Datos
-  </button> 
-   <!--/form-->
 </ion-content>
-

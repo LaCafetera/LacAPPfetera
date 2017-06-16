@@ -28,6 +28,7 @@ export class DescargaCafetera {
     @Input() fileDownload: string;
     @Input() enVivo: boolean;
     @Output() ficheroDescargado = new EventEmitter();
+    @Output() ficheroBorrado = new EventEmitter();
    /*@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
 
@@ -171,12 +172,13 @@ export class DescargaCafetera {
             }
             else if (this.icono == 'trash') {
                 console.log("[descarga.components.descargarFichero] Solicitado borrado.")
-                this.dialogs.confirm('El fichero ya ha sido descargado. \n ¿Desea borrarlo?')
+                this.dialogs.confirm('¿Está seguro de que desea borrar el programa?')
                 .then ((respuesta)=> {
                     //reproductor.stop();
                     console.log("[descarga.components.descargarFichero] Confirmación de borrado:" + respuesta);
                     if (respuesta == 1){
                         this.borrarDescarga(this.fileDownload + ".mp3");
+                        this.ficheroBorrado.emit({episodio_id: this.fileDownload});
                     }
                 })
                 .catch (() => {
