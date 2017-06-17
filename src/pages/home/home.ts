@@ -56,13 +56,9 @@ export class HomePage {
                 this.capEnRep = this.reproductor.dameCapitulo();
             }
         });
-        events.subscribe("like:modificado", (reproductorIn) => {
+        events.subscribe("like:modificado", (valoresLike) => {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');
-            /*
-                Valores recibidos:
-                    valorLike booleano, 
-                    episodio: código episodio
-            */
+            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
         });
     }
 
@@ -151,6 +147,7 @@ export class HomePage {
     }
 
     ngOnDestroy(){
+        console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
         this.reproductor.release(this._configuracion);
         //this.mscControl.destroy(); <-- Revisar esto que no funciona.
         //.destroy(); // onSuccess, onError
@@ -239,6 +236,21 @@ export class HomePage {
         popover.present({
             ev: myEvent
         });
+    }
+
+    actualizaLike (valorLike, episodio){
+        var encontrado = false;
+        for (var i = 0; i < this.items.length && !encontrado; i+=1) {
+        // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
+            if (this.items[i].objeto.episode_id == episodio) {
+                this.items[i].like = valorLike;
+                encontrado = true;
+                console.log("[HOME.actualizaLike] Encontrado capítulo");
+            }
+        }
+        if (!encontrado){
+            console.log("[HOME.actualizaLike] Capítulo no Encontrado");
+        }
     }
 
 /*------------------------- salir -----------------

@@ -34,13 +34,13 @@ export class DescargaCafetera {
 
     }*/
 
-    //fileTransfer = new Transfer();
     descargando:boolean = false;
     icono: string;
 
     //UBICACIONHTTP: string = "https://api.spreaker.com/download/episode/";
     //DIRDESTINO:string = cordova.file.dataDirectory;
     dirdestino:string;
+    fileTransfer: TransferObject;
 
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
@@ -57,12 +57,15 @@ export class DescargaCafetera {
     ngOnInit(){
         // externalDataDirectory --> cdvfile://localhost/files-external/
         // dataDirectory --> cdvfile://localhost/files/
-       if (this.enVivo){
+
+        this.fileTransfer = this.transfer.create();
+
+        if (this.enVivo){
             this.icono = 'lock';
             this.ficheroDescargado.emit({existe: false})
-       }
-       else {
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        }
+        else {
+            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
                 .then((entry) => {
                     this.dirdestino = entry.toInternalURL();
                     if (this.fileDownload != null) {
@@ -81,7 +84,7 @@ export class DescargaCafetera {
                             }
                         })
                         .catch((err) => {
-                            this.icono = 'cloud-download';
+                            this.icono = 'ios-cloud-download';
                             this.ficheroDescargado.emit({existe: false});
                                 console.log("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que no existe.");
                         });
@@ -96,7 +99,7 @@ export class DescargaCafetera {
                     this.icono = 'bug';
                     this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
                 });
-       }
+        }
     }
 
     msgDescarga  (mensaje: string) {
@@ -113,13 +116,13 @@ export class DescargaCafetera {
        }
        else {
             let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+this.fileDownload+"/download";
-            const fileTransfer: TransferObject = this.transfer.create();
+            //const this.fileTransfer: TransferObject = this.transfer.create();
         /////  let audio_en_desc : string  = "https://api.spreaker.com/download/episode/"+this.fileDownload+".mp3";
             //let uri : string = encodeURI(audio_en_desc);
             let fileURL:string = this.dirdestino + this.fileDownload + ".mp3" ;
             console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
             console.log ("[Descarga.components.descargarFichero] Descargando " + fileURL);
-            if (this.icono == 'cloud-download' || this.icono == 'ios-archive'){
+            if (this.icono == 'ios-cloud-download' || this.icono == 'ios-archive'){
                 console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
                 if (!this.descargando){
                     this._configuracion.getWIFI()
@@ -128,7 +131,7 @@ export class DescargaCafetera {
                             if(this.network.type === "wifi" || !val  ) {
                                 console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.dirdestino );
                                 this.msgDescarga("Descargando audio.")
-                                fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
+                                this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
                                     console.log("[descarga.components.descargarFichero]  Descarga completa.");
                                     this.icono = 'trash';
                                     this.ficheroDescargado.emit({existe: true});
@@ -137,7 +140,7 @@ export class DescargaCafetera {
                                     this.msgDescarga('Descarga completa');
                                 })
                                 .catch((error) => {
-                                    if (error.code != 4 /*FileTransferError.ABORT_ERR*/){
+                                    if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
                                         console.log("[descarga.components.descargarFichero] Kagada " + error);
                                         console.log("[descarga.components.descargarFichero] download error source " + error.source);
                                         console.log("[descarga.components.descargarFichero] download error target " + error.target);
@@ -145,6 +148,8 @@ export class DescargaCafetera {
                                         this.msgDescarga("Error en Descargar. Código de error " + error.code);
                                     }
                                     this.descargando = false;
+                                    this.icono = 'ios-cloud-download';
+                                    this.porcentajeDescargado = 0;
                                 });
                                 this.descargando = true;
                             }
@@ -154,7 +159,7 @@ export class DescargaCafetera {
                         }).catch(() => {
                             console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
                         });
-                    fileTransfer.onProgress((progress) => {
+                    this.fileTransfer.onProgress((progress) => {
                         this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
                         if (this.porcentajeCalculado != this.porcentajeDescargado){
                             console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
@@ -165,7 +170,7 @@ export class DescargaCafetera {
                     })
                 }
                 else{
-                    fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
+                    this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
                     this.msgDescarga ("Cancelando descarga");
                     this.borrarDescarga(this.fileDownload  + ".mp3");
                 }

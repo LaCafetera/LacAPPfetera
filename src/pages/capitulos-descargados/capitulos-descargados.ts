@@ -49,18 +49,11 @@ export class CapitulosDescargadosPage {
                 this.capEnRep = this.reproductor.dameCapitulo();
             }
         });
+        events.subscribe("like:modificado", (valoresLike) => {
+            console.log('[HOME.constructor] Recibido mensaje Like Modificado');
+            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
+        });
     }
-
-/*
-{"isFile":false,"isDirectory":true,"name":"files","fullPath":"/files/","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/files/"},
-{"isFile":false,"isDirectory":true,"name":"Documents","fullPath":"/Documents/","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/Documents/"},
-{"isFile":true,"isDirectory":false,"name":"11556812","fullPath":"/11556812","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/11556812"},
-{"isFile":true,"isDirectory":false,"name":"11978713.mp3","fullPath":"/11978713.mp3","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/11978713.mp3"},
-{"isFile":true,"isDirectory":false,"name":"12006537.mp3","fullPath":"/12006537.mp3","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/12006537.mp3"},
-{"isFile":true,"isDirectory":false,"name":"11885748.mp3","fullPath":"/11885748.mp3","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/11885748.mp3"},
-{"isFile":true,"isDirectory":false,"name":"12016111.mp3","fullPath":"/12016111.mp3","filesystem":"<FileSystem: files>","nativeURL":"file:///data/user/0/com.ionicframework.lacappfetera828555/files/12016111.mp3"}]"
-
-*/
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad CapitulosDescargadosPage');
@@ -153,8 +146,7 @@ export class CapitulosDescargadosPage {
     }
 
     dameEnlace (cadena:string):string{
-        return "https://twitter.com/hashtag/"+this.damehashtag(cadena)//+"/live";  //--> Versión 2
-        //return "https://twitter.com/hashtag/"+this.damehashtag(cadena);
+        return "https://twitter.com/hashtag/"+this.damehashtag(cadena)
     }
 
     tidyYourRoom(){
@@ -196,11 +188,6 @@ export class CapitulosDescargadosPage {
     }
 
     borrarElemento(episodio){
-        this.quitaElementoDeLista(episodio.episodio_id);
-        console.log("[HOME.actualizaLike] Debería borrar el episodio: " + episodio.episodio_id);
-    }
-
-    quitaElementoDeLista (episodio) {
         var encontrado = false;
         for (var i = 0; i < this.items.length && !encontrado; i+=1) {
         // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
@@ -215,4 +202,18 @@ export class CapitulosDescargadosPage {
         }
     }
 
+    actualizaLike (valorLike, episodio){
+        var encontrado = false;
+        for (var i = 0; i < this.items.length && !encontrado; i+=1) {
+        // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
+            if (this.items[i].objeto.episode_id == episodio) {
+                this.items[i].like = valorLike;
+                encontrado = true;
+                console.log("[HOME.actualizaLike] Encontrado capítulo");
+            }
+        }
+        if (!encontrado){
+            console.log("[HOME.actualizaLike] Capítulo no Encontrado");
+        }
+    }
 }

@@ -48,12 +48,12 @@ export class EpisodiosService {
                                     this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
                                     .subscribe (
                                         espureo=>{ 
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
+                                          //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
                                             observer.next ({objeto:data.response.episode,
                                                             like: true});
                                         },
                                         error=>{
-                                            console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
+                                           // console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
                                             observer.next ({objeto:data.response.episode,
                                                             like: false});
                                         }
@@ -142,7 +142,7 @@ export class EpisodiosService {
     }
 
     episodioDimeSiLike(episodio_id:string, usuario:string, token:string){
-        console.log("[EPISODIOS-SERVICE.episodioDimeSiLike] Consultando si gusta o no gusta el episodio "+ episodio_id);
+        //console.log("[EPISODIOS-SERVICE.episodioDimeSiLike] Consultando si gusta o no gusta el episodio "+ episodio_id);
         let headers = new Headers();
         headers.append ('Authorization', 'Bearer ' + token);
         headers.append('Content-Type', 'application/json');

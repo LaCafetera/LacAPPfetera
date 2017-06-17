@@ -46,6 +46,10 @@ export class Player {
 //        this.repPlugin = new MediaPlugin ();
     }
 
+    ngOnDestroy(){
+        console.log("[PLAYER.ngOnDestroy] M'an matao");
+    }
+
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
         console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
         //this._configuracion = configuracion;
@@ -167,14 +171,8 @@ export class Player {
             this.capitulo = audio;
             this.seekPdte = true;
             this.repObject = this.crearepPlugin (audio, configuracion);
-/*            .then((objeto)=> {*/
-                console.log("[PLAYER.play] Objeto reproductor creado."); 
-/*                this.repObject = objeto;*/
-			    this.repObject.play();
-/*            })
-            .catch((error)=> {
-                console.log("[PLAYER.crearepPlugin] Error creando reproductor: "+ error); 
-            })*/
+            console.log("[PLAYER.play] Objeto reproductor creado."); 
+            this.repObject.play();
         }
     }
 
@@ -239,10 +237,6 @@ export class Player {
     stop(){
         this.repObject.stop();
         //this.reproduciendo = false;
-    }
-
-    dimeCapitulo():string{
-        return ('**************** El capítulo es:' + this.capitulo==null?'Sin capítulo definido':this.capitulo);
     }
 
 }
