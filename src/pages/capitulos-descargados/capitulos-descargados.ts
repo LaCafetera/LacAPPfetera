@@ -39,14 +39,18 @@ export class CapitulosDescargadosPage {
         this.items = new Array();
         this.reproductor = this.navParams.get('player');
         this.mscControl = this.navParams.get('controlador');
+        if( this.reproductor != null) {
+            this.capEnRep = this.reproductor.dameCapitulo();
+            console.log('[CAPITULOS-DESCARGADOS.constructor] El capítulo que se está reproduciendo es ' + this.capEnRep);
+        }
+        else {
+            console.log('[CAPITULOS-DESCARGADOS.constructor] Reproductor es nulo.');
+        }
         events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje Audio Modificado');
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
                 this.mscControl = reproductorIn.controlador;
-            }
-            if( this.reproductor != null) {
-                this.capEnRep = this.reproductor.dameCapitulo();
             }
         });
         events.subscribe("like:modificado", (valoresLike) => {

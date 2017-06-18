@@ -198,6 +198,7 @@ export class ReproductorPage {
                         this.playPause(this._configuracion);
                         break;
                     case 'music-controls-destroy':
+                        this.reproductor.release(this._configuracion);
                         this.platform.exitApp();
                         break;
 
@@ -214,11 +215,11 @@ export class ReproductorPage {
                     //    break;
                     case 'music-controls-headset-unplugged':
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-unplugged");
-                        this.reproductor.pause();
+                        this.reproductor.pause(this._configuracion);
                         break;
                     case 'music-controls-headset-plugged':
                         console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-plugged");
-                        this.reproductor.pause();
+                        this.reproductor.pause(this._configuracion);
                         break;
                     default:
                         break;
@@ -256,8 +257,10 @@ export class ReproductorPage {
     ngOnDestroy(){
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
+        //console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
     }
+
     numerosDosCifras(numero):string {
         let ret: string = "00";
         if (!isNaN(numero)){
@@ -326,7 +329,7 @@ export class ReproductorPage {
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
                 else {
-                    this.reproductor.pause();
+                    this.reproductor.pause(this._configuracion);
                 }
                 this.iconoPlayPause = 'play';
                 this.reproduciendo = false;

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { NavController, Events, MenuController, PopoverController } from 'ionic-angular';
+import { NavController, Events, MenuController, PopoverController, Platform } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
@@ -20,7 +20,7 @@ import { Player } from "../../app/player";
   providers: [EpisodiosService, BackgroundMode, Dialogs/*, ConfiguracionService*/]
 })
 
-export class HomePage {
+export class HomePage  {
 
     items: Array<any>;
    // reproductor = ReproductorPage;
@@ -44,7 +44,8 @@ export class HomePage {
                 private backgroundMode: BackgroundMode, 
                 private dialogs: Dialogs, 
                 private _configuracion: ConfiguracionService,
-                public popoverCtrl: PopoverController) {
+                public popoverCtrl: PopoverController,
+                public platform: Platform) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
@@ -60,18 +61,28 @@ export class HomePage {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');
             this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
         });
-    }
-
-    ionViewDidLoad() {
-        //console.log("[HOME.ionViewDidLoad] Entrando" );
         this.backgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
+        this.platform.pause.subscribe(()=>{
+            this.reproductor.release(_configuracion);
+            console.log('[HOME.constructor] Nos han mandado a dormir.');
+        })
+    }
+
+    ionViewDidLoad() {
+        //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
         this.cargaUsuarioParaProgramas(null);
     }
-    
+    /*
+    ngOnDestroy(){
+        console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
+        //this.mscControl.destroy(); <-- Revisar esto que no funciona.
+        //.destroy(); // onSuccess, onError
+    }*/
+
     cargaUsuarioParaProgramas (episodio:string){
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
@@ -146,12 +157,6 @@ export class HomePage {
         );
     }
 
-    ngOnDestroy(){
-        console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
-        this.reproductor.release(this._configuracion);
-        //this.mscControl.destroy(); <-- Revisar esto que no funciona.
-        //.destroy(); // onSuccess, onError
-    }
 
     pushPage(item){
         this.navCtrl.push(ReproductorPage, {episodio:   item,

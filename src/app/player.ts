@@ -1,4 +1,4 @@
-import { Injectable, Component/*, Output, EventEmitter*/ } from '@angular/core';
+import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { MediaPlugin, MediaObject } from '@ionic-native/media';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -10,7 +10,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
     providers: [File, MediaPlugin]
 })
 
-export class Player {
+export class Player implements OnDestroy {
 
   //  private repPlugin: MediaPlugin;
     private repObject: MediaObject;
@@ -35,7 +35,7 @@ export class Player {
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
 
-    constructor(/*private repObject: MediaObject, */public repPlugin: MediaPlugin, private file: File){
+    constructor(/*private repObject: MediaObject, */public repPlugin: MediaPlugin, private file: File, configuracion: ConfiguracionService){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
@@ -47,7 +47,7 @@ export class Player {
     }
 
     ngOnDestroy(){
-        console.log("[PLAYER.ngOnDestroy] M'an matao");
+        console.log("[PLAYER.ngOnDestroy] M'an matao!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
@@ -160,6 +160,7 @@ export class Player {
                         console.log("[PLAYER.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
                         if (pos > 0 && capitulo != ""){
                             configuracion.setTimeRep(capitulo, pos * 1000);
+                            console.log ("[PLAYER.play] Guardando la posición en la configuración");
                         }
                     })
                     .catch ((err)=> {
@@ -180,8 +181,20 @@ export class Player {
         this.repObject.play();
     }
 
-    pause(){
-        this.repObject.pause();
+    pause(configuracion: ConfiguracionService){
+        if (this.repObject != null){
+            this.repObject.getCurrentPosition()
+                .then((pos)=>{
+                    console.log("[PLAYER.release] Recibida posición " + pos * 1000);
+                    if (pos > 0) {
+                        configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                    }
+                })
+                .catch ((err)=> {
+                    console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
+                });
+            this.repObject.pause();
+        }
     }
 
     release(configuracion: ConfiguracionService){
