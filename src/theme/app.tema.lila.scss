@@ -319,6 +319,11 @@ page-home {
       .playBasura {
         color: $lila-primary;
       }
+      .button {
+        ion-icon {
+          color: $lila-primary;
+        }
+      }
     }
   }
 
