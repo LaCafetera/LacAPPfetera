@@ -27,15 +27,15 @@
             </ion-row>
 
             <ion-row >
-                <ion-col col-10>
+                <ion-col col-9>
                     <ion-row >
-                        <ion-col col-3 (click)="pushPage(item)">
+                        <ion-col col-4 (click)="pushPage(item)">
                             <div id="imagen">
                                 <img [src]="item.objeto.image_url" />
                             </div>
                         </ion-col>
 
-                        <ion-col col-5 class="datos"  (click)="pushPage(item)">
+                        <ion-col col-6 class="datos"  (click)="pushPage(item)">
                             <ion-row>
                                 <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
                             </ion-row>
@@ -52,13 +52,14 @@
                             </ion-row>
                         </ion-col>
 
-                        <ion-col col-2 text-center  (click)="pushPage(item)">
+                        <ion-col col-2 (click)="pushPage(item)">
                             <!--ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon-->
                             <ion-icon name="play" class="playBasura" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
                         </ion-col>
                     </ion-row>
                 </ion-col>
-                <ion-col col-2 text-center >
+
+                <ion-col col-3 >
                     <descargaCafetera [fileDownload]="item.objeto.episode_id" [enVivo]=false (ficheroBorrado)="borrarElemento($event)">
                     </descargaCafetera>
                 </ion-col>

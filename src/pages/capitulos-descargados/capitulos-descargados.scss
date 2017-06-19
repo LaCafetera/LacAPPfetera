@@ -27,6 +27,14 @@ page-capitulos-descargados {
         padding-top: 30px;
         font-size: 3rem;
       }
+      .button {
+        margin-top: 25px;
+
+        ion-icon {
+          margin-top: 15px;
+          font-size: 4rem;
+        }
+      }
     }
   }
   @media screen and (min-width: 35em) and (max-width: 64em) {
