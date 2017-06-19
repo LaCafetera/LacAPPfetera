@@ -192,17 +192,18 @@ export class CapitulosDescargadosPage {
     }
 
     borrarElemento(episodio){
+            console.log("[HOME.borrarElemento] recibido " +episodio.episodio_id );
         var encontrado = false;
         for (var i = 0; i < this.items.length && !encontrado; i+=1) {
         // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
-            if (this.items[i].objeto.episode_id == episodio) {
+            if (this.items[i].objeto.episode_id == episodio.episodio_id) {
                 this.items.splice(i, 1);
                 encontrado = true;
-                console.log("[HOME.actualizaLike] Encontrado capítulo en posición " + i);
+                console.log("[HOME.borrarElemento] Encontrado capítulo en posición " + i);
             }
         }
         if (!encontrado){
-            console.log("[HOME.actualizaLike] Capítulo no Encontrado");
+            console.log("[HOME.borrarElemento] Capítulo no Encontrado");
         }
     }
 
