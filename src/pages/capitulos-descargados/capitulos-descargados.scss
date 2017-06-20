@@ -22,13 +22,18 @@ page-capitulos-descargados {
       }
       .datos {
         padding-left: 15px;
+
+        p {
+          width: 100%;
+        }
       }
       .playBasura {
         padding-top: 30px;
         font-size: 3rem;
       }
       .button {
-        margin-top: 25px;
+        margin-top: 20px;
+        height: 50px;
 
         ion-icon {
           margin-top: 15px;
