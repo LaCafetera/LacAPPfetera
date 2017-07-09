@@ -52,7 +52,7 @@ export class MenuExtComponent {
      console.log('[MENUEXT.mostrarInfoUsuarioSpreaker] Abriendo acerca de ');
       this.viewCtrl.dismiss();
  //     close();
-      this.appCtrl.getRootNav().push(this.infoUsuario);
+      this.appCtrl.getRootNav().push(this.infoUsuario, {detalles: ""});
   }
 
   programasDescargados(){

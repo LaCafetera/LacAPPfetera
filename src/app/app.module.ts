@@ -15,6 +15,7 @@ import { Contacts } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { Deeplinks } from '@ionic-native/deeplinks';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -95,6 +96,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
               Contacts,
               ScreenOrientation,
               InAppBrowser,
+              Deeplinks,
               Player,
               ConfiguracionService,
               EpisodiosService,

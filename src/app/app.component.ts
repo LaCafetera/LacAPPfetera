@@ -4,16 +4,17 @@ import { StatusBar} from '@ionic-native/status-bar';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { InAppBrowser} from '@ionic-native/in-app-browser'
+import { Deeplinks } from '@ionic-native/deeplinks';
 
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from '../providers/episodios-service';
-//import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
+import { InfoUsuarioPage } from '../pages/info-usuario/info-usuario';
 
 
 @Component({
   templateUrl: 'app.html',
-  providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts, InAppBrowser]
+  providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts, InAppBrowser, Deeplinks]
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
@@ -33,21 +34,44 @@ export class MyApp {
   descripcion: string = "Resistente de Sherwood"
   datosUsu: Array<any> = null;
 
-  constructor(public platform: Platform, 
+  constructor(private _platform: Platform, 
               private _configuracion: ConfiguracionService, 
               public toastCtrl: ToastController, 
               private barraEstado: StatusBar, 
               private splashscreen: SplashScreen, 
               private contacts: Contacts,
               private epService: EpisodiosService,
-              private iab: InAppBrowser) {
+              private iab: InAppBrowser,
+              private _deepLink: Deeplinks) {
 
     this.availableThemes = this._configuracion.availableThemes;
-    platform.ready().then(() => {
+    _platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.barraEstado.styleDefault();
-      this.splashscreen.hide();
+      this.splashscreen.hide(); 
+    });
+  }
+
+  ngAfterViewInit() {
+    this._platform.ready().then(() => {
+      this._deepLink.routeWithNavController(this.nav,{'/':InfoUsuarioPage}).subscribe((match) => {
+        //console.log('[app.component.ngAfterViewInit] Enrutado. $link: '/* + match.$route + ' - '*/ +  JSON.stringify(match.$link) );
+        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
+        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
+        this.epService.solicitaTokenViaCode(match.$args["code"]).subscribe(
+            data => {
+                console.log("[app.component.ngAfterViewInit] Descargados datos de conexión: " + JSON.stringify(data));
+                this.habemusConexion(data.token);
+            },
+            err => {
+                console.error("[app.component.ngAfterViewInit] Error solicitando datos de usuario " + err.message);
+                this.logoutSpreaker();
+            }
+        );
+      }, (nomatch) => {
+        console.warn('[app.component.ngAfterViewInit] Enrutado incorrecto' + nomatch);
+      });;
     });
   }
 
@@ -82,7 +106,7 @@ export class MyApp {
       this._configuracion.theme.subscribe(val => {
         this.chosenTheme = val;
         console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
-        if (this.platform.is("ios")){
+        if (this._platform.is("ios")){
           this.barraEstado.overlaysWebView(true);
         }
         this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
@@ -152,43 +176,93 @@ export class MyApp {
       }
       this.iniciando= false;
     }
-
+// cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=cappfetera --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=lacappfetera.mo 
+// npm install --save @ionic-native/deeplinks    
     loginSpreaker(){
-      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
+                                    '_self', 
+                                    'location=no,clearsessioncache=yes,clearcache=yes');
+    }
+
+    loginSpreaker2(){
+      // una conexión
+      //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      // cuatro conexiones.
+      //let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      // Cuatro conexiones, tirando de CODE
+      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
                                     '_blank', 
                                     'location=no,clearsessioncache=yes,clearcache=yes');
       browser.on('loadstart')
         .subscribe((event) => {
           let responseParameters;
+          let parsedResponse = {};
           console.log ("[APP.loginSpreaker] URL recibido: " + event.url + " tipo " + event.type );
           if ((event.url).indexOf("http://localhost:8100") === 0) {
-            //browser.removeEventListener("exit", (event) => {});
-            browser.close();
-            if ((event.url).indexOf("http://localhost:8100") === 0 ){
-              responseParameters = ((event.url).split("#")[1]).split("&");
+            if ((event.url).indexOf("?error") == -1) {
+              //browser.removeEventListener("exit", (event) => {});
+              browser.close();
+              //if ((event.url).indexOf("http://localhost:8100") === 0 ){
+                responseParameters = ((event.url).split("#")[1]).split("&");
+              //}
+              console.log ("[APP.loginSpreaker] responseParameters vale " + responseParameters);
+              for (let i = 0; i < responseParameters.length; i++) {
+                parsedResponse[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+              }
+              if (parsedResponse["access_token"] !== undefined && parsedResponse["access_token"] !== null) { //conexión vía spreaker
+                console.log ("[APP.loginSpreaker] Login vía Spreaker OK");
+                this.habemusConexion(parsedResponse["access_token"]);
+                //this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
+                //this.actualizaAvatar(parsedResponse["access_token"]);
+              } 
             }
-            console.log ("[APP.loginSpreaker] responseParameters vale " + responseParameters);
-            let parsedResponse = {};
+            else {
+              this.conectadoASpreaker = false;
+              console.log ("[APP.loginSpreaker] Error en la conexión: " + (event.url).split("?")[1]);
+              this.msgDescarga ("Se ha producido un error conectando a Spreaker.");
+            }
+          }
+          else if ((event.url).indexOf("https://www.spreaker.com/twitter/connect/return") === 0) {
+            console.log("[APP.loginSpreaker] Conexión vía twitter");
+            browser.close();
+            responseParameters = ((event.url).split("?")[1]).split("&");
             for (let i = 0; i < responseParameters.length; i++) {
               parsedResponse[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
             }
-            if (parsedResponse["access_token"] !== undefined && parsedResponse["access_token"] !== null) { //conexión vía spreaker
-              console.log ("[APP.loginSpreaker] Login vía Spreaker OK");
-              this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
-              this.actualizaAvatar(parsedResponse["access_token"]);
+            console.log("[APP.loginSpreaker] Parámetros recibdos: " + parsedResponse);
+            if (parsedResponse["oauth_token"] !== undefined && parsedResponse["oauth_token"] !== null) { //conexión vía spreaker
+              console.log ("[APP.loginSpreaker] Recibido Code; solicitando token");
+              this.epService.solicitaTokenViaCode (parsedResponse["oauth_token"]).subscribe
+                ((data) => {
+                  console.log("[APP.loginSpreaker] Información recibida " + JSON.stringify(data));
+                  this.habemusConexion(data.access_token);
+                  //this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
+                  //this.actualizaAvatar(parsedResponse["access_token"]);
+                }),
+                ((error) => {
+                    console.log("[APP.loginSpreaker] Error recibiendo token " + error);
+                });
             } 
           }
-         });
+        });
     /*  browser.on("exit") //comento esto, porque cuando conectas con un servicio que ya te "conoce" directamente cierra la web (Twitter) y lo considero como cancelado, por esto.
         .subscribe((event) =>{
           console.log ("[APP.loginSpreaker] Login cancelado. type: " + event.type + " url " + event.url + " code " + event.code + " message " + event.message);
         });*/
     }
 
+    habemusConexion (token: string){
+      console.log ("[APP.habemusConexion] Procesando token "+ token);
+      this._configuracion.setTokenSpreaker(token);
+      this.actualizaAvatar(token);
+      this.conectadoASpreaker = true;
+    }
+
     logoutSpreaker(){
       console.log ("[APP.logoutSpreaker] Desconectando de spreaker.");
       this._configuracion.setTokenSpreaker(null);
       this.actualizaAvatar(null);
+      this.conectadoASpreaker = false;
     }
 
     actualizaAvatar (token:string){

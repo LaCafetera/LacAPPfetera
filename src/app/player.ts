@@ -1,6 +1,7 @@
 import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { MediaPlugin, MediaObject } from '@ionic-native/media';
+import { Events } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
 
 //declare var cordova: any;
@@ -21,21 +22,25 @@ export class Player implements OnDestroy {
     //private reproduciendo:boolean = false;
     private statusRep:number;
 /*
-    public MEDIA_RUNNING = 0; // this.repPlugin.MEDIA_RUNNING;
-    public MEDIA_PAUSED = 0; // this.repPlugin.MEDIA_PAUSED;
-    public MEDIA_STARTING = 0; // this.repPlugin.MEDIA_STARTING;
-    public MEDIA_STOPPED = 0; // this.repPlugin.MEDIA_STOPPED;
+    public MEDIA_NONE = 0; // MediaPlugin.MEDIA_NONE;
+    public MEDIA_STARTING = 1; // this.repPlugin.MEDIA_STARTING;
+    public MEDIA_RUNNING = 2; // this.repPlugin.MEDIA_RUNNING;
+    public MEDIA_PAUSED = 3; // this.repPlugin.MEDIA_PAUSED;
+    public MEDIA_STOPPED = 4; // this.repPlugin.MEDIA_STOPPED;
 
-    public MEDIA_ERR_ABORTED = 0; // this.repPlugin.MEDIA_ERR_ABORTED;
-    public MEDIA_ERR_DECODE = 0; // this.repPlugin.MEDIA_ERR_DECODE;
-    public MEDIA_ERR_NETWORK =  0; //this.repPlugin.MEDIA_ERR_NETWORK;
-    public MEDIA_ERR_NONE_SUPPORTED = 0; // this.repPlugin.MEDIA_ERR_NONE_SUPPORTED;
-    public MEDIA_NONE = 0; // this.repPlugin.MEDIA_NONE;
+    public MEDIA_ERR_ABORTED = 1; // this.repPlugin.MEDIA_ERR_ABORTED;
+    public MEDIA_ERR_DECODE = 3; // this.repPlugin.MEDIA_ERR_DECODE;
+    public MEDIA_ERR_NETWORK =  2; //this.repPlugin.MEDIA_ERR_NETWORK;
+    public MEDIA_ERR_NONE_SUPPORTED = 4; // this.repPlugin.MEDIA_ERR_NONE_SUPPORTED;
 */
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
+    audioRecibido: string = "";
 
-    constructor(/*private repObject: MediaObject, */public repPlugin: MediaPlugin, private file: File, configuracion: ConfiguracionService){
+    constructor(public repPlugin: MediaPlugin, 
+                private file: File, 
+                configuracion: ConfiguracionService, 
+                public events: Events){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
@@ -53,14 +58,16 @@ export class Player implements OnDestroy {
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
         console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
         //this._configuracion = configuracion;
+        this.audioRecibido = audio;
         const onStatusUpdate = ((status) =>{
-            this.statusRep = status
+            this.statusRep = status;
+            this.events.publish('reproduccion:status', {status:this.statusRep});
             console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.repPlugin.MEDIA_RUNNING);
             if (this.seekPdte && status == this.repPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
                 configuracion.getTimeRep(this.dameCapitulo())
                 .then((val)=> {
-                    console.log("[PLAYER.crearepPlugin] recibida posición de reproducción "+val + "para el capítulo" + capitulo );
+                    console.log("[PLAYER.crearepPlugin] recibida posición de reproducción " + val + " para el capítulo " + capitulo );
                     if (val != null && Number(val) > 0){
                         this.seekTo (Number(val));
                     }
@@ -76,7 +83,8 @@ export class Player implements OnDestroy {
         }
         else {
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
-            return(this.repPlugin.create (audio+".mp3?application_id=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST", onStatusUpdate));
+            //return(this.repPlugin.create (audio+".mp3?application_id=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST", onStatusUpdate));
+            return(this.repPlugin.create (audio+".mp3", onStatusUpdate));
         }
     }
 
@@ -94,6 +102,10 @@ export class Player implements OnDestroy {
 
     dameStatusStop(){
         return this.repPlugin.MEDIA_STOPPED;
+    }
+
+    dameStatusStarting(){
+        return this.repPlugin.MEDIA_STARTING;
     }
 
     traduceAudio(audio):string{
@@ -185,13 +197,13 @@ export class Player implements OnDestroy {
         if (this.repObject != null){
             this.repObject.getCurrentPosition()
                 .then((pos)=>{
-                    console.log("[PLAYER.release] Recibida posición " + pos * 1000);
+                    console.log("[PLAYER.pause] Recibida posición " + pos * 1000);
                     if (pos > 0) {
                         configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
                     }
                 })
                 .catch ((err)=> {
-                    console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
+                    console.log ("[PLAYER.pause] Recibido error al pedir posición de reproducción: " + err);
                 });
             this.repObject.pause();
         }
@@ -210,6 +222,7 @@ export class Player implements OnDestroy {
                     console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
                 });
             this.repObject.release();
+            console.log ("[PLAYER.release] EJECUTADO RELEASE");
         }
         //this.reproduciendo = false;
     }

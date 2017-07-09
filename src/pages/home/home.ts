@@ -61,14 +61,20 @@ export class HomePage  {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');
             this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
         });
+        events.subscribe("capitulo:fenecido", (nuevoEstado) => {
+            console.log('[HOME.constructor] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
+            this.items[0].objeto.type= nuevoEstado;
+        });
         this.backgroundMode.setDefaults({title: "La cAPPfetera",
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
-        this.platform.pause.subscribe(()=>{
-            this.reproductor.release(_configuracion);
-            console.log('[HOME.constructor] Nos han mandado a dormir.');
-        })
+/*        this.platform.pause.subscribe(()=>{
+            if (this.reproductor != null){
+                this.reproductor.release(_configuracion);
+                console.log('[HOME.constructor] Nos han mandado a dormir.');
+            }
+        });*/
     }
 
     ionViewDidLoad() {
@@ -232,7 +238,7 @@ export class HomePage  {
     }
 
     abreDatosUsuario() {
-        console.log("************************************************************");
+        console.log("[HOME.abreDatosUsuario] ************************************************************");
     }
 
     muestraMenu(myEvent) {

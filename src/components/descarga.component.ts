@@ -16,7 +16,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 
                     </ion-icon>
                 </button>
-                <div class="porcentaje" *ngIf="porcentajeDescargado != 0" (click)="descargarFichero()">
+                <div class="porcentaje" [hidden]="porcentajeDescargado == 0" (click)="descargarFichero()">
                     <p>{{porcentajeDescargado}}%</p>
                 </div>
                 `,
@@ -59,6 +59,12 @@ export class DescargaCafetera {
         // dataDirectory --> cdvfile://localhost/files/
 
         this.fileTransfer = this.transfer.create();
+
+        this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
+            console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
+            this.icono = 'ios-cloud-download'; // Si justo acaba de morir el capítulo, no puede ser que esté ya descargado.
+            this.ficheroDescargado.emit({existe: false});
+        });
 
         if (this.enVivo){
             this.icono = 'lock';

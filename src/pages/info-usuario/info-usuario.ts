@@ -20,62 +20,101 @@ import { ConfiguracionService } from '../../providers/configuracion.service';
 export class InfoUsuarioPage {
 
 //  private formulario: FormGroup;
-  datosUsu:Array<any>;
+    datosUsu:Array<any>;
 
-  imgItem: string = "../../assets/icon/icon.png";
-  nombreUsu: string = "Proscrito";
-  descripcion: string = "Resistente de Sherwood";
-  emilio: string = "resistente@tree.sherwood.for";
-  dirWeb: string = "http://www.sherwood.for";
-  dirFacebook: string = "";
-  usuTwitter: string = "";
+    imgItem: string = "../../assets/icon/icon.png";
+    nombreUsu: string = "Proscrito";
+    descripcion: string = "Resistente de Sherwood";
+    emilio: string = "resistente@tree.sherwood.for";
+    dirWeb: string = "http://www.sherwood.for";
+    dirFacebook: string = "";
+    usuTwitter: string = "";
 
-  dataUsuario: string = ''; //7985950';
-  dataToken: string = '';   // 35d6ea9f4b968e0af47560bda9d95ff417e30df6';
+    dataUsuario: string = ''; //7985950';
+    dataToken: string = '';   // 35d6ea9f4b968e0af47560bda9d95ff417e30df6';
 
-  constructor(public navCtrl: NavController, 
-              public navParams: NavParams, 
-              private formBuilder: FormBuilder,
-              private episodiosService: EpisodiosService, 
-              private _configuracion: ConfiguracionService, 
-              public toastCtrl: ToastController) {    
-    //this.datosUsu = this.navParams.get('datos');
-  /*  this.formulario = this.formBuilder.group({
-      nombreCompleto: ['']
-    });*/
-  }
+    detallesLink : string = ""; 
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad InfoUsuarioPage');
+    constructor(public navCtrl: NavController, 
+                public navParams: NavParams, 
+                private formBuilder: FormBuilder,
+                private episodiosService: EpisodiosService, 
+                private _configuracion: ConfiguracionService, 
+                public toastCtrl: ToastController) {    
+        //this.datosUsu = this.navParams.get('datos');
+    /*  this.formulario = this.formBuilder.group({
+        nombreCompleto: ['']
+        });*/
 
+        this.detallesLink = navParams.get('detalles');
+        console.log('[INFO-USUARIO.constructor] Los parámetros que hemos recibido (o no) son:' + this.detallesLink);
+        if (this.detallesLink != ""){
+            this.procesaDatosConexion();
+        }
+    }
+
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad InfoUsuarioPage');
+        this.actualizaDatosUsuario();
+
+    }
+
+    actualizaDatosUsuario(){
         this._configuracion.dameUsuario()
         .then ((Usuario) => {
             if (Usuario != null){
-                console.log ("[INFO-USUARIO.ionViewDidLoad] recibido usuario " + Usuario );
+                console.log ("[INFO-USUARIO.actualizaDatosUsuario] recibido usuario " + Usuario );
                 this.dataUsuario = Usuario;
                 this._configuracion.dameToken()
                 .then ((Token) => {
-                    console.log ("[INFO-USUARIO.ionViewDidLoad] recibido token " + Token );
+                    console.log ("[INFO-USUARIO.actualizaDatosUsuario] recibido token " + Token );
                     if (Token != null) {
-                        console.log("[INFO-USUARIO.ionViewDidLoad] solicitado envío para usuario " + Usuario);
+                        console.log("[INFO-USUARIO.actualizaDatosUsuario] solicitado envío para usuario " + Usuario);
                         this.dataToken = Token;
                         this.cargaDatosUsu();
                     }
                     else {
-                        console.log ("[INFO-USUARIO.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
+                        console.log ("[INFO-USUARIO.actualizaDatosUsuario] Debe estar conectado a Spreaker para poder realizar esa acción.");
                     }
                 })
                 .catch ((error) => {
-                    console.log ("[INFO-USUARIO.ionViewDidLoad] Error extrayendo usuario de Spreaker:" + error);
+                    console.log ("[INFO-USUARIO.actualizaDatosUsuario] Error extrayendo usuario de Spreaker:" + error);
                 });
             }
             else {
-                console.log ("[INFO-USUARIO.ionViewDidLoad] Error extrayendo usuario de Spreaker.");
+                console.log ("[INFO-USUARIO.actualizaDatosUsuario] Error extrayendo usuario de Spreaker.");
+                this.dataUsuario = '';
             }
         })
         .catch (() => {
-            console.log ("[INFO-USUARIO.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
+            console.log ("[INFO-USUARIO.actualizaDatosUsuario] Debe estar conectado a Spreaker para poder realizar esa acción.");
         });
+    }
+
+
+    procesaDatosConexion(){
+        let responseParameters;
+        let parsedResponse = {};
+        console.log ("[INFO-USUARIO.procesaDatosConexion] ");
+
+        responseParameters = (this.detallesLink).split("&");
+        for (let i = 0; i < responseParameters.length; i++) {
+            parsedResponse[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+        }
+        if (parsedResponse["code"] !== undefined && parsedResponse["code"] !== null) { //conexión vía spreaker
+            this.episodiosService.solicitaTokenViaCode(parsedResponse["code"]).subscribe(
+                data => {
+                    console.log("[INFO-USUARIO.procesaDatosConexion] Descargados datos de conexión: " + JSON.stringify(data));
+                    console.log("[INFO-USUARIO.procesaDatosConexion] Recibido token: " + data["access_token"]);
+                    this._configuracion.setTokenSpreaker(data["access_token"]);
+                    this.actualizaDatosUsuario();
+                },
+                err => {
+                    console.error("[INFO-USUARIO.procesaDatosConexion] Error solicitando datos de usuario " + err.message);
+                }
+            );
+        } 
+
     }
 
 // 7985950 - 35d6ea9f4b968e0af47560bda9d95ff417e30df6
@@ -97,7 +136,8 @@ export class InfoUsuarioPage {
             },
             err => {
                 console.log("[INFO-USUARIO.cargaDatosUsu] Error descargando datos de usuario: " + err.message);
-            });        
+            }
+        );        
     }
 
 

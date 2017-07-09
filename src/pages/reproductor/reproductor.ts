@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef/*, Output, EventEmitter*/ } from '@angular/core';
+import {Component, ChangeDetectorRef,/*, Output, EventEmitter*/ OnDestroy} from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -27,7 +27,7 @@ import { Player } from '../../app/player';
   templateUrl: 'reproductor.html',
   providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player]
 })
-export class ReproductorPage {
+export class ReproductorPage implements OnDestroy{
 
     capItem: any;
     reproductor: Player;
@@ -42,7 +42,7 @@ export class ReproductorPage {
     audioEnRep: string = null;
     reproduciendo: boolean = false;
     descargando: boolean = false;
-    statusRep: number;
+    //statusRep: number;
     ficheroExiste: boolean;
     posicionRepStr: string = "00:00:00";
     tamanyoStr: string = "01:00:00"
@@ -52,6 +52,7 @@ export class ReproductorPage {
     timer: any;
     timerDescarga: number = 0;
     timerVigilaEnVivo: number;
+    timerParpadeo: number = 0;
 
     titulo: string;
     descripcion: string;
@@ -70,6 +71,8 @@ export class ReproductorPage {
     colorLike: string = "";
 
     pagChat: any = ChatPage;
+
+    ocultaTiempoRep: boolean = false;
 
 
     constructor(public navCtrl: NavController, 
@@ -127,10 +130,11 @@ export class ReproductorPage {
             .catch(()=>{
                 console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
             });
+        events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
     }
 
     /****************************************
-     HAy que estudiar esto. Salir de la página cancelará la descarga. ¿Seguro que quiere salir?
+     Hay que estudiar esto. Salir de la página cancelará la descarga. ¿Seguro que quiere salir?
 
 
   ionViewCanLeave(): boolean{
@@ -235,18 +239,24 @@ export class ReproductorPage {
             this.timerVigilaEnVivo = setInterval(() =>{
                 this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
                     data => {
+                        //console.log("[REPRODUCTOR.ionViewDidLoad] Respuesta vale: " + data.response.episode.type);
                         if (data.response.episode.type != "LIVE"){
+                            console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha muerto. Larga vida al episodio .");
                             clearInterval(this.timerVigilaEnVivo);
                             this.enVivo = false;
                             this.episodioDescarga = data.response.episode.episode_id;
                             this.totDurPlay = data.response.episode.duration;
                             this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
+                            this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
                         }
                         else {
-                            console.log("[REPRODUCTOR.ionViewDidLoad] El primer episodio sigue siendo en vivo.");
+                        //    console.log("[REPRODUCTOR.ionViewDidLoad] El primer episodio sigue siendo en vivo.");
                         }
+                    },
+                    error => {
+                        console.log("[REPRODUCTOR.ionViewDidLoad] Error revisando si el capítulo sigue estando vivo. Posible error de conexión.");
                     }
-            )}, 3000);
+            )}, 1000);
         }
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
@@ -257,8 +267,63 @@ export class ReproductorPage {
     ngOnDestroy(){
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
+
         //console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
+    }
+
+    cambiandoStatusRep(statusRep) {
+        console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
+        if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
+            if (statusRep.status == this.reproductor.dameStatusStop()){
+                console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
+                if (this.enVivo){
+                    console.log ("[REPRODUCTOR.cambiandoStatusRep] Reproducción en vivo."); // Limpiamos el reproductor.
+                    //this.reproductor.stop();
+                    this.reproductor.release(this._configuracion);
+                    this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
+                }
+                this.posicionRep = 0;
+                this.posicionRepStr = this.dameTiempo(Math.round(0));
+//                this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo. --> Anulo la línea ya que si la reproducción se para porque 
+//                                        el buffer se queda sin datos debido a un error de red, deja de estar en VIVO 
+            }
+            console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
+            this.iconoPlayPause = 'play';
+            this.reproduciendo = false;
+            this.parpadeoTiempoRep(false);
+        }
+        else {
+            this.iconoPlayPause = 'pause';
+            this.reproduciendo = true;
+            if (statusRep.status == this.reproductor.dameStatusStarting()){
+                console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está buffereando.");
+                this.posicionRepStr = "Cargando café.";
+                this.parpadeoTiempoRep(true);
+            }
+            else {
+                console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
+                if (this.enVivo){
+                    this.iniciaContadorRep();
+                }
+                this.parpadeoTiempoRep(false);
+            }
+        }
+        console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+        this.mscControl.updateIsPlaying(this.reproduciendo);
+        this.chngDetector.detectChanges();
+    }
+
+    parpadeoTiempoRep(iniciar: boolean){
+        if (iniciar){
+            console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
+            this.timerParpadeo = setInterval(() =>{ this.ocultaTiempoRep = !this.ocultaTiempoRep; }, 1000);
+        }
+        else {
+            console.log("[REPRODUCTOR.parpadeoTiempoRep] Eliminando parpadeo");
+            clearInterval(this.timerParpadeo);
+            this.ocultaTiempoRep = false;
+        }
     }
 
     numerosDosCifras(numero):string {
@@ -286,70 +351,75 @@ export class ReproductorPage {
         this.timer = setInterval(() => {
             this.reproductor.getCurrentPosition()
                 .then((position) => {
-                    let status = this.reproductor.dameStatus();
+                    // let status = this.reproductor.dameStatus();
             //        console.log("[REPRODUCTOR] status vale "+ status + " y parado vale " + this.reproductor.MEDIA_STOPPED);
-                    console.log("[REPRODUCTOR.iniciaContadorRep] Posición: " + position*1000 + ". Status: " + status + " - " + this.reproductor.dameStatusRep());
-                    if (position > 0 && status == this.reproductor.dameStatusRep()) {
+                    //console.log("[REPRODUCTOR.iniciaContadorRep] Posición: " + position*1000 + ". Status: " + this.reproductor.dameStatus() + " - " + this.reproductor.dameStatusRep());
+                    //if (position > 0 && status == this.reproductor.dameStatusRep()) {
                         this.posicionRep = position*1000;
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
+                    //    this.chngDetector.detectChanges();
                     //   console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
-                    }
-                    if (status == this.reproductor.dameStatusPause() || status == this.reproductor.dameStatusStop()){
-                        clearInterval(this.timer);
-                        this.iconoPlayPause = 'play';
-                        this.reproduciendo = false;
-                        this.mscControl.updateIsPlaying(this.reproduciendo);
-                        //this.mscControl.updateDismissable(true);
-                        if (status == this.reproductor.dameStatusStop()){
-                            console.log ("[REPRODUCTOR.iniciaContadorRep] Poniendo la posición del reproductor a 0");
-                            this.posicionRep = 0;
-                            this.posicionRepStr = this.dameTiempo(Math.round(0));
-                            this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo.
-                        }
-                        else {
-                            console.log ("[REPRODUCTOR.iniciaContadorRep] Sin modificar la posición del reproductor a 0");
-                        }
-                    }
+                    //}
+                    //if (status == this.reproductor.dameStatusPause() || status == this.reproductor.dameStatusStop()){
+                    //    clearInterval(this.timer);
+                    //    this.iconoPlayPause = 'play';
+                    //    this.reproduciendo = false;
+                    //    this.mscControl.updateIsPlaying(this.reproduciendo);
+                    //    //this.mscControl.updateDismissable(true);
+                    //    if (status == this.reproductor.dameStatusStop()){
+                    //        console.log ("[REPRODUCTOR.iniciaContadorRep] Poniendo la posición del reproductor a 0");
+                    //        this.posicionRep = 0;
+                    //        this.posicionRepStr = this.dameTiempo(Math.round(0));
+                    //        this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo.
+                    //    }
+                    //    else {
+                    //        console.log ("[REPRODUCTOR.iniciaContadorRep] Sin modificar la posición del reproductor a 0");
+                    //    }
+                    //}
                 })
-                .catch ((e) => {
-                    console.log("Error getting pos=" + e);
+                .catch ((error) => {
+                    console.error("[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: " + error);
                 });
         }, 1000);
     }
 
     playPause(configuracion: ConfiguracionService){
         let descargaPermitida = (this.network.type === "wifi" || !this.soloWifi);
-        console.log ("[REPORDUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi);
+        console.log ("[REPORDUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi + " y reproduciendo vale " + this.reproduciendo);
+
         if (this.reproductor != null){
             if (this.reproduciendo) {
+                console.log ("[REPORDUCTOR.playPause] Está reproduciendo y el timer vale " + this.timer );
                 clearInterval(this.timer);
                 if (this.enVivo){
+                    this.reproductor.pause(this._configuracion); // Esto es absurdo, pero si no ha comenzado la reproducción, no para con el stop.
                     this.reproductor.stop();
+                    console.log ("[REPORDUCTOR.playPause] Parando" );
                     this.reproductor.release(configuracion);
-                    this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
+                    //this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
                 else {
                     this.reproductor.pause(this._configuracion);
                 }
-                this.iconoPlayPause = 'play';
-                this.reproduciendo = false;
-                this.chngDetector.detectChanges();
+                //this.iconoPlayPause = 'play';
+                //this.reproduciendo = false;
+                //this.chngDetector.detectChanges();
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
                     this.reproductor.play(this.audioEnRep, this._configuracion);
-                    this.iconoPlayPause = 'pause';
-                    this.iniciaContadorRep();
-                    this.reproduciendo = true;
-                    this.chngDetector.detectChanges();
+                //    this.iconoPlayPause = 'pause';
+                //    this.iniciaContadorRep();
+                //    this.reproduciendo = true;
+                //    this.chngDetector.detectChanges();
                     
                 }
                 else{
                     this.msgDescarga ("Sólo tiene permitidas reproducción por streaming con la conexión WIFI activada.");
                 }
             }
-            console.log("[REPRODUCTOR.playpause] actualizando status control remoto");
-            this.mscControl.updateIsPlaying(this.reproduciendo);
+            //console.log("[REPRODUCTOR.playpause] actualizando status control remoto");
+            //this.mscControl.updateIsPlaying(this.reproduciendo);
             //this.mscControl.updateDismissable(true);
         }
         else this.dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
@@ -441,11 +511,11 @@ export class ReproductorPage {
                     console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
                     this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
                 } else {
-                    this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
+                    //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                     if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
-                        this.iconoPlayPause = 'pause';
-						this.reproduciendo = true;
-                        this.iniciaContadorRep();
+                        //this.iconoPlayPause = 'pause';
+						//this.reproduciendo = true;
+                        //this.iniciaContadorRep();
                         this.reproductor.play(this.audioEnRep, this._configuracion);
                         console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
@@ -463,19 +533,19 @@ export class ReproductorPage {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor no es nulo");
                 if (this.reproductor.reproduciendoEste(this.audioEnRep)){
                     console.log("[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo este mismo audio");
-                    this.iconoPlayPause = 'pause';
-					this.reproduciendo = true;
-                    this.iniciaContadorRep();
-                    this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
+                    //this.iconoPlayPause = 'pause';
+					//this.reproduciendo = true;
+                    //this.iniciaContadorRep();
+                    //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                 }
                 else {
                     console.log("[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo otro audio");
-                    this.iconoPlayPause = 'play';
-					this.reproduciendo = false;
+                    //this.iconoPlayPause = 'play';
+					//this.reproduciendo = false;
                 }
             }
         }
-		this.mscControl.updateIsPlaying(this.reproduciendo);
+		//this.mscControl.updateIsPlaying(this.reproduciendo);
         //this.mscControl.updateDismissable(true);
     }
 

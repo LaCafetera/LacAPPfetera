@@ -67,7 +67,7 @@
 
           <div data-role="fieldcontain" id="barra_reprod" name="barra" *ngIf="!enVivo">
             <ion-range [(ngModel)]="posicionRep" pin="false" debounce=100 max={{totDurPlay}} (ionChange)="actualizaPosicion()"></ion-range>
-            <div id="tiempo-lleva">
+            <div id="tiempo-lleva" [hidden]="ocultaTiempoRep">
               <ion-label range-left>{{posicionRepStr}}</ion-label>
             </div>
             <div id="tiempo-falta">
@@ -80,7 +80,7 @@
             <ion-col text-center no-padding icon-right>
               <button ion-button color=danger (click)="playPause()">
                 EN VIVO
-                <ion-icon name={{iconoPlayPause}}></ion-icon>
+                <ion-icon name={{iconoPlayPause}}  [hidden]="ocultaTiempoRep"></ion-icon>
               </button>
             </ion-col>
           </ion-row>

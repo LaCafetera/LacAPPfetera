@@ -10,10 +10,6 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class EpisodiosService {
 
-    episodioVivo = `{"response":{"episode":{"episode_id":11015852,"type":"LIVE"}}}`;
-
-    episodioMuerto = `{"response":{"episode":{"episode_id":11015852,"type":"RECORDED"}}}`;
-
     static get parameters() {
         return [[Http]];
     }
@@ -31,7 +27,11 @@ export class EpisodiosService {
     }
 
     dameEpisodios(usuario:string, token:string, ultimocap: string, numCaps: number){
-        // let direccion = https://api.spreaker.com/v2/shows/1341125/episodes //--> LIVE
+        //let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE
+
+// Para cuando haya que probar con un capítulo que deja de estar en vivo...
+//        let primero = 0;
+
         let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
         if (ultimocap != null) {
             console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );    
@@ -42,8 +42,22 @@ export class EpisodiosService {
             this.http.get(direccion).map(res => res.json()).subscribe(
                 data => {
                     data.response.items.forEach((capitulo, elemento, array) => {
+// Para cuando haya que probar con un capítulo que dejar de esta en vivo...
+//                        if (primero == 0) {
+//                            primero = capitulo.episode_id;
+//                            console.log("[EPISODIOS-SERVICE.dameEpisodios] El primer episodio es "+ primero  );
+//                        }  //--------------------
+
                         this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
                             data => {
+
+// Para cuando haya que probar con un capítulo que deja de estar en vivo...
+//                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Llega el capítulo  "+ data.response.episode.episode_id  );//--------------------
+//                                if (data.response.episode.episode_id == primero ){ //--------------------
+//                                    console.log("[EPISODIOS-SERVICE.dameEpisodios] detalle del capítulo  "+ JSON.stringify(data) );//--------------------
+//                                    data.response.episode.type = 'LIVE'; //--------------------
+//                                } //--------------------
+
                                 if (token!= null) {
                                     this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
                                     .subscribe (
@@ -74,8 +88,6 @@ export class EpisodiosService {
                     console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
                 }
             );
-        //let episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id='+ultimocap).map(res => res.json()); // Fernando
-        //return episodiosJSON;
         });
     }
 
@@ -83,21 +95,6 @@ export class EpisodiosService {
         //console.log("[EPISODIOS-SERVICE.dameDetalleEpisodio] Entrando para episodio " + episodio_id );
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id).map(res => res.json());
         return episodiosJSON;
-        /*
-        let observador :any;
-            console.log("************************************" + this.cantidad + "*****************************");
-        if (this.cantidad-- > 0 ){
-            console.log("************************************ VIVO *****************************");
-            return Observable.create(observer => {
-                observer.next (JSON.parse(this.episodioVivo));
-            });
-        }
-        else{
-            console.log("************************************ MUERTO *****************************");
-            return Observable.create(observer => {
-                observer.next(JSON.parse(this.episodioMuerto));
-            });
-        } */
     }
 
     dameChatEpisodio(episodio_id){
@@ -174,7 +171,8 @@ export class EpisodiosService {
         let cID = "client_id=1093";
         let cs = "client_secret=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST";
         let ru = "redirect_uri=http://localhost:8100";
-        return this.http.post('https://api.spreaker.com/oauth2/token?' + cID + '&' + cs + '&' + gt + '&' + ru + '&code=' + code, null).map(res => res.json());
+        console.log('[EPISODIOS-SERVICE.solicitaTokenViaCode] https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code );
+        return this.http.post('https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code, null, null).map(res => res.json());
     }
 
     actualizaDatosUsuario(usuario: string, token: string, datosUsu:Array<any>){
@@ -192,5 +190,13 @@ export class EpisodiosService {
     }
 }
 
+
+// consultas a revisar cuando esté conectado.
+// https://api.spreaker.com/v2/sync/users/7985950/notifications
+// https://api.spreaker.com/v2/sync/users/7985950/push-notifications 
+//  https://api.spreaker.com/v2/sync/users/7985950/favorites 
+//  https://api.spreaker.com/v2/sync/users/7985950/bookmarks
+//  https://api.spreaker.com/v2/sync/users/7985950/likes
+//  https://api.spreaker.com/v2/sync/users/7985950/plays
 
 
