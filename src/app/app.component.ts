@@ -57,7 +57,7 @@ export class MyApp {
     this._platform.ready().then(() => {
       this._deepLink.routeWithNavController(this.nav,{'/':InfoUsuarioPage}).subscribe((match) => {
         //console.log('[app.component.ngAfterViewInit] Enrutado. $link: '/* + match.$route + ' - '*/ +  JSON.stringify(match.$link) );
-        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
+        //console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
         console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
         this.epService.solicitaTokenViaCode(match.$args["code"]).subscribe(
             data => {

@@ -88,23 +88,23 @@ export class Player implements OnDestroy {
         }
     }
 
-    dameStatus(){
+    public dameStatus(){
         return this.statusRep;
     }
 
-    dameStatusRep(){
+    public dameStatusRep(){
         return this.repPlugin.MEDIA_RUNNING;
     }
 
-    dameStatusPause(){
+    public dameStatusPause(){
         return this.repPlugin.MEDIA_PAUSED;
     }
 
-    dameStatusStop(){
+    public dameStatusStop(){
         return this.repPlugin.MEDIA_STOPPED;
     }
 
-    dameStatusStarting(){
+    public dameStatusStarting(){
         return this.repPlugin.MEDIA_STARTING;
     }
 
@@ -112,7 +112,7 @@ export class Player implements OnDestroy {
         return (audio.includes('mp3')?this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3":audio);
     }
 
-    dameCapitulo():string{
+    public dameCapitulo():string{
         return (this.extraeCapitulo(this.capitulo));
     }
 

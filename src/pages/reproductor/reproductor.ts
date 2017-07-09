@@ -115,6 +115,7 @@ export class ReproductorPage implements OnDestroy{
         }
 
         if (this.reproductor == null) {
+            console.log("[REPRODUCTOR.constructor] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
 
@@ -261,11 +262,14 @@ export class ReproductorPage implements OnDestroy{
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
         }
+
     }
 
 
     ngOnDestroy(){
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
+        clearInterval(this.timer);
+        clearInterval(this.timerVigilaEnVivo);
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
 
         //console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
@@ -274,6 +278,7 @@ export class ReproductorPage implements OnDestroy{
 
     cambiandoStatusRep(statusRep) {
         console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
+        console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
         if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
             if (statusRep.status == this.reproductor.dameStatusStop()){
                 console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
@@ -284,7 +289,7 @@ export class ReproductorPage implements OnDestroy{
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
                 this.posicionRep = 0;
-                this.posicionRepStr = this.dameTiempo(Math.round(0));
+                this.posicionRepStr = "00:00:00";
 //                this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo. --> Anulo la línea ya que si la reproducción se para porque 
 //                                        el buffer se queda sin datos debido a un error de red, deja de estar en VIVO 
             }
@@ -292,8 +297,8 @@ export class ReproductorPage implements OnDestroy{
             this.iconoPlayPause = 'play';
             this.reproduciendo = false;
             this.parpadeoTiempoRep(false);
-        }
-        else {
+        } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
+        else if (statusRep.status == this.reproductor.dameStatusRep() || statusRep.status == this.reproductor.dameStatusPause()){
             this.iconoPlayPause = 'pause';
             this.reproduciendo = true;
             if (statusRep.status == this.reproductor.dameStatusStarting()){
@@ -303,7 +308,7 @@ export class ReproductorPage implements OnDestroy{
             }
             else {
                 console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
-                if (this.enVivo){
+                if (!this.enVivo){
                     this.iniciaContadorRep();
                 }
                 this.parpadeoTiempoRep(false);
@@ -311,7 +316,7 @@ export class ReproductorPage implements OnDestroy{
         }
         console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
         this.mscControl.updateIsPlaying(this.reproduciendo);
-        this.chngDetector.detectChanges();
+        //this.chngDetector.detectChanges();
     }
 
     parpadeoTiempoRep(iniciar: boolean){
@@ -357,8 +362,8 @@ export class ReproductorPage implements OnDestroy{
                     //if (position > 0 && status == this.reproductor.dameStatusRep()) {
                         this.posicionRep = position*1000;
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
-                    //    this.chngDetector.detectChanges();
-                    //   console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
+                        this.chngDetector.detectChanges();
+                    //    console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
                     //}
                     //if (status == this.reproductor.dameStatusPause() || status == this.reproductor.dameStatusStop()){
                     //    clearInterval(this.timer);
@@ -532,10 +537,13 @@ export class ReproductorPage implements OnDestroy{
             else {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor no es nulo");
                 if (this.reproductor.reproduciendoEste(this.audioEnRep)){
-                    console.log("[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo este mismo audio");
+                    console.log("[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo este mismo audio ");
+                    // Se trata de que "cambiandoStatusRep" centralice el cambio del icono del play/pause, el contador, etc...  
+                    this.cambiandoStatusRep({status:this.reproductor.dameStatus()});
                     //this.iconoPlayPause = 'pause';
 					//this.reproduciendo = true;
                     //this.iniciaContadorRep();
+
                     //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                 }
                 else {
