@@ -179,6 +179,7 @@ export class HomePage  {
             event.complete();
         }
         else {
+            console.log("[HOME.recalentarCafe] Episodio vale " + episodio);
             this.cargaUsuarioParaProgramas(episodio);
             this.timerVigilaDescargas = setInterval(() =>{
                 console.log("[HOME.recalentarCafe] faltan por descargar " + this.contadorCapitulos + " capítulos");
@@ -215,17 +216,15 @@ export class HomePage  {
   hacerCafe(event){
       this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
             data => {
-                //console.log("[HOME.hacerCafe] " + JSON.stringify (data));
-                //let longArray = data.objeto.items.length;
-                //let i:number=0;
+                // console.log("[HOME.hacerCafe] " + JSON.stringify (data));
                 if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
-                    this.items = this.items.concat (data, this.items);
+                    this.items.unshift(data);
                     console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
                 }
                 else{
                     //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
-                    this.items = this.items.concat (data, this.items.slice(1));
-                  //  console.log("[HOME.hacerCafe] item[0] " + this.items[0]);
+                    this.items.shift();
+                    this.items.unshift(data);
                 }
                 event.complete();
             },
@@ -236,13 +235,13 @@ export class HomePage  {
             }
         );
     }
-
+/*
     abreDatosUsuario() {
         console.log("[HOME.abreDatosUsuario] ************************************************************");
     }
-
+*/
     muestraMenu(myEvent) {
-        let datosObjeto = {player:     this.reproductor, controlador:this.mscControl}
+        let datosObjeto = {player: this.reproductor, controlador:this.mscControl}
         let popover = this.popoverCtrl.create(MenuExtComponent, datosObjeto );
         popover.present({
             ev: myEvent
