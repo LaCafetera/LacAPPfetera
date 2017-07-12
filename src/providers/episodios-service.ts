@@ -167,12 +167,15 @@ export class EpisodiosService {
 
     solicitaTokenViaCode (code: string){
         console.log("[EPISODIOS-SERVICE.solicitaTokenViaCode] Solicitado token para código recibido: "+ code);
+        let headers = new Headers();
+        headers.append ('Content-Type', 'application/x-www-form-urlencoded');
         let gt = "grant_type=authorization_code";
         let cID = "client_id=1093";
-        let cs = "client_secret=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST";
+        let cs = "client_secret=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST";
         let ru = "redirect_uri=http://localhost:8100";
         console.log('[EPISODIOS-SERVICE.solicitaTokenViaCode] https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code );
-        return this.http.post('https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code, null, null).map(res => res.json());
+        //return this.http.post('https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code, null, {headers: headers}).map(res => res.json());
+        return this.http.post('https://api.spreaker.com/oauth2/token',(gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code), {headers: headers}).map(res => res.json());
     }
 
     actualizaDatosUsuario(usuario: string, token: string, datosUsu:Array<any>){

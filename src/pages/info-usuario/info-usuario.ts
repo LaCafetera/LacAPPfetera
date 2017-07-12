@@ -48,7 +48,7 @@ export class InfoUsuarioPage {
 
         this.detallesLink = navParams.get('detalles');
         console.log('[INFO-USUARIO.constructor] Los parámetros que hemos recibido (o no) son:' + this.detallesLink);
-        if (this.detallesLink != ""){
+        if (this.detallesLink != "" && this.detallesLink != null){
             this.procesaDatosConexion();
         }
     }
@@ -104,6 +104,7 @@ export class InfoUsuarioPage {
         if (parsedResponse["code"] !== undefined && parsedResponse["code"] !== null) { //conexión vía spreaker
             this.episodiosService.solicitaTokenViaCode(parsedResponse["code"]).subscribe(
                 data => {
+                    this.msgDescarga  (JSON.stringify(data));
                     console.log("[INFO-USUARIO.procesaDatosConexion] Descargados datos de conexión: " + JSON.stringify(data));
                     console.log("[INFO-USUARIO.procesaDatosConexion] Recibido token: " + data["access_token"]);
                     this._configuracion.setTokenSpreaker(data["access_token"]);
@@ -199,7 +200,7 @@ export class InfoUsuarioPage {
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
-            duration: 3000,
+            duration: 20000,
             cssClass: 'msgDescarga'
         });
         toast.present();

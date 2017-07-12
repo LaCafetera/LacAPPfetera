@@ -65,7 +65,7 @@ export class MyApp {
                 this.habemusConexion(data.token);
             },
             err => {
-                console.error("[app.component.ngAfterViewInit] Error solicitando datos de usuario " + err.message);
+                console.error("[app.component.ngAfterViewInit] Error solicitando datos de usuario " + JSON.stringify(err));
                 this.logoutSpreaker();
             }
         );
@@ -161,7 +161,7 @@ export class MyApp {
         });
     }
 
-//Recibido http://localhost:8100/#access_token=bbcb70c068334b8fe067b34f69e5d318a45fb37a&expires_in=r&token_type=Bearer&scope=basic&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST"
+//Recibido http://localhost:8100/#access_token=bbcb70c068334b8fe067b34f69e5d318a45fb37a&expires_in=r&token_type=Bearer&scope=basic&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST"
 
     conexionSpreaker (evento){
       if(!evento.checked) {
@@ -179,18 +179,18 @@ export class MyApp {
 // cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=cappfetera --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=lacappfetera.mo 
 // npm install --save @ionic-native/deeplinks    
     loginSpreaker(){
-      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
+      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
                                     '_self', 
                                     'location=no,clearsessioncache=yes,clearcache=yes');
     }
 
     loginSpreaker2(){
       // una conexión
-      //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
       // cuatro conexiones.
-      //let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
       // Cuatro conexiones, tirando de CODE
-      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
+      //let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
                                     '_blank', 
                                     'location=no,clearsessioncache=yes,clearcache=yes');
       browser.on('loadstart')
