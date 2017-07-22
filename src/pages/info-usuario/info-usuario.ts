@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, Events } from 'ionic-angular';
 import { FormBuilder } from '@angular/forms';
 
 import { EpisodiosService } from '../../providers/episodios-service';
@@ -22,7 +22,7 @@ export class InfoUsuarioPage {
 //  private formulario: FormGroup;
     datosUsu:Array<any>;
 
-    imgItem: string = "../../assets/icon/icon.png";
+    imgItem: string = "assets/icon/icon.png";
     nombreUsu: string = "Proscrito";
     descripcion: string = "Resistente de Sherwood";
     emilio: string = "resistente@tree.sherwood.for";
@@ -40,17 +40,21 @@ export class InfoUsuarioPage {
                 private formBuilder: FormBuilder,
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
-                public toastCtrl: ToastController) {    
+                public toastCtrl: ToastController, 
+                public events: Events) {    
         //this.datosUsu = this.navParams.get('datos');
     /*  this.formulario = this.formBuilder.group({
         nombreCompleto: ['']
         });*/
 
-        this.detallesLink = navParams.get('detalles');
-        console.log('[INFO-USUARIO.constructor] Los parámetros que hemos recibido (o no) son:' + this.detallesLink);
-        if (this.detallesLink != "" && this.detallesLink != null){
-            this.procesaDatosConexion();
-        }
+        //Como no hay manera de hacer que me lleguen los parámetros, he dejado la conexión en el componente app.components.ts Comento esto.
+        //this.detallesLink = navParams.get('detalles');
+        //console.log('[INFO-USUARIO.constructor] Los parámetros que hemos recibido (o no) son:' + JSON.stringify(navParams.get('detalles')));
+        //console.log('[INFO-USUARIO.constructor] Los parámetros que hemos recibido (o no) son:' + this.detallesLink);
+        //if (this.detallesLink != "" && this.detallesLink != null){
+        //    this.procesaDatosConexion();
+        //}
+        events.subscribe("conexion:status", () => this.actualizaDatosUsuario());
     }
 
     ionViewDidLoad() {
@@ -82,7 +86,7 @@ export class InfoUsuarioPage {
                 });
             }
             else {
-                console.log ("[INFO-USUARIO.actualizaDatosUsuario] Error extrayendo usuario de Spreaker.");
+                console.log ("[INFO-USUARIO.actualizaDatosUsuario] El usuario no está loggeado en Spreaker.");
                 this.dataUsuario = '';
             }
         })
@@ -144,7 +148,7 @@ export class InfoUsuarioPage {
 
     actualizarDatosUsu(){
         let camposCabiar: Array<any> = new Array;
-        if ( this.imgItem != "../../assets/icon/icon.png"){
+        if ( this.imgItem != "assets/icon/icon.png"){
             if (this.nombreUsu == "")
             {
                 this.msgDescarga ("Lo siento. El nombre de usuario no puede estar vacío.");

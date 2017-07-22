@@ -278,7 +278,7 @@ export class ReproductorPage implements OnDestroy{
 
     cambiandoStatusRep(statusRep) {
         console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
-        console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
+        //console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
         if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
             if (statusRep.status == this.reproductor.dameStatusStop()){
                 console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
@@ -297,8 +297,12 @@ export class ReproductorPage implements OnDestroy{
             this.iconoPlayPause = 'play';
             this.reproduciendo = false;
             this.parpadeoTiempoRep(false);
+            if (this.posicionRepStr == "Cargando café."){
+                this.posicionRepStr = "00:00:00";
+            }
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
-        else if (statusRep.status == this.reproductor.dameStatusRep() || statusRep.status == this.reproductor.dameStatusPause()){
+        else if (statusRep.status == this.reproductor.dameStatusRep() || 
+                 statusRep.status == this.reproductor.dameStatusStarting()){
             this.iconoPlayPause = 'pause';
             this.reproduciendo = true;
             if (statusRep.status == this.reproductor.dameStatusStarting()){
@@ -316,7 +320,7 @@ export class ReproductorPage implements OnDestroy{
         }
         console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
         this.mscControl.updateIsPlaying(this.reproduciendo);
-        //this.chngDetector.detectChanges();
+        this.chngDetector.detectChanges();
     }
 
     parpadeoTiempoRep(iniciar: boolean){
@@ -354,6 +358,7 @@ export class ReproductorPage implements OnDestroy{
     iniciaContadorRep(){
         console.log ("[REPRODUCTOR.iniciaContadorRep] Entrando");
         this.timer = setInterval(() => {
+            //console.log ("[REPRODUCTOR.iniciaContadorRep] timer vale " + this.timer);
             this.reproductor.getCurrentPosition()
                 .then((position) => {
                     // let status = this.reproductor.dameStatus();
@@ -362,7 +367,6 @@ export class ReproductorPage implements OnDestroy{
                     //if (position > 0 && status == this.reproductor.dameStatusRep()) {
                         this.posicionRep = position*1000;
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
-                        this.chngDetector.detectChanges();
                     //    console.log ("[REPRODUCTOR] Reproductor por " + position + " (" + Math.round(position) + ")");
                     //}
                     //if (status == this.reproductor.dameStatusPause() || status == this.reproductor.dameStatusStop()){
@@ -385,21 +389,22 @@ export class ReproductorPage implements OnDestroy{
                 .catch ((error) => {
                     console.error("[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: " + error);
                 });
+            this.chngDetector.detectChanges();
         }, 1000);
     }
 
     playPause(configuracion: ConfiguracionService){
         let descargaPermitida = (this.network.type === "wifi" || !this.soloWifi);
-        console.log ("[REPORDUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi + " y reproduciendo vale " + this.reproduciendo);
+        console.log ("[REPRODUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi + " y reproduciendo vale " + this.reproduciendo);
 
         if (this.reproductor != null){
             if (this.reproduciendo) {
-                console.log ("[REPORDUCTOR.playPause] Está reproduciendo y el timer vale " + this.timer );
+                console.log ("[REPRODUCTOR.playPause] Está reproduciendo y el timer vale " + this.timer );
                 clearInterval(this.timer);
                 if (this.enVivo){
                     this.reproductor.pause(this._configuracion); // Esto es absurdo, pero si no ha comenzado la reproducción, no para con el stop.
                     this.reproductor.stop();
-                    console.log ("[REPORDUCTOR.playPause] Parando" );
+                    console.log ("[REPRODUCTOR.playPause] Parando" );
                     this.reproductor.release(configuracion);
                     //this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
@@ -420,7 +425,7 @@ export class ReproductorPage implements OnDestroy{
                     
                 }
                 else{
-                    this.msgDescarga ("Sólo tiene permitidas reproducción por streaming con la conexión WIFI activada.");
+                    this.msgDescarga ("Sólo tiene permitida reproducción por streaming con la conexión WIFI activada.");
                 }
             }
             //console.log("[REPRODUCTOR.playpause] actualizando status control remoto");

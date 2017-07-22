@@ -36,6 +36,9 @@ export class Player implements OnDestroy {
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
     audioRecibido: string = "";
+    // Cuando damos a pause / stop y la reproducción está en MEDIA_STARTING, no para la descarga del buffer, ni se lo guarda ni nada. Así que hay que hacer 
+    // una guarrería.
+    paradaEncolada: boolean = false;
 
     constructor(public repPlugin: MediaPlugin, 
                 private file: File, 
@@ -75,6 +78,10 @@ export class Player implements OnDestroy {
                     console.log("[PLAYER.crearepPlugin] Error recuperando posición de la reproducción.");
                 });
                 this.seekPdte = false;
+            }
+            if (this.paradaEncolada && status == this.repPlugin.MEDIA_RUNNING){
+                this.pause(configuracion);
+                this.paradaEncolada = false;
             }
         });
         if (audio.includes('mp3')){
@@ -195,6 +202,7 @@ export class Player implements OnDestroy {
 
     pause(configuracion: ConfiguracionService){
         if (this.repObject != null){
+            console.log ("[PLAYER.pause] repObject no es nulo ");
             this.repObject.getCurrentPosition()
                 .then((pos)=>{
                     console.log("[PLAYER.pause] Recibida posición " + pos * 1000);
@@ -206,6 +214,16 @@ export class Player implements OnDestroy {
                     console.log ("[PLAYER.pause] Recibido error al pedir posición de reproducción: " + err);
                 });
             this.repObject.pause();
+            if (this.statusRep == this.repPlugin.MEDIA_STARTING)
+                {
+                    //Hay un fallo en este plugin. Si damos a pause / stop cuando está en "MEDIA_STARTING no nos hace ni caso. ASí que hay que parchear."
+                    console.log ("[PLAYER.pause] Dejando parada en espera");
+                    this.paradaEncolada = true;
+                    this.events.publish('reproduccion:status', {status:this.repPlugin.MEDIA_PAUSED});
+                }
+        }
+        else {
+            console.log ("[PLAYER.pause] repObject es nulo ");
         }
     }
 

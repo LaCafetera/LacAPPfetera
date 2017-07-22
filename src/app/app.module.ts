@@ -2,6 +2,7 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
 
 import { File } from '@ionic-native/file';
 import { MediaPlugin } from '@ionic-native/media';
@@ -13,7 +14,7 @@ import { BackgroundMode } from '@ionic-native/background-mode';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Contacts } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { InAppBrowser} from '@ionic-native/in-app-browser'
+//import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Deeplinks } from '@ionic-native/deeplinks';
 
@@ -24,7 +25,6 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
 
-import { HttpModule } from '@angular/http';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { InfoFerPage } from '../pages/info-fer/info-fer';
@@ -95,7 +95,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
               SplashScreen,
               Contacts,
               ScreenOrientation,
-              InAppBrowser,
+//              InAppBrowser,
               Deeplinks,
               Player,
               ConfiguracionService,

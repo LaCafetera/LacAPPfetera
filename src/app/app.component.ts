@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, ToastController } from 'ionic-angular';
+import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { InAppBrowser} from '@ionic-native/in-app-browser'
+//import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { Deeplinks } from '@ionic-native/deeplinks';
 
 import { HomePage } from '../pages/home/home';
@@ -14,7 +14,7 @@ import { InfoUsuarioPage } from '../pages/info-usuario/info-usuario';
 
 @Component({
   templateUrl: 'app.html',
-  providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts, InAppBrowser, Deeplinks]
+  providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts/*, InAppBrowser*/, Deeplinks]
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
@@ -41,8 +41,10 @@ export class MyApp {
               private splashscreen: SplashScreen, 
               private contacts: Contacts,
               private epService: EpisodiosService,
-              private iab: InAppBrowser,
-              private _deepLink: Deeplinks) {
+              //private iab: InAppBrowser,
+              private _deepLink: Deeplinks,
+              public menuCtrl: MenuController, 
+              public events: Events) {
 
     this.availableThemes = this._configuracion.availableThemes;
     _platform.ready().then(() => {
@@ -55,14 +57,16 @@ export class MyApp {
 
   ngAfterViewInit() {
     this._platform.ready().then(() => {
-      this._deepLink.routeWithNavController(this.nav,{'/':InfoUsuarioPage}).subscribe((match) => {
+      this._deepLink.routeWithNavController(this.nav,{
+          '/:detalles':InfoUsuarioPage
+        }).subscribe((match) => {
         //console.log('[app.component.ngAfterViewInit] Enrutado. $link: '/* + match.$route + ' - '*/ +  JSON.stringify(match.$link) );
-        //console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
-        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
+        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
+        console.log('[app.component.ngAfterViewInit]          Código: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
         this.epService.solicitaTokenViaCode(match.$args["code"]).subscribe(
             data => {
                 console.log("[app.component.ngAfterViewInit] Descargados datos de conexión: " + JSON.stringify(data));
-                this.habemusConexion(data.token);
+                this.habemusConexion(data.access_token);
             },
             err => {
                 console.error("[app.component.ngAfterViewInit] Error solicitando datos de usuario " + JSON.stringify(err));
@@ -179,11 +183,11 @@ export class MyApp {
 // cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=cappfetera --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=lacappfetera.mo 
 // npm install --save @ionic-native/deeplinks    
     loginSpreaker(){
-      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
+      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=cappfetera://lacappfetera.mo', 
                                     '_self', 
                                     'location=no,clearsessioncache=yes,clearcache=yes');
     }
-
+/*
     loginSpreaker2(){
       // una conexión
       //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
@@ -249,13 +253,15 @@ export class MyApp {
         .subscribe((event) =>{
           console.log ("[APP.loginSpreaker] Login cancelado. type: " + event.type + " url " + event.url + " code " + event.code + " message " + event.message);
         });*/
-    }
+    //}
 
     habemusConexion (token: string){
       console.log ("[APP.habemusConexion] Procesando token "+ token);
       this._configuracion.setTokenSpreaker(token);
       this.actualizaAvatar(token);
       this.conectadoASpreaker = true;
+      this.menuCtrl.close();
+      this.events.publish('conexion:status', {});
     }
 
     logoutSpreaker(){

@@ -20,12 +20,6 @@ export class EpisodiosService {
         this.meVigilan = new Observable();
     }
 
-    dameEpisodios2(){ //Esto se usa para pruebas....
-        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1060718/episodes?filter=listenable&last_id=10462689').map(res => res.json()); // Fernando
-        //var episodiosJSON = this.http.get('https://api.spreaker.com/v2/shows/1341125/episodes').map(res => res.json());   //Live
-        return episodiosJSON;
-    }
-
     dameEpisodios(usuario:string, token:string, ultimocap: string, numCaps: number){
         //let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE
 
@@ -57,26 +51,28 @@ export class EpisodiosService {
 //                                    console.log("[EPISODIOS-SERVICE.dameEpisodios] detalle del capítulo  "+ JSON.stringify(data) );//--------------------
 //                                    data.response.episode.type = 'LIVE'; //--------------------
 //                                } //--------------------
-
-                                if (token!= null) {
-                                    this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
-                                    .subscribe (
-                                        espureo=>{ 
-                                          //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
-                                            observer.next ({objeto:data.response.episode,
-                                                            like: true});
-                                        },
-                                        error=>{
-                                           // console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
-                                            observer.next ({objeto:data.response.episode,
-                                                            like: false});
-                                        }
-                                    )
-                                }
-                                else{
-                                    observer.next ({objeto:data.response.episode,
-                                                    like: false});
-                                }
+// Para cuando haya que probar la llegada de un nuevo audio.
+//                                if (data.response.episode.episode_id != primero || numCaps == 1){
+                                    if (token!= null) {
+                                        this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
+                                        .subscribe (
+                                            espureo=>{ 
+                                            //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
+                                                observer.next ({objeto:data.response.episode,
+                                                                like: true});
+                                            },
+                                            error=>{
+                                            // console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
+                                                observer.next ({objeto:data.response.episode,
+                                                                like: false});
+                                            }
+                                        )
+                                    }
+                                    else{
+                                        observer.next ({objeto:data.response.episode,
+                                                        like: false});
+                                    }
+//                                }
                             },
                             err => {
                                 console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
@@ -172,7 +168,7 @@ export class EpisodiosService {
         let gt = "grant_type=authorization_code";
         let cID = "client_id=1093";
         let cs = "client_secret=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST";
-        let ru = "redirect_uri=http://localhost:8100";
+        let ru = "redirect_uri=cappfetera://lacappfetera.mo";
         console.log('[EPISODIOS-SERVICE.solicitaTokenViaCode] https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code );
         //return this.http.post('https://api.spreaker.com/oauth2/token?' + gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code, null, {headers: headers}).map(res => res.json());
         return this.http.post('https://api.spreaker.com/oauth2/token',(gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code), {headers: headers}).map(res => res.json());
