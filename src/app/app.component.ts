@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
+import { Nav, Platform, ToastController, MenuController } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -43,8 +43,7 @@ export class MyApp {
               private epService: EpisodiosService,
               //private iab: InAppBrowser,
               private _deepLink: Deeplinks,
-              public menuCtrl: MenuController, 
-              public events: Events) {
+              public menuCtrl: MenuController) {
 
     this.availableThemes = this._configuracion.availableThemes;
     _platform.ready().then(() => {
@@ -184,7 +183,7 @@ export class MyApp {
 // npm install --save @ionic-native/deeplinks    
     loginSpreaker(){
       /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=cappfetera://lacappfetera.mo', 
-                                    '_self', 
+                                    '_system', 
                                     'location=no,clearsessioncache=yes,clearcache=yes');
     }
 /*
@@ -261,7 +260,6 @@ export class MyApp {
       this.actualizaAvatar(token);
       this.conectadoASpreaker = true;
       this.menuCtrl.close();
-      this.events.publish('conexion:status', {});
     }
 
     logoutSpreaker(){

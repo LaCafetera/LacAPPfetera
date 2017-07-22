@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { Storage } from '@ionic/storage';
+import { Events } from 'ionic-angular';
 
 import { EpisodiosService } from "./episodios-service";
 
@@ -13,7 +14,9 @@ export class ConfiguracionService {
     // as promised, I've moved the availableThemes here as well
     availableThemes: {className: string, prettyName: string}[];
 
-    constructor(public storage: Storage, public episodioSrvc: EpisodiosService) {
+    constructor(public storage: Storage, 
+                public episodioSrvc: EpisodiosService, 
+                public events: Events) {
         this.theme = new BehaviorSubject('tema-base');
 
         // again, hard-coding the values for possible selections,
@@ -172,7 +175,8 @@ export class ConfiguracionService {
             this.episodioSrvc.whoAMi(token).subscribe(
             data => {
                 console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Solicitado usuario recibo " + JSON.stringify(data.response.user));
-                this.storage.set ("usuarioSpreaker", data.response.user.user_id);
+                //this.storage.set ("usuarioSpreaker", data.response.user.user_id);
+                this.guardaUsuario(data.response.user.user_id);
             },
             err => {
                 console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Error solicitando datos de usuario:" + err);
@@ -181,7 +185,8 @@ export class ConfiguracionService {
         else
         {   
             console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Borro el usuario ya que he borrado el token");
-            this.storage.set ("usuarioSpreaker", null);
+            //this.storage.set ("usuarioSpreaker", null);
+            this.guardaUsuario("");
         }
     }
 
@@ -195,7 +200,8 @@ export class ConfiguracionService {
                         this.episodioSrvc.whoAMi(data).subscribe(
                             data => {
                                 console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] recibido " + JSON.stringify(data.response.user));
-                                this.storage.set ("usuarioSpreaker", data.response.user.user_id);
+                                //this.storage.set ("usuarioSpreaker", data.response.user.user_id);
+                                this.guardaUsuario(data.response.user.user_id);
                             },
                             err => {
                                 console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] Error solicitando datos de usuario:" + err);
@@ -207,7 +213,8 @@ export class ConfiguracionService {
             )
             .catch ((error) => {
                 console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Error recuperando tokenSpreaker "+ error);
-                this.storage.set ("usuarioSpreaker", "");
+                //this.storage.set ("usuarioSpreaker", "");
+                this.guardaUsuario("");
                 resolve(0);
             }); 
         });
@@ -220,5 +227,10 @@ export class ConfiguracionService {
     dameUsuario ():Promise<any>{
         console.log ("[CONFIGURACION.SERVICE.dameUsuario] Entrando");
         return (this.storage.get ("usuarioSpreaker"));
+    }
+
+    guardaUsuario(usuario:string){
+        this.storage.set ("usuarioSpreaker", usuario);
+        this.events.publish('conexion:status', {});
     }
 }
