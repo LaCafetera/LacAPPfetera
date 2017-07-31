@@ -161,7 +161,7 @@ export class Player implements OnDestroy {
         return (/*audio == this.capitulo || */this.capitulo.includes(audio));
     }
 
-    play(audio: string, configuracion: ConfiguracionService){
+    play(audio: string, configuracion: ConfiguracionService):boolean{
         console.log ("[PLAYER.play] Recibida petición de reproducción de "+ audio );
 		let capitulo = this.dameCapitulo();
         audio = this.traduceAudio(audio);
@@ -170,6 +170,7 @@ export class Player implements OnDestroy {
         {
             console.log ("[PLAYER.play] Play normal");
             this.repObject.play(); //this.repPlugin.play([repeticiones, sonarBloqueado]);
+            return (false);
         }
         else{
             console.log ("[PLAYER.play] Modificado audio");
@@ -193,6 +194,7 @@ export class Player implements OnDestroy {
             this.repObject = this.crearepPlugin (audio, configuracion);
             console.log("[PLAYER.play] Objeto reproductor creado."); 
             this.repObject.play();
+            return (true);
         }
     }
 

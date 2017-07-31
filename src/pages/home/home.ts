@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 
 import { NavController, Events, MenuController, PopoverController, Platform } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -20,7 +20,7 @@ import { Player } from "../../app/player";
   providers: [EpisodiosService, BackgroundMode, Dialogs/*, ConfiguracionService*/]
 })
 
-export class HomePage  {
+export class HomePage implements OnDestroy {
 
     items: Array<any>;
    // reproductor = ReproductorPage;
@@ -69,6 +69,11 @@ export class HomePage  {
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
+        /*this.platform.registerBackButtonAction(
+            ()=>{
+                this.mscControl.destroy();
+                this.platform.exitApp();
+            }, 0);*/
 /*        this.platform.pause.subscribe(()=>{
             if (this.reproductor != null){
                 this.reproductor.release(_configuracion);
@@ -82,12 +87,13 @@ export class HomePage  {
         // BackgroundMode.enable();
         this.cargaUsuarioParaProgramas(null);
     }
-    /*
+    
     ngOnDestroy(){
         console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
-        //this.mscControl.destroy(); <-- Revisar esto que no funciona.
-        //.destroy(); // onSuccess, onError
-    }*/
+        this.events.unsubscribe("like:modificado");
+        this.events.unsubscribe("capitulo:fenecido");
+        this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+    }
 
     cargaUsuarioParaProgramas (episodio:string){
         this._configuracion.dameUsuario()
