@@ -42,7 +42,7 @@ export class Player implements OnDestroy {
 
     constructor(public repPlugin: MediaPlugin, 
                 private file: File, 
-                configuracion: ConfiguracionService, 
+                private configuracion: ConfiguracionService, 
                 public events: Events){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
@@ -55,7 +55,22 @@ export class Player implements OnDestroy {
     }
 
     ngOnDestroy(){
-        console.log("[PLAYER.ngOnDestroy] M'an matao!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (this.statusRep == this.repPlugin.MEDIA_PAUSED || this.statusRep == this.repPlugin.MEDIA_STOPPED ){
+            console.log("[PLAYER.ngOnDestroy] Reproducción parada; guardando posición. ")
+            let capitulo = this.dameCapitulo();
+            console.log("[PLAYER.ngOnDestroy] Guardando posición para capítulo " + capitulo);
+            this.repObject.getCurrentPosition()
+            .then((pos)=>{
+                console.log("[PLAYER.ngOnDestroy] Recibida posición " + pos * 1000);
+                if (pos > 0) {
+                    this.configuracion.setTimeRep(capitulo, pos * 1000);
+                }
+            })
+            .catch ((err)=> {
+                console.log ("[PLAYER.ngOnDestroy] Recibido error al pedir posición de reproducción: " + err);
+            });
+        }
+        console.log("[PLAYER.ngOnDestroy] Saliendo");
     }
 
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
@@ -79,6 +94,7 @@ export class Player implements OnDestroy {
                 });
                 this.seekPdte = false;
             }
+            
             if (this.paradaEncolada && status == this.repPlugin.MEDIA_RUNNING){
                 this.pause(configuracion);
                 this.paradaEncolada = false;
@@ -246,6 +262,8 @@ export class Player implements OnDestroy {
         }
         //this.reproduciendo = false;
     }
+
+
 
     adelantaRep(){
         this.getCurrentPosition()

@@ -187,6 +187,7 @@ export class EpisodiosService {
         console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Quiero enviar " + parametros);
         return this.http.post('https://api.spreaker.com/v2/users/'+usuario+'?'+parametros, null, {headers: headers}).map(res => res.json());
     }
+    
 }
 
 
@@ -195,7 +196,7 @@ export class EpisodiosService {
 // https://api.spreaker.com/v2/sync/users/7985950/push-notifications 
 //  https://api.spreaker.com/v2/sync/users/7985950/favorites 
 //  https://api.spreaker.com/v2/sync/users/7985950/bookmarks
-//  https://api.spreaker.com/v2/sync/users/7985950/likes
+//  https://api.spreaker.com/v2/sync/users/7985950/likes 
 //  https://api.spreaker.com/v2/sync/users/7985950/plays
 
-
+//https://api.spreaker.com/v2/episodes/:episodio/likes?limit=5--> Esto devuelve datos de personas que han dado a like al episodio

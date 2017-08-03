@@ -27,6 +27,7 @@ export class ChatPage {
     timer:any;
     mensajeTxt:string = "";
     usuario_id:string = "";
+    token_id:string = "";
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
@@ -42,33 +43,10 @@ export class ChatPage {
     this._configuracion.dameUsuario()
     .then ((dataUsuario) => {
         this.usuario_id = dataUsuario;
-        this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
-        data => {
-            this.items=data.response.items;
-            console.log("[CHAT]: cha recibido: "+ JSON.stringify(data.response.items));
-        },
-        err => {
-            console.log("[CHAT.ionViewDidLoad] Error recuperando chat: " + err)
-        })
     })
     .catch (() => {
-        this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
-        data => {
-            this.items=data.response.items;
-        },
-        err => {
-            console.log("[CHAT.ionViewDidLoad] Error recuperando chat: " + err)
-        })
         console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
     });
-/*    this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
-        data => {
-            this.items=data.response.items;
-        },
-        err => {
-            alert(err);
-        }
-    );       */
   }
   
       ngOnDestroy(){
@@ -78,6 +56,41 @@ export class ChatPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChatPage');
+
+    this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
+    data => {
+        this.items=data.response.items;
+        console.log("[CHAT.ionViewDidLoad]: chat recibido");
+    },
+    err => {
+        console.log("[CHAT.ionViewDidLoad] Error recuperando chat: " + err)
+    })
+
+    this._configuracion.dameUsuario()
+    .then ((dataUsuario) => {
+        if (dataUsuario != null){
+            console.log ("[CHAT.ionViewDidLoad] recibido usuario " + dataUsuario );
+            this.usuario_id = dataUsuario;
+            this._configuracion.dameToken()
+            .then ((dataToken) => {
+                console.log ("[CHAT.ionViewDidLoad] recibido token " + dataToken );
+                this.token_id = dataToken;
+            })
+            .catch ((error) => {
+                console.log("[CHAT.ionViewDidLoad] Error descargando token:" + error);
+                this.msgDescarga ("Error extrayendo token de Spreaker.");
+                this.token_id = "";
+            });
+        }
+        else {
+            this.msgDescarga ("No podrá enviar mensajes por no estar conectado a Spreaker.");
+            this.usuario_id = "";
+        }
+    })
+    .catch (() => {
+        this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+    });
+
     this.timer = setInterval(() =>{
         console.log("[CHAT.dameComentarios] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
@@ -94,7 +107,7 @@ export class ChatPage {
                         console.log("[CHAT.dameComentarios] " + i );   
                     }
                     this.items = data.response.items.slice(0,i).concat(this.items);
-                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
+//                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
                 }
             },
             err => {
@@ -102,7 +115,7 @@ export class ChatPage {
                 console.log ("[CHAT.dameComentarios] Error actualizando chat: " + err)
             }
         );       
-    }, 5000);
+    }, 200);
   }
 /*
   concatenaChat (arrayChat, nuevoArray){
@@ -132,7 +145,9 @@ export class ChatPage {
     enviarComentario(){
         console.log ("[CHAT.enviarComentario] Solicitado envío " + this.mensajeTxt );
 
-        this._configuracion.dameUsuario()
+        if ( this.usuario_id != "" && this.token_id != "" && this.mensajeTxt != null) {
+
+        /*this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
             if (dataUsuario != null){
                 console.log ("[CHAT.enviarComentario] recibido usuario " + dataUsuario );
@@ -140,17 +155,18 @@ export class ChatPage {
                 .then ((dataToken) => {
                     console.log ("[CHAT.enviarComentario] recibido token " + dataToken );
                     if (dataToken != null) {
-                        console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);
-                        this.episodiosService.enviaComentarios(this.episodio, dataUsuario, dataToken,  this.mensajeTxt).subscribe(
+                        console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);*/
+                        this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  this.mensajeTxt).subscribe(
                             data => {
-                                console.log("[[CHAT.enviarComentario] Mensaje enviado" + JSON.stringify(data));
+                                console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/);
                                 this.mensajeTxt = null;
                             },
                             err => {
                                 console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
+                                this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
                             }
                         );
-                    }
+/*                    }
                     else {
                         this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
                     }
@@ -166,19 +182,23 @@ export class ChatPage {
         })
         .catch (() => {
             this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-        });
+        });*/
+
+        }
     }
 
     twittearComentario(){
         console.log ("[CHAT.twittearComentario] Solicitado envío");
-        this.socialsharing.shareViaTwitter(this.hashtag + " " + this.mensajeTxt)
-        .then((respuesta) => {
-            console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
-            this.mensajeTxt = null;
-        })
-        .catch((error) => {
-            console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
-        });
+        if (this.mensajeTxt != null){
+            this.socialsharing.shareViaTwitter(this.hashtag + " " + this.mensajeTxt)
+            .then((respuesta) => {
+                console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
+                this.mensajeTxt = null;
+            })
+            .catch((error) => {
+                console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
+            });
+        }
     }
     
     msgDescarga  (mensaje: string) {
@@ -196,13 +216,13 @@ export class ChatPage {
         .then ((respuesta)=> {
             //reproductor.stop();
             console.log("[CHAT.borraComentario] Confirmación de borrado:" + respuesta);
-            if (respuesta == 1){                    
-                this._configuracion.dameUsuario()
+            if (respuesta == 1){
+/*                this._configuracion.dameUsuario()
                 .then ((dataUsuario) => {
                     if (dataUsuario != null){
                         this._configuracion.dameToken()
-                        .then ((dataToken) => {
-                            this.episodiosService.borraComentarios(this.episodio, dataUsuario, dataToken, item.message_id).subscribe(
+                        .then ((dataToken) => {*/
+                            this.episodiosService.borraComentarios(this.episodio, this.usuario_id, this.token_id, item.message_id).subscribe(
                             data =>{
                                 console.log("[CHAT.borraComentario] Comentario " + item.message_id + " borrado");
                                 this.borraItemComentario(item);
@@ -210,7 +230,7 @@ export class ChatPage {
                             err =>{
                                 console.log("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
                             })
-                        })
+/*                        })
                         .catch ((error) => {
                             this.msgDescarga ("Error borrando mensaje.");
                             console.log("[CHAT.borraComentario] Error extrayendo token " + error);
@@ -222,7 +242,7 @@ export class ChatPage {
                 })
                 .catch (() => {
                     this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-                });
+                });*/
             }
         })
         .catch (() => {

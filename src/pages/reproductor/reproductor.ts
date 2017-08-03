@@ -295,13 +295,13 @@ export class ReproductorPage implements OnDestroy{
         //console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
         if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
             if (statusRep.status == this.reproductor.dameStatusStop()){
-                console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
                 if (this.enVivo){
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Reproducción en vivo."); // Limpiamos el reproductor.
                     //this.reproductor.stop();
                     this.reproductor.release(this._configuracion);
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
+                console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
                 this.posicionRep = 0;
                 this.posicionRepStr = "00:00:00";
 //                this.enVivo = false; // Si se ha terminado seguro que ya no es en vivo. --> Anulo la línea ya que si la reproducción se para porque 
