@@ -301,10 +301,6 @@ export class ReproductorPage implements OnDestroy{
                     this.reproductor.release(this._configuracion);
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
                 }
-                else{ // Si se ha parado y no es en vivo, guardamos la posición.
-                    console.log ("[REPRODUCTOR.cambiandoStatusRep] Guardando la posición de reproducción, por stop.");
-                    this.reproductor.guardaPos(this._configuracion);
-                }
                 console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
                 this.posicionRep = 0;
                 this.posicionRepStr = "00:00:00";
