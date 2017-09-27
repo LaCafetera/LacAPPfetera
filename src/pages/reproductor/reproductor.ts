@@ -49,7 +49,7 @@ export class ReproductorPage implements OnDestroy{
     posicionRep: number = 0;
     totDurPlay: number;
     iconoPlayPause: string = 'play';
-    timer: any;
+    timer: number = 0;
     timerDescarga: number = 0;
     timerVigilaEnVivo: number;
     timerParpadeo: number = 0;
@@ -205,7 +205,7 @@ export class ReproductorPage implements OnDestroy{
                 artist      : 'Radiocable.com',             // optional, default : ''
                 cover       : this.capItem.image_url,      // optional, default : nothing
                 isPlaying   : false,                         // optional, default : true
-                dismissable : false,
+                dismissable : true,                       // Esto es importante ponerlo a true para que no vuelva a arrancar si matan la app
 
                 // hide previous/next/close buttons:
                 hasPrev   : true,      // show previous button, optional, default: true
@@ -300,6 +300,10 @@ export class ReproductorPage implements OnDestroy{
                     //this.reproductor.stop();
                     this.reproductor.release(this._configuracion);
                     this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
+                }
+                else{ // Si se ha parado y no es en vivo, guardamos la posición.
+                    console.log ("[REPRODUCTOR.cambiandoStatusRep] Guardando la posición de reproducción, por stop.");
+                    this.reproductor.guardaPos(this._configuracion);
                 }
                 console.log ("[REPRODUCTOR.cambiandoStatusRep] Poniendo la posición del reproductor a 0");
                 this.posicionRep = 0;
@@ -458,7 +462,7 @@ export class ReproductorPage implements OnDestroy{
         if (this.reproductor != null && this.reproduciendo){
             this.reproductor.seekTo(this.posicionRep);
             this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
-            console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr);
+            console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr + " - " + this.posicionRep);
         }
         else {
             console.log("[REPRODUCTOR.actualizaPosicion] No cambio la posición del slider porque reproductor es nulo.");

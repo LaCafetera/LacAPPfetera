@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { Nav, Platform, ToastController, MenuController } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
@@ -16,7 +16,7 @@ import { InfoUsuarioPage } from '../pages/info-usuario/info-usuario';
   templateUrl: 'app.html',
   providers: [ConfiguracionService, StatusBar, SplashScreen, Contacts/*, InAppBrowser*/, Deeplinks]
 })
-export class MyApp {
+export class MyApp implements OnDestroy {
   @ViewChild(Nav) nav: Nav;
 
   soloWifi:boolean = false;
@@ -116,6 +116,12 @@ export class MyApp {
         //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
       });
     }
+    
+
+    ngOnDestroy(){
+      console.log("[app.component.ngOnDestroy] Saliendoooooooooooooooooooooooooooooo");
+   }
+
 
     setTheme(e) {
     // https://webcake.co/theming-an-ionic-2-application/

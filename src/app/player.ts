@@ -73,6 +73,10 @@ export class Player implements OnDestroy {
         console.log("[PLAYER.ngOnDestroy] Saliendo");
     }
 
+    ionViewWillUnload() {
+        console.log("[PLAYER.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
+    }
+
     public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
         console.log("[PLAYER.crearepPlugin] recibida petición de audio: " + audio);
         //this._configuracion = configuracion;
@@ -218,19 +222,27 @@ export class Player implements OnDestroy {
         this.repObject.play();
     }
 
+    guardaPos(configuracion: ConfiguracionService){
+        this.repObject.getCurrentPosition()
+            .then((pos)=>{
+                console.log("[PLAYER.guardaPos] Recibida posición " + pos * 1000);
+                if (pos > 0) {
+                    configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                }
+                else { // Cuando la reproducción está parada, la posición es -1
+                    configuracion.setTimeRep(this.dameCapitulo(), 0);
+                }
+            })
+            .catch ((err)=> {
+                console.log ("[PLAYER.guardaPos] Recibido error al pedir posición de reproducción: " + err);
+            });
+
+    }
+
     pause(configuracion: ConfiguracionService){
         if (this.repObject != null){
             console.log ("[PLAYER.pause] repObject no es nulo ");
-            this.repObject.getCurrentPosition()
-                .then((pos)=>{
-                    console.log("[PLAYER.pause] Recibida posición " + pos * 1000);
-                    if (pos > 0) {
-                        configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
-                    }
-                })
-                .catch ((err)=> {
-                    console.log ("[PLAYER.pause] Recibido error al pedir posición de reproducción: " + err);
-                });
+            this.guardaPos(configuracion);
             this.repObject.pause();
             if (this.statusRep == this.repPlugin.MEDIA_STARTING)
                 {
@@ -247,16 +259,7 @@ export class Player implements OnDestroy {
 
     release(configuracion: ConfiguracionService){
         if (this.repObject != null){
-            this.repObject.getCurrentPosition()
-                .then((pos)=>{
-                    console.log("[PLAYER.release] Recibida posición " + pos * 1000);
-                    if (pos > 0) {
-                        configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
-                    }
-                })
-                .catch ((err)=> {
-                    console.log ("[PLAYER.release] Recibido error al pedir posición de reproducción: " + err);
-                });
+            this.guardaPos(configuracion);
             this.repObject.release();
             console.log ("[PLAYER.release] EJECUTADO RELEASE");
         }
@@ -291,7 +294,13 @@ export class Player implements OnDestroy {
     }
 
     seekTo(milisegundos:number){
-        this.repObject.seekTo(milisegundos);
+        if (milisegundos == 0){
+            // Hay un bug; si es cero no hace ni caso,así que lo pondremos a 1 milisegundo, que para el caso...
+            this.repObject.seekTo(1);    
+        }
+        else {
+            this.repObject.seekTo(milisegundos);
+        }
     }
 
     setVolume(volumen){

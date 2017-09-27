@@ -87,6 +87,10 @@ export class HomePage implements OnDestroy {
         // BackgroundMode.enable();
         this.cargaUsuarioParaProgramas(null);
     }
+
+    ionViewWillUnload() {
+        console.log("[HOME.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
+    }
     
     ngOnDestroy(){
         console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");

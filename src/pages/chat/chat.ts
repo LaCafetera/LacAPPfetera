@@ -24,7 +24,7 @@ export class ChatPage {
     episodio: string;
     hashtag: string;
     items: Array<any>;
-    timer:any;
+    timer:number = 0;
     mensajeTxt:string = "";
     usuario_id:string = "";
     token_id:string = "";
