@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, ChangeDetectorRef } from "@angular/core";
 
 import { NavController, Events, MenuController, PopoverController, Platform } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -37,6 +37,8 @@ export class HomePage implements OnDestroy {
     contadorCapitulos : number = 0;
     timerVigilaDescargas: number;
 
+    mostrarFechasAbsolutas : boolean = false;
+
     constructor(public navCtrl: NavController, 
                 private episodiosService: EpisodiosService, 
                 public events: Events, 
@@ -45,7 +47,8 @@ export class HomePage implements OnDestroy {
                 private dialogs: Dialogs, 
                 private _configuracion: ConfiguracionService,
                 public popoverCtrl: PopoverController,
-                public platform: Platform) {
+                public platform: Platform,
+                private chngDetector: ChangeDetectorRef ) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
@@ -69,6 +72,11 @@ export class HomePage implements OnDestroy {
                                   ticker: "Te estás tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
+        events.subscribe("fechasAbsolutas:status", (dato) => {
+            console.log('[HOME.constructor] Cambiado valor fechas absolutas a ' + dato.valor);
+            this.mostrarFechasAbsolutas = dato.valor;
+            this.chngDetector.markForCheck();
+        });                                  
         /*this.platform.registerBackButtonAction(
             ()=>{
                 this.mscControl.destroy();
@@ -86,6 +94,9 @@ export class HomePage implements OnDestroy {
         //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
         this.cargaUsuarioParaProgramas(null);
+        this._configuracion.getFechasAbsolutas()
+            .then((dato)=>this.mostrarFechasAbsolutas = dato)
+            .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
     }
 
     ionViewWillUnload() {

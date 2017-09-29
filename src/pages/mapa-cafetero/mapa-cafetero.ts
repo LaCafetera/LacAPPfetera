@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component , OnDestroy} from '@angular/core';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
@@ -14,13 +14,23 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
   selector: 'page-mapa-cafetero',
   templateUrl: 'mapa-cafetero.html',
 })
-export class MapaCafeteroPage {
+export class MapaCafeteroPage  implements OnDestroy {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private screenOrientation: ScreenOrientation) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private screenOrientation: ScreenOrientation, 
+    public toastCtrl: ToastController) {
+      /*this.screenOrientation.onChange().subscribe(
+        data => {
+          this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
+        },
+        err => {
+          this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
+        }
+    );*/
   }
 
   ionViewDidLoad() {
     console.log("[MapaCafeteroPage.ionViewDidLoad] La orientación del parato es: " + this.screenOrientation.type);
+    this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     console.log("[MapaCafeteroPage.ionViewDidLoad] Ahora la orientación del parato es: " + this.screenOrientation.type);
   }
@@ -29,4 +39,18 @@ export class MapaCafeteroPage {
     console.log("[MapaCafeteroPage.ionViewWillLeave] Desbloqueando.");
     this.screenOrientation.unlock();
   }
+
+  ngOnDestroy(){
+    this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
+    console.log("[MapaCafeteroPage.ngOnDestroy] Saliendo " + this.screenOrientation.type);
+  }
+
+  msgDescarga  (mensaje: string) {
+    let toast = this.toastCtrl.create({
+        message: mensaje,
+        duration: 3000,
+        cssClass: 'msgDescarga'
+    });
+    toast.present();
+  } 
 }

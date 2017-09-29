@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, Events } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -28,6 +28,7 @@ export class ChatPage {
     mensajeTxt:string = "";
     usuario_id:string = "";
     token_id:string = "";
+    mostrarFechasAbsolutas : boolean = false;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
@@ -36,7 +37,8 @@ export class ChatPage {
               private _configuracion: ConfiguracionService, 
               private toastCtrl: ToastController,
               private dialogs: Dialogs,
-              private keyboard: Keyboard ) {
+              private keyboard: Keyboard, 
+              public events: Events ) {
     this.episodio = this.navParams.get('episodioMsg');
     this.hashtag = this.navParams.get('hashtag');
     console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
@@ -47,6 +49,10 @@ export class ChatPage {
     .catch (() => {
         console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
     });
+    events.subscribe("fechasAbsolutas:status", (valor) => {
+        console.log('[HOME.constructor] Cambiado valor fechas absolutas');
+        this.mostrarFechasAbsolutas = valor;
+    });                                  
   }
   
       ngOnDestroy(){

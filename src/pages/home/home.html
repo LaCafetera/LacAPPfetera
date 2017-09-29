@@ -64,7 +64,11 @@
             </ion-row>
 
             <ion-row class="iconos" (click)="pushPage(item)">
-                <ion-col col-5>
+                <ion-col col-5 *ngIf="mostrarFechasAbsolutas">
+                    <p>{{ item.objeto.published_at }}</p>
+                </ion-col>
+
+                <ion-col col-5 *ngIf="!mostrarFechasAbsolutas">
                     <p>{{ item.objeto.published_at |tiempoHastaAhora }}</p>
                 </ion-col>
 

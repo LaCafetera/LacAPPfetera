@@ -104,14 +104,18 @@ export class Player implements OnDestroy {
                 this.paradaEncolada = false;
             }
         });
+        const onSuccess = () => console.log('[PLAYER.crearepPlugin] Reproduciendo OK');
+        const onError = (error) => {
+            console.error(error.message);
+        }
         if (audio.includes('mp3')){
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
-            return(this.repPlugin.create (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate));
+            return(this.repPlugin.create (this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3", onStatusUpdate, onSuccess, onError));
         }
         else {
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
             //return(this.repPlugin.create (audio+".mp3?application_id=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST", onStatusUpdate));
-            return(this.repPlugin.create (audio+".mp3", onStatusUpdate));
+            return(this.repPlugin.create (audio+".mp3", onStatusUpdate, onSuccess, onError));
         }
     }
 

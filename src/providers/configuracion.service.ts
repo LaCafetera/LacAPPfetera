@@ -77,7 +77,7 @@ export class ConfiguracionService {
         //return this.theme.asObservable();
         return (this.storage.get ("WIFI"));/*
         return new Promise ((resolve,reject) =>{
-             this.storage.get ("WIFI")
+                this.storage.get ("WIFI")
             .then (
                 data=> {
                     console.log ("[CONFIGURACION.SERVICE.getWIFI] Enviado "+ data);
@@ -97,6 +97,19 @@ export class ConfiguracionService {
         else {
             this.storage.set ("WIFI",val);
         //console.log("[CONFIGURACION.SERVICE.setWIFI] cambiado el WIFI a "+ val );
+        }
+    }
+
+    getFechasAbsolutas(){
+        return (this.storage.get ("FechasAbsolutas"));
+    }
+
+    setFechasAbsolutas(val:boolean){
+        if (val == null){
+            console.log("[CONFIGURACION_SERVICE.setFechasAbsolutas] No puedo guardar un valor nulo")
+        }
+        else {
+            this.storage.set ("FechasAbsolutas",val);
         }
     }
 

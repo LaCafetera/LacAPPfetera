@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
-import { Nav, Platform, ToastController, MenuController } from 'ionic-angular';
+import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -20,6 +20,7 @@ export class MyApp implements OnDestroy {
   @ViewChild(Nav) nav: Nav;
 
   soloWifi:boolean = false;
+  fechasAbsolutas:boolean = false;
   // prueba: any;
   conectadoASpreaker: boolean = false;
   iniciando: boolean = false;
@@ -43,7 +44,8 @@ export class MyApp implements OnDestroy {
               private epService: EpisodiosService,
               //private iab: InAppBrowser,
               private _deepLink: Deeplinks,
-              public menuCtrl: MenuController) {
+              public menuCtrl: MenuController,
+              public events: Events) {
 
     this.availableThemes = this._configuracion.availableThemes;
     _platform.ready().then(() => {
@@ -115,6 +117,10 @@ export class MyApp implements OnDestroy {
         this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
         //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
       });
+
+      this._configuracion.getFechasAbsolutas()
+      .then((dato)=>this.fechasAbsolutas = dato==true)
+      .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
     }
     
 
@@ -127,10 +133,16 @@ export class MyApp implements OnDestroy {
     // https://webcake.co/theming-an-ionic-2-application/
         this._configuracion.setTheme(e);
     }
-
+    
     setWIFI(e) {
         console.log("[app.component.setWIFI] El valor que trato de guardar es " + e.checked );
         this._configuracion.setWIFI(e.checked);
+    }
+    
+    setFechasAbsolutas(e) {
+        console.log("[app.component.setFechasAbsolutas] El valor que trato de guardar es " + e.checked );
+        this._configuracion.setFechasAbsolutas(e.checked);
+        this.events.publish('fechasAbsolutas:status', {valor:e.checked});
     }
 
     msgDescarga  (mensaje: string) {
