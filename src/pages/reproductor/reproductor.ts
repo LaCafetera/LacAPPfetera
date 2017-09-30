@@ -585,7 +585,7 @@ export class ReproductorPage implements OnDestroy{
     meGustasMucho(){
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
-            if (dataUsuario != null){
+            if (dataUsuario != null && dataUsuario != ''){
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
                     if (this.episodioLike){ 
@@ -623,10 +623,12 @@ export class ReproductorPage implements OnDestroy{
                 });
             }
             else {
-                this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+                console.log("[REPRODUCTOR.meGustasMucho] El código de usuario es nulo");
+                this.msgDescarga ("Por favor, conéctese a Spreaker en el menú de la app.");
             }
         })
         .catch (() => {
+            this.msgDescarga ("Error extrayendo usuario de Spreaker.");
             this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
         });
     }
