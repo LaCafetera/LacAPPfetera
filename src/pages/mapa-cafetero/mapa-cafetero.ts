@@ -30,7 +30,7 @@ export class MapaCafeteroPage  implements OnDestroy {
 
   ionViewDidLoad() {
     console.log("[MapaCafeteroPage.ionViewDidLoad] La orientación del parato es: " + this.screenOrientation.type);
-    this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
+    //this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     console.log("[MapaCafeteroPage.ionViewDidLoad] Ahora la orientación del parato es: " + this.screenOrientation.type);
   }
@@ -41,7 +41,7 @@ export class MapaCafeteroPage  implements OnDestroy {
   }
 
   ngOnDestroy(){
-    this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
+    //this.msgDescarga ("La orientación del terminal es: " + this.screenOrientation.type);
     console.log("[MapaCafeteroPage.ngOnDestroy] Saliendo " + this.screenOrientation.type);
   }
 
