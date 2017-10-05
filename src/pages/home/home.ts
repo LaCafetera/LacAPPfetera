@@ -4,6 +4,7 @@ import { NavController, Events, MenuController, PopoverController, Platform } fr
 import { Dialogs } from '@ionic-native/dialogs';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
+import { Network } from '@ionic-native/network';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -17,7 +18,7 @@ import { Player } from "../../app/player";
 @Component({
   selector: "page-home",
   templateUrl: "home.html",
-  providers: [EpisodiosService, BackgroundMode, Dialogs/*, ConfiguracionService*/]
+  providers: [EpisodiosService, BackgroundMode, Dialogs, Network/*, ConfiguracionService*/]
 })
 
 export class HomePage implements OnDestroy {
@@ -39,6 +40,8 @@ export class HomePage implements OnDestroy {
 
     mostrarFechasAbsolutas : boolean = false;
 
+    desconectado : boolean = false;
+
     constructor(public navCtrl: NavController, 
                 private episodiosService: EpisodiosService, 
                 public events: Events, 
@@ -48,6 +51,7 @@ export class HomePage implements OnDestroy {
                 private _configuracion: ConfiguracionService,
                 public popoverCtrl: PopoverController,
                 public platform: Platform,
+                private network: Network,
                 private chngDetector: ChangeDetectorRef ) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
@@ -93,10 +97,23 @@ export class HomePage implements OnDestroy {
     ionViewDidLoad() {
         //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
-        this.cargaUsuarioParaProgramas(null);
-        this._configuracion.getFechasAbsolutas()
-            .then((dato)=>this.mostrarFechasAbsolutas = dato)
-            .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
+        this.compruebaConexion();
+    }
+
+    compruebaConexion (){
+        //console.log("[HOME.ionViewDidLoad] Entrando" );
+        // BackgroundMode.enable();
+        this.desconectado = this.network.type === "none";
+        console.log("[home.compruebaConexion] el sistema me dice que la conexión es " + this.network.type);
+        if (this.desconectado){
+            this.dialogs.alert("El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo", 'Super-Gurú.');
+        }
+        else{
+            this.cargaUsuarioParaProgramas(null);
+            this._configuracion.getFechasAbsolutas()
+                .then((dato)=>this.mostrarFechasAbsolutas = dato)
+                .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
+        }
     }
 
     ionViewWillUnload() {
@@ -234,27 +251,33 @@ export class HomePage implements OnDestroy {
         return (hashtag);
     }
 
-  hacerCafe(event){
-      this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
-            data => {
-                // console.log("[HOME.hacerCafe] " + JSON.stringify (data));
-                if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
-                    this.items.unshift(data);
-                    console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
+    hacerCafe(event){
+        if (this.items.length > 0){
+            this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
+                data => {
+                    // console.log("[HOME.hacerCafe] " + JSON.stringify (data));
+                    if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
+                        this.items.unshift(data);
+                        console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
+                    }
+                    else{
+                        //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
+                        this.items.shift();
+                        this.items.unshift(data);
+                    }
+                    event.complete();
+                },
+                err => {
+                    event.complete();
+                    console.log("[HOME.hacerCafe] Error haciendo café: " + err);
+                    this.dialogs.alert ("Error descargando episodios" + err, "Error");
                 }
-                else{
-                    //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
-                    this.items.shift();
-                    this.items.unshift(data);
-                }
-                event.complete();
-            },
-            err => {
-                event.complete();
-                console.log("[HOME.hacerCafe] Error haciendo café: " + err);
-                this.dialogs.alert ("Error descargando episodios" + err, "Error");
-            }
-        );
+            );
+        }
+        else {
+            event.complete();
+            this.compruebaConexion();
+        }
     }
 /*
     abreDatosUsuario() {

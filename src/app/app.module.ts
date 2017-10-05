@@ -42,6 +42,7 @@ import { MenuExtComponent } from '../components/menuext/menuext';
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
 import { muestraHashtagPipe } from './muestraHashtag.pipe'
 import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
+import { formateaFechaPipe } from './formateoFecha.pipe'
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
     tiempoHastaAhoraPipe,
     muestraHashtagPipe,
     eliminaHashtagPipe,
+    formateaFechaPipe,
     InfoUsuChatPage,
     InfoUsuarioPage,
     MapaCafeteroPage,

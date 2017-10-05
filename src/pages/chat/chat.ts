@@ -30,38 +30,41 @@ export class ChatPage {
     token_id:string = "";
     mostrarFechasAbsolutas : boolean = false;
 
-  constructor(public navCtrl: NavController, 
-              public navParams: NavParams, 
-              private episodiosService: EpisodiosService,
-              private socialsharing: SocialSharing,
-              private _configuracion: ConfiguracionService, 
-              private toastCtrl: ToastController,
-              private dialogs: Dialogs,
-              private keyboard: Keyboard, 
-              public events: Events ) {
-    this.episodio = this.navParams.get('episodioMsg');
-    this.hashtag = this.navParams.get('hashtag');
-    console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
-    this._configuracion.dameUsuario()
-    .then ((dataUsuario) => {
-        this.usuario_id = dataUsuario;
-    })
-    .catch (() => {
-        console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
-    });
-    events.subscribe("fechasAbsolutas:status", (valor) => {
-        console.log('[HOME.constructor] Cambiado valor fechas absolutas');
-        this.mostrarFechasAbsolutas = valor;
-    });                                  
-  }
+    constructor(public navCtrl: NavController, 
+                public navParams: NavParams, 
+                private episodiosService: EpisodiosService,
+                private socialsharing: SocialSharing,
+                private _configuracion: ConfiguracionService, 
+                private toastCtrl: ToastController,
+                private dialogs: Dialogs,
+                private keyboard: Keyboard, 
+                public events: Events ) {
+        this.episodio = this.navParams.get('episodioMsg');
+        this.hashtag = this.navParams.get('hashtag');
+        console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
+        this._configuracion.dameUsuario()
+        .then ((dataUsuario) => {
+            this.usuario_id = dataUsuario;
+        })
+        .catch (() => {
+            console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
+        });
+        events.subscribe("fechasAbsolutas:status", (valor) => {
+            console.log('[HOME.constructor] Cambiado valor fechas absolutas');
+            this.mostrarFechasAbsolutas = valor;
+        });                                  
+    }
   
-      ngOnDestroy(){
+    ngOnDestroy(){
         clearInterval(this.timer);
     }
 
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChatPage');
+    this._configuracion.getFechasAbsolutas()
+        .then((dato)=>this.mostrarFechasAbsolutas = dato)
+        .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
     this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
     data => {

@@ -21,8 +21,8 @@
                 </div>
             </ion-avatar>
             <h3>{{ item.author_fullname }}</h3>
-            <p *ngIf="!mostrarFechasAbsolutas">{{ item.created_at |tiempoHastaAhora }}</p>
-            <p *ngIf="mostrarFechasAbsolutas">{{ item.created_at }}</p>
+            <p *ngIf="!mostrarFechasAbsolutas">{{ item.created_at | tiempoHastaAhora }}</p>
+            <p *ngIf="mostrarFechasAbsolutas">{{ item.created_at | formateaFecha}}</p>
 			<button ion-button item-right clear *ngIf="item.author_id == usuario_id" (click)="borrarComentario(item)">
                 <ion-icon name='trash' class="envio"></ion-icon>
             </button>
