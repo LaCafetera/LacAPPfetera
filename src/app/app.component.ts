@@ -62,8 +62,8 @@ export class MyApp implements OnDestroy {
           '/:detalles':InfoUsuarioPage
         }).subscribe((match) => {
         //console.log('[app.component.ngAfterViewInit] Enrutado. $link: '/* + match.$route + ' - '*/ +  JSON.stringify(match.$link) );
-        console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
-        console.log('[app.component.ngAfterViewInit]          Código: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
+        //console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
+        //console.log('[app.component.ngAfterViewInit]          Código: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args["code"] ) );
         this.epService.solicitaTokenViaCode(match.$args["code"]).subscribe(
             data => {
                 console.log("[app.component.ngAfterViewInit] Descargados datos de conexión: " + JSON.stringify(data));

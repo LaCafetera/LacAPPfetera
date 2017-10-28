@@ -208,7 +208,7 @@ export class HomePage implements OnDestroy {
                                             controlador:this.mscControl,
                                        //     soloWifi:this.soloWifi,
                                             enlaceTwitter: this.dameEnlace(item.objeto.title)});
-  }
+    }
 
     recalentarCafe(event){
         let episodio = this.items[this.items.length-1].objeto.episode_id;

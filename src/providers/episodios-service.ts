@@ -187,6 +187,22 @@ export class EpisodiosService {
         console.log("[EPISODIOS-SERVICE.actualizaDatosUsuario] Quiero enviar " + parametros);
         return this.http.post('https://api.spreaker.com/v2/users/'+usuario+'?'+parametros, null, {headers: headers}).map(res => res.json());
     }
+
+    sigueSiendoVivo(episodio: string ){
+        console.log("[EPISODIOS-SERVICE.sigueSiendoVivo] Me preguntan si sigue vivo el capítulo  " + episodio);
+        let promesa = new Promise ((resolve, reject) => {
+        this.dameDetalleEpisodio(episodio).subscribe(
+            data => {
+                console.log("[EPISODIOS-SERVICE.sigueSiendoVivo] ¿Sigue vivo el episodio? " + data.type=="LIVE");
+                resolve(data.type=="LIVE");
+            },
+            err => {
+                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                reject ("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+            });
+        });
+        return (promesa);
+    }
     
 }
 

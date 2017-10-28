@@ -102,6 +102,6 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
               Player,
               ConfiguracionService,
               EpisodiosService,
-              CadenasTwitterService ]
+              CadenasTwitterService]
 })
 export class AppModule {}

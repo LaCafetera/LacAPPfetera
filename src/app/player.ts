@@ -98,7 +98,6 @@ export class Player implements OnDestroy {
                 });
                 this.seekPdte = false;
             }
-            
             if (this.paradaEncolada && status == this.repPlugin.MEDIA_RUNNING){
                 this.pause(configuracion);
                 this.paradaEncolada = false;
@@ -106,7 +105,7 @@ export class Player implements OnDestroy {
         });
         const onSuccess = () => console.log('[PLAYER.crearepPlugin] Reproduciendo OK');
         const onError = (error) => {
-            console.error(error.message);
+            console.error("[PLAYER.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
         }
         if (audio.includes('mp3')){
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3");
