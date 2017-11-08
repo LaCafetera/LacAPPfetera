@@ -114,7 +114,8 @@ export class Player implements OnDestroy {
         else {
             console.log("[PLAYER.crearepPlugin] Tratando de reproducir:"+ audio);
             //return(this.repPlugin.create (audio+".mp3?application_id=cG9J6z16F2qHtZFr3w79sdf1aYqzK6ST", onStatusUpdate));
-            return(this.repPlugin.create (audio+".mp3", onStatusUpdate, onSuccess, onError));
+            //return(this.repPlugin.create (audio+".mp3", onStatusUpdate, onSuccess, onError));
+            return(this.repPlugin.create (audio, onStatusUpdate, onSuccess, onError));
         }
     }
 
@@ -297,12 +298,28 @@ export class Player implements OnDestroy {
     }
 
     seekTo(milisegundos:number){
+ //       console.log("[PLAYER.seekTo] Recibidos " + milisegundos + " milésimas de segundo.")
         if (milisegundos == 0){
             // Hay un bug; si es cero no hace ni caso,así que lo pondremos a 1 milisegundo, que para el caso...
             this.repObject.seekTo(1);    
         }
         else {
-            this.repObject.seekTo(milisegundos);
+            this.getCurrentPosition()
+            .then((position)=>{
+                let diferencia = Number(position*1000) - milisegundos;
+ //               console.log("[PLAYER.seekTo] " + diferencia + " " + position + " " + milisegundos + "--------------------------------------------------------");
+                if (Math.abs(diferencia) > 100){
+                    this.repObject.seekTo(milisegundos);
+                    console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + milisegundos + "milésimas de segundo.")
+                }
+                else{
+                    console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + diferencia + " milésimas de segundo. Paso 1000.")
+                }
+            })
+            .catch(() =>{
+                this.repObject.seekTo(milisegundos);
+                console.log("[PLAYER.seekTo] No he podido ver por dónde vamos, así que obedezco.")
+            });
         }
     }
 

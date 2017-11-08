@@ -13,6 +13,8 @@ import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
 
+enum TipoRep {EnVivo, Streaming, Descargado};
+
 /*
   Generated class for the Reproductor page.
 
@@ -71,7 +73,8 @@ export class ReproductorPage implements OnDestroy{
 
     ocultaTiempoRep: boolean = false;
     stopPulsado:boolean = false; 
-    streaming: boolean = false;
+    //streaming: boolean = false;
+    streaming: TipoRep = TipoRep.Streaming;
 
     //streamingAudio: StreamingAudioService;
 
@@ -439,7 +442,7 @@ export class ReproductorPage implements OnDestroy{
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
-                    if (!this.streaming){
+                    if (this.streaming != TipoRep.EnVivo){
 //                    if (!this.enVivo){
                         if (this.reproductor.play(this.audioEnRep, this._configuracion)){
                             // si estamos aquí al darle al play hemos cambiado el audio por lo que hay  que renovar el control del area de notificaciones.
@@ -604,12 +607,18 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.dameNombreFichero] EL fichero existe.");
             this.noRequiereDescarga = true;
             nombre = encodeURI(this.episodio + '.mp3');
-            this.streaming = false;
+            this.streaming = TipoRep.Descargado;
         } else {
             console.log("[REPRODUCTOR.dameNombreFichero] EL fichero no existe.");
             this.noRequiereDescarga = false;
-            nombre = this.streamingAudio.nombreFicheroStreaming(this.episodio);
-            this.streaming = true;
+            if (this.enVivo){
+                this.streaming = TipoRep.EnVivo;
+                nombre = this.streamingAudio.nombreFicheroStreaming(this.episodio);
+            }
+            else{
+                this.streaming = TipoRep.Streaming;  
+                nombre = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/stream');
+            }
         };
         return nombre;
     }
