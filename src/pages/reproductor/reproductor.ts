@@ -76,6 +76,8 @@ export class ReproductorPage implements OnDestroy{
     //streaming: boolean = false;
     streaming: TipoRep = TipoRep.Streaming;
 
+    tmplongitudborrar: number = 0;
+
     //streamingAudio: StreamingAudioService;
 
 
@@ -186,7 +188,8 @@ export class ReproductorPage implements OnDestroy{
                             this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
                         }
                         else {
-                        //    console.log("[REPRODUCTOR.ionViewDidLoad] El primer episodio sigue siendo en vivo.");
+                            this.tmplongitudborrar = this.player.getDuration()
+                            console.log("[REPRODUCTOR.ionViewDidLoad] El episodio dura " + this.tmplongitudborrar );
                         }
                     },
                     error => {
@@ -308,7 +311,9 @@ export class ReproductorPage implements OnDestroy{
                 this.posicionRepStr = "00:00:00";
             }
             if (statusRep.status == this.reproductor.dameStatusStop()){
-                if (this.enVivo){
+                this.playPause();
+                this.player.seekTo(this.tmplongitudborrar*1000);
+/********                if (this.enVivo){
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Reproducción en vivo."); // Limpiamos el reproductor.
                     //this.reproductor.stop();
                     this.streamingAudio.borrarStreaming(this.episodio); // Si es por streaming y hemos terminado queremos borrar el audio
@@ -319,9 +324,13 @@ export class ReproductorPage implements OnDestroy{
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] No se ha pulsado stop. Revisando para ver si nos hemos quedado sin buffer."); 
                     this.episodiosService.sigueSiendoVivo(this.episodio)
                     .then ((valor)=>{
-                        console.log ("[REPRODUCTOR.cambiandoStatusRep] Sigue siendo en vivo es " + valor[0]);
-                        if (valor[0]){
-                            this.playPause(); // volvemos a darle al play para que siga "cantando" en cuanto vuelva la cobertura.    
+                        console.log ("[REPRODUCTOR.cambiandoStatusRep] Sigue siendo en vivo es " + JSON.stringify(valor));
+                        if (valor){
+                            console.log ("[REPRODUCTOR.cambiandoStatusRep] Play");   
+                            this.playPause(); // volvemos a darle al play para que siga "cantando" en cuanto vuelva la cobertura. 
+                        }
+                        else {
+                            console.log ("[REPRODUCTOR.cambiandoStatusRep] No play");   
                         }
                     })
                     .catch ((error)=>{
@@ -335,7 +344,7 @@ export class ReproductorPage implements OnDestroy{
                     this.posicionRep = 0;
                     this.posicionRepStr = "00:00:00";
                     this.stopPulsado  = !this.stopPulsado;
-                }
+                }*******************/
             }
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
         else if (statusRep.status == this.reproductor.dameStatusRep() || 

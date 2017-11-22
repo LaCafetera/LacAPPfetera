@@ -48,11 +48,11 @@ export class StreamingAudioService {
                     reject ("Error " + error.code + " en descarga de streaming." + error.exception);
                 });
                 this.descargando = true;
-                setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 3000);
+                setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 500);
                 //resolve(true);
-                //this.fileTransfer.onProgress((progress) => {
-                //    console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded + " de " + progress.total);
-                //})
+                this.fileTransfer.onProgress((progress) => {
+                    console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                })
             }
             else{
                 console.log("[StreamingAudio.capturarStreaming] COSA EXTRAÑA. ME HAN SOLICITADO DESCARGAR STREAMING CUANDO YA LO ESTABA HACIENDO..." );

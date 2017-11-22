@@ -171,9 +171,13 @@ export class Player implements OnDestroy {
     capDescargado (idDescargado){
         this.descargado = idDescargado;
     }
-
+    
     getCurrentPosition(){
         return this.repObject.getCurrentPosition();
+    }
+    
+    getDuration(){
+        return this.repObject.getDuration();
     }
 
     getCurrentAmplitude(){
