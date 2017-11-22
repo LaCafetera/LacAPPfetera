@@ -21,12 +21,12 @@ export class EpisodiosService {
     }
 
     dameEpisodios(usuario:string, token:string, ultimocap: string, numCaps: number){
-        let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE
+        //let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE
 
 // Para cuando haya que probar con un capítulo que deja de estar en vivo...
 //        let primero = 0;
 
-        //let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
+        let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
         if (ultimocap != null) {
             console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );    
             direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
