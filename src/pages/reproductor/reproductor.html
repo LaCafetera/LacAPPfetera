@@ -46,19 +46,19 @@
             <!-- Botonera de reproducción, se muestra con capítulos en diferido -->
             <!-- Cada botón mide 20% del ancho dejando un 20% a la izq -->
             <ion-col text-center no-padding>
-              <button ion-button outline round (click)="retrasa()">
+              <button class="ffBtn" (click)="retrasa()">
                 <ion-icon name=rewind></ion-icon>
               </button>
             </ion-col>
 
             <ion-col text-center no-padding>
-              <button ion-button outline round (click)="playPause()">
+              <button class="playBtn" (click)="playPause()">
                 <ion-icon name={{iconoPlayPause}}></ion-icon>
               </button>
             </ion-col>
 
             <ion-col text-center no-padding>
-              <button ion-button outline round (click)="adelanta()">
+              <button class="ffBtn" (click)="adelanta()">
                 <ion-icon name=fastforward></ion-icon>
               </button>
             </ion-col>

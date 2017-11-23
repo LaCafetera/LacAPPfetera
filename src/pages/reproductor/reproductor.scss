@@ -7,7 +7,7 @@ page-reproductor {
   .reproductor {
     /* tarjeta del reproductor */
     //height: 90%;
-    margin-top: 77px;
+    margin-top: 57px;
 
     #titular {
       /* div para centrar el titular en la tarjeta y separarlo */
@@ -67,13 +67,24 @@ page-reproductor {
     #botonera {
       /* botonera completa de reproducción en diferido */
       margin-top: 2%;
-      width: 70%;
+      width: 80%;
       margin-left: auto;
       margin-right: auto;
 
-     .button {
-        /* estilo de los botones del reproductor para fijar la alura */
-        height: 20px;
+      .playBtn {
+        /* estilo de los botones play/pause */
+        ion-icon {
+          font-size: 5rem;
+        }
+      }
+
+      .ffBtn {
+        /* estilo de los botones atrás/adelante */
+        padding-top: 10px;
+
+        ion-icon {
+          font-size: 3rem;
+        }
       }
     }
 

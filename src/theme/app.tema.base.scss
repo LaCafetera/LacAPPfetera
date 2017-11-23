@@ -39,7 +39,7 @@
 
     .toggle-checked {
       /* botones deslizantes */
-      background-color: $base-primary;
+      //background-color: $base-primary;
     }
 
     .button {
@@ -59,6 +59,8 @@
 // ******************************************************************* Estilos página listado de capítulos home.html
   page-home {
     ion-list {
+      background-color: $base-fondoApp;
+
       .card {
         .hashtag {
           /* Línea y sombra de separación del titular */
@@ -149,6 +151,14 @@
     #botonera .button:active {
       background-color: $base-primary;
       color: $base-light;
+    }
+
+    .playBtn, .ffBtn {
+      color: $base-primary;
+    }
+
+    .playBtn:active, .ffBtn:active {
+      color: $base-secondary;
     }
 
     .range-bar {
