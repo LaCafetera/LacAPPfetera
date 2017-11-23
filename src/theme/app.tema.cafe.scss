@@ -38,7 +38,7 @@
 
       .toggle-checked {
         /* botones deslizantes */
-        background-color: $cafe-primary;
+        //background-color: $cafe-primary;
       }
 
       .button {
@@ -58,6 +58,8 @@
 // ******************************************************************* Estilos página listado de capítulos home.html
 page-home {
   ion-list {
+    background-color: $cafe-fondoApp;
+
     .card {
       .hashtag {
         border-bottom: solid 1px $cafe-light;

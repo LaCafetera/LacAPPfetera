@@ -38,7 +38,7 @@
 
       .toggle-checked {
         /* botones deslizantes */
-        background-color: $lila-primary;
+        //background-color: $lila-primary;
       }
 
       .button {
@@ -58,6 +58,8 @@
 // ******************************************************************* Estilos página listado de capítulos home.html
 page-home {
   ion-list {
+    background-color: $lila-fondoApp;
+
     .card {
       .hashtag {
         border-bottom: solid 1px $lila-light;

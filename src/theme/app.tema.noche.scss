@@ -38,7 +38,7 @@
 
       .toggle-checked {
         /* botones deslizantes */
-        background-color: $noche-dark;
+        //background-color: $noche-dark;
       }
 
       .button {
@@ -57,7 +57,10 @@
 
 // ******************************************************************* Estilos página listado de capítulos home.html
 page-home {
+
   ion-list {
+    background-color: $noche-fondoApp;
+
     .card {
       .hashtag {
         border-bottom: solid 1px $noche-light;
