@@ -48,10 +48,14 @@ export class StreamingAudioService {
                     reject ("Error " + error.code + " en descarga de streaming." + error.exception);
                 });
                 this.descargando = true;
-                setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 500);
+                //setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 1000);
                 //resolve(true);
                 this.fileTransfer.onProgress((progress) => {
-                    console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                    if (progress.loaded > 200000) {
+                        resolve (true);
+                        //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                    }
+                    //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                 })
             }
             else{

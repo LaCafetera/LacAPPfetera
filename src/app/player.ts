@@ -189,6 +189,12 @@ export class Player implements OnDestroy {
         return (/*audio == this.capitulo || */this.capitulo.includes(audio));
     }
 
+    continuaPlayStreaming (tiempoSeek: number){
+        console.log ("[PLAYER.continuaPlayStreaming] Play rápido posicionando en "+ tiempoSeek );
+        this.repObject.play();
+        this.repObject.seekTo(tiempoSeek);
+    }
+
     play(audio: string, configuracion: ConfiguracionService):boolean{
         console.log ("[PLAYER.play] Recibida petición de reproducción de "+ audio );
 		let capitulo = this.dameCapitulo();

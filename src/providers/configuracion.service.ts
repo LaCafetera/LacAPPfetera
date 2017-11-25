@@ -207,12 +207,12 @@ export class ConfiguracionService {
         return new Promise ((resolve,reject) =>{
             this.storage.get ("tokenSpreaker")
             .then ((data) => {
-                    console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Enviado "+ data + " tipo " + typeof data);
+                    //console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Enviado "+ data + " tipo " + typeof data);
                     if (data != null && data != ""){
                         console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] solicitando datos de usuario.");
                         this.episodioSrvc.whoAMi(data).subscribe(
                             data => {
-                                console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] recibido " + JSON.stringify(data.response.user));
+                    //            console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] recibido " + JSON.stringify(data.response.user));
                                 //this.storage.set ("usuarioSpreaker", data.response.user.user_id);
                                 this.guardaUsuario(data.response.user.user_id);
                             },

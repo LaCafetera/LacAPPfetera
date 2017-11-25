@@ -130,13 +130,13 @@ export class HomePage implements OnDestroy {
     cargaUsuarioParaProgramas (episodio:string){
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
-            console.log("[HOME.cargaUsuarioParaProgramas] dataUsuario " + dataUsuario);
+            //console.log("[HOME.cargaUsuarioParaProgramas] dataUsuario " + dataUsuario);
             if (dataUsuario != null){
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
-                    console.log("[HOME.cargaUsuarioParaProgramas] dataToken " + dataToken);
+            //        console.log("[HOME.cargaUsuarioParaProgramas] dataToken " + dataToken);
                     if (dataToken != null) {
-                        console.log("[HOME.cargaUsuarioParaProgramas] Usuario: " + dataUsuario + " token:" + dataToken);
+            //            console.log("[HOME.cargaUsuarioParaProgramas] Usuario: " + dataUsuario + " token:" + dataToken);
                         this.cargaProgramas(dataUsuario, dataToken, episodio);
                     }
                     else {

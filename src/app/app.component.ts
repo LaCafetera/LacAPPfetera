@@ -288,11 +288,11 @@ export class MyApp implements OnDestroy {
     }
 
     actualizaAvatar (token:string){
-      console.log("[APP.actualizaAvatar] Solicitada actualización de avatar con token " + token);
+      // console.log("[APP.actualizaAvatar] Solicitada actualización de avatar con token " + token);
       if (token != null){
         this.epService.whoAMi(token).subscribe
         ((data) => {
-          console.log("[APP.actualizaAvatar] Información recibida " + JSON.stringify(data));
+          //console.log("[APP.actualizaAvatar] Información recibida " + JSON.stringify(data));
           this.imgItem = data.response.user.image_url;
           this.nombreUsu = data.response.user.fullname;
           this.descripcion = data.response.user.description;
