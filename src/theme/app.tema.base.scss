@@ -135,32 +135,38 @@
       box-shadow: 3px 3px 3px $base-dark;
     }
 
-    #enVivo .button {
-      /* botón de reproducción en vivo */
+    .enVivoTexto {
       border: solid 2px $base-danger;
       background-color: $base-danger;
+      color: white;
     }
 
-    #botonera .button {
-      /* botones de reproducción diferido */
-      border-color: $base-primary;
-      background-color: $base-light;
-      color: $base-primary;
+    #enVivo {
+
+      .botonDirecto {
+        /* botones de reproducción en vivo */
+        color: $base-danger;
+        background-color: $base-fondoCard;
+      }
+      .botonDirectoStop {
+        /* botones de reproducción en vivo */
+        color: $base-danger;
+        background-color: $base-fondoCard;
+      }
     }
 
-    #botonera .button:active {
-      background-color: $base-primary;
-      color: $base-light;
-    }
-
+    /* botones de reproducción diferido */
     .playBtn, .ffBtn {
       color: $base-primary;
+      background-color: $base-fondoCard;
     }
 
     .playBtn:active, .ffBtn:active {
       color: $base-secondary;
+      background-color: $base-fondoCard;
     }
 
+    /* barra de estado */
     .range-bar {
       background-color: $base-light;
     }
