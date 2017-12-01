@@ -51,17 +51,31 @@ page-reproductor {
 
     #enVivo {
       /* botón de reproducción en vivo */
-      margin-top: 12%;
-      margin-bottom: 13%;
+      margin-left: auto;
+      margin-right: auto;
 
-     .button {
+      .enVivoTexto {
         margin-left: auto;
         margin-right: auto;
-        width: 38%;
-        font-size: 1.3rem;
+        padding: 5px;
+
+        font-size: 1.5rem;
         font-weight: bold;
-        color: white;
       }
+
+      .botonDirecto {
+        font-size: 5rem;
+        font-weight: bold;
+      }
+
+      .botonDirectoStop {
+        font-size: 4rem;
+        font-weight: bold;
+
+        ion-icon {
+          padding-top: 5px;
+        }
+       }
     }
 
     #botonera {
@@ -105,7 +119,7 @@ page-reproductor {
 
     .social {
       /* líneas de separación sup e inf en botonera social */
-      margin-top: 18%;
+      margin-top: 0%;
       height: 50px;
 
      .button {
@@ -129,7 +143,7 @@ page-reproductor {
   @media screen and (min-width: 35em) and (max-width: 47em) {
     // Móvil 4" Horizontal
     .reproductor {
-      height: 74%;
+      height: 94%;
 
       #titular {
         /* div para centrar el titular en la tarjeta y separarlo */
@@ -144,13 +158,14 @@ page-reproductor {
         /* div contiene imagen del capítulo */
         float: left;
         padding-left: 5%;
-        width: 30%;
+        width: 38%;
       }
 
       #enVivo {
         /* botón de reproducción en vivo */
-        margin-top: 0%;
-        margin-bottom: 15%;
+        margin-top: -5%;
+        margin-bottom: 8%;
+        width: 50%;
       }
 
       #botonera {
@@ -167,7 +182,6 @@ page-reproductor {
         margin-left: 20%;
         clear: none;
 
-
         #tiempo-lleva {
           position: relative;
           top: -40px;
@@ -181,10 +195,9 @@ page-reproductor {
       }
 
       .social {
-        float: left;
-        margin-top: -7%;
         width: 50%;
-        margin-left: 10%;
+        margin-right: auto;
+        margin-left: auto;
       }
     }
   }
