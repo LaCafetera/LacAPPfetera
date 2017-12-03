@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core'
+import {Pipe/*, PipeTransform*/} from '@angular/core'
 
 @Pipe ({name: 'muestraHashtag'})
 
-export class muestraHashtagPipe implements PipeTransform{
+export class muestraHashtagPipe /*implements PipeTransform*/{
     transform (value:string, args:number[]){
         let hashtag:string ="";
         let posHT = value.indexOf('#');

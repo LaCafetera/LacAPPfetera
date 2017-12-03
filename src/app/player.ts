@@ -82,9 +82,9 @@ export class Player implements OnDestroy {
         //this._configuracion = configuracion;
         this.audioRecibido = audio;
         const onStatusUpdate = ((status) =>{
+            console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.repPlugin.MEDIA_RUNNING);
             this.statusRep = status;
             this.events.publish('reproduccion:status', {status:this.statusRep});
-            console.log("[PLAYER.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.repPlugin.MEDIA_RUNNING);
             if (this.seekPdte && status == this.repPlugin.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
                 configuracion.getTimeRep(this.dameCapitulo())
@@ -323,7 +323,7 @@ export class Player implements OnDestroy {
                     console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + milisegundos + "milésimas de segundo.")
                 }
                 else{
-                    console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + diferencia + " milésimas de segundo. Paso 1000.")
+ //                   console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + diferencia + " milésimas de segundo. Paso 1000.")
                 }
             })
             .catch(() =>{

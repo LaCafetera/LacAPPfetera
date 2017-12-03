@@ -240,64 +240,64 @@ export class ReproductorPage implements OnDestroy{
             .catch((error) => {console.log("[REPRODUCTOR.ionViewDidLoad] ***** ERROR ***** Control remoto creado KO " + error) });
 
             this.mscControl.subscribe()
-                .subscribe((action) => {
-                    function events(action) {
-                        const message = JSON.parse(action).message;
-                        switch(message) {
-                            case 'music-controls-next':
-                                this.reproductor.adelantaRep();
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-next");
-                                break;
-                            case 'music-controls-previous':
-                                this.reproductor.retrocedeRep();
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-previous");
-                                break;
-                            case 'music-controls-pause':
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-pause");
-                                //this.playPause(this._configuracion);
-                                this.reproductor.pause(this._configuracion);
-                                break;
-                            case 'music-controls-play':
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-play");
-                                this.reproductor.play(this.audioEnRep, this._configuracion);
-                                //this.playPause(this._configuracion);
-                                break;
-                            case 'music-controls-destroy':
-                                this.reproductor.release(this._configuracion);
-                                this.mscControl.destroy();
-                                this.platform.exitApp();
-                                break;
+            .subscribe((action) => {
+                switch(action) {
+                    case 'music-controls-next':
+                        this.reproductor.adelantaRep();
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-next");
+                        break;
+                    case 'music-controls-previous':
+                        this.reproductor.retrocedeRep();
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-previous");
+                        break;
+                    case 'music-controls-pause':
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-pause");
+                        //this.playPause(this._configuracion);
+                        this.reproductor.pause(this._configuracion);
+                        break;
+                    case 'music-controls-play':
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-play");
+                        this.reproductor.play(this.audioEnRep, this._configuracion);
+                        //this.playPause(this._configuracion);
+                        break;
+                    case 'music-controls-destroy':
+                        this.reproductor.release(this._configuracion);
+                        this.mscControl.destroy();
+                        this.platform.exitApp();
+                        break;
 
-                            case 'music-controls-media-button' :
-                        // External controls (iOS only)
-                            case 'music-controls-toggle-play-pause' :
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-toggle-play-pause");
-                                this.playPause(/*this._configuracion*/);
-                                break;
+                    case 'music-controls-media-button' :
+                // External controls (iOS only)
+                    case 'music-controls-toggle-play-pause' :
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-toggle-play-pause");
+                        this.playPause(/*this._configuracion*/);
+                        break;
 
-                            // Headset events (Android only)
-                            // All media button events are listed below
-                                // Do something
-                            //    break;
-                            case 'music-controls-headset-unplugged':
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-unplugged");
-                                this.reproductor.pause(this._configuracion);
-                                break;
-                            case 'music-controls-headset-plugged':
-                                console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-plugged");
-                                this.reproductor.pause(this._configuracion);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                },
-                (error) => {console.log("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")}
-            );
+                    // Headset events (Android only)
+                    // All media button events are listed below
+                        // Do something
+                    //    break;
+                    case 'music-controls-headset-unplugged':
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-unplugged");
+                        this.reproductor.pause(this._configuracion);
+                        break;
+                    case 'music-controls-headset-plugged':
+                        console.log("[REPRODUCTOR.ionViewDidLoad] music-controls-headset-plugged");
+                        this.reproductor.pause(this._configuracion);
+                        break;
+                    default:
+                        break;
+                }
+            },
+            (error) => {console.log("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")}
+        );
+        this.mscControl.listen();
+    }
+    }/*
             this.mscControl.listen();
             this.mscControl.updateIsPlaying(false);
         }
-    }
+    }*/
 
 
     ngOnDestroy(){
@@ -315,25 +315,34 @@ export class ReproductorPage implements OnDestroy{
         //console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
         if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
             console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
-            if (statusRep.status == this.reproductor.dameStatusStop() && this.enVivo && !this.stopPulsado && this.reproduciendo){ // Si estamos en vivo y se ha cortado...
-                //this.reproduciendo = false;
-                //this.playPause();
-                //this.player.seekTo(this.longAudioLiveDescargado*1000);
-                this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
-                this.parpadeoStreaming = true;
-                console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
+            if (statusRep.status == this.reproductor.dameStatusStop()) {
+                if (this.enVivo && !this.stopPulsado && this.reproduciendo){ // Si estamos en vivo y se ha cortado...
+                    //this.reproduciendo = false;
+                    //this.playPause();
+                    //this.player.seekTo(this.longAudioLiveDescargado*1000);
+                    this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
+                    this.parpadeoStreaming = true;
+                    console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
+                }
+                else {
+                    this.reproduciendo = false;
+                    this.iconoPlayPause = 'play';
+                    this.parpadeoTiempoRep(false);
+                    this.stopPulsado  = false; //tanto si lo habían pulsado como si no, ya no me sirve tenerlo.
+                    this.posicionRep = 0;
+                    this.posicionRepStr = "00:00:00";
+                    this.streamingAudio.borrarStreaming(this.episodio); //NO sé si era por streaming, pero por si acaso lo borro (si no lo era no rompo nada).
+                    console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+                    this.mscControl.updateIsPlaying(this.reproduciendo);
+                    this.chngDetector.markForCheck();
+                }
             }
             else {
+                console.log("[REPRODUCTOR.cambiandoStatusRep] pause");
                 this.reproduciendo = false;
                 this.iconoPlayPause = 'play';
-                this.parpadeoTiempoRep(false);
-                this.stopPulsado  = false; //tanto si lo habían pulsado como si no, ya no me sirve tenerlo.
-                this.posicionRep = 0;
-                this.posicionRepStr = "00:00:00";
-                this.streamingAudio.borrarStreaming(this.episodio); //NO sé si era por streaming, pero por si acaso lo borro (si no lo era no rompo nada).
                 console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                 this.mscControl.updateIsPlaying(this.reproduciendo);
-                this.chngDetector.markForCheck();
             }
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
         else if (statusRep.status == this.reproductor.dameStatusRep() || 
@@ -345,9 +354,9 @@ export class ReproductorPage implements OnDestroy{
                     this.parpadeoTiempoRep(true);
                     this.iconoPlayPause = 'pause';
                     this.reproduciendo = true;
+                    this.chngDetector.markForCheck();
                     console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                     this.mscControl.updateIsPlaying(this.reproduciendo);
-                    this.chngDetector.markForCheck();
                 }
                 else{
                     console.log("[REPRODUCTOR.cambiandoStatusRep] Parpadeo Streaming 1");
@@ -356,10 +365,14 @@ export class ReproductorPage implements OnDestroy{
             else {
                 if (!this.parpadeoStreaming){
                     console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
+                    this.iconoPlayPause = 'pause';
+                    this.reproduciendo = true;
+                    this.parpadeoTiempoRep(false);
+                    console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+                    this.mscControl.updateIsPlaying(this.reproduciendo);
                     if (!this.enVivo){
                         this.iniciaContadorRep();
                     }
-                    this.parpadeoTiempoRep(false);
                 }
                 else{
                     console.log("[REPRODUCTOR.cambiandoStatusRep] Parpadeo Streaming 2");
@@ -476,7 +489,6 @@ export class ReproductorPage implements OnDestroy{
                             console.log ("[REPRODUCTOR.playPause] Error reproduciendo streaming")
                         })
                     }
-                    
                 }
                 else{
                     this.msgDescarga ("Sólo tiene permitida reproducción por streaming con la conexión WIFI activada.");

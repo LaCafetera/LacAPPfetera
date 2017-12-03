@@ -1,4 +1,4 @@
-import { Component , OnDestroy} from '@angular/core';
+import { Component /*, OnDestroy*/} from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
@@ -14,7 +14,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
   selector: 'page-mapa-cafetero',
   templateUrl: 'mapa-cafetero.html',
 })
-export class MapaCafeteroPage  implements OnDestroy {
+export class MapaCafeteroPage /* implements OnDestroy */{
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private screenOrientation: ScreenOrientation, 
     public toastCtrl: ToastController) {

@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core'
+import {Pipe/*, PipeTransform*/} from '@angular/core'
 
 @Pipe ({name: 'tiempoHastaAhora'})
 
-export class tiempoHastaAhoraPipe implements PipeTransform{
+export class tiempoHastaAhoraPipe /*implements PipeTransform*/{
     transform (value:string, args:number[]){
         var ahora = Date.now();
         var diferencia;

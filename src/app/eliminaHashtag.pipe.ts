@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core'
+import {Pipe/*, PipeTransform*/} from '@angular/core'
 
 @Pipe ({name: 'eliminaHashtag'})
 
-export class eliminaHashtagPipe implements PipeTransform{
+export class eliminaHashtagPipe /*implements PipeTransform*/{
     transform (value:string, args:number[]){
         let cadena:string ="";
         let posHT = value.indexOf('#');

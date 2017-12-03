@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, ToastController, Events } from 'ionic-angular';
-import { FormBuilder } from '@angular/forms';
+//import { FormBuilder } from '@angular/forms';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -37,7 +37,7 @@ export class InfoUsuarioPage {
 
     constructor(public navCtrl: NavController, 
                 public navParams: NavParams, 
-                private formBuilder: FormBuilder,
+    //            private formBuilder: FormBuilder,
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
                 public toastCtrl: ToastController, 
