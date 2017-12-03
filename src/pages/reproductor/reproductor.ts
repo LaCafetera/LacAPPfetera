@@ -1,4 +1,4 @@
-import {Component, ChangeDetectorRef,/*, Output, EventEmitter*/ OnDestroy} from '@angular/core';
+import { Component, ChangeDetectorRef,/*, Output, EventEmitter*/ OnDestroy} from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -78,6 +78,7 @@ export class ReproductorPage implements OnDestroy{
 
     longAudioLiveDescargado: number = 0;
     parpadeoStreaming:boolean = false;
+    esIOS: boolean = false;
 
     //streamingAudio: StreamingAudioService;
 
@@ -117,6 +118,7 @@ export class ReproductorPage implements OnDestroy{
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
+        this.esIOS = this.platform.is('ios');
 
         if (this.mscControl == null) {
             console.log("[REPRODUCTOR.constructor] Creando un nuevo player en la zona de notificación.");
@@ -190,10 +192,12 @@ export class ReproductorPage implements OnDestroy{
                             this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
                         }
                         else {
-                            let nuevoTiempo = this.player.getDuration();
-                            if (nuevoTiempo !=this.longAudioLiveDescargado) { 
-                                console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
-                                this.longAudioLiveDescargado = nuevoTiempo;
+                            if (this.reproduciendo){
+                                let nuevoTiempo = this.player.getDuration();
+                                if (nuevoTiempo !=this.longAudioLiveDescargado) { 
+                                    console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
+                                    this.longAudioLiveDescargado = nuevoTiempo;
+                                }
                             }
                         }
                     },
@@ -224,7 +228,7 @@ export class ReproductorPage implements OnDestroy{
                 // hide previous/next/close buttons:
                 hasPrev   : true,      // show previous button, optional, default: true
                 hasNext   : true,      // show next button, optional, default: true
-                hasClose  : !this.platform.is('ios'),       // Si es iOS le quito el botón de cerrar.
+                hasClose  : !this.esIOS,       // Si es iOS le quito el botón de cerrar.
 
                 // Android only, optional
                 // text displayed in the status bar when the notification (and the ticker) are updated
@@ -313,14 +317,14 @@ export class ReproductorPage implements OnDestroy{
     cambiandoStatusRep(statusRep) {
         console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
         //console.log('[REPRODUCTOR.cambiandoStatusRep] ' + JSON.stringify( this.reproductor));
-        if (statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()){
+        if ((statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()) && !this.parpadeoStreaming){
             console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
             if (statusRep.status == this.reproductor.dameStatusStop()) {
                 if (this.enVivo && !this.stopPulsado && this.reproduciendo){ // Si estamos en vivo y se ha cortado...
                     //this.reproduciendo = false;
                     //this.playPause();
                     //this.player.seekTo(this.longAudioLiveDescargado*1000);
-                    this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
+                    ////this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
                     this.parpadeoStreaming = true;
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
                 }
@@ -370,13 +374,13 @@ export class ReproductorPage implements OnDestroy{
                     this.parpadeoTiempoRep(false);
                     console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                     this.mscControl.updateIsPlaying(this.reproduciendo);
-                    if (!this.enVivo){
+              //      if (!this.enVivo){
                         this.iniciaContadorRep();
-                    }
+              //      }
                 }
                 else{
                     console.log("[REPRODUCTOR.cambiandoStatusRep] Parpadeo Streaming 2");
-                    this.parpadeoStreaming = true;
+                    this.parpadeoStreaming = false;
                 }
             }
         }
@@ -419,9 +423,20 @@ export class ReproductorPage implements OnDestroy{
         this.timer = setInterval(() => {
             this.reproductor.getCurrentPosition()
                 .then((position) => {
-                        this.posicionRep = position*1000;
-                        this.posicionRepStr = this.dameTiempo(Math.round(position));
+                    this.posicionRep = position*1000;
+                    this.posicionRepStr = this.dameTiempo(Math.round(position));
+                    if (!this.enVivo){ // No hay nada que refrescar en la pantalla si estamos en vivo. Pero me interesa el dato.
                         this.chngDetector.detectChanges();
+                    }
+                    else 
+                        if (!this.esIOS){
+                        //    console.log ("[REPRODUCTOR.iniciaContadorRep] Longitud audio " + this.longAudioLiveDescargado + "; posición " + this.posicionRep);
+                            if (this.longAudioLiveDescargado < position + 1 && this.longAudioLiveDescargado > position){ // Hay veces en que position no refresca a tiempo y reinicio dos veces
+                        //        console.log ("[REPRODUCTOR.iniciaContadorRep] Refrescando");
+                                this.player.continuaPlayStreaming(this.posicionRep);
+                                this.parpadeoStreaming = true;
+                        }
+                    }      
                 })
                 .catch ((error) => {
                     console.error("[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: " + error);

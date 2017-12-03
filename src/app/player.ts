@@ -190,7 +190,8 @@ export class Player implements OnDestroy {
     }
 
     continuaPlayStreaming (tiempoSeek: number){
-        console.log ("[PLAYER.continuaPlayStreaming] Play rápido posicionando en "+ tiempoSeek );
+        console.log ("[PLAYER.continuaPlayStreaming] Play rápido posicionando en " + tiempoSeek );
+        this.repObject.stop();
         this.repObject.play();
         this.repObject.seekTo(tiempoSeek);
     }
@@ -279,8 +280,6 @@ export class Player implements OnDestroy {
         }
         //this.reproduciendo = false;
     }
-
-
 
     adelantaRep(){
         this.getCurrentPosition()

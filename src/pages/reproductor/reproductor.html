@@ -85,7 +85,13 @@
               </ion-col>
             </ion-row>
             <ion-row data-role="fieldcontain" name="barra" *ngIf="enVivo">
-              <ion-col col-4 offset-1 no-padding>
+              <ion-col col-4 no-padding>
+                <button class="botonDirecto" (click)="retrasa()">
+                  <ion-icon name='rewind'  [hidden]="ocultaTiempoRep"></ion-icon>
+                </button>
+              </ion-col>
+
+              <ion-col col-4 no-padding>
                 <button class="botonDirecto" (click)="playPause()">
                   <ion-icon name={{iconoPlayPause}}  [hidden]="ocultaTiempoRep"></ion-icon>
                 </button>
