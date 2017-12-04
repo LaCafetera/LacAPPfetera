@@ -52,22 +52,37 @@ page-reproductor {
     #enVivo {
       /* botón de reproducción en vivo */
 
-      .enVivoTexto {
-        padding: 5px;
-        font-size: 1.5rem;
-        font-weight: bold;
+      ion-label {
+        // Elimina un padding left de serie
+        margin: 0px;
       }
+
+        .enVivoTexto {
+          // Estilo para la etiqueta EN VIVO
+          padding: 5px;
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
 
       ion-col {
+        // Centrado del contenido de la columna
         text-align: center;
+        //border:solid 1px red;
       }
 
+      button {
+        // Corrección de centrado del contenido del botón en iOS
+        padding: 0px;
+      }
+
+      // Correcciones visuales de iconos para ser similares
       .botonDirectoAtras {
-        font-size: 4rem;
+        font-size: 3rem;
         font-weight: bold;
 
         ion-icon {
-          padding-top: 5px;
+          // centrado para hacerlo visualmente similar al resto
+          padding-top: 12px;
         }
        }
 
@@ -77,12 +92,13 @@ page-reproductor {
       }
 
       .botonDirectoStop {
-        font-size: 3.1rem;
+        font-size: 2.4rem;
         font-weight: bold;
 
         ion-icon {
-          padding-top: 12px;
-          padding-right: 18px;
+          // centrado para hacerlo visualmente similar al resto
+          padding-top: 16px;
+          padding-right: 16px;
         }
        }
     }
@@ -172,9 +188,8 @@ page-reproductor {
 
       #enVivo {
         /* botón de reproducción en vivo */
-        margin-top: -5%;
-        margin-bottom: 8%;
-        width: 50%;
+        margin-top: -3%;
+        width: 60%;
       }
 
       #botonera {

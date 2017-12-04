@@ -142,20 +142,15 @@
     }
 
     #enVivo {
+      .botonDirectoAtras, .botonDirecto, .botonDirectoStop {
+        /* botones de reproducción en vivo */
+        color: $base-danger;
+        background-color: $base-fondoCard;
+      }
 
-      .botonDirectoAtras {
+      .botonDirectoAtras:active, .botonDirecto:active, .botonDirectoStop:active {
         /* botones de reproducción en vivo */
-        color: $base-danger;
-        background-color: $base-fondoCard;
-      }
-      .botonDirecto {
-        /* botones de reproducción en vivo */
-        color: $base-danger;
-        background-color: $base-fondoCard;
-      }
-      .botonDirectoStop {
-        /* botones de reproducción en vivo */
-        color: $base-danger;
+        color: $base-primary;
         background-color: $base-fondoCard;
       }
     }
@@ -167,7 +162,7 @@
     }
 
     .playBtn:active, .ffBtn:active {
-      color: $base-secondary;
+      color: $base-danger;
       background-color: $base-fondoCard;
     }
 
