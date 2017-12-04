@@ -143,6 +143,11 @@
 
     #enVivo {
 
+      .botonDirectoAtras {
+        /* botones de reproducción en vivo */
+        color: $base-danger;
+        background-color: $base-fondoCard;
+      }
       .botonDirecto {
         /* botones de reproducción en vivo */
         color: $base-danger;

@@ -51,17 +51,25 @@ page-reproductor {
 
     #enVivo {
       /* botón de reproducción en vivo */
-      margin-left: auto;
-      margin-right: auto;
 
       .enVivoTexto {
-        margin-left: auto;
-        margin-right: auto;
         padding: 5px;
-
         font-size: 1.5rem;
         font-weight: bold;
       }
+
+      ion-col {
+        text-align: center;
+      }
+
+      .botonDirectoAtras {
+        font-size: 4rem;
+        font-weight: bold;
+
+        ion-icon {
+          padding-top: 5px;
+        }
+       }
 
       .botonDirecto {
         font-size: 5rem;
@@ -69,11 +77,12 @@ page-reproductor {
       }
 
       .botonDirectoStop {
-        font-size: 4rem;
+        font-size: 3.1rem;
         font-weight: bold;
 
         ion-icon {
-          padding-top: 5px;
+          padding-top: 12px;
+          padding-right: 18px;
         }
        }
     }
