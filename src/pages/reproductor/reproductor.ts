@@ -191,13 +191,11 @@ export class ReproductorPage implements OnDestroy{
                             this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
                             this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
                         }
-                        else {
-                            if (this.reproduciendo){
-                                let nuevoTiempo = this.player.getDuration();
-                                if (nuevoTiempo !=this.longAudioLiveDescargado) { 
-                                    console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
-                                    this.longAudioLiveDescargado = nuevoTiempo;
-                                }
+                        if (this.reproduciendo){
+                            let nuevoTiempo = this.player.getDuration();
+                            if (nuevoTiempo !=this.longAudioLiveDescargado) { 
+                                console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
+                                this.longAudioLiveDescargado = nuevoTiempo;
                             }
                         }
                     },
@@ -209,7 +207,6 @@ export class ReproductorPage implements OnDestroy{
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
         }
-
     }
 
     creaControlEnNotificaciones (destruir: boolean){

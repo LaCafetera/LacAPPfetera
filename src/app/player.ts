@@ -155,6 +155,9 @@ export class Player implements OnDestroy {
             if (capituloEntrada.includes('play')){
                 fin = capituloEntrada.length-5;
             }
+            else if (capituloEntrada.includes('stream')){
+                fin = capituloEntrada.length-7;
+            }
             else {
                 fin = capituloEntrada.length-4;
             }
@@ -251,7 +254,6 @@ export class Player implements OnDestroy {
             .catch ((err)=> {
                 console.log ("[PLAYER.guardaPos] Recibido error al pedir posición de reproducción: " + err);
             });
-
     }
 
     pause(configuracion: ConfiguracionService){
