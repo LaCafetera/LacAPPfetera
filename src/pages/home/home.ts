@@ -69,7 +69,7 @@ export class HomePage implements OnDestroy {
             this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
         });
         events.subscribe("capitulo:fenecido", (nuevoEstado) => {
-            console.log('[HOME.constructor] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
+            console.log('[HOME.constructor] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + JSON.stringify( nuevoEstado ));
             this.items[0].objeto.type= nuevoEstado;
         });
         this.backgroundMode.setDefaults({title: "La cAPPfetera",

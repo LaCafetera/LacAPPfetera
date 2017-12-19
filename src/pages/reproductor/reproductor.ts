@@ -80,6 +80,8 @@ export class ReproductorPage implements OnDestroy{
     parpadeoStreaming:boolean = false;
     esIOS: boolean = false;
 
+    borraresto:number = 0;
+
     //streamingAudio: StreamingAudioService;
 
 
@@ -178,31 +180,14 @@ export class ReproductorPage implements OnDestroy{
 
         if (this.enVivo){
             this.timerVigilaEnVivo = setInterval(() =>{
-                this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
-                    // this.episodiosService.sigueSiendoVivo(this.episodio) // Debería usar esto, ya que lo tengo.
-                    data => {
-                        //console.log("[REPRODUCTOR.ionViewDidLoad] Respuesta vale: " + data.response.episode.type);
-                        if (data.response.episode.type != "LIVE"){
-                            console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha muerto. Larga vida al episodio .");
-                            clearInterval(this.timerVigilaEnVivo);
-                            this.enVivo = false;
-                            this.episodioDescarga = data.response.episode.episode_id;
-                            this.totDurPlay = data.response.episode.duration;
-                            this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
-                            this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
-                        }
-                        if (this.reproduciendo){
-                            let nuevoTiempo = this.player.getDuration();
-                            if (nuevoTiempo !=this.longAudioLiveDescargado) { 
-                                console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
-                                this.longAudioLiveDescargado = nuevoTiempo;
-                            }
-                        }
-                    },
-                    error => {
-                        console.log("[REPRODUCTOR.ionViewDidLoad] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
+                if (this.reproduciendo){
+                    let nuevoTiempo = this.player.getDuration();
+                    if (nuevoTiempo !=this.longAudioLiveDescargado) { 
+                        console.log("[REPRODUCTOR.ionViewDidLoad] El episodio ha pasado de durar " + this.longAudioLiveDescargado + " a durar " + nuevoTiempo );
+                        this.longAudioLiveDescargado = nuevoTiempo;
                     }
-            )}, 1000);
+                }
+            }, 1000);
         }
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
@@ -310,6 +295,31 @@ export class ReproductorPage implements OnDestroy{
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
     }
+        
+    gatoSchrodinger(){
+        this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
+            // this.episodiosService.sigueSiendoVivo(this.episodio) // Debería usar esto, ya que lo tengo.
+            data => {
+                //console.log("[REPRODUCTOR.ionViewDidLoad] Respuesta vale: " + data.response.episode.type);
+                if (data.response.episode.type != "LIVE"){
+                    console.log("[REPRODUCTOR.gatoSchrodinger] El episodio ha muerto. Larga vida al episodio .");
+                    clearInterval(this.timerVigilaEnVivo);
+                    this.enVivo = false;
+                    this.episodioDescarga = data.response.episode.episode_id;
+                    this.totDurPlay = data.response.episode.duration;
+                    this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
+                    this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
+                    clearInterval (this.timerVigilaEnVivo);
+                }
+                else{
+                    console.log("[REPRODUCTOR.gatoSchrodinger] valor " + data.response.episode.type);
+                }
+            },
+            error => {
+                console.log("[REPRODUCTOR.gatoSchrodinger] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
+            }
+        )   
+    }
 
     cambiandoStatusRep(statusRep) {
         console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
@@ -318,14 +328,11 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
             if (statusRep.status == this.reproductor.dameStatusStop()) {
                 if (this.enVivo && !this.stopPulsado && this.reproduciendo){ // Si estamos en vivo y se ha cortado...
-                    //this.reproduciendo = false;
-                    //this.playPause();
-                    //this.player.seekTo(this.longAudioLiveDescargado*1000);
-                    ////this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
                     this.parpadeoStreaming = true;
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
                 }
                 else {
+                    this.gatoSchrodinger();
                     this.reproduciendo = false;
                     this.iconoPlayPause = 'play';
                     this.parpadeoTiempoRep(false);
@@ -359,9 +366,6 @@ export class ReproductorPage implements OnDestroy{
                     console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                     this.mscControl.updateIsPlaying(this.reproduciendo);
                 }
-                else{
-                    console.log("[REPRODUCTOR.cambiandoStatusRep] Parpadeo Streaming 1");
-                }
             }
             else {
                 if (!this.parpadeoStreaming){
@@ -376,7 +380,6 @@ export class ReproductorPage implements OnDestroy{
               //      }
                 }
                 else{
-                    console.log("[REPRODUCTOR.cambiandoStatusRep] Parpadeo Streaming 2");
                     this.parpadeoStreaming = false;
                 }
             }
@@ -514,7 +517,7 @@ export class ReproductorPage implements OnDestroy{
         if (this.reproductor != null && this.reproduciendo){
             this.reproductor.seekTo(this.posicionRep);
             this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
-            console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr + " - " + this.posicionRep);
+        //    console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr + " - " + this.posicionRep);
         }
         else {
             console.log("[REPRODUCTOR.actualizaPosicion] No cambio la posición del slider porque reproductor es nulo.");
@@ -654,10 +657,26 @@ export class ReproductorPage implements OnDestroy{
             }
             else{
                 this.streaming = TipoRep.Streaming;  
-                nombre = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/stream');
+                nombre = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/stream'); // /play
             }
         };
         return nombre;
+    }
+
+    cambioDeAudio(nombrerep){
+        if (this.audioEnRep != nombrerep){
+            this.reproductor.release(this._configuracion);
+            this.audioEnRep = nombrerep;
+            if (this.reproductor == null) {
+                console.log("[REPRODUCTOR.cambioDeAudio] reproductor es nulo");
+                this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
+            } else {
+                if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
+                    this.reproductor.play(this.audioEnRep, this._configuracion);
+                    console.log("[REPRODUCTOR.cambioDeAudio] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
+                }
+            }
+        }
     }
 
     ficheroDescargado(fichero):void{
@@ -666,18 +685,9 @@ export class ReproductorPage implements OnDestroy{
         console.log("[REPRODUCTOR.ficheroDescargado] Hemos recibido como nombre de fichero " + nombrerep);
         if (this.audioEnRep != null){
             console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos. AudioEnRep vale " + this.audioEnRep);
-            if (this.audioEnRep != nombrerep){
-                this.reproductor.release(this._configuracion);
-                this.audioEnRep = nombrerep;
-                if (this.reproductor == null) {
-                    console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
-                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
-                } else {
-                    if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
-                        this.reproductor.play(this.audioEnRep, this._configuracion);
-                        console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
-                    }
-                }
+            this.cambioDeAudio(nombrerep);
+            if (nombrerep.indexOf('str')>0){
+                console.log("[REPRODUCTOR.ficheroDescargado] Es un audio en vivo; le dejo sonar");
             }
         }
         else {
