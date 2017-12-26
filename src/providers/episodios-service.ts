@@ -21,7 +21,7 @@ export class EpisodiosService {
     }
 
     dameEpisodios(usuario:string, token:string, ultimocap: string, numCaps: number){
-        //let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE
+        //let direccion = 'https://api.spreaker.com/v2/shows/1341125/episodes' //--> LIVE (1341125)
 
 // Para cuando haya que probar con un capítulo que deja de estar en vivo...
 //        let primero = 0;

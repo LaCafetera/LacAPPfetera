@@ -80,7 +80,7 @@ export class ReproductorPage implements OnDestroy{
     parpadeoStreaming:boolean = false;
     esIOS: boolean = false;
 
-    borraresto:number = 0;
+    corteEnDescarga: boolean = false;
 
     //streamingAudio: StreamingAudioService;
 
@@ -146,6 +146,11 @@ export class ReproductorPage implements OnDestroy{
                 console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
             });
         events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+
+        events.subscribe('streaming:descargado', (dato) => {
+            this.corteEnDescarga = true;
+            console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.');
+        });
 
     }
 
@@ -327,7 +332,7 @@ export class ReproductorPage implements OnDestroy{
         if ((statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()) && !this.parpadeoStreaming){
             console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
             if (statusRep.status == this.reproductor.dameStatusStop()) {
-                if (this.enVivo && !this.stopPulsado && this.reproduciendo){ // Si estamos en vivo y se ha cortado...
+                if (this.enVivo && !this.stopPulsado && this.reproduciendo && !this.corteEnDescarga){ // Si estamos en vivo y se ha cortado...
                     this.parpadeoStreaming = true;
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
                 }

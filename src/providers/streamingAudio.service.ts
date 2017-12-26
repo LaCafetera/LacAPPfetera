@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
+import { Events } from 'ionic-angular';
 import { Transfer, TransferObject} from '@ionic-native/transfer';
 
 
@@ -14,7 +15,8 @@ export class StreamingAudioService {
     fileTransfer: TransferObject;
       //file: File;
 
-    constructor(public file :File) {
+    constructor(public file :File,
+                public events: Events ) {
         //this.file = new File();
         this.transfer = new Transfer();
         this.fileTransfer = this.transfer.create();
@@ -29,6 +31,7 @@ export class StreamingAudioService {
 
     capturarStreaming(capitulo: string) {
         let flujoStreaming : string  = "https://api.spreaker.com/v2/episodes/"+capitulo+"/stream";
+        let yasta :boolean = false;
         let promesa = new Promise((resolve, reject) => {
             let fileURL:string = this.carpetaDestino + capitulo + "str.mp3" ;
             console.log ("[StreamingAudio.capturarStreaming] Descargando " + fileURL);
@@ -38,11 +41,14 @@ export class StreamingAudioService {
                 .then(() => {
                     console.log("[StreamingAudio.capturarStreaming] El flujo de streaming ha terminado.");
                     this.descargando = false;
+                    this.events.publish('streaming:descargado', {valor:true});
                 })
                 .catch((error) => {
                     if (error.code != 4){
                         console.log("[StreamingAudio.capturarStreaming] Kagada " + error);
                         console.log("[StreamingAudio.capturarStreaming] Error " + error.code + " en descarga de streaming." + error.exception);
+                        this.descargando = false;
+                        this.events.publish('streaming:descargado', {valor:false});
                     }
                     this.descargando = false;
                     reject ("Error " + error.code + " en descarga de streaming." + error.exception);
@@ -51,9 +57,10 @@ export class StreamingAudioService {
                 //setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 1000);
                 //resolve(true);
                 this.fileTransfer.onProgress((progress) => {
-                    if (progress.loaded > 200000) {
+                    if (progress.loaded > 200000 && !yasta) {
                         resolve (true);
-                        //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                        yasta = true;
+                        console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
                     }
                     //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                 })
