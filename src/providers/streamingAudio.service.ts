@@ -62,7 +62,7 @@ export class StreamingAudioService {
                         yasta = true;
                         console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
                     }
-                    //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                    console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                 })
             }
             else{

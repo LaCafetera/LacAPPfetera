@@ -118,6 +118,9 @@ export class ConfiguracionService {
         if (cap == null || pos == null){
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No puedo guardar un valor nulo")
         }
+        else if (cap.indexOf('str')!= -1){
+            console.log("[CONFIGURACION_SERVICE.setTimeRep] No debo guardar la posición para un capítulo en vivo")
+        }
         else {
             this.storage.set ("pos_"+cap, pos);
         }
