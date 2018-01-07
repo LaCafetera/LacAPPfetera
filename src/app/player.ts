@@ -105,6 +105,7 @@ export class Player implements OnDestroy {
         });
         const onSuccess = () => console.log('[PLAYER.crearepPlugin] Reproduciendo OK');
         const onError = (error) => {
+            this.events.publish('errorReproduccion:status', {status:error});
             console.error("[PLAYER.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
         }
         if (audio.includes('mp3')){
@@ -150,7 +151,7 @@ export class Player implements OnDestroy {
     extraeCapitulo(capituloEntrada):string{
         let inicio:number;
         let fin:number;
-        console.log("[PLAYER.extraeCapitulo] Extrayendo capítulo de la cadena "+ this.capitulo);
+        console.log("[PLAYER.extraeCapitulo] Extrayendo capítulo de la cadena "+ capituloEntrada);
         if (capituloEntrada != null){
             if (capituloEntrada.includes('play')){
                 fin = capituloEntrada.length-5;

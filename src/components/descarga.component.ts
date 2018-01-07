@@ -135,39 +135,40 @@ export class DescargaCafetera {
                     console.log ("[Descarga.components.descargarFichero] Solicitada descarga.");
                     if (!this.descargando){
                         this._configuracion.getWIFI()
-                            .then((val) => {
-                                console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
-                                if(this.network.type === "wifi" || !val  ) {
-                                    console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.dirdestino );
-                                    this.msgDescarga("Descargando audio.")
-                                    this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {}).then(() => {
-                                        console.log("[descarga.components.descargarFichero]  Descarga completa.");
-                                        this.icono = 'trash';
-                                        this.ficheroDescargado.emit({existe: true});
-                                        this.porcentajeDescargado = 0;
-                                        this.descargando = false;
-                                        this.msgDescarga('Descarga completa');
-                                    })
-                                    .catch((error) => {
-                                        if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
-                                            console.log("[descarga.components.descargarFichero] Kagada " + error);
-                                            console.log("[descarga.components.descargarFichero] download error source " + error.source);
-                                            console.log("[descarga.components.descargarFichero] download error target " + error.target);
-                                            console.log("[descarga.components.descargarFichero] " + error.body);
-                                            this.msgDescarga("Error en Descargar capítulo " + this.fileDownload + ". Código de error " + error.code);
-                                        }
-                                        this.descargando = false;
-                                        this.icono = 'ios-cloud-download';
-                                        this.porcentajeDescargado = 0;
-                                    });
-                                    this.descargando = true;
-                                }
-                                else {
-                                    this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
-                                }
-                            }).catch(() => {
-                                console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
-                            });
+                        .then((val) => {
+                            console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
+                            if(this.network.type === "wifi" || !val  ) {
+                                console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ this.fileDownload + " en la carpeta " + this.dirdestino );
+                                this.msgDescarga("Descargando audio.")
+                                this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {})
+                                .then(() => {
+                                    console.log("[descarga.components.descargarFichero]  Descarga completa.");
+                                    this.icono = 'trash';
+                                    this.ficheroDescargado.emit({existe: true});
+                                    this.porcentajeDescargado = 0;
+                                    this.descargando = false;
+                                    this.msgDescarga('Descarga completa');
+                                })
+                                .catch((error) => {
+                                    if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
+                                        console.log("[descarga.components.descargarFichero] Kagada " + error);
+                                        console.log("[descarga.components.descargarFichero] download error source " + error.source);
+                                        console.log("[descarga.components.descargarFichero] download error target " + error.target);
+                                        console.log("[descarga.components.descargarFichero] " + error.body);
+                                        this.msgDescarga("Error en Descargar capítulo " + this.fileDownload + ". Código de error " + error.code);
+                                    }
+                                    this.descargando = false;
+                                    this.icono = 'ios-cloud-download';
+                                    this.porcentajeDescargado = 0;
+                                });
+                                this.descargando = true;
+                            }
+                            else {
+                                this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
+                            }
+                        }).catch(() => {
+                            console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
+                        });
                         this.fileTransfer.onProgress((progress) => {
                             this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
                             if (this.porcentajeCalculado != this.porcentajeDescargado){

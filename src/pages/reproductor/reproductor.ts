@@ -145,18 +145,22 @@ export class ReproductorPage implements OnDestroy{
             .catch(()=>{
                 console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
             });
-        events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+            events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+            events.subscribe("errorReproduccion:status", (statusRep) => {
+                console.log("[REPRODUCTOR.constructor] Error en la reproducción. Recibido " + statusRep.code);
+                this.playPause();
+            });
 
-        events.subscribe('streaming:descargado', (dato) => {
-            if (dato.valor) {
-                this.corteEnDescarga = true;
-            }
-            else{
-                this.stop();
-                this.dialogs.alert("Error descargando audio de Spreaker. ¿Problemas de conexión?", 'Error');
-            }
-            console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.' + dato.valor);
-        });
+            events.subscribe('streaming:descargado', (dato) => {
+                if (dato.valor) {
+                    this.corteEnDescarga = true;
+                }
+                else{
+                    this.stop();
+                    this.dialogs.alert("Error descargando audio de Spreaker. ¿Problemas de conexión?", 'Error');
+                }
+                console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.' + dato.valor);
+            });
 
     }
 
@@ -409,7 +413,7 @@ export class ReproductorPage implements OnDestroy{
                     console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
                     this.timerParpadeo = setInterval(() =>{ 
                         this.ocultaTiempoRep = !this.ocultaTiempoRep; 
-                        console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando");
+                        console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando " + this.reproduciendo);
                     }, 1000);
                 }
                 else {
@@ -472,19 +476,19 @@ export class ReproductorPage implements OnDestroy{
 
     stop ()  {
         console.log ("[REPRODUCTOR.stop] solicitada parada de reproducción streaming");
-        if (this.reproduciendo){
+  //      if (this.reproduciendo){
             console.log ("[REPRODUCTOR.stop] Parece que está reproduciendo. Compenzamos a parar");
             this.reproductor.stop();
             this.reproductor.release(this._configuracion);
             this.streamingAudio.borrarStreaming(this.episodio);
             //this.reproduciendo = !this.reproduciendo;
             this.stopPulsado = true;
-        }
-        else {
-            console.log ("[REPRODUCTOR.stop] Parece que no está reproduciendo. ¿Para qué le das al stop?");
+  //      }
+  //      else {
+  //          console.log ("[REPRODUCTOR.stop] Parece que no está reproduciendo. ¿Para qué le das al stop?");
             this.parpadeoTiempoRep(false); // pongo esto aquí por si acaso no le había dado tiempo a empezar a sonar
             this.iconoPlayPause = 'play';
-        }
+  //      }
     }
 
     playPause(/*configuracion: ConfiguracionService*/){

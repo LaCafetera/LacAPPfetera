@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
-import { Events } from 'ionic-angular';
+import { Events, Platform } from 'ionic-angular';
 import { Transfer, TransferObject} from '@ionic-native/transfer';
 
 
@@ -13,13 +13,16 @@ export class StreamingAudioService {
     descargando: boolean = false;
     transfer: Transfer;
     fileTransfer: TransferObject;
+    esIOS: boolean = false;
       //file: File;
 
     constructor(public file :File,
-                public events: Events ) {
+                public events: Events, 
+                public platform : Platform ) {
         //this.file = new File();
         this.transfer = new Transfer();
         this.fileTransfer = this.transfer.create();
+        this.esIOS = this.platform.is('ios');
         this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalCacheDirectory
         .then((entry) => {
             this.carpetaDestino = entry.toInternalURL();
@@ -54,14 +57,12 @@ export class StreamingAudioService {
                     reject ("Error " + error.code + " en descarga de streaming." + error.exception);
                 });
                 this.descargando = true;
-                //setTimeout (()=> {resolve(true); console.log("[StreamingAudio.capturarStreaming] Mandamos true. ")}, 1000);
-                //resolve(true);
                 this.fileTransfer.onProgress((progress) => {
                     if (progress.loaded > 200000 && !yasta) {
                         resolve (true);
                         yasta = true;
                         console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
-                    }
+                    }   
                     console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                 })
             }
