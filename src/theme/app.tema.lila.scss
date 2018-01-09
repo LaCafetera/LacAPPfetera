@@ -126,24 +126,38 @@ page-home {
       box-shadow: 3px 3px 3px $lila-dark;
     }
 
-    #enVivo .button {
-      /* botón de reproducción en vivo */
+    .enVivoTexto {
       border: solid 2px $lila-danger;
       background-color: $lila-danger;
+      color: white;
     }
 
-    #botonera .button {
-      /* botones de reproducción diferido */
-      border-color: $lila-primary;
-      background-color: $lila-light;
+    #enVivo {
+      .botonDirectoAtras, .botonDirecto, .botonDirectoStop {
+        /* botones de reproducción en vivo */
+        color: $lila-danger;
+        background-color: $lila-fondoCard;
+      }
+
+      .botonDirectoAtras:active, .botonDirecto:active, .botonDirectoStop:active {
+        /* botones de reproducción en vivo */
+        color: $lila-primary;
+        background-color: $lila-fondoCard;
+      }
+    }
+
+    /* botones de reproducción diferido */
+    .playBtn, .ffBtn {
       color: $lila-primary;
+      background-color: $lila-fondoCard;
     }
 
-    #botonera .button:active {
-      background-color: $lila-primary;
-      color: $lila-light;
+    .playBtn:active, .ffBtn:active {
+      color: $lila-danger;
+      background-color: $lila-fondoCard;
     }
 
+    /* barra de estado */
     .range-bar {
       background-color: $lila-light;
     }

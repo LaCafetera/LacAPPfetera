@@ -126,24 +126,38 @@ page-home {
       box-shadow: 3px 3px 3px $noche-fondoApp;
     }
 
-    #enVivo .button {
-      /* botón de reproducción en vivo */
+    .enVivoTexto {
       border: solid 2px $noche-danger;
       background-color: $noche-danger;
+      color: white;
     }
 
-    #botonera .button {
-      /* botones de reproducción diferido */
-      border-color: $noche-primary;
-      background-color: $noche-light;
+    #enVivo {
+      .botonDirectoAtras, .botonDirecto, .botonDirectoStop {
+        /* botones de reproducción en vivo */
+        color: $noche-danger;
+        background-color: $noche-fondoCard;
+      }
+
+      .botonDirectoAtras:active, .botonDirecto:active, .botonDirectoStop:active {
+        /* botones de reproducción en vivo */
+        color: $noche-primary;
+        background-color: $noche-fondoCard;
+      }
+    }
+
+    /* botones de reproducción diferido */
+    .playBtn, .ffBtn {
       color: $noche-primary;
+      background-color: $noche-fondoCard;
     }
 
-    #botonera .button:active {
-      background-color: $noche-primary;
-      color: $noche-light;
+    .playBtn:active, .ffBtn:active {
+      color: $noche-danger;
+      background-color: $noche-fondoCard;
     }
 
+    /* barra de estado */
     .range-bar {
       background-color: $noche-light;
     }

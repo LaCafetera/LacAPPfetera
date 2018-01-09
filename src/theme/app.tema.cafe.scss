@@ -130,24 +130,38 @@ page-home {
       box-shadow: 3px 3px 3px $cafe-dark;
     }
 
-    #enVivo .button {
-      /* botón de reproducción en vivo */
+    .enVivoTexto {
       border: solid 2px $cafe-danger;
       background-color: $cafe-danger;
+      color: white;
     }
 
-    #botonera .button {
-      /* botones de reproducción diferido */
-      border-color: $cafe-primary;
-      background-color: $cafe-light;
+    #enVivo {
+      .botonDirectoAtras, .botonDirecto, .botonDirectoStop {
+        /* botones de reproducción en vivo */
+        color: $cafe-danger;
+        background-color: $cafe-fondoCard;
+      }
+
+      .botonDirectoAtras:active, .botonDirecto:active, .botonDirectoStop:active {
+        /* botones de reproducción en vivo */
+        color: $cafe-primary;
+        background-color: $cafe-fondoCard;
+      }
+    }
+
+    /* botones de reproducción diferido */
+    .playBtn, .ffBtn {
       color: $cafe-primary;
+      background-color: $cafe-fondoCard;
     }
 
-    #botonera .button:active {
-      background-color: $cafe-primary;
-      color: $cafe-light;
+    .playBtn:active, .ffBtn:active {
+      color: $cafe-danger;
+      background-color: $cafe-fondoCard;
     }
 
+    /* barra de estado */
     .range-bar {
       background-color: $cafe-light;
     }
