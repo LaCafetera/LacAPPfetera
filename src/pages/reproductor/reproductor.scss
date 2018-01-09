@@ -67,7 +67,7 @@ page-reproductor {
       ion-col {
         // Centrado del contenido de la columna
         text-align: center;
-        //border:solid 1px red;
+        border:solid 1px red;
       }
 
       button {
@@ -90,6 +90,7 @@ page-reproductor {
         font-size: 5rem;
         font-weight: bold;
         height: 60px;
+        border:solid 1px blue;
       }
 
       .botonDirectoStop {
