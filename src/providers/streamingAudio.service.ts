@@ -57,14 +57,20 @@ export class StreamingAudioService {
                     reject ("Error " + error.code + " en descarga de streaming." + error.exception);
                 });
                 this.descargando = true;
-                this.fileTransfer.onProgress((progress) => {
-                    if (progress.loaded > 200000 && !yasta) {
-                        resolve (true);
-                        yasta = true;
-                        console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
-                    }   
-                    console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
-                })
+                if (this.esIOS){
+                    console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción para ios. ");
+                    setTimeout(resolve, 2000, true);
+                }
+                else {
+                    this.fileTransfer.onProgress((progress) => {
+                        if (progress.loaded > 200000 && !yasta) {
+                            resolve (true);
+                            yasta = true;
+                            console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
+                        }   
+                        console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                    })
+                }
             }
             else{
                 console.log("[StreamingAudio.capturarStreaming] COSA EXTRAÑA. ME HAN SOLICITADO DESCARGAR STREAMING CUANDO YA LO ESTABA HACIENDO..." );
