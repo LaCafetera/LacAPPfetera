@@ -135,6 +135,10 @@ export class ConfiguracionService {
                 console.log("[CONFIGURACION_SERVICE.getTimeRep] No puedo guardar un valor nulo");
                 reject("No puedo devolver la posición de un capítulo vacío.")
             }
+            else if (cap.indexOf('str')!= -1){
+                console.log ("[CONFIGURACION.SERVICE.getTimeRep] De un capítulo en vivo siempre mando 0");
+                resolve(0);
+            }
             else {
                 this.storage.get ("pos_"+cap)
                 .then (

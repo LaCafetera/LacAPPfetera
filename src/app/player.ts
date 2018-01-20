@@ -195,7 +195,7 @@ export class Player implements OnDestroy {
 
     continuaPlayStreaming (tiempoSeek: number){
         console.log ("[PLAYER.continuaPlayStreaming] Play rápido posicionando en " + tiempoSeek );
-        this.repObject.stop();
+        // this.repObject.stop(); YA está parado, así que parar lo parado da error.
         this.repObject.play();
         this.repObject.seekTo(tiempoSeek);
     }

@@ -48,7 +48,6 @@ export class StreamingAudioService {
                 })
                 .catch((error) => {
                     if (error.code != 4){
-                        console.log("[StreamingAudio.capturarStreaming] Kagada " + error);
                         console.log("[StreamingAudio.capturarStreaming] Error " + error.code + " en descarga de streaming." + error.exception);
                         this.descargando = false;
                         this.events.publish('streaming:descargado', {valor:false});
@@ -68,7 +67,7 @@ export class StreamingAudioService {
                             yasta = true;
                             console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
                         }   
-                        console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                        //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                     })
                 }
             }

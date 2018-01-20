@@ -348,7 +348,7 @@ export class ReproductorPage implements OnDestroy{
                                                             " corteEnDescarga " + this.corteEnDescarga);
                 if (this.enVivo && !this.stopPulsado && this.reproduciendo && !this.corteEnDescarga){ // Si estamos en vivo y se ha cortado...
                     this.parpadeoStreaming = true;
-                    this.player.continuaPlayStreaming(this.longAudioLiveDescargado);
+                    this.player.continuaPlayStreaming(this.longAudioLiveDescargado*1000);
                     console.log ("[REPRODUCTOR.cambiandoStatusRep] Se ha producido un corte en la reproducción."); // Limpiamos el reproductor.
                 }
                 else {
