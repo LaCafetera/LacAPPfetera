@@ -127,7 +127,6 @@ export class ReproductorPage implements OnDestroy{
             this.mscControl = new MusicControls ();
             this.creaControlEnNotificaciones (false);
         }
-
         if (this.reproductor == null) {
             console.log("[REPRODUCTOR.constructor] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
@@ -147,11 +146,15 @@ export class ReproductorPage implements OnDestroy{
             });
             events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
             events.subscribe("errorReproduccion:status", (statusRep) => {
-                console.log("[REPRODUCTOR.constructor] Error en la reproducción. Recibido " + statusRep.code);
-                this.playPause();
+                console.log("[REPRODUCTOR.constructor] Error en la reproducción. Recibido " + statusRep.status);
+                if (statusRep.status != 0) {
+                    this.playPause();
+                }
             });
 
             events.subscribe('streaming:descargado', (dato) => {
+
+                console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.' + JSON.stringify(dato));
                 if (dato.valor) {
                     this.corteEnDescarga = true;
                 }
@@ -408,6 +411,7 @@ export class ReproductorPage implements OnDestroy{
     }
 
     parpadeoTiempoRep(iniciar: boolean){
+        console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeo vale " + this.timerParpadeo);
         if (iniciar){
             if ( this.timerParpadeo == 0){
                     console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
@@ -423,6 +427,7 @@ export class ReproductorPage implements OnDestroy{
         else {
             console.log("[REPRODUCTOR.parpadeoTiempoRep] Eliminando parpadeo");
             clearInterval(this.timerParpadeo);
+            this.timerParpadeo = 0;
             this.ocultaTiempoRep = false;
             this.chngDetector.markForCheck();
         }
@@ -476,19 +481,13 @@ export class ReproductorPage implements OnDestroy{
 
     stop ()  {
         console.log ("[REPRODUCTOR.stop] solicitada parada de reproducción streaming");
-  //      if (this.reproduciendo){
-            console.log ("[REPRODUCTOR.stop] Parece que está reproduciendo. Compenzamos a parar");
-            this.reproductor.stop();
-            this.reproductor.release(this._configuracion);
-            this.streamingAudio.borrarStreaming(this.episodio);
-            //this.reproduciendo = !this.reproduciendo;
-            this.stopPulsado = true;
-  //      }
-  //      else {
-  //          console.log ("[REPRODUCTOR.stop] Parece que no está reproduciendo. ¿Para qué le das al stop?");
-            this.parpadeoTiempoRep(false); // pongo esto aquí por si acaso no le había dado tiempo a empezar a sonar
-            this.iconoPlayPause = 'play';
-  //      }
+        this.parpadeoTiempoRep(false); // pongo esto aquí por si acaso no le había dado tiempo a empezar a sonar
+        this.iconoPlayPause = 'play';
+        this.reproduciendo = false;
+        this.stopPulsado = true;
+        //this.reproductor.stop(); // Comento esto porque hacer stop si no está reproduciendo provoca un error. Con el release lo hago todo.
+        this.reproductor.release(this._configuracion);
+        this.streamingAudio.borrarStreaming(this.episodio);
     }
 
     playPause(/*configuracion: ConfiguracionService*/){
@@ -508,6 +507,9 @@ export class ReproductorPage implements OnDestroy{
                 }
                 else {*/
                     this.reproductor.pause(this._configuracion);
+                    this.reproduciendo = false;
+                    this.parpadeoTiempoRep(false);
+                    this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
                 //}
                 //this.iconoPlayPause = 'play';
                 //this.reproduciendo = false;
@@ -515,6 +517,7 @@ export class ReproductorPage implements OnDestroy{
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
+                    this.parpadeoTiempoRep(true);
                     if (this.streaming != TipoRep.EnVivo){
 //                    if (!this.enVivo){
                         if (this.reproductor.play(this.audioEnRep, this._configuracion)){
@@ -524,7 +527,6 @@ export class ReproductorPage implements OnDestroy{
                         }
                     }
                     else {
-                        this.parpadeoTiempoRep(true);
                         this.streamingAudio.capturarStreaming(this.episodio)
                         .then (() =>{
                             if (this.reproductor.play(this.audioEnRep, this._configuracion)){

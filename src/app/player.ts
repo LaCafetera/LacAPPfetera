@@ -105,7 +105,7 @@ export class Player implements OnDestroy {
         });
         const onSuccess = () => console.log('[PLAYER.crearepPlugin] Reproduciendo OK');
         const onError = (error) => {
-            this.events.publish('errorReproduccion:status', {status:error});
+            this.events.publish('errorReproduccion:status', {status:error.code});
             console.error("[PLAYER.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
         }
         if (audio.includes('mp3')){
@@ -259,9 +259,14 @@ export class Player implements OnDestroy {
 
     pause(configuracion: ConfiguracionService){
         if (this.repObject != null){
-            console.log ("[PLAYER.pause] repObject no es nulo ");
+            console.log ("[PLAYER.pause] repObject no es nulo " + this.statusRep + " - " + this.repPlugin.MEDIA_RUNNING);
             this.guardaPos(configuracion);
-            this.repObject.pause();
+            if (this.statusRep != this.repPlugin.MEDIA_RUNNING){
+                this.repObject.stop();    
+            }
+            else {
+                this.repObject.pause();
+            }
             if (this.statusRep == this.repPlugin.MEDIA_STARTING)
                 {
                     //Hay un fallo en este plugin. Si damos a pause / stop cuando está en "MEDIA_STARTING no nos hace ni caso. ASí que hay que parchear."

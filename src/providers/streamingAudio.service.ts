@@ -67,7 +67,7 @@ export class StreamingAudioService {
                             yasta = true;
                             console.log("[StreamingAudio.capturarStreaming] Enviado OK a la reproducción. " + progress.loaded);
                         }   
-                        //console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
+                        // console.log("[StreamingAudio.capturarStreaming] Recibido " + progress.loaded);
                     })
                 }
             }
@@ -86,7 +86,7 @@ export class StreamingAudioService {
     borrarStreaming (flujo:string) {
         this.fileTransfer.abort();
         this.descargando = false;
-        let promesa = new Promise((resolve, reject) => {
+        /*let promesa = new Promise((resolve, reject) => {
             this.file.removeFile(this.carpetaDestino, flujo + 'str.mp3')
             .then(() => {
                 console.log("[streamingAudio.borrarStreaming] El fichero " + flujo + '.se ha eliminado.');
@@ -96,6 +96,6 @@ export class StreamingAudioService {
                 console.log("[streamingAudio.borrarStreaming] Error " + err.code + " borrando fichero "+ this.carpetaDestino + flujo + "str.mp3: " + err.message);
             });
         })
-        return promesa;
+        return promesa;*/
     } 
 }    
