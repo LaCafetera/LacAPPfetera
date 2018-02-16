@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectorRef} from '@angul
 import { File } from '@ionic-native/file';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
-import { Transfer, TransferObject} from '@ionic-native/transfer';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Events, ToastController } from 'ionic-angular';
 
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -20,7 +20,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
                     <p>{{porcentajeDescargado}}%</p>
                 </div>
                 `,
-    providers: [File, Transfer, ConfiguracionService, Dialogs, Network]
+    providers: [FileTransfer, FileTransferObject, ConfiguracionService, Dialogs, Network]
 })
 
 export class DescargaCafetera {
@@ -40,7 +40,7 @@ export class DescargaCafetera {
     //UBICACIONHTTP: string = "https://api.spreaker.com/download/episode/";
     //DIRDESTINO:string = cordova.file.dataDirectory;
     dirdestino:string;
-    fileTransfer: TransferObject;
+    fileTransfer: FileTransferObject;
 
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
@@ -51,7 +51,7 @@ export class DescargaCafetera {
                 private file: File,
                 private network: Network,
                 private dialogs: Dialogs,
-                private transfer: Transfer,
+                private transfer: FileTransfer,
                 private chngDetector: ChangeDetectorRef ) {};
 
     ngOnInit(){

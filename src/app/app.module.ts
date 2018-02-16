@@ -1,11 +1,12 @@
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { BrowserModule } from '@angular/platform-browser';
+import { SQLite } from '@ionic-native/sqlite';
 import { HttpModule } from '@angular/http';
 
 import { File } from '@ionic-native/file';
-import { MediaPlugin } from '@ionic-native/media';
+import { Media } from '@ionic-native/media';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -17,10 +18,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 //import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Deeplinks } from '@ionic-native/deeplinks';
+import { AndroidExoplayer } from '@ionic-native/android-exoplayer';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
 import { Player } from './player';
+import { PlayerAndroid } from './playerAndroid';
+import { PlayerIOS } from './playerIOS';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
@@ -47,8 +51,8 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
 @NgModule({
   declarations: [
     MyApp,
-    DescargaCafetera,
     HomePage,
+    DescargaCafetera,
     InfoFerPage,
     ReproductorPage,
     DetalleCapituloPage,
@@ -87,7 +91,7 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,
-              MediaPlugin,
+              Media,
               Dialogs,
               SocialSharing,
               Network,
@@ -100,8 +104,12 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
 //              InAppBrowser,
               Deeplinks,
               Player,
+              PlayerIOS,
+              PlayerAndroid,
               ConfiguracionService,
               EpisodiosService,
-              CadenasTwitterService]
+              CadenasTwitterService,
+              AndroidExoplayer,
+              SQLite]
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 <div [class]="chosenTheme">
-    <ion-menu type="push" [content]="content">
+    <ion-menu type="push" [content]="miContent">
         <ion-header>
             <ion-toolbar>
                 <ion-title>Menú Cafetero</ion-title>
@@ -35,7 +35,6 @@
             </ion-item>
 
             <ion-item>
-                <!--a href="#" ion-button full onclick="window.open('http://telegram.me/cafeterabetatest')">Síguenos en Telegram</a-->
                 <a href="http://t.me/lacafetera" ion-button full>Síguenos en Telegram</a>
             </ion-item>
 
@@ -54,15 +53,14 @@
             </ion-item>
 
             <ion-item class="version">
-                <p>Versión de la APP: Kaldi - 0.99.30</p>
+                <p>Versión de la APP: Kaldi - 0.99.40</p>
             </ion-item>
 
-            <!--button ion-button round menuClose>Cerrar</button-->
         </ion-content>
 
     </ion-menu>
 
-    <ion-nav [root]="rootPage" main #content swipeBackEnabled="false">
+    <ion-nav [root]="rootPage" main #miContent swipeBackEnabled="false">
     </ion-nav>
 
 </div>

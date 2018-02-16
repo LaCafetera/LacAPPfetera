@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
-import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
+import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts'; 
 import { SplashScreen } from '@ionic-native/splash-screen';
 //import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { Deeplinks } from '@ionic-native/deeplinks';
@@ -35,7 +35,7 @@ export class MyApp implements OnDestroy {
   descripcion: string = "Resistente de Sherwood"
   datosUsu: Array<any> = null;
 
-  constructor(private _platform: Platform, 
+  constructor(public _platform: Platform, 
               private _configuracion: ConfiguracionService, 
               public toastCtrl: ToastController, 
               private barraEstado: StatusBar, 
@@ -77,6 +77,10 @@ export class MyApp implements OnDestroy {
       }, (nomatch) => {
         console.warn('[app.component.ngAfterViewInit] Enrutado incorrecto' + nomatch);
       });;
+    })
+    .catch((error)=>{
+      console.log("[app.ngAfterViewInit] Error esperando a que el terminal responda: " + error);
+      this.soloWifi=false;
     });
   }
 
@@ -107,6 +111,7 @@ export class MyApp implements OnDestroy {
           console.log("[app.component.ngOnInit] Error recuperando valor token Spreaker");
           this.soloWifi=false;
       });
+      console.log("[app.component.ngOnInit] Plataformas: " + this._platform.platforms());
 
       this._configuracion.theme.subscribe(val => {
         this.chosenTheme = val;
@@ -121,6 +126,7 @@ export class MyApp implements OnDestroy {
       this._configuracion.getFechasAbsolutas()
       .then((dato)=>this.fechasAbsolutas = dato==true)
       .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
+
     }
     
 
@@ -167,7 +173,7 @@ export class MyApp implements OnDestroy {
             console.log("[app.component.cafeteaAgenda] Guardando en agenda ");
             contact.name = new ContactName('La Cafetera de Radiocable', 'La Cafetera');
             contact.phoneNumbers = [new ContactField ('mobile', telefono)]; //(type?: string, value?: string, pref?: boolean)
-            contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'RadioCable en Internet. Apartado postal 82042 28080 Madrid', 'Apartado de correos 82042', 'Madrid', '', '28080', 'España')];
+            contact.addresses = [new ContactAddress(true, 'Apartado de Correos', 'RadioCable en Internet. Apartado postal 18018 28080 Madrid', 'Apartado de correos 18018', 'Madrid', '', '28080', 'España')];
             contact.save().then(
               () => this.msgDescarga('Has dado de alta La Cafetera en tu agenda'),
               (error: any) => this.msgDescarga('Error guardando el contacto.'+ error));
@@ -178,7 +184,7 @@ export class MyApp implements OnDestroy {
         })
         .catch ((error)=> {
             console.log("[app.component.cafeteaAgenda] Guardando en agenda "+ error.message);
-            this.msgDescarga ("Se ha producido un error " + error.message);
+            this.msgDescarga ("No puedo acceder a tu agenda. ¿Seguro que me has dado permiso?");
         });
     }
 

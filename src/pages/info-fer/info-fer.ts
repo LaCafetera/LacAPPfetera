@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { MediaPlugin, MediaObject } from '@ionic-native/media';
+import { Media, MediaObject } from '@ionic-native/media';
 import { Platform } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 
@@ -17,8 +17,8 @@ import { Dialogs } from '@ionic-native/dialogs';
 })
 export class InfoFerPage {
     
-    repPlugin = new MediaPlugin ();
-    dirJingle:MediaObject;
+    repPlugin = new Media ();
+    dirJingle: MediaObject;
     reproduciendo: boolean = false;
     esAndroid:boolean;
     

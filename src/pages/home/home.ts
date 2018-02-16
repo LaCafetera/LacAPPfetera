@@ -203,6 +203,7 @@ export class HomePage implements OnDestroy {
 
 
     pushPage(item){
+        console.log("[HOME.pushPage] Entro en episodio " + JSON.stringify (item));
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
                                             controlador:this.mscControl,
