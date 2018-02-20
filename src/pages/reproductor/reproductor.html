@@ -18,7 +18,7 @@
 
 </ion-header>
 
-<ion-split-pane when="(min-width: 550px)"> 
+<ion-split-pane when="(min-width: 550px)">
     <ion-content main>
       <ion-card class="reproductor">
 
@@ -85,11 +85,11 @@
             </ion-row>
 
             <ion-row justify-content-center data-role="fieldcontain" name="barra" *ngIf="enVivo">
-              <ion-col col-3>
+              <!-- <ion-col col-3>
                 <button class="botonDirectoAtras" (click)="retrasa()">
                   <ion-icon name='rewind'></ion-icon>
                 </button>
-              </ion-col>
+              </ion-col> -->
 
               <ion-col col-3>
                 <button class="botonDirecto" (click)="playPause()">
