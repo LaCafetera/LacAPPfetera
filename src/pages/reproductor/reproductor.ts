@@ -115,8 +115,6 @@ export class ReproductorPage implements OnDestroy{
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
         this.esIOS = this.platform.is('ios');
 
-
-
         if (this.mscControl == null) {
             console.log("[REPRODUCTOR.constructor] Creando un nuevo player en la zona de notificación.");
             this.mscControl = new MusicControls ();
@@ -126,9 +124,6 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.constructor] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
-
-        this.guardaDescargados.guardaProgramas(this.capItem);
-        //this.guardaDescargados.daListaProgramas();
 
         this._configuracion.getTwitteado(this.episodio)
             .then((val)=> {
@@ -553,6 +548,7 @@ export class ReproductorPage implements OnDestroy{
             nombrerep = encodeURI(/*cordova.file.dataDirectory + */this.episodio + '.mp3');
             console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga. " + nombrerep + " . ");
             this.noRequiereDescarga = true;
+            this.guardaDescargados.guardaProgramas(this.capItem);
         } else {
             nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
             console.log("[REPRODUCTOR.ficheroDescargado] EL fichero no existe. Reproduciendo de red. " + nombrerep + " . ");

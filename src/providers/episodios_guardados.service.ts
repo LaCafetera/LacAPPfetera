@@ -23,31 +23,68 @@ export class EpisodiosGuardadosService {
     ngOnInit(){
     }
 
-    guardaProgramas (programa: string){
+    guardaProgramas (programa: object){
         console.log("[EpisodiosGuardados.guardaProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
-        this.dameDatosFichero()
-        .then((listaDescargados)=>{
-            console.log("[EpisodiosGuardados.guardaProgramas] El fichero " + this.fichero + ' existe.');
-            this.file.writeExistingFile (this.dirdestino, this.fichero, JSON.stringify(listaDescargados.programas.concat(programa)))
-            .then (() => {
-                console.log("[EpisodiosGuardados.guardaProgramas] Datos guardados en fichero existente.")})
-            .catch (() => {
-                console.log("[Episodi}osGuardados.guardaProgramas] Error guardando datos en el fichero existente.")});
-        })
-        .catch((err) => {
-            //if (err.code == 1){
-                console.log("[EpisodiosGuardados.guardaProgramas] El fichero no existe.");
-                let listaDescargados = {"programas":[programa]};
-                this.file.writeFile (this.dirdestino, this.fichero, JSON.stringify(listaDescargados), {replace: true, append:false, truncate:0})
-                .then ((data) => {
-                    console.log("[EpisodiosGuardados.guardaProgramas] Datos guardados en fichero existente." + JSON.stringify(data))})
-                .catch ((error) => {
-                    console.log("[EpisodiosGuardados.guardaProgramas] Error guardando datos en el fichero existente." + error)});
-            //}
-            //else {
-            //    console.log("[EpisodiosGuardados.guardaProgramas] Error buscando fichero:" + err.message);
-            //}
+        let listaDescargados = {"programas":[programa]};
+        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        .then((entry) => {
+            this.dirdestino = entry.toInternalURL();
+                this.dameDatosFichero ()
+                .then ((datos)=> {
+                    let programasObjeto = JSON.parse(datos);
+                    if (!this.yaEstaba(programa, programasObjeto)) {
+                        var todosProgramas = JSON.stringify(this.tidyYourRoom(programasObjeto.concat([programa])));
+                        console.log("[EpisodiosGuardados.guardaProgramas] ." + todosProgramas);
+                        this.file.writeFile (this.dirdestino, this.fichero, todosProgramas, {replace: true, append:false, truncate:0})
+                        .then ((data) => {
+                            console.log("[EpisodiosGuardados.guardaProgramas] Datos guardados en fichero existente." + todosProgramas)
+                        })
+                        .catch ((error) => {
+                            console.log("[EpisodiosGuardados.guardaProgramas] Error guardando datos en el fichero existente." + error)
+                        });
+                    }
+                })
+                .catch ((error)=> {
+                    let todosProgramas = JSON.stringify([programa]);
+                    this.file.writeFile (this.dirdestino, this.fichero,todosProgramas, {replace: true, append:false, truncate:0})
+                        .then ((data) => {
+                            console.log("[EpisodiosGuardados.guardaProgramas] Datos guardados en fichero existente." + todosProgramas)
+                        })
+                        .catch ((error) => {
+                            console.log("[EpisodiosGuardados.guardaProgramas] Error guardando datos en el fichero existente." + error)
+                        });
+                    //console.log("[EpisodiosGuardados.cargaProgramas] Error leyendo: " + error);
+                })
+            })
+        .catch((error) => {
+            console.log("[EpisodiosGuardados.constructor] Error recuperando carpeta de destino: " + error.body);
         });
+    }
+
+    tidyYourRoom(listaProgramas: Array<any>) :Array<object>{
+        let ordenado = listaProgramas;
+        let mapped = ordenado.map((el, i) => {
+            return { index: i, value: el.episode_id };
+        });
+
+        // ordenando el array mapeado conteniendo los valores reducidos
+        mapped.sort((a, b) => {
+            return (b.value - a.value);
+        });
+
+        // contenedor para el orden resultante
+        return( mapped.map((el) =>{
+            return ordenado[el.index];
+        }));
+    }
+
+    yaEstaba(programa: any, programasArray: any){
+        //let programaObjeto = programa;
+        //let programasArray = programasGuardados.programas;
+        let encontrado = programasArray.find((element) => {
+            return (element.episode_id == programa.episode_id)
+        });
+        return (encontrado != undefined);
     }
 
     dameDatosFichero (): Promise <any>{
@@ -81,12 +118,13 @@ export class EpisodiosGuardadosService {
         return Observable.create(observer => {
             this.dameDatosFichero ()
             .then ((datos)=> {
-                datos.forEach(programas => {
-                    observer.next(programas);
+                console.log("[EpisodiosGuardados.cargaProgramas] enviado: " + JSON.stringify(JSON.parse(datos).programas));
+                JSON.parse(datos).forEach((elemento, index, array) => {
+                    observer.next(elemento);
                 });
             })
             .catch ((error)=> {
-                //console.log("[EpisodiosGuardados.cargaProgramas] Error leyendo: " + error)});
+                console.log("[EpisodiosGuardados.cargaProgramas] Error leyendo: " + error.message);
             })
         })
     }
