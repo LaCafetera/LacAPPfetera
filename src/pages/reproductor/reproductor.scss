@@ -76,15 +76,15 @@ page-reproductor {
       }
 
       // Correcciones visuales de iconos para ser similares
-      .botonDirectoAtras {
-        font-size: 3rem;
-        font-weight: bold;
-
-        ion-icon {
-          // centrado para hacerlo visualmente similar al resto
-          padding-top: 24px;
-        }
-       }
+      // .botonDirectoAtras {
+      //   font-size: 3rem;
+      //   font-weight: bold;
+      //
+      //   ion-icon {
+      //     // centrado para hacerlo visualmente similar al resto
+      //     padding-top: 24px;
+      //   }
+      //  }
 
       .botonDirecto {
         font-size: 5rem;
@@ -94,13 +94,13 @@ page-reproductor {
       }
 
       .botonDirectoStop {
-        font-size: 2.4rem;
+        font-size: 3.8rem;
         font-weight: bold;
 
         ion-icon {
           // centrado para hacerlo visualmente similar al resto
-          padding-top: 28px;
-          padding-right: 16px;
+          padding-top: 20px;
+          padding-right: 8px;
         }
        }
     }
