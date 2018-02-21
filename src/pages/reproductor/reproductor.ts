@@ -8,6 +8,7 @@ import { MusicControls } from '@ionic-native/music-controls';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
+import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
@@ -21,7 +22,7 @@ import { Player } from '../../app/player';
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player, EpisodiosGuardadosService]
 })
 export class ReproductorPage implements OnDestroy{
 
@@ -90,7 +91,8 @@ export class ReproductorPage implements OnDestroy{
                 private socialsharing: SocialSharing,
                 private network: Network,
                 private player: Player,
-                private chngDetector: ChangeDetectorRef) {
+                private chngDetector: ChangeDetectorRef,
+                private guardaDescargados: EpisodiosGuardadosService) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.episodioLike = this.navParams.get('episodio').like;
@@ -113,6 +115,8 @@ export class ReproductorPage implements OnDestroy{
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
         this.esIOS = this.platform.is('ios');
 
+
+
         if (this.mscControl == null) {
             console.log("[REPRODUCTOR.constructor] Creando un nuevo player en la zona de notificación.");
             this.mscControl = new MusicControls ();
@@ -122,6 +126,9 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.constructor] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
+
+        this.guardaDescargados.guardaProgramas(this.capItem);
+        //this.guardaDescargados.daListaProgramas();
 
         this._configuracion.getTwitteado(this.episodio)
             .then((val)=> {
@@ -440,7 +447,7 @@ export class ReproductorPage implements OnDestroy{
             this.reproductor.stop();// // Comento esto porque hacer stop si no está reproduciendo provoca un error. Con el release lo hago todo.
         }
         //this.stopPulsado = true;
-        this.reproductor.release(this._configuracion);
+        //this.reproductor.release(this._configuracion);
     }
 
     playPause(/*configuracion: ConfiguracionService*/){
@@ -600,7 +607,7 @@ export class ReproductorPage implements OnDestroy{
 		//this.mscControl.updateIsPlaying(this.reproduciendo);
         //this.mscControl.updateDismissable(true);
     }
-
+/* ¿Esto lo uso para algo?
     cambioDeAudio(nombrerep){
         if (this.audioEnRep != nombrerep){
             this.reproductor.release(this._configuracion);
@@ -616,7 +623,7 @@ export class ReproductorPage implements OnDestroy{
             }
         }
     }
-
+*/
     meGustasMucho(){
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {

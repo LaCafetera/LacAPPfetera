@@ -47,7 +47,7 @@ export class Player implements OnDestroy {
             this.playerIOS.crearepPlugin(audio, configuracion);
         }
         else {
-            this.playerAndroid.crearepPlugin(audio, configuracion);
+            this.playerAndroid.crearepPlugin(audio, configuracion, true);
         }
         this.inicializado = true;
     }
@@ -196,7 +196,7 @@ export class Player implements OnDestroy {
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
-                this.playerAndroid.cerrarAudio();
+                //this.playerAndroid.cerrarAudio();
                 this.crearepPlugin(audioIn,configuracion);
                 return (this.playerAndroid.play(audio, configuracion));
             }

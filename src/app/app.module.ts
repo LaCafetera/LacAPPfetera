@@ -28,6 +28,7 @@ import { PlayerIOS } from './playerIOS';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
+import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -109,6 +110,7 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
               ConfiguracionService,
               EpisodiosService,
               CadenasTwitterService,
+              EpisodiosGuardadosService,
               AndroidExoplayer,
               SQLite]
 })

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 
+import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
+
 import { MusicControls } from '@ionic-native/music-controls';
 
 import { EpisodiosService } from "../../providers/episodios-service";
@@ -19,7 +21,7 @@ import { ReproductorPage } from "../reproductor/reproductor";
 @Component({
   selector: 'page-capitulos-descargados',
   templateUrl: 'capitulos-descargados.html',
-  providers: [File, EpisodiosService, ConfiguracionService]
+  providers: [File, EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
 })
 export class CapitulosDescargadosPage {
 
@@ -35,7 +37,8 @@ export class CapitulosDescargadosPage {
                 private file: File, 
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
-                public events: Events) {
+                public events: Events,
+                private dameDescargados: EpisodiosGuardadosService) {
         this.items = new Array();
         this.reproductor = this.navParams.get('player');
         this.mscControl = this.navParams.get('controlador');
@@ -59,7 +62,7 @@ export class CapitulosDescargadosPage {
         });
     }
 
-    ionViewDidLoad() {
+    ionViewDidLoad_OLD() {
         console.log('ionViewDidLoad CapitulosDescargadosPage');
         this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
@@ -76,21 +79,21 @@ export class CapitulosDescargadosPage {
                         console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] recibido usuario " + Usuario );
                         this._configuracion.dameToken()
                         .then ((token) => {
-                            this.creaListaCapitulos (listado, Usuario, token);
+                            this.creaListaCapitulos_OLD (listado, Usuario, token);
                         })
                         .catch ((error) => {
                             console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker:" + error);
-                            this.creaListaCapitulos (listado, null, null);
+                            this.creaListaCapitulos_OLD (listado, null, null);
                         });
                     }
                     else {
                         console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker.");
-                        this.creaListaCapitulos (listado, null, null);
+                        this.creaListaCapitulos_OLD (listado, null, null);
                     } //  if (Usuario != null)
                 }) // .then ((Usuario) => {
                 .catch (() => {
                     console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
-                    this.creaListaCapitulos (listado, null, null);
+                    this.creaListaCapitulos_OLD (listado, null, null);
                 });
             }) //  .then((listado)=>{
             .catch ((error)=>{
@@ -102,7 +105,74 @@ export class CapitulosDescargadosPage {
         });
     }
 
-    creaListaCapitulos (listado: Array<any>, usuario: string, token:string){
+
+
+    ionViewDidLoad() {
+        this._configuracion.dameUsuario()
+        .then ((Usuario) => {
+            if (Usuario != null){
+                console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] recibido usuario " + Usuario );
+                this._configuracion.dameToken()
+                .then ((token) => {
+                    this.creaListaCapitulos (Usuario, token);
+                })
+                .catch ((error) => {
+                    console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker:" + error);
+                    this.creaListaCapitulos (null, null);
+                });
+            }
+            else {
+                console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker.");
+                this.creaListaCapitulos (null, null);
+            } //  if (Usuario != null)
+        }) // .then ((Usuario) => {
+        .catch (() => {
+            console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
+            this.creaListaCapitulos (null, null);
+        });
+    }
+
+    creaListaCapitulos (usuario: string, token:string){
+        this.dameDescargados.daListaProgramas().subscribe(
+            data => {
+                if (token != null && usuario != null){
+                    this.episodiosService.episodioDimeSiLike(data["episode_id"], usuario, token)
+                    .subscribe (
+                        espureo=>{
+                            console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Devuelve datos --> Me gusta el capítulo " + data['episode_id'] );
+                            if (this.items == null){
+                                this.items = [{objeto:data.response.episode, like: true}];
+                            }
+                            else {
+                                this.items.push({objeto:data.response.episode, like: true});
+                            }
+                        },
+                        error=>{
+                            console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] No me gusta el capítulo " + data['episode_id'] );
+                            if (this.items == null){
+                                this.items = [{objeto:data.response.episode, like: false}];
+                            }
+                            else {
+                                this.items.push({objeto:data.response.episode, like: false});
+                            }
+                        })
+                }
+                else {
+                    if (this.items == null){
+                        this.items = [{objeto:data.response.episode, like: false}];
+                    }
+                    else {
+                        this.items.push({objeto:data.response.episode, like: false});
+                    }
+                }
+            },
+            err => {
+                console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Error en detalle:" + err);
+            }
+        );
+    }
+
+    creaListaCapitulos_OLD (listado: Array<any>, usuario: string, token:string){
         listado.forEach((capitulo, elemento, array) => {
         //    console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] REcorriendo capítulos " + JSON.stringify(capitulo) + " - " + JSON.stringify(elemento) + " - " + JSON.stringify(array) + " - " );
             if (capitulo["isFile"]){

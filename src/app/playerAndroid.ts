@@ -116,7 +116,7 @@ export class PlayerAndroid implements OnDestroy {
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos));
+            // console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos));
             this.estadoExo=datos;
         })
         .catch ((err)=> {
@@ -142,7 +142,7 @@ export class PlayerAndroid implements OnDestroy {
         this.events.publish('reproduccion:status', {status:this.estado});
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService) {
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean) {
         console.log("[PLAYERANDROID.crearepPlugin] recibida petición de audio: " + audio);
         //this.audioRecibido = audio;
         this.capitulo = audio;
@@ -153,7 +153,7 @@ export class PlayerAndroid implements OnDestroy {
             this.params.seekTo = Number(data)/1000;
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
-                console.log("recibidos datos " + JSON.stringify(data))
+            //    console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                 if (this.estadoExo == null){
                     this.estadoExo = data;                    
                 } 
@@ -186,7 +186,7 @@ export class PlayerAndroid implements OnDestroy {
             }
         })
 
-        this.androidExoplayer.playPause(); // cuando pueda instalar una versión > 2.5.0 esto no hará falta.
+        //this.androidExoplayer.playPause(); // cuando pueda instalar una versión > 2.5.0 esto no hará falta.
     }
 
     public dameStatus(){
@@ -293,31 +293,25 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     play(audioIn: string, configuracion: ConfiguracionService):boolean{
-        /*console.log ("[PLAYERANDROID.play] Recibida petición de reproducción de "+ audioIn );
-		let capitulo = this.dameCapitulo();
-        let audio = this.traduceAudio(audioIn);
-        console.log ("[PLAYERANDROID.play] traducimos audio a reproducir a "+ audio );
-        if (this.reproduciendoEste(audio))
-        {*/
-            console.log ("[PLAYERANDROID.play] Play normal");
-            this.androidExoplayer.playPause()
-            .then(()=>{
-                console.log("[PLAYERANDROID.play] playPause OK "); 
-            })
-            .catch ((err)=> {
-                console.log("[PLAYERANDROID.play] playPause KO " + err);
-            });
-            if (this.estado == this.estadoPlayer.MEDIA_RUNNING)
-            {
-                this.estado = this.estadoPlayer.MEDIA_PAUSED;
-            }
-            else if (this.estado == this.estadoPlayer.MEDIA_NONE ||
-                     this.estado == this.estadoPlayer.MEDIA_PAUSED)
-            {
-                this.estado = this.estadoPlayer.MEDIA_STARTING;
-            }
-            this.publicaEstado ();
-            return (false);
+        console.log ("[PLAYERANDROID.play] Play normal");
+        this.androidExoplayer.playPause()
+        .then(()=>{
+            console.log("[PLAYERANDROID.play] playPause OK "); 
+        })
+        .catch ((err)=> {
+            console.log("[PLAYERANDROID.play] playPause KO " + err);
+        });
+        if (this.estado == this.estadoPlayer.MEDIA_RUNNING)
+        {
+            this.estado = this.estadoPlayer.MEDIA_PAUSED;
+        }
+        else if (this.estado == this.estadoPlayer.MEDIA_NONE ||
+                    this.estado == this.estadoPlayer.MEDIA_PAUSED)
+        {
+            this.estado = this.estadoPlayer.MEDIA_STARTING;
+        }
+        this.publicaEstado ();
+        return (true);
     }
 
     cerrarAudio (){
