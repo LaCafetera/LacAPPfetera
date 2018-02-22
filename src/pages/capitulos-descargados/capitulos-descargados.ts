@@ -141,28 +141,28 @@ export class CapitulosDescargadosPage {
                         espureo=>{
                             console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Devuelve datos --> Me gusta el capítulo " + data['episode_id'] );
                             if (this.items == null){
-                                this.items = [{objeto:data.response.episode, like: true}];
+                                this.items = [{objeto:data, like: true}];
                             }
                             else {
-                                this.items.push({objeto:data.response.episode, like: true});
+                                this.items.push({objeto:data, like: true});
                             }
                         },
                         error=>{
                             console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] No me gusta el capítulo " + data['episode_id'] );
                             if (this.items == null){
-                                this.items = [{objeto:data.response.episode, like: false}];
+                                this.items = [{objeto:data, like: false}];
                             }
                             else {
-                                this.items.push({objeto:data.response.episode, like: false});
+                                this.items.push({objeto:data, like: false});
                             }
                         })
                 }
                 else {
                     if (this.items == null){
-                        this.items = [{objeto:data.response.episode, like: false}];
+                        this.items = [{objeto:data, like: false}];
                     }
                     else {
-                        this.items.push({objeto:data.response.episode, like: false});
+                        this.items.push({objeto:data, like: false});
                     }
                 }
             },

@@ -125,6 +125,7 @@ export class HomePage implements OnDestroy {
         this.events.unsubscribe("like:modificado");
         this.events.unsubscribe("capitulo:fenecido");
         this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+        this.reproductor.release(this._configuracion);
     }
 
     cargaUsuarioParaProgramas (episodio:string){
