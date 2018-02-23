@@ -6,32 +6,29 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Events, ToastController } from 'ionic-angular';
 
 import { ConfiguracionService } from '../providers/configuracion.service';
+import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
 
 //declare var cordova: any;
-
 @Component({
     selector: 'descargaCafetera',
     template: `<button ion-button clear (click)="descargarFichero()">
                     <ion-icon icon-left [name]="icono">
-
                     </ion-icon>
                 </button>
                 <div class="porcentaje" [hidden]="porcentajeDescargado == 0" (click)="descargarFichero()">
                     <p>{{porcentajeDescargado}}%</p>
                 </div>
                 `,
-    providers: [FileTransfer, FileTransferObject, ConfiguracionService, Dialogs, Network]
+    providers: [FileTransfer, FileTransferObject, ConfiguracionService, Dialogs, Network, EpisodiosGuardadosService]
 })
 
 export class DescargaCafetera {
 
-    @Input() fileDownload: string;
-    @Input() enVivo: boolean;
+    @Input() capDownload: string;
     @Output() ficheroDescargado = new EventEmitter();
     @Output() ficheroBorrado = new EventEmitter();
    /*@Input() fileExists: string;
     @Output() porcentajeDescarga = new EventEmitter();
-
     }*/
 
     descargando:boolean = false;
@@ -45,6 +42,11 @@ export class DescargaCafetera {
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
 
+    capItem: any;
+    fileDownload:string;
+    enVivo: boolean;
+    imagenDownload: string;
+
     constructor(public events: Events,
                 public toastCtrl: ToastController,
                 private _configuracion: ConfiguracionService,
@@ -52,17 +54,28 @@ export class DescargaCafetera {
                 private network: Network,
                 private dialogs: Dialogs,
                 private transfer: FileTransfer,
-                private chngDetector: ChangeDetectorRef ) {};
+                private chngDetector: ChangeDetectorRef,
+                private guardaDescargados: EpisodiosGuardadosService ) {
+                };
 
     ngOnInit(){
         // externalDataDirectory --> cdvfile://localhost/files-external/
         // dataDirectory --> cdvfile://localhost/files/
+        if (typeof this.capDownload == 'object'){
+            this.capItem = this.capDownload;
+        }
+        else {
+            this.capItem = JSON.parse(this.capDownload);
+        }
+        this.fileDownload = this.capItem.episode_id;
+        this.enVivo = this.capItem.type=="LIVE";
+        this.imagenDownload = this.capItem.image_url;
 
         this.fileTransfer = this.transfer.create();
 
         this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
             console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
-            this.icono = 'ios-cloud-download'; // Si justo acaba de morir el capítulo, no puede ser que esté ya descargado.
+            this.icono = 'ios-cloud-download'; // Si justo acaba de morir el cap�tulo, no puede ser que est� ya descargado.
             this.ficheroDescargado.emit({existe: false});
         });
 
@@ -78,14 +91,14 @@ export class DescargaCafetera {
                         console.log("[Descarga.ngOnInit] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fileDownload)
                         this.file.checkFile(this.dirdestino, this.fileDownload + '.mp3')
                         .then((value)=>{
-                            if(value == true) { //Aquí hay que ver si VALUE se considera boolean y podemos quitar el " == true"
+                            if(value == true) { //Aqu� hay que ver si VALUE se considera boolean y podemos quitar el " == true"
                                 console.log("[Descarga.ngOnInit] El fichero " + this.fileDownload + ' existe.');
                                 this.icono = 'trash';
-                                this.ficheroDescargado.emit({existe: true}); //Aquí hay que ver si VALUE se considera boolean y dejar sólo un "emit existe:value"
+                                this.ficheroDescargado.emit({existe: true}); //Aqu� hay que ver si VALUE se considera boolean y dejar s�lo un "emit existe:value"
                             }
                             else {
                                 console.log("[Descarga.ngOnInit] El fichero " + this.fileDownload + ' no existe.');
-                                this.icono = 'ios-cloud-download'; // Fuerzo a que salga el icono de iOS que mola más :b
+                                this.icono = 'ios-cloud-download'; // Fuerzo a que salga el icono de iOS que mola m�s :b
                                 this.ficheroDescargado.emit({existe: false});
                             }
                         })
@@ -148,6 +161,20 @@ export class DescargaCafetera {
                                     this.porcentajeDescargado = 0;
                                     this.descargando = false;
                                     this.msgDescarga('Descarga completa');
+                                    let inicioNombreImagen : number = this.imagenDownload.lastIndexOf('\/')+1;
+                                    let nombreImagen : string = this.imagenDownload.substr(inicioNombreImagen,this.imagenDownload.lastIndexOf('.') - inicioNombreImagen);
+                                    this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + nombreImagen + '.jpg'), true, {})
+                                    .then((entrada) => {
+                                        console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + entrada);     
+                                        this.capItem.image_url = entrada.nativeURL;              
+                                        this.porcentajeDescargado = 0;               
+                                        this.guardaDescargados.guardaProgramas(this.capItem);
+                                    })
+                                    .catch((error) => {
+                                        if (error.code != 4){
+                                            console.log("[descarga.components.descargarFichero] Error descargando imagen " + JSON.stringify(error));
+                                        }
+                                    });
                                 })
                                 .catch((error) => {
                                     if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
@@ -161,7 +188,7 @@ export class DescargaCafetera {
                                     this.icono = 'ios-cloud-download';
                                     this.porcentajeDescargado = 0;
                                 });
-                                this.descargando = true;
+                                this.descargando = true;                                
                             }
                             else {
                                 this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
@@ -180,19 +207,19 @@ export class DescargaCafetera {
                         })
                     }
                     else{
-                        this.fileTransfer.abort(); //se genera un error "abort", así que es en la función de error donde pongo el false a descargando.
+                        this.fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
                         this.msgDescarga ("Cancelando descarga");
-                        this.borrarDescarga(this.fileDownload  + ".mp3");
+                        this.borrarDescarga();
                     }
                 }
                 else if (this.icono == 'trash') {
                     console.log("[descarga.components.descargarFichero] Solicitado borrado.")
-                    this.dialogs.confirm('¿Está seguro de que desea borrar el programa?')
+                    this.dialogs.confirm('¿Está seguro de que desea borrar el programa?', 'Super-Gurú')
                     .then ((respuesta)=> {
                         //reproductor.stop();
                         console.log("[descarga.components.descargarFichero] Confirmación de borrado:" + respuesta);
                         if (respuesta == 1){
-                            this.borrarDescarga(this.fileDownload + ".mp3");
+                            this.borrarDescarga();
                             this.ficheroBorrado.emit({episodio_id: this.fileDownload});
                         }
                     })
@@ -215,16 +242,24 @@ export class DescargaCafetera {
         }
     }
 
-    borrarDescarga (fichero:string) {
+    borrarDescarga () {
         this.file.removeFile(this.dirdestino, this.fileDownload + '.mp3')
             .then(() => {
-                console.log("[Descarga.borrarDescarga] El fichero " + fichero + '.se ha eliminado.');
-                this.icono = 'cloud-download';
+                console.log("[Descarga.borrarDescarga] El fichero " + this.fileDownload + '.se ha eliminado.');
+                this.icono = 'ios-cloud-download';
                 this.ficheroDescargado.emit({existe: false});
                 this.msgDescarga('Programa borrado');
+                this.guardaDescargados.borraProgramas(this.capItem);
+				this.file.removeFile(this.dirdestino, this.fileDownload + '.jpg')
+				.then(() => {
+					console.log("[Descarga.borrarDescarga] Borrada imagen asociada.");
+				})
+				.catch((err) => {
+					console.log("[Descarga.borrarDescarga] Error borrando imagen "+ this.dirdestino + this.fileDownload + ".jpg . Error code: " + err.code + " message: " + err.message);
+				});
             })
             .catch((err) => {
-                console.log("[Descarga.borrarDescarga] Error borrando fichero "+ this.dirdestino + this.fileDownload + " . Error code: " + err.code + " message: " + err.message);
+                console.log("[Descarga.borrarDescarga] Error borrando fichero "+ this.dirdestino + this.fileDownload + ".mp3 . Error code: " + err.code + " message: " + err.message);
             });
     }
 }

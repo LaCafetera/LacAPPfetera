@@ -120,7 +120,7 @@
 
             <ion-col col-3>
               <!--div *ngIf="!enVivo"-->
-                <descargaCafetera [fileDownload]="episodio" [enVivo]="enVivo" (ficheroDescargado)="ficheroDescargado($event)">
+                <descargaCafetera [capDownload]="capItemTxt" (ficheroDescargado)="ficheroDescargado($event)">
                 </descargaCafetera>
               <!--/div>
               <div *ngIf="enVivo">

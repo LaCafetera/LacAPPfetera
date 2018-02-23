@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ToastController } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
@@ -38,7 +38,8 @@ export class CapitulosDescargadosPage {
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
                 public events: Events,
-                private dameDescargados: EpisodiosGuardadosService) {
+                private dameDescargados: EpisodiosGuardadosService, 
+                public toastCtrl: ToastController) {
         this.items = new Array();
         this.reproductor = this.navParams.get('player');
         this.mscControl = this.navParams.get('controlador');
@@ -141,28 +142,28 @@ export class CapitulosDescargadosPage {
                         espureo=>{
                             console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Devuelve datos --> Me gusta el capítulo " + data['episode_id'] );
                             if (this.items == null){
-                                this.items = [{objeto:data, like: true}];
+                                this.items = [{objeto:data, like: true, objetoTxt: JSON.stringify(data)}];
                             }
                             else {
-                                this.items.push({objeto:data, like: true});
+                                this.items.push({objeto:data, like: true, objetoTxt: JSON.stringify(data)});
                             }
                         },
                         error=>{
                             console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] No me gusta el capítulo " + data['episode_id'] );
                             if (this.items == null){
-                                this.items = [{objeto:data, like: false}];
+                                this.items = [{objeto:data, like: false, objetoTxt: JSON.stringify(data)}];
                             }
                             else {
-                                this.items.push({objeto:data, like: false});
+                                this.items.push({objeto:data, like: false, objetoTxt: JSON.stringify(data)});
                             }
                         })
                 }
                 else {
                     if (this.items == null){
-                        this.items = [{objeto:data, like: false}];
+                        this.items = [{objeto:data, like: false, objetoTxt: JSON.stringify(data)}];
                     }
                     else {
-                        this.items.push({objeto:data, like: false});
+                        this.items.push({objeto:data, like: false, objetoTxt: JSON.stringify(data)});
                     }
                 }
             },
@@ -262,7 +263,7 @@ export class CapitulosDescargadosPage {
     }
 
     borrarElemento(episodio){
-            console.log("[HOME.borrarElemento] recibido " +episodio.episodio_id );
+        console.log("[HOME.borrarElemento] recibido " +episodio.episodio_id );
         var encontrado = false;
         for (var i = 0; i < this.items.length && !encontrado; i+=1) {
         // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
@@ -290,5 +291,14 @@ export class CapitulosDescargadosPage {
         if (!encontrado){
             console.log("[HOME.actualizaLike] Capítulo no Encontrado");
         }
+    }
+
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000,
+            cssClass: 'msgDescarga'
+        });
+        toast.present();
     }
 }

@@ -8,7 +8,6 @@ import { MusicControls } from '@ionic-native/music-controls';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
-import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
@@ -22,7 +21,7 @@ import { Player } from '../../app/player';
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player, EpisodiosGuardadosService]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player]
 })
 export class ReproductorPage implements OnDestroy{
 
@@ -74,6 +73,7 @@ export class ReproductorPage implements OnDestroy{
 
     longAudioLiveDescargado: number = 0;
     esIOS: boolean = false;
+    capItemTxt: string;
 
     corteEnDescarga: boolean = false;
 
@@ -91,10 +91,10 @@ export class ReproductorPage implements OnDestroy{
                 private socialsharing: SocialSharing,
                 private network: Network,
                 private player: Player,
-                private chngDetector: ChangeDetectorRef,
-                private guardaDescargados: EpisodiosGuardadosService) {
+                private chngDetector: ChangeDetectorRef) {
 
         this.capItem = this.navParams.get('episodio').objeto;
+        this.capItemTxt = JSON.stringify(this.capItem);
         this.episodioLike = this.navParams.get('episodio').like;
         if(this.episodioLike){
             this.colorLike = "danger";
@@ -548,7 +548,6 @@ export class ReproductorPage implements OnDestroy{
             nombrerep = encodeURI(/*cordova.file.dataDirectory + */this.episodio + '.mp3');
             console.log("[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga. " + nombrerep + " . ");
             this.noRequiereDescarga = true;
-            this.guardaDescargados.guardaProgramas(this.capItem);
         } else {
             nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
             console.log("[REPRODUCTOR.ficheroDescargado] EL fichero no existe. Reproduciendo de red. " + nombrerep + " . ");

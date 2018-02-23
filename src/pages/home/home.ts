@@ -8,6 +8,7 @@ import { Network } from '@ionic-native/network';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
+import { EpisodiosGuardadosService } from '../../providers/episodios_guardados.service';
 import { MenuExtComponent } from '../../components/menuext/menuext';
 
 import { InfoFerPage } from "../info-fer/info-fer";
@@ -18,7 +19,7 @@ import { Player } from "../../app/player";
 @Component({
   selector: "page-home",
   templateUrl: "home.html",
-  providers: [EpisodiosService, BackgroundMode, Dialogs, Network/*, ConfiguracionService*/]
+  providers: [EpisodiosService, BackgroundMode, Dialogs, Network/*, ConfiguracionService*/, EpisodiosGuardadosService]
 })
 
 export class HomePage implements OnDestroy {
@@ -52,7 +53,8 @@ export class HomePage implements OnDestroy {
                 public popoverCtrl: PopoverController,
                 public platform: Platform,
                 private network: Network,
-                private chngDetector: ChangeDetectorRef ) {
+                private chngDetector: ChangeDetectorRef, 
+                private episodiosGuardados: EpisodiosGuardadosService				) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
@@ -69,11 +71,11 @@ export class HomePage implements OnDestroy {
             this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
         });
         events.subscribe("capitulo:fenecido", (nuevoEstado) => {
-            console.log('[HOME.constructor] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + JSON.stringify( nuevoEstado ));
+            console.log('[HOME.constructor] Recibido mensaje de que ha terminado cap�tulo en vivo y en directo. Ahora es ' + JSON.stringify( nuevoEstado ));
             this.items[0].objeto.type= nuevoEstado;
         });
         this.backgroundMode.setDefaults({title: "La cAPPfetera",
-                                  ticker: "Te estás tomando un cafetito de actualidad",
+                                  ticker: "Te est�s tomando un cafetito de actualidad",
                                   text: "Bienvenido al bosque de Sherwood",
                                   silent: true});
         events.subscribe("fechasAbsolutas:status", (dato) => {
@@ -104,9 +106,21 @@ export class HomePage implements OnDestroy {
         //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
         this.desconectado = this.network.type === "none";
-        console.log("[home.compruebaConexion] el sistema me dice que la conexión es " + this.network.type);
+        console.log("[home.compruebaConexion] el sistema me dice que la conexi�n es " + this.network.type);
         if (this.desconectado){
-            this.dialogs.alert("El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo", 'Super-Gurú.');
+            this.dialogs.alert("El terminal no tiene conexi�n. Por favor, con�ctese y arrastre la pantalla hacia abajo", 'Super-Gur�.');
+			this.episodiosGuardados.daListaProgramas().subscribe(
+            data => {
+				if (this.items == null){
+					this.items = [{objeto:data, like: false}];
+				}
+				else {
+					this.items.push({objeto:data, like: false});
+				}
+            },
+            err => {
+                console.log("[home.compruebaConexion] Error en detalle:" + err);
+            });
         }
         else{
             this.cargaUsuarioParaProgramas(null);
@@ -193,10 +207,9 @@ export class HomePage implements OnDestroy {
             },
             err => {
                 console.log("[HOME.cargaProgramas] Error descargando episodio: " + err.message);
-                this.dialogs.alert ("[HOME.cargaProgramas] Error descargando episodios" + err, "Error");
+                this.dialogs.alert ("Error descargando episodios" + err, "Error");
                 this.contadorCapitulos--;
               /*  if (this.contadorCapitulos == 0){
-
                 }*/
             }
         );
@@ -222,7 +235,7 @@ export class HomePage implements OnDestroy {
             console.log("[HOME.recalentarCafe] Episodio vale " + episodio);
             this.cargaUsuarioParaProgramas(episodio);
             this.timerVigilaDescargas = setInterval(() =>{
-                console.log("[HOME.recalentarCafe] faltan por descargar " + this.contadorCapitulos + " capítulos");
+                console.log("[HOME.recalentarCafe] faltan por descargar " + this.contadorCapitulos + " cap�tulos");
                 if (this.contadorCapitulos == 0){
                     clearInterval(this.timerVigilaDescargas);
                     event.complete();
@@ -236,7 +249,7 @@ export class HomePage implements OnDestroy {
     }
 
     dameEnlace (cadena:string):string{
-        return "https://twitter.com/hashtag/"+this.damehashtag(cadena)//+"/live";  //--> Versión 2
+        return "https://twitter.com/hashtag/"+this.damehashtag(cadena)//+"/live";  //--> Versi�n 2
         //return "https://twitter.com/hashtag/"+this.damehashtag(cadena);
     }
 
@@ -260,10 +273,10 @@ export class HomePage implements OnDestroy {
                     // console.log("[HOME.hacerCafe] " + JSON.stringify (data));
                     if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
                         this.items.unshift(data);
-                        console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
+                        console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo cap�tulo");
                     }
                     else{
-                        //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso éste se hubiera actualizado
+                        //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso �ste se hubiera actualizado
                         this.items.shift();
                         this.items.unshift(data);
                     }
@@ -271,7 +284,7 @@ export class HomePage implements OnDestroy {
                 },
                 err => {
                     event.complete();
-                    console.log("[HOME.hacerCafe] Error haciendo café: " + err);
+                    console.log("[HOME.hacerCafe] Error haciendo caf�: " + err);
                     this.dialogs.alert ("Error descargando episodios" + err, "Error");
                 }
             );
@@ -297,15 +310,15 @@ export class HomePage implements OnDestroy {
     actualizaLike (valorLike, episodio){
         var encontrado = false;
         for (var i = 0; i < this.items.length && !encontrado; i+=1) {
-        // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
+        // console.log("En el �ndice '" + i + "' hay este valor: " + miArray[i]);
             if (this.items[i].objeto.episode_id == episodio) {
                 this.items[i].like = valorLike;
                 encontrado = true;
-                console.log("[HOME.actualizaLike] Encontrado capítulo");
+                console.log("[HOME.actualizaLike] Encontrado cap�tulo");
             }
         }
         if (!encontrado){
-            console.log("[HOME.actualizaLike] Capítulo no Encontrado");
+            console.log("[HOME.actualizaLike] Cap�tulo no Encontrado");
         }
     }
 
@@ -327,12 +340,9 @@ exit(){
   exitApp(){
     this.platform.exitApp();
   }
-
-  y por ahí:
-
+  y por ah�:
   this.platform.registerBackButtonAction(this.exit)
-
-  Más a mirar:
+  M�s a mirar:
   http://cordova.apache.org/docs/en/latest/config_ref/index.html#preference ---> KeepRunning(boolean)
 */
 }
@@ -340,7 +350,5 @@ exit(){
 
 // ojo a esto
 // https://ionicframework.com/docs/v2/api/components/virtual-scroll/VirtualScroll/
-
 // Y a esto:
 // https://ionicframework.com/docs/v2/api/components/refresher/Refresher/
-
