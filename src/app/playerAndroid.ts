@@ -136,6 +136,7 @@ export class PlayerAndroid implements OnDestroy {
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.publicaEstado();                
         }
+        //console.log("[PLAYERANDROID.actualizaStatus] PAQUETE: " + JSON.stringify(this.estadoExo));
     }
 
     publicaEstado (){
@@ -150,16 +151,17 @@ export class PlayerAndroid implements OnDestroy {
         
         configuracion.getTimeRep(this.dameCapitulo())
         .then((data) => {
+            this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.params.seekTo = Number(data)/1000;
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
-            //    console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                 if (this.estadoExo == null){
                     this.estadoExo = data;                    
                 } 
                 this.inVigilando(true);
             }),
-            ((error) => console.log("recibidos error " + error));
+            ((error) => console.log("recibido error " + error));
             if (this.estado == this.estadoPlayer.MEDIA_NONE || 
                 this.estado == this.estadoPlayer.MEDIA_PAUSED || 
                 this.estado == this.estadoPlayer.MEDIA_STOPPED) {
@@ -177,7 +179,7 @@ export class PlayerAndroid implements OnDestroy {
                 } 
                 this.inVigilando(true);
             }),
-            ((error) => console.log("recibidos error " + error));
+            ((error) => console.log("recibido error " + error));
             if (this.estado == this.estadoPlayer.MEDIA_NONE || 
                 this.estado == this.estadoPlayer.MEDIA_PAUSED || 
                 this.estado == this.estadoPlayer.MEDIA_STOPPED) {
@@ -187,6 +189,14 @@ export class PlayerAndroid implements OnDestroy {
         })
 
         //this.androidExoplayer.playPause(); // cuando pueda instalar una versión > 2.5.0 esto no hará falta.
+    }
+
+    private preparado() {
+        return new Promise(resolve => setTimeout(() => {
+            if (this.estado != this.estadoPlayer.MEDIA_NONE) {
+                resolve
+            }
+        }, 500));
     }
 
     public dameStatus(){
@@ -292,8 +302,10 @@ export class PlayerAndroid implements OnDestroy {
         });
     }
 
-    play(audioIn: string, configuracion: ConfiguracionService):boolean{
+    async play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
         console.log ("[PLAYERANDROID.play] Play normal");
+        //await this.preparado(); // Cuando estemos preparados, seguimos.
+        console.log ("[PLAYERANDROID.play] *********************************************************************************************");
         this.androidExoplayer.playPause()
         .then(()=>{
             console.log("[PLAYERANDROID.play] playPause OK "); 
@@ -304,6 +316,7 @@ export class PlayerAndroid implements OnDestroy {
         if (this.estado == this.estadoPlayer.MEDIA_RUNNING)
         {
             this.estado = this.estadoPlayer.MEDIA_PAUSED;
+            this.guardaPos(configuracion);
         }
         else if (this.estado == this.estadoPlayer.MEDIA_NONE ||
                     this.estado == this.estadoPlayer.MEDIA_PAUSED)
@@ -311,7 +324,7 @@ export class PlayerAndroid implements OnDestroy {
             this.estado = this.estadoPlayer.MEDIA_STARTING;
         }
         this.publicaEstado ();
-        return (true);
+        //return (true);
     }
 
     cerrarAudio (){
@@ -377,6 +390,8 @@ export class PlayerAndroid implements OnDestroy {
         .catch ((err)=> {
             console.log("[PLAYERANDROID.release] close KO " + err);
         });
+        this.estado = this.estadoPlayer.MEDIA_STOPPED;
+        this.publicaEstado ();
         // this.guardaPos(configuracion); //TODO
         this.inVigilando(false);
         console.log ("[PLAYERANDROID.release] EJECUTADO RELEASE");
@@ -419,18 +434,20 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     stop(){
-        this.androidExoplayer.stop()
-        .then((data)=>{
-            console.log("[PLAYERANDROID.stop] ************************************************ stop OK " + JSON.stringify(data));
-            this.estado = this.estadoPlayer.MEDIA_STOPPED;
+        if (this.estado != this.estadoPlayer.MEDIA_STOPPED && this.estado != this.estadoPlayer.MEDIA_NONE){
+            this.androidExoplayer.stop()
+            .then((data)=>{  // por lo que he podido ver, aquí nunca entra :-p
+                console.log("[PLAYERANDROID.stop] ************************************************ stop OK " + JSON.stringify(data));
+                this.estado = this.estadoPlayer.MEDIA_STOPPED;
+                this.publicaEstado ();
+                this.capitulo = '';
+            })
+            .catch ((err)=> {
+                console.log("[PLAYERANDROID.stop] stop KO " + err);
+            });
+            this.estado = this.estadoPlayer.MEDIA_NONE;
             this.publicaEstado ();
-            this.capitulo = '';
-        })
-        .catch ((err)=> {
-            console.log("[PLAYERANDROID.stop] stop KO " + err);
-        });
-        this.estado = this.estadoPlayer.MEDIA_STOPPED;
-        this.publicaEstado ();
+        }
         this.capitulo = '';
         this.inVigilando(false);
         //this.reproduciendo = false;

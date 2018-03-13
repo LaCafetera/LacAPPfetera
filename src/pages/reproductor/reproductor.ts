@@ -69,14 +69,17 @@ export class ReproductorPage implements OnDestroy{
     pagChat: any = ChatPage;
 
     ocultaTiempoRep: boolean = false;
-    // stopPulsado:boolean = false; 
+    
 
     longAudioLiveDescargado: number = 0;
     esIOS: boolean = false;
     capItemTxt: string;
 
+    // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo 
+    // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
     corteEnDescarga: boolean = false;
-
+    // Puede haber terminado la reproducción porque hayan pulsado stop...
+    stopPulsado:boolean = false; 
 
     constructor(public navCtrl: NavController, 
                 public navParams: NavParams, 
@@ -99,8 +102,8 @@ export class ReproductorPage implements OnDestroy{
         if(this.episodioLike){
             this.colorLike = "danger";
         }
-        this.episodio = this.capItem.episode_id;
         this.httpAudio = this.capItem.site_url;
+        this.episodio = this.capItem.episode_id;
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
@@ -116,47 +119,14 @@ export class ReproductorPage implements OnDestroy{
         this.esIOS = this.platform.is('ios');
 
         if (this.mscControl == null) {
-            console.log("[REPRODUCTOR.constructor] Creando un nuevo player en la zona de notificación.");
+            console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
             this.mscControl = new MusicControls ();
             this.creaControlEnNotificaciones (false);
         }
         if (this.reproductor == null) {
-            console.log("[REPRODUCTOR.constructor] El reproductor era nulo, así que me lo invento.");
+            console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
-
-        this._configuracion.getTwitteado(this.episodio)
-            .then((val)=> {
-            //    console.log("[REPRODUCTOR.constructor] recibida verificación de twitteado " + val + " para el capítulo " + this.episodio );
-                if (val == null){ //Si es null nunca se ha guardado nada, con lo que no hemos preguntado.
-                    this.twitteaCapitulo ();
-                    this._configuracion.setTwitteado(this.episodio);
-                }
-                //this.actualizaPosicion();
-            })
-            .catch(()=>{
-                console.log("[REPRODUCTOR.constructor] Error recuperando posición de la reproducción.");
-            });
-            events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
-            events.subscribe("errorReproduccion:status", (statusRep) => {
-                console.log("[REPRODUCTOR.constructor] Error en la reproducción. Recibido " + statusRep.status);
-                if (statusRep.status != 0) {
-                    this.playPause();
-                }
-            });
-
-            events.subscribe('streaming:descargado', (dato) => {
-
-                console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.' + JSON.stringify(dato));
-                if (dato.valor) {
-                    this.corteEnDescarga = true;
-                }
-                else{
-                    this.stop();
-                    this.dialogs.alert("Error descargando audio de Spreaker. ¿Problemas de conexión?", 'Error');
-                }
-                console.log('[REPRODUCTOR.constructor] Me dicen que ha terminado el programa en vivo.' + dato.valor);
-            });
 
     }
 
@@ -175,6 +145,48 @@ export class ReproductorPage implements OnDestroy{
   }
 
     */
+
+    
+    ngOnInit() {
+    //console.log ('[app.component.ngOnInit]');
+
+        this.platform.ready().then(() => {
+            this._configuracion.getTwitteado(this.episodio)
+            .then((val)=> {
+            //    console.log("[REPRODUCTOR.constructor] recibida verificación de twitteado " + val + " para el capítulo " + this.episodio );
+                if (val == null){ //Si es null nunca se ha guardado nada, con lo que no hemos preguntado.
+                    this.twitteaCapitulo ();
+                    this._configuracion.setTwitteado(this.episodio);
+                }
+                //this.actualizaPosicion();
+            })
+            .catch(()=>{
+                console.log("[REPRODUCTOR.ngOnInit] Error recuperando posición de la reproducción.");
+            });
+            this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+            this.events.subscribe("errorReproduccion:status", (statusRep) => {
+                console.log("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
+                if (statusRep.status != 0) {
+                    this.playPause();
+                }
+            });
+/*
+            this.events.subscribe('streaming:descargado', (dato) => {
+                console.log('[REPRODUCTOR.ngOnInit] Me dicen que ha terminado el programa en vivo.' + JSON.stringify(dato));
+                if (dato.valor) {
+                    this.corteEnDescarga = true;
+                }
+                else{
+                    this.stop();
+                    this.dialogs.alert("Error descargando audio de Spreaker. ¿Problemas de conexión?", 'Error');
+                }
+                console.log('[REPRODUCTOR.ngOnInit] Me dicen que ha terminado el programa en vivo.' + dato.valor);
+            });*/
+        })
+        .catch((error)=>{
+            console.log('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
+        });
+    }
 
     ionViewDidLoad() {
         this._configuracion.getWIFI()
@@ -195,6 +207,17 @@ export class ReproductorPage implements OnDestroy{
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
         }
+    }
+
+    ngOnDestroy(){
+        //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
+        clearInterval(this.timer);
+        clearInterval(this.timerVigilaEnVivo);
+        this.timer = this.timerVigilaEnVivo = 0;
+        this.events.unsubscribe("reproduccion:status");
+        this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
+        console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
+        //MusicControls.destroy(); // onSuccess, onError
     }
 
     creaControlEnNotificaciones (destruir: boolean){
@@ -281,25 +304,9 @@ export class ReproductorPage implements OnDestroy{
                         break;
                 }
             },
-            (error) => {console.log("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")}
-        );
-        this.mscControl.listen();
-    }
-    }/*
+            (error) => {console.log("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")});
             this.mscControl.listen();
-            this.mscControl.updateIsPlaying(false);
         }
-    }*/
-
-
-    ngOnDestroy(){
-        //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
-        clearInterval(this.timer);
-        clearInterval(this.timerVigilaEnVivo);
-        this.events.unsubscribe("reproduccion:status");
-        this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
-        console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
-        //MusicControls.destroy(); // onSuccess, onError
     }
         
     gatoSchrodinger(){
@@ -311,18 +318,22 @@ export class ReproductorPage implements OnDestroy{
                     console.log("[REPRODUCTOR.gatoSchrodinger] El episodio ha muerto. Larga vida al episodio .");
                     clearInterval(this.timerVigilaEnVivo);
                     this.enVivo = false;
+                    this.corteEnDescarga = false; //  Si el programa no es en vivo no es aquí donde puedo decidir si hay corte o no.
+                    //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga false");
                     this.episodioDescarga = data.response.episode.episode_id;
                     this.totDurPlay = data.response.episode.duration;
                     this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
                     this.events.publish('capitulo:fenecido', {valor:data.response.episode.type});
-                    clearInterval (this.timerVigilaEnVivo);
                 }
-                //else{
-                //    console.log("[REPRODUCTOR.gatoSchrodinger] el gato de Schrödinger está " + data.response.episode.type);
-                //}
+                else{
+                    this.corteEnDescarga = true;  // Si estamos en vivo, no "puede" cortarse.
+                    //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
+                }
             },
             error => {
                 console.log("[REPRODUCTOR.gatoSchrodinger] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
+                this.corteEnDescarga = true; //Si tengo problemas de conexión... true.
+                //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
             }
         )   
     }
@@ -339,9 +350,16 @@ export class ReproductorPage implements OnDestroy{
                 this.parpadeoTiempoRep(false);
                 //this.chngDetector.markForCheck();
                 clearInterval(this.timer);
+                if (!this.stopPulsado && this.corteEnDescarga){
+                    console.error("[REPRODUCTOR.cambiandoStatusRep] Parece que se ha producido un corte en las comunicaciones. " + this.stopPulsado + ' - ' + this.corteEnDescarga);
+                    this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
+                    this.stop();
+                }
+                this.stopPulsado = false; // Limpiamos el valor.
             }
             this.reproduciendo = false;
             this.iconoPlayPause = 'play';
+            this.chngDetector.markForCheck();
             this.mscControl.updateIsPlaying(this.reproduciendo);
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
         else if (statusRep.status == this.reproductor.dameStatusRep() || 
@@ -370,19 +388,19 @@ export class ReproductorPage implements OnDestroy{
     }
 
     parpadeoTiempoRep(iniciar: boolean){
-        if (!this.enVivo){
+        //if (!this.enVivo){
             console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeo vale " + this.timerParpadeo);
             if (iniciar){
                 if ( this.timerParpadeo == 0){
-                        console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
-                        this.timerParpadeo = setInterval(() =>{ 
-                            this.ocultaTiempoRep = !this.ocultaTiempoRep; 
-                            console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando " + this.reproduciendo);
-                        }, 1000);
-                    }
-                    else {
-                        console.log("[REPRODUCTOR.parpadeoTiempoRep] Has intentado iniciar el parpadeo dos veces (Muy hábil, Morgan)");
-                    }
+                    console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
+                    this.timerParpadeo = setInterval(() =>{ 
+                        this.ocultaTiempoRep = !this.ocultaTiempoRep; 
+                        // console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando " + this.reproduciendo);
+                    }, 1000);
+                }
+                else {
+                    console.log("[REPRODUCTOR.parpadeoTiempoRep] Has intentado iniciar el parpadeo dos veces (Muy hábil, Morgan)");
+                }
             }
             else {
                 console.log("[REPRODUCTOR.parpadeoTiempoRep] Eliminando parpadeo");
@@ -391,7 +409,7 @@ export class ReproductorPage implements OnDestroy{
                 this.ocultaTiempoRep = false;
                 this.chngDetector.markForCheck();
             }
-        }
+        //}
     }
 
     numerosDosCifras(numero):string {
@@ -421,6 +439,15 @@ export class ReproductorPage implements OnDestroy{
                 this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
+                        //console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
+                        if (this.posicionRep < (this.totDurPlay/1000)-10) {
+                            this.corteEnDescarga = false;
+                            //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga false");
+                        }
+                        else {
+                            this.corteEnDescarga = true;
+                            //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga true");
+                        }
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
                         if (!this.enVivo){ // No hay nada que refrescar en la pantalla si estamos en vivo. Pero me interesa el dato.
                             this.chngDetector.detectChanges();
@@ -441,7 +468,7 @@ export class ReproductorPage implements OnDestroy{
             this.reproduciendo = false;
             this.reproductor.stop();// // Comento esto porque hacer stop si no está reproduciendo provoca un error. Con el release lo hago todo.
         }
-        //this.stopPulsado = true;
+        this.stopPulsado = true;
         //this.reproductor.release(this._configuracion);
     }
 
@@ -472,7 +499,7 @@ export class ReproductorPage implements OnDestroy{
                 }
             }
         }
-        else this.dialogs.alert("Es nulo. (Error reproduciendo)", 'Error');
+        else this.dialogs.alert("Es nulo. (Error reproduciendo)", 'Super - Gurú');
     }
 
     actualizaPosicion(){

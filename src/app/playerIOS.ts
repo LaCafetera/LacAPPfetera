@@ -105,7 +105,10 @@ export class PlayerIOS implements OnDestroy {
                 this.paradaEncolada = false;
             }
         });
-        const onSuccess = () => console.log('[PLAYERIOS.crearepPlugin] Reproduciendo OK');
+        const onSuccess = () => {
+            console.log('[PLAYERIOS.crearepPlugin] La reprodución ha terminado.');
+            this.stop();
+        };
         const onError = (error) => {
             this.events.publish('errorReproduccion:status', {status:error.code});
             console.error("[PLAYERIOS.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
@@ -250,7 +253,7 @@ export class PlayerIOS implements OnDestroy {
                 .catch ((err)=> {
                     console.log ("[PLAYERIOS.play] Recibido error al pedir posición de reproducción: " + err);
                 });
-            this.repObject.stop();
+            this.stop();
             this.repObject.release();
         }
     }
@@ -348,6 +351,7 @@ export class PlayerIOS implements OnDestroy {
 
     stop(){
         this.repObject.stop();
+        this.capitulo = '';
         //this.reproduciendo = false;
     }
 

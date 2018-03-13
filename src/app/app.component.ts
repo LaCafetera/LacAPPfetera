@@ -48,12 +48,10 @@ export class MyApp implements OnDestroy {
               public events: Events) {
 
     this.availableThemes = this._configuracion.availableThemes;
-    _platform.ready().then(() => {
+//    _platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      this.barraEstado.styleDefault();
-      this.splashscreen.hide(); 
-    });
+//    });
   }
 
   ngAfterViewInit() {
@@ -87,46 +85,53 @@ export class MyApp implements OnDestroy {
     ngOnInit() {
       //console.log ('[app.component.ngOnInit]');
 
-      this._configuracion.getWIFI()
-        .then((val)=> {
-          this.soloWifi = val==true;
-          console.log("[app.component.ngOnInit] getWIFI vale "+ val + " type " + typeof val);
-        }).catch(()=>{
-          console.log("[app.component.ngOnInit] Error recuperando valor WIFI");
-          this.soloWifi=false;
-      });
+      this._platform.ready().then(() => {
+        this.barraEstado.styleDefault();
+        this.splashscreen.hide(); 
+        this._configuracion.getWIFI()
+          .then((val)=> {
+            this.soloWifi = val==true;
+            console.log("[app.component.ngOnInit] getWIFI vale "+ val + " type " + typeof val);
+          }).catch(()=>{
+            console.log("[app.component.ngOnInit] Error recuperando valor WIFI");
+            this.soloWifi=false;
+        });
 
-      this._configuracion.getTokenSpreaker()
-        .then((val)=> {
-          if (val == null || val == ""){
-            this.conectadoASpreaker = false;
+        this._configuracion.getTokenSpreaker()
+          .then((val)=> {
+            if (val == null || val == ""){
+              this.conectadoASpreaker = false;
+            }
+            else {
+              this.conectadoASpreaker = true;
+              this.iniciando = true;
+              this.actualizaAvatar (val);
+            }
+            console.log("[app.component.ngOnInit] getTokenSpreaker vale "+ val + " type " + typeof val);
+          }).catch(()=>{
+            console.log("[app.component.ngOnInit] Error recuperando valor token Spreaker");
+            this.soloWifi=false;
+        });
+        console.log("[app.component.ngOnInit] Plataformas: " + this._platform.platforms());
+
+        this._configuracion.theme.subscribe(val => {
+          this.chosenTheme = val;
+          console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
+          if (this._platform.is("ios")){
+            this.barraEstado.overlaysWebView(true);
           }
-          else {
-            this.conectadoASpreaker = true;
-            this.iniciando = true;
-            this.actualizaAvatar (val);
-          }
-          console.log("[app.component.ngOnInit] getTokenSpreaker vale "+ val + " type " + typeof val);
-        }).catch(()=>{
-          console.log("[app.component.ngOnInit] Error recuperando valor token Spreaker");
-          this.soloWifi=false;
+          this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+          //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
+        });
+
+        this._configuracion.getFechasAbsolutas()
+        .then((dato)=>this.fechasAbsolutas = dato==true)
+        .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
+
+      })
+      .catch((error)=>{
+        console.log("[app.ngAfterViewInit] Error esperando a que el terminal responda: " + error);
       });
-      console.log("[app.component.ngOnInit] Plataformas: " + this._platform.platforms());
-
-      this._configuracion.theme.subscribe(val => {
-        this.chosenTheme = val;
-        console.log("[app.component.ngOnInit] El valor de tema elegido es " + this.chosenTheme);
-        if (this._platform.is("ios")){
-          this.barraEstado.overlaysWebView(true);
-        }
-        this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
-        //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
-      });
-
-      this._configuracion.getFechasAbsolutas()
-      .then((dato)=>this.fechasAbsolutas = dato==true)
-      .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
-
     }
     
 

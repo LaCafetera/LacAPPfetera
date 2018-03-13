@@ -106,9 +106,9 @@ export class HomePage implements OnDestroy {
         //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
         this.desconectado = this.network.type === "none";
-        console.log("[home.compruebaConexion] el sistema me dice que la conexi�n es " + this.network.type);
+        console.log("[home.compruebaConexion] el sistema me dice que la conexión es " + this.network.type);
         if (this.desconectado){
-            this.dialogs.alert("El terminal no tiene conexi�n. Por favor, con�ctese y arrastre la pantalla hacia abajo", 'Super-Gur�.');
+            this.dialogs.alert("El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo", 'Super-Gurú.');
 			this.episodiosGuardados.daListaProgramas().subscribe(
             data => {
 				if (this.items == null){

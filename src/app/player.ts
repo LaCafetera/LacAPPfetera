@@ -186,7 +186,7 @@ export class Player implements OnDestroy {
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
-                return (this.playerAndroid.play(audio, configuracion));
+                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
             }
         }
         else {
@@ -198,7 +198,7 @@ export class Player implements OnDestroy {
             else {
                 //this.playerAndroid.cerrarAudio();
                 this.crearepPlugin(audioIn,configuracion);
-                return (this.playerAndroid.play(audio, configuracion));
+                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
             }
         }
     }
@@ -228,7 +228,7 @@ export class Player implements OnDestroy {
         else {
             // El reproductor de android no tiene pause; solo "playpause". Por esto, el "pause" se hace solo, diciendo "play". Pero como hay que 
             // pasarle un capítulo (por si acaso estuviéramos cambiando de capítulo) le paso el que está sonando.
-            return (this.playerAndroid.play(this.dameCapitulo(), configuracion)); 
+            this.playerAndroid.play(this.dameCapitulo(), configuracion); 
         }
     }
 
