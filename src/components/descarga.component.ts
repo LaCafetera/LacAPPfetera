@@ -75,7 +75,7 @@ export class DescargaCafetera {
 
         this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
             console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
-            this.icono = 'ios-cloud-download'; // Si justo acaba de morir el cap�tulo, no puede ser que est� ya descargado.
+            this.icono = 'ios-cloud-download'; // Si justo acaba de morir el capítulo, no puede ser que está ya descargado.
             this.ficheroDescargado.emit({existe: false});
         });
 
@@ -165,7 +165,7 @@ export class DescargaCafetera {
                                     let nombreImagen : string = this.imagenDownload.substr(inicioNombreImagen,this.imagenDownload.lastIndexOf('.') - inicioNombreImagen);
                                     this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + nombreImagen + '.jpg'), true, {})
                                     .then((entrada) => {
-                                        console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + entrada);     
+                                        console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
                                         this.capItem.image_url = entrada.nativeURL;              
                                         this.porcentajeDescargado = 0;               
                                         this.guardaDescargados.guardaProgramas(this.capItem);

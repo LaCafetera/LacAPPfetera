@@ -166,6 +166,7 @@ export class CapitulosDescargadosPage {
                         this.items.push({objeto:data, like: false, objetoTxt: JSON.stringify(data)});
                     }
                 }
+                console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] La imagen de este item es:" + data.image_url);  
             },
             err => {
                 console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Error en detalle:" + err);

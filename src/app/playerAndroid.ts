@@ -23,6 +23,7 @@ export class PlayerAndroid implements OnDestroy {
     //audioRecibido: string = "";
     paradaEncolada: boolean = false;
     timerVigila: number = 0;
+    timerGetReady: number = 0;
 
     estadoExo: AndroidExoplayerState = null;
     estadoPlayer = { 
@@ -192,9 +193,13 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     private preparado() {
-        return new Promise(resolve => setTimeout(() => {
+        return new Promise(resolve => this.timerGetReady = setInterval(() => {
+            console.log("Promesas que no valen nada " + this.estado + ' - ' + this.estadoPlayer.MEDIA_NONE); 
             if (this.estado != this.estadoPlayer.MEDIA_NONE) {
-                resolve
+                console.log("Promesas que no valen nada  resolviendo");
+                clearInterval(this.timerGetReady);
+                this.timerGetReady = 0;
+                resolve (true);
             }
         }, 500));
     }
@@ -304,7 +309,7 @@ export class PlayerAndroid implements OnDestroy {
 
     async play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
         console.log ("[PLAYERANDROID.play] Play normal");
-        //await this.preparado(); // Cuando estemos preparados, seguimos.
+        await this.preparado(); // Cuando estemos preparados, seguimos.
         console.log ("[PLAYERANDROID.play] *********************************************************************************************");
         this.androidExoplayer.playPause()
         .then(()=>{
