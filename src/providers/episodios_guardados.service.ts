@@ -25,7 +25,7 @@ export class EpisodiosGuardadosService {
     }
 
     guardaProgramas (programa: object){
-        console.log("[EpisodiosGuardados.guardaProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
+        console.log("[EpisodiosGuardados.guardaProgramas] Guardando "+ JSON.stringify(programa))
         let listaDescargados = {"programas":[programa]};
         this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {

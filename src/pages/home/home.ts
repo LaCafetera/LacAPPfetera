@@ -113,10 +113,14 @@ export class HomePage implements OnDestroy {
 			this.episodiosGuardados.daListaProgramas().subscribe(
             data => {
 				if (this.items == null){
-					this.items = [{objeto:data, like: false}];
+                    this.items = [{objeto:data, like: false}];
+                    console.log("[home.compruebaConexion] Recibido capítulo " + data.title);
+                    console.log("[home.compruebaConexion] Imagen " + data.image_url);
 				}
 				else {
 					this.items.push({objeto:data, like: false});
+                    console.log("[home.compruebaConexion] Recibido otro capítulo " + data.title);
+                    console.log("[home.compruebaConexion] Imagen " + data.image_url);
 				}
             },
             err => {
