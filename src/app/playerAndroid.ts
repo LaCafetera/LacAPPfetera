@@ -117,7 +117,7 @@ export class PlayerAndroid implements OnDestroy {
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            // console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos));
+            console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos));
             this.estadoExo=datos;
         })
         .catch ((err)=> {
@@ -153,7 +153,7 @@ export class PlayerAndroid implements OnDestroy {
         configuracion.getTimeRep(this.dameCapitulo())
         .then((data) => {
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
-            this.params.seekTo = Number(data)/1000;
+            this.params.seekTo = Number(data);
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
                 console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
@@ -359,7 +359,7 @@ export class PlayerAndroid implements OnDestroy {
             let posicionNum = parseInt(this.estadoExo.position);
             let capitulo = this.dameCapitulo();
             if (posicionNum > 0 && capitulo != ""){
-                configuracion.setTimeRep(capitulo, posicionNum * 1000);
+                configuracion.setTimeRep(capitulo, posicionNum);
                 console.log ("[PLAYERIOS.guardaPos] Guardando la posición en la configuración");
             }
             else{

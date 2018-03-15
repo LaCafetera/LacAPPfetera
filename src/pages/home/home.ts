@@ -107,6 +107,7 @@ export class HomePage implements OnDestroy {
         // BackgroundMode.enable();
         this.desconectado = this.network.type === "none";
         console.log("[home.compruebaConexion] el sistema me dice que la conexión es " + this.network.type);
+        while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
         if (this.desconectado){
             this.dialogs.alert("El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo", 'Super-Gurú.');
 			this.episodiosGuardados.daListaProgramas().subscribe(
@@ -267,13 +268,13 @@ export class HomePage implements OnDestroy {
     }
 
     hacerCafe(event){
-        if (this.items.length > 0){
+        if (this.items.length > 0 && !this.desconectado){
             this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
                 data => {
                     // console.log("[HOME.hacerCafe] " + JSON.stringify (data));
                     if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
                         this.items.unshift(data);
-                        console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo cap�tulo");
+                        console.log("[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo");
                     }
                     else{
                         //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso �ste se hubiera actualizado
@@ -284,7 +285,7 @@ export class HomePage implements OnDestroy {
                 },
                 err => {
                     event.complete();
-                    console.log("[HOME.hacerCafe] Error haciendo caf�: " + err);
+                    console.log("[HOME.hacerCafe] Error haciendo café: " + err);
                     this.dialogs.alert ("Error descargando episodios" + err, "Error");
                 }
             );
