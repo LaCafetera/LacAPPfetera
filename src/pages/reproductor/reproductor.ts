@@ -276,9 +276,12 @@ export class ReproductorPage implements OnDestroy{
                         //this.playPause(this._configuracion);
                         break;
                     case 'music-controls-destroy':
+                        this.stopPulsado = true;
                         this.reproductor.release(this._configuracion);
-                        this.mscControl.destroy();
                         this.platform.exitApp();
+                        break;
+                    case 'music-controls-stop-listening':
+                        this.mscControl.destroy();
                         break;
 
                     case 'music-controls-media-button' :
@@ -439,8 +442,8 @@ export class ReproductorPage implements OnDestroy{
                 this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
-                        //console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
-                        if (this.posicionRep < (this.totDurPlay/1000)-10) {
+                        console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
+                        if (Math.abs(this.posicionRep - this.totDurPlay) < 1000) {
                             this.corteEnDescarga = false;
                             //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga false");
                         }
@@ -583,6 +586,7 @@ export class ReproductorPage implements OnDestroy{
         if (this.audioEnRep != null){
             console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos. AudioEnRep vale " + this.audioEnRep);
             if (this.audioEnRep != nombrerep){
+                this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
                 this.reproductor.release(this._configuracion);
                 this.audioEnRep = nombrerep;
                 if (!this.reproductor.inicializado) {

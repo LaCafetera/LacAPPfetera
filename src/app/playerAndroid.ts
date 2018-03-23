@@ -135,7 +135,8 @@ export class PlayerAndroid implements OnDestroy {
         }
         else if (this.estadoExo.playbackState == "STATE_ENDED" && this.estado != this.estadoPlayer.MEDIA_STOPPED){
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
-            this.publicaEstado();                
+            this.publicaEstado();  
+            this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
         }
         //console.log("[PLAYERANDROID.actualizaStatus] PAQUETE: " + JSON.stringify(this.estadoExo));
     }
@@ -194,9 +195,9 @@ export class PlayerAndroid implements OnDestroy {
 
     private preparado() {
         return new Promise(resolve => this.timerGetReady = setInterval(() => {
-            console.log("Promesas que no valen nada " + this.estado + ' - ' + this.estadoPlayer.MEDIA_NONE); 
+            //console.log("Promesas que no valen nada " + this.estado + ' - ' + this.estadoPlayer.MEDIA_NONE); 
             if (this.estado != this.estadoPlayer.MEDIA_NONE) {
-                console.log("Promesas que no valen nada  resolviendo");
+                //console.log("Promesas que no valen nada  resolviendo");
                 clearInterval(this.timerGetReady);
                 this.timerGetReady = 0;
                 resolve (true);
@@ -324,7 +325,8 @@ export class PlayerAndroid implements OnDestroy {
             this.guardaPos(configuracion);
         }
         else if (this.estado == this.estadoPlayer.MEDIA_NONE ||
-                    this.estado == this.estadoPlayer.MEDIA_PAUSED)
+            this.estado == this.estadoPlayer.MEDIA_PAUSED||
+            this.estado == this.estadoPlayer.MEDIA_STOPPED)
         {
             this.estado = this.estadoPlayer.MEDIA_STARTING;
         }

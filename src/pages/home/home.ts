@@ -1,6 +1,6 @@
 import { Component, OnDestroy, ChangeDetectorRef } from "@angular/core";
 
-import { NavController, Events, MenuController, PopoverController, Platform } from 'ionic-angular';
+import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
@@ -325,6 +325,10 @@ export class HomePage implements OnDestroy {
         if (!encontrado){
             console.log("[HOME.actualizaLike] Cap�tulo no Encontrado");
         }
+    }
+
+    normalizaUbicacion (ubicacion: string ):string {
+        return (normalizeURL(ubicacion));
     }
 
 /*------------------------- salir -----------------

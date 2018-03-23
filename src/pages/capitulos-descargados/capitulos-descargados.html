@@ -31,7 +31,7 @@
                     <ion-row >
                         <ion-col col-4 (click)="pushPage(item)">
                             <div id="imagen">
-                                <img [src]="item.objeto.image_url" />
+                                <img [src]="normalizaUbicacion(item.objeto.image_url)" />
                             </div>
                         </ion-col>
 

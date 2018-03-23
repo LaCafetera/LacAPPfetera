@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ToastController, normalizeURL } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
@@ -292,6 +292,10 @@ export class CapitulosDescargadosPage {
         if (!encontrado){
             console.log("[HOME.actualizaLike] Capítulo no Encontrado");
         }
+    }
+
+    normalizaUbicacion (ubicacion: string ):string {
+        return (normalizeURL(ubicacion));
     }
 
     msgDescarga  (mensaje: string) {
