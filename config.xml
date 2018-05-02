@@ -99,5 +99,5 @@
     </plugin>
     <plugin name="cordova-plugin-exoplayer" spec="^2.5.0" />
     <allow-navigation href="http://192.168.3.250:8100" />
-    <engine name="android" spec="~6.4.0" />
+    <engine name="android" spec="6.4.0" />
 </widget>
