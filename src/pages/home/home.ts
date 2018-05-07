@@ -43,17 +43,17 @@ export class HomePage implements OnDestroy {
 
     desconectado : boolean = false;
 
-    constructor(public navCtrl: NavController, 
-                private episodiosService: EpisodiosService, 
-                public events: Events, 
-                public menuCtrl: MenuController, 
-                private backgroundMode: BackgroundMode, 
-                private dialogs: Dialogs, 
+    constructor(public navCtrl: NavController,
+                private episodiosService: EpisodiosService,
+                public events: Events,
+                public menuCtrl: MenuController,
+                private backgroundMode: BackgroundMode,
+                private dialogs: Dialogs,
                 private _configuracion: ConfiguracionService,
                 public popoverCtrl: PopoverController,
                 public platform: Platform,
                 private network: Network,
-                private chngDetector: ChangeDetectorRef, 
+                private chngDetector: ChangeDetectorRef,
                 private episodiosGuardados: EpisodiosGuardadosService				) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
@@ -82,7 +82,7 @@ export class HomePage implements OnDestroy {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas a ' + dato.valor);
             this.mostrarFechasAbsolutas = dato.valor;
             this.chngDetector.markForCheck();
-        });                                  
+        });
         /*this.platform.registerBackButtonAction(
             ()=>{
                 this.mscControl.destroy();
@@ -96,10 +96,19 @@ export class HomePage implements OnDestroy {
         });*/
     }
 
-    ionViewDidLoad() {
-        //console.log("[HOME.ionViewDidLoad] Entrando" );
-        // BackgroundMode.enable();
+    // ionViewDidLoad() {
+    //     //console.log("[HOME.ionViewDidLoad] Entrando" );
+    //     // BackgroundMode.enable();
+    //     this.compruebaConexion();
+    // }
+
+    ngOnInit() {
+       this.platform.ready().then(() => {
         this.compruebaConexion();
+       })
+       .catch((error)=>{
+           console.log('[HOME.ngOnInit] Error:' + JSON.stringify(error));
+       });
     }
 
     compruebaConexion (){
@@ -138,7 +147,7 @@ export class HomePage implements OnDestroy {
     ionViewWillUnload() {
         console.log("[HOME.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
     }
-    
+
     ngOnDestroy(){
         console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
         this.events.unsubscribe("like:modificado");
@@ -246,7 +255,7 @@ export class HomePage implements OnDestroy {
                     event.complete();
                 }
             }, 1000);
-        }  
+        }
     }
 
     lanzaTwitter(cap:string){
