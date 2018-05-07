@@ -63,51 +63,6 @@ export class CapitulosDescargadosPage {
         });
     }
 
-    ionViewDidLoad_OLD() {
-        console.log('ionViewDidLoad CapitulosDescargadosPage');
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
-        .then((entry) => {
-            this.dirdestino = entry.toInternalURL();
-            console.log('[CAPITULOS-DESCARGADOS.ionViewDidLoad] Vamos a revisar los archivos que hay en la carpeta ' +this.dirdestino  );
-            this.file.listDir(this.dirdestino,'' )
-            .then((listado)=>{
-                console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Los capitulos descargados son " + JSON.stringify(listado));
-                this.datosDestino = listado
-    
-                this._configuracion.dameUsuario()
-                .then ((Usuario) => {
-                    if (Usuario != null){
-                        console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] recibido usuario " + Usuario );
-                        this._configuracion.dameToken()
-                        .then ((token) => {
-                            this.creaListaCapitulos_OLD (listado, Usuario, token);
-                        })
-                        .catch ((error) => {
-                            console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker:" + error);
-                            this.creaListaCapitulos_OLD (listado, null, null);
-                        });
-                    }
-                    else {
-                        console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker.");
-                        this.creaListaCapitulos_OLD (listado, null, null);
-                    } //  if (Usuario != null)
-                }) // .then ((Usuario) => {
-                .catch (() => {
-                    console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
-                    this.creaListaCapitulos_OLD (listado, null, null);
-                });
-            }) //  .then((listado)=>{
-            .catch ((error)=>{
-            console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Se ha producido un errrrorrrr listando episodios" + error.body);
-        })
-        }) // .then((entry) => {
-        .catch ((error)=>{
-            console.log("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error recuperando carpeta de destino: " + error.body);
-        });
-    }
-
-
-
     ionViewDidLoad() {
         this._configuracion.dameUsuario()
         .then ((Usuario) => {
@@ -172,53 +127,6 @@ export class CapitulosDescargadosPage {
                 console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Error en detalle:" + err);
             }
         );
-    }
-
-    creaListaCapitulos_OLD (listado: Array<any>, usuario: string, token:string){
-        listado.forEach((capitulo, elemento, array) => {
-        //    console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] REcorriendo capítulos " + JSON.stringify(capitulo) + " - " + JSON.stringify(elemento) + " - " + JSON.stringify(array) + " - " );
-            if (capitulo["isFile"]){
-                this.episodiosService.dameDetalleEpisodio(capitulo["name"].replace('.mp3', '')).subscribe(
-                data => {
-                    if (token != null && usuario != null){
-                        this.episodiosService.episodioDimeSiLike(capitulo["name"].replace('.mp3', ''), usuario, token)
-                        .subscribe (
-                            espureo=>{
-                                console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Devuelve datos --> Me gusta el capítulo " + capitulo["name"].replace('.mp3', '') );
-                                if (this.items == null){
-                                    this.items = [{objeto:data.response.episode, like: true}];
-                                }
-                                else {
-                                    this.items.push({objeto:data.response.episode, like: true});
-                                    this.tidyYourRoom();
-                                }
-                            },
-                            error=>{
-                                console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] No me gusta el capítulo " + capitulo["name"].replace('.mp3', ''));
-                                if (this.items == null){
-                                    this.items = [{objeto:data.response.episode, like: false}];
-                                }
-                                else {
-                                    this.items.push({objeto:data.response.episode, like: false});
-                                    this.tidyYourRoom();
-                                }
-                            })
-                    }
-                    else {
-                        if (this.items == null){
-                            this.items = [{objeto:data.response.episode, like: false}];
-                        }
-                        else {
-                            this.items.push({objeto:data.response.episode, like: false});
-                            this.tidyYourRoom();
-                        }
-                    }
-                }, // data => {
-                err => {
-                    console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Error en detalle:" + err);
-                })
-            } // if (elemento["isFile"]){
-        }) // listado.forEach((capitulo, elemento, array) => {
     }
 
     dameEnlace (cadena:string):string{

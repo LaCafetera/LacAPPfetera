@@ -169,6 +169,25 @@ export class DescargaCafetera {
                                         this.capItem.image_url = entrada.nativeURL;              
                                         this.porcentajeDescargado = 0;               
                                         this.guardaDescargados.guardaProgramas(this.capItem);
+                                        this.file.checkFile(this.dirdestino, nombreImagen + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+                                        .then((resultado) => {
+                                            if (resultado){
+                                                console.log("[descarga.components.descargarFichero] Imagen encontrada en carpeta destino");
+                                            }
+                                            else {
+                                                console.log("[descarga.components.descargarFichero] Imagen NO encontrada en carpeta destino");
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            console.log("[descarga.components.descargarFichero] Se ha producido un error buscando la imagen en carpeta destinoo: " + JSON.stringify(error));
+                                        }); 
+                                        this.file.readAsBinaryString(this.dirdestino, nombreImagen + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+                                        .then((resultado) => {
+                                            console.log("[descarga.components.descargarFichero] Imagen abierta en carpeta destino");
+                                        })
+                                        .catch((error) => {
+                                            console.log("[descarga.components.descargarFichero] Se ha producido un error abriendo imagen en carpeta destino: " + JSON.stringify(error));
+                                        });
                                     })
                                     .catch((error) => {
                                         if (error.code != 4){
