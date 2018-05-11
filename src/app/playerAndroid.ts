@@ -102,7 +102,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     private inVigilando (interruptor:boolean){
-  /*      var _that = this;
+        //var _that = this;
         if (interruptor) {
             if (this.timerVigila == 0){
                 this.timerVigila = setInterval(() =>{
@@ -112,7 +112,7 @@ export class PlayerAndroid implements OnDestroy {
         }
         else {
             clearInterval(this.timerVigila);
-        }*/
+        }
     }
     
     actualizaStatus(){
@@ -128,6 +128,7 @@ export class PlayerAndroid implements OnDestroy {
             if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
                 //this.estado = this.estadoPlayer.MEDIA_PAUSED;
                 this.publicaEstado(this.estadoPlayer.MEDIA_PAUSED);
+                this.guardaPos(this.configuracion);
             }
             else if (this.estadoExo.playWhenReady == "true" && this.estado != this.estadoPlayer.MEDIA_RUNNING){
                 //this.estado = this.estadoPlayer.MEDIA_RUNNING;
@@ -141,35 +142,10 @@ export class PlayerAndroid implements OnDestroy {
         else if (this.estadoExo.playbackState == "STATE_ENDED" && this.estado != this.estadoPlayer.MEDIA_STOPPED){
             //this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
+            this.guardaPos(this.configuracion);
             this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
         }
         //console.log("[PLAYERANDROID.actualizaStatus] PAQUETE: " + JSON.stringify(this.estadoExo));
-    }
-
-    actualizaStatusNew(data : AndroidExoplayerState){
-        this.estadoExo = data;
-        if (this.estadoExo.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
-            this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
-        }
-        if (this.estadoExo.playbackState == "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
-            if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
-                //this.estado = this.estadoPlayer.MEDIA_PAUSED;
-                this.publicaEstado(this.estadoPlayer.MEDIA_PAUSED);
-            }
-            else if (this.estadoExo.playWhenReady == "true" && this.estado != this.estadoPlayer.MEDIA_RUNNING){
-                //this.estado = this.estadoPlayer.MEDIA_RUNNING;
-                this.publicaEstado(this.estadoPlayer.MEDIA_RUNNING);                
-            }    
-        }
-        else if (this.estadoExo.playbackState == "STATE_BUFFERING" && this.estado != this.estadoPlayer.MEDIA_STARTING && this.estado != this.estadoPlayer.MEDIA_STOPPED){
-            //this.estado = this.estadoPlayer.MEDIA_STARTING;
-            this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);  
-        }
-        else if (this.estadoExo.playbackState == "STATE_ENDED" && this.estado != this.estadoPlayer.MEDIA_STOPPED){
-            //this.estado = this.estadoPlayer.MEDIA_STOPPED;
-            this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
-            this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
-        }
     }
 
     publicaEstado (nuevoEstado: number){
@@ -196,13 +172,11 @@ export class PlayerAndroid implements OnDestroy {
                 console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                 //if (this.estadoExo == null){
                     //this.estadoExo = data;
-                    this.actualizaStatusNew(data);  
+                if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+                    this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
+                }
+                this.inVigilando(true);
                 //} 
-                /*if (this.timerVigila != 0){
-                    //this.inVigilando(true);
-                }*/
-
-
             }),
             ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
         /*    if (this.estado == this.estadoPlayer.MEDIA_NONE || 
@@ -230,7 +204,6 @@ export class PlayerAndroid implements OnDestroy {
                 this.publicaEstado ();
             }*/
         })
-
         //this.androidExoplayer.playPause(); // cuando pueda instalar una versión > 2.5.0 esto no hará falta.
     }
 

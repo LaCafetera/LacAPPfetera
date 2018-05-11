@@ -280,9 +280,9 @@ export class ReproductorPage implements OnDestroy{
                         this.reproductor.release(this._configuracion);
                         this.platform.exitApp();
                         break;
-                    //case 'music-controls-stop-listening':
+                    case 'music-controls-stop-listening':
                         //this.mscControl.destroy();
-                    //    break;
+                        break;
 
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
@@ -440,11 +440,9 @@ export class ReproductorPage implements OnDestroy{
                         //console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
                         if (Math.abs(this.posicionRep - this.totDurPlay) < 1000) {
                             this.corteEnDescarga = false;
-                            //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga false");
                         }
                         else {
                             this.corteEnDescarga = true;
-                            //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga true");
                         }
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
                         if (!this.enVivo){ // No hay nada que refrescar en la pantalla si estamos en vivo. Pero me interesa el dato.
