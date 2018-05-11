@@ -27,7 +27,15 @@ export class Player implements OnDestroy {
     ionViewWillUnload() {
     }
 
-    private cantaIos_local (): boolean {
+    private cantaIos_local (audio: string): boolean {
+        if (audio != ''){ // Si me pasan el nombre del fichero, lo cambio; si no lo dejo como está.
+            if (audio.includes('.mp3')) {
+                this.audiolocal = true;
+            }
+            else {
+                this.audiolocal = false;
+            }
+        }
         if (!this.platform.is('android') || this.audiolocal) {
             return (true)
         }
@@ -36,24 +44,18 @@ export class Player implements OnDestroy {
         }
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService) { 
-        if (audio.includes('.mp3')) {
-            this.audiolocal = true;
-        }
-        else {
-            this.audiolocal = false;
-        }
-        if (this.cantaIos_local()){
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean) { 
+        if (this.cantaIos_local(audio)){
             this.playerIOS.crearepPlugin(audio, configuracion);
         }
         else {
-            this.playerAndroid.crearepPlugin(audio, configuracion, true);
+            this.playerAndroid.crearepPlugin(audio, configuracion, autoplay);
         }
         this.inicializado = true;
     }
 
     public dameStatus(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameStatus());
         }
         else {
@@ -62,7 +64,7 @@ export class Player implements OnDestroy {
     }
 
     public dameStatusRep(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameStatusRep());
         }
         else {
@@ -71,7 +73,7 @@ export class Player implements OnDestroy {
     }
 
     public dameStatusPause(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameStatusPause());
         }
         else {
@@ -80,7 +82,7 @@ export class Player implements OnDestroy {
     }
 
     public dameStatusStop(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameStatusStop())
         }
         else {
@@ -89,7 +91,7 @@ export class Player implements OnDestroy {
     }
 
     public dameStatusStarting(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameStatusStarting());
         }
         else {
@@ -98,7 +100,7 @@ export class Player implements OnDestroy {
     }
 
     traduceAudio(audio):string{
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){ // no paso el audio porque no quiero que me cambie el si es un adudio local o no. Además, ambos sistemas funcionan igual.
             return (this.playerIOS.traduceAudio(audio));
         }
         else {
@@ -107,7 +109,7 @@ export class Player implements OnDestroy {
     }
 
     public dameCapitulo():string{
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.dameCapitulo());
         }
         else {
@@ -116,7 +118,7 @@ export class Player implements OnDestroy {
     }
 
     extraeCapitulo(capituloEntrada):string{
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local(capituloEntrada)){
             return (this.playerIOS.extraeCapitulo(capituloEntrada));
         }
         else {
@@ -125,7 +127,7 @@ export class Player implements OnDestroy {
     }
 
     capDescargado (idDescargado){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.capDescargado (idDescargado);
         }
         else {
@@ -134,7 +136,7 @@ export class Player implements OnDestroy {
     }
     
     getCurrentPosition(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.getCurrentPosition());
         }
         else {
@@ -143,7 +145,7 @@ export class Player implements OnDestroy {
     }
     
     getDuration(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.getDuration());
         }
         else {
@@ -152,7 +154,7 @@ export class Player implements OnDestroy {
     }
 
     getCurrentAmplitude(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             return (this.playerIOS.getCurrentAmplitude());
         }
         else {
@@ -161,7 +163,7 @@ export class Player implements OnDestroy {
     }
 
     reproduciendoEste(audio):boolean{
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){ // no paso el audio porque no quiero que me cambie el si es un adudio local o no. Además, ambos sistemas funcionan igual.
             return (this.playerIOS.reproduciendoEste(audio));
         }
         else {
@@ -182,29 +184,42 @@ export class Player implements OnDestroy {
         let capitulo = this.dameCapitulo();
         let audio = this.traduceAudio(audioIn);
         if (this.reproduciendoEste(audio)) {
-            if (this.cantaIos_local()){
+            if (this.cantaIos_local(audioIn)){
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
-                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                //this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                this.playerAndroid.play(audio, configuracion);
+                return (true);
             }
         }
         else {
-            if (this.cantaIos_local()){
+            // Aquí no paso el audio porque quiero que el "cerrarAudio" se ejecute sobre el sistema que estaba reproduciendo,  
+            // que no tiene por qué ser el mismo que va a reproducir.
+            if (this.cantaIos_local('')){
                 this.playerIOS.cerrarAudio();
-                this.crearepPlugin(audioIn,configuracion);
+            }
+            else {
+                this.playerAndroid.cerrarAudio();
+            }
+            // Ahora sí lo paso, porque no sé si estoy en android reproduciendo descargado, o en Android reproduciendo en streaming. (O en iOS, en cuyo caso da todo igual).
+            if (this.cantaIos_local(audioIn)){
+                // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android 
+                // y he pasado de reproducir en local a reproducir en remoto, el reproductor 
+                // me lo tiene que crear como "true"
+                this.crearepPlugin(audioIn,configuracion, true); 
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
-                //this.playerAndroid.cerrarAudio();
-                this.crearepPlugin(audioIn,configuracion);
-                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                this.crearepPlugin(audioIn,configuracion, true);
+//                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                return (true);
             }
         }
     }
 
     resume(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.resume ();
         }
         else {
@@ -213,7 +228,7 @@ export class Player implements OnDestroy {
     }
 
     guardaPos(configuracion: ConfiguracionService){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.guardaPos(configuracion);
         }
         else {
@@ -222,7 +237,7 @@ export class Player implements OnDestroy {
     }
 
     pause(configuracion: ConfiguracionService){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.pause(configuracion);
         }
         else {
@@ -233,7 +248,7 @@ export class Player implements OnDestroy {
     }
 
     release(configuracion: ConfiguracionService){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.release(configuracion);
         }
         else {
@@ -243,7 +258,7 @@ export class Player implements OnDestroy {
     }
 
     adelantaRep(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.adelantaRep();
         }
         else {
@@ -252,7 +267,7 @@ export class Player implements OnDestroy {
     }
 
     retrocedeRep(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.retrocedeRep();
         }
         else {
@@ -265,7 +280,7 @@ export class Player implements OnDestroy {
         .then((position)=>{
             let diferencia = Number(position*1000) - milisegundos;
             if (Math.abs(diferencia) > 100){
-                if (this.cantaIos_local()){
+                if (this.cantaIos_local('')){
                     this.playerIOS.seekTo(milisegundos);
                 }
                 else {
@@ -278,7 +293,7 @@ export class Player implements OnDestroy {
             }
         })
         .catch(() =>{
-            if (this.cantaIos_local()){
+            if (this.cantaIos_local('')){
                 this.playerIOS.seekTo(milisegundos);
             }
             else {
@@ -289,7 +304,7 @@ export class Player implements OnDestroy {
     }
 
     setVolume(volumen){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.setVolume(volumen);
         }
         else {
@@ -298,7 +313,7 @@ export class Player implements OnDestroy {
     }
 
     stop(){
-        if (this.cantaIos_local()){
+        if (this.cantaIos_local('')){
             this.playerIOS.stop();
         }
         else {

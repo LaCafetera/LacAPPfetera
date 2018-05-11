@@ -127,7 +127,7 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
-
+        console.log("[REPRODUCTOR.ngOnInit] Estatus es :" +  this.reproductor.dameStatusRep());
     }
 
     /****************************************
@@ -280,21 +280,16 @@ export class ReproductorPage implements OnDestroy{
                         this.reproductor.release(this._configuracion);
                         this.platform.exitApp();
                         break;
-                    case 'music-controls-stop-listening':
-                        this.mscControl.destroy();
-                        break;
+                    //case 'music-controls-stop-listening':
+                        //this.mscControl.destroy();
+                    //    break;
 
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
                     case 'music-controls-toggle-play-pause' :
                         console.log("[REPRODUCTOR.creaControlEnNotificaciones] music-controls-toggle-play-pause");
-                        this.playPause(/*this._configuracion*/);
+                        this.playPause();
                         break;
-
-                    // Headset events (Android only)
-                    // All media button events are listed below
-                        // Do something
-                    //    break;
                     case 'music-controls-headset-unplugged':
                         console.log("[REPRODUCTOR.creaControlEnNotificaciones] music-controls-headset-unplugged");
                         this.reproductor.pause(this._configuracion);
@@ -442,7 +437,7 @@ export class ReproductorPage implements OnDestroy{
                 this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
-                        console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
+                        //console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
                         if (Math.abs(this.posicionRep - this.totDurPlay) < 1000) {
                             this.corteEnDescarga = false;
                             //console.log ("[REPRODUCTOR.iniciaContadorRep] corte en descarga false");
@@ -586,18 +581,19 @@ export class ReproductorPage implements OnDestroy{
         if (this.audioEnRep != null){
             console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos. AudioEnRep vale " + this.audioEnRep);
             if (this.audioEnRep != nombrerep){
-                this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
-                this.reproductor.release(this._configuracion);
+                //this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
+                //this.reproductor.release(this._configuracion);
                 this.audioEnRep = nombrerep;
                 if (!this.reproductor.inicializado) {
                     console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
-                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
+                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false);
                 } else {
                     //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                     if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
                         //this.iconoPlayPause = 'pause';
 						//this.reproduciendo = true;
                         //this.iniciaContadorRep();
+                        this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
                         this.reproductor.play(this.audioEnRep, this._configuracion);
                         console.log("[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
                     }
@@ -609,7 +605,7 @@ export class ReproductorPage implements OnDestroy{
             this.audioEnRep = nombrerep;
             if (!this.reproductor.inicializado) {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
-                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion);
+                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion, false);
             }
             else {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor no es nulo");
@@ -633,23 +629,7 @@ export class ReproductorPage implements OnDestroy{
 		//this.mscControl.updateIsPlaying(this.reproduciendo);
         //this.mscControl.updateDismissable(true);
     }
-/* ¿Esto lo uso para algo?
-    cambioDeAudio(nombrerep){
-        if (this.audioEnRep != nombrerep){
-            this.reproductor.release(this._configuracion);
-            this.audioEnRep = nombrerep;
-            if (!this.reproductor.inicializado) {
-                console.log("[REPRODUCTOR.cambioDeAudio] reproductor es nulo");
-                this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion);
-            } else {
-                if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
-                    this.reproductor.play(this.audioEnRep, this._configuracion);
-                    console.log("[REPRODUCTOR.cambioDeAudio] ya estaba reproduciendo. Se iba por " + this.posicionRep/1000);
-                }
-            }
-        }
-    }
-*/
+
     meGustasMucho(){
         this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
