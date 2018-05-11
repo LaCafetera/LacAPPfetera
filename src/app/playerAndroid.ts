@@ -148,6 +148,9 @@ export class PlayerAndroid implements OnDestroy {
 
     actualizaStatusNew(data : AndroidExoplayerState){
         this.estadoExo = data;
+        if (this.estadoExo.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+            this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
+        }
         if (this.estadoExo.playbackState == "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
             if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
                 //this.estado = this.estadoPlayer.MEDIA_PAUSED;
@@ -166,9 +169,6 @@ export class PlayerAndroid implements OnDestroy {
             //this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
             this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
-        }
-        if (this.estadoExo.eventType == "POSITION_DISCONTINUITY_EVENT"){
-            this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
         }
     }
 
