@@ -13,7 +13,9 @@ export class Player implements OnDestroy {
 
     audiolocal: boolean = false;
 
-    public inicializado:boolean = false;
+    public inicializado: boolean = false;
+
+    private enVivo: boolean = false;
 
     constructor(public platform : Platform, 
                 private playerIOS: PlayerIOS, 
@@ -44,12 +46,13 @@ export class Player implements OnDestroy {
         }
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean) { 
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean, live: boolean) { 
+        this.enVivo = live;
         if (this.cantaIos_local(audio)){
-            this.playerIOS.crearepPlugin(audio, configuracion);
+            this.playerIOS.crearepPlugin(audio, configuracion, live);
         }
         else {
-            this.playerAndroid.crearepPlugin(audio, configuracion, autoplay);
+            this.playerAndroid.crearepPlugin(audio, configuracion, autoplay, live);
         }
         this.inicializado = true;
     }
@@ -170,16 +173,16 @@ export class Player implements OnDestroy {
             return (this.playerAndroid.reproduciendoEste(audio));
         }
     }
-/*
-    continuaPlayStreaming (tiempoSeek: number){
-        if (this.cantaIos_local()){
-            this.playerIOS.continuaPlayStreaming (tiempoSeek);
+
+/*    continuaPlayStreaming (tiempoSeek: number){
+        if (this.cantaIos_local('')){
+            console.error("[PLAYER.continuaPlayStreaming] Han llamado a iOS, y no deberían");
         }
         else {
             this.playerAndroid.continuaPlayStreaming (tiempoSeek);
         }
-    }
-*/
+    }*/
+
     play(audioIn: string, configuracion: ConfiguracionService):boolean{
         let capitulo = this.dameCapitulo();
         let audio = this.traduceAudio(audioIn);
@@ -207,11 +210,11 @@ export class Player implements OnDestroy {
                 // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android 
                 // y he pasado de reproducir en local a reproducir en remoto, el reproductor 
                 // me lo tiene que crear como "true"
-                this.crearepPlugin(audioIn,configuracion, true); 
+                this.crearepPlugin(audioIn,configuracion, true, this.enVivo ); 
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
-                this.crearepPlugin(audioIn,configuracion, true);
+                this.crearepPlugin(audioIn,configuracion, true, this.enVivo);
 //                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
                 return (true);
             }

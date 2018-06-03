@@ -165,10 +165,19 @@ export class ReproductorPage implements OnDestroy{
             });
             this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
             this.events.subscribe("errorReproduccion:status", (statusRep) => {
-                console.log("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
-                if (statusRep.status != 0) {
-                    this.playPause();
+                console.error("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
+                if (!this.stopPulsado) { 
+                    if (statusRep.status == 666) { // Si es Android
+                        this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
+                    }
+                    else {
+                        this.reproductor.play(this.audioEnRep, this._configuracion);
+                        this.stopPulsado = false;
+                    }
                 }
+                /*if (statusRep.status != 0) {
+                    this.playPause();
+                }*/
             });
 /*
             this.events.subscribe('streaming:descargado', (dato) => {
@@ -184,7 +193,7 @@ export class ReproductorPage implements OnDestroy{
             });*/
         })
         .catch((error)=>{
-            console.log('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
+            console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
         });
     }
 
@@ -194,7 +203,7 @@ export class ReproductorPage implements OnDestroy{
                 this.soloWifi = val==true;
             }).catch(()=>{
                 this.soloWifi = true;
-                console.log("[REPRODUCTOR.ionViewDidLoad] Error recuperando valor WIFI. Forzando escuchar vía WIFI");
+                console.error("[REPRODUCTOR.ionViewDidLoad] Error recuperando valor WIFI. Forzando escuchar vía WIFI");
             });
 
         //console.log ("[REPRODUCTOR.ionViewDidLoad] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
@@ -250,7 +259,7 @@ export class ReproductorPage implements OnDestroy{
                 hasScrubbing: false // enable scrubbing from control center and lockscreen progress bar, optional
             })
             .then((data) => {console.log("[REPRODUCTOR.creaControlEnNotificaciones] Control remoto creado OK " + JSON.stringify(data)) })
-            .catch((error) => {console.log("[REPRODUCTOR.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO " + error) });
+            .catch((error) => {console.error("[REPRODUCTOR.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO " + error) });
 
             this.mscControl.subscribe()
             .subscribe((action) => {
@@ -325,12 +334,14 @@ export class ReproductorPage implements OnDestroy{
                 }
                 else{
                     this.corteEnDescarga = true;  // Si estamos en vivo, no "puede" cortarse.
+                    clearInterval(this.timerVigilaEnVivo);
                     //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
                 }
             },
             error => {
                 console.log("[REPRODUCTOR.gatoSchrodinger] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
                 this.corteEnDescarga = true; //Si tengo problemas de conexión... true.
+                clearInterval(this.timerVigilaEnVivo);
                 //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
             }
         )   
@@ -348,17 +359,17 @@ export class ReproductorPage implements OnDestroy{
                 this.parpadeoTiempoRep(false);
                 //this.chngDetector.markForCheck();
                 clearInterval(this.timer);
-                if (!this.stopPulsado && this.corteEnDescarga){
+            /*    if (!this.stopPulsado && this.corteEnDescarga){
                     console.error("[REPRODUCTOR.cambiandoStatusRep] Parece que se ha producido un corte en las comunicaciones. " + this.stopPulsado + ' - ' + this.corteEnDescarga);
                     this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
                     this.stop();
-                }
+                }*/
                 this.stopPulsado = false; // Limpiamos el valor.
             }
             this.reproduciendo = false;
             this.iconoPlayPause = 'play';
             this.chngDetector.markForCheck();
-            this.mscControl.updateIsPlaying(this.reproduciendo);
+            //this.mscControl.updateIsPlaying(this.reproduciendo);
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
         else if (statusRep.status == this.reproductor.dameStatusRep() || 
                  statusRep.status == this.reproductor.dameStatusStarting()){
@@ -370,8 +381,7 @@ export class ReproductorPage implements OnDestroy{
                 //this.stopPulsado  = false; // Parece que esto aquí no pinta nada pero es importante.
                 console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                 this.parpadeoTiempoRep(true);
-                this.chngDetector.markForCheck();
-                this.mscControl.updateIsPlaying(this.reproduciendo);
+            //    this.mscControl.updateIsPlaying(this.reproduciendo);
             }
             else {
                 console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
@@ -379,10 +389,11 @@ export class ReproductorPage implements OnDestroy{
                 this.reproduciendo = true;
                 this.parpadeoTiempoRep(false);
                 console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-                this.mscControl.updateIsPlaying(this.reproduciendo);
+            //    this.mscControl.updateIsPlaying(this.reproduciendo);
                 this.iniciaContadorRep();
             }
         }
+        this.mscControl.updateIsPlaying(this.reproduciendo);
     }
 
     parpadeoTiempoRep(iniciar: boolean){
@@ -393,6 +404,7 @@ export class ReproductorPage implements OnDestroy{
                     console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
                     this.timerParpadeo = setInterval(() =>{ 
                         this.ocultaTiempoRep = !this.ocultaTiempoRep; 
+                        this.chngDetector.markForCheck();
                         // console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando " + this.reproduciendo);
                     }, 1000);
                 }
@@ -472,23 +484,24 @@ export class ReproductorPage implements OnDestroy{
         let descargaPermitida = (this.network.type === "wifi" || !this.soloWifi);
         console.log ("[REPRODUCTOR.playPause] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.soloWifi + " y reproduciendo vale " + this.reproduciendo);
 
-        if (this.reproductor.inicializado){
+        if (this.reproductor != null){
             if (this.reproduciendo) {
                 console.log ("[REPRODUCTOR.playPause] Está reproduciendo y el timer vale " + this.timer );
                 clearInterval(this.timer);  
                 this.reproductor.pause(this._configuracion);
                 this.reproduciendo = false;
-                this.parpadeoTiempoRep(false);
+                //this.parpadeoTiempoRep(false);
                 this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
             }
             else {
                 if (descargaPermitida || this.noRequiereDescarga) {
-                    this.parpadeoTiempoRep(true);
-                    if (this.reproductor.play(this.audioEnRep, this._configuracion)){
+                    //this.parpadeoTiempoRep(true);
+                    this.reproductor.play(this.audioEnRep, this._configuracion);
+                    //if (this.reproductor.play(this.audioEnRep, this._configuracion)){
                         // si estamos aquí al darle al play hemos cambiado el audio por lo que hay  que renovar el control del area de notificaciones.
-                        console.log ("[REPRODUCTOR.playPause] reproduciendo nuevo audio. Regeneramos el reproductor del area de notificacioes." );
-                        this.creaControlEnNotificaciones(true); 
-                    }
+                    //    console.log ("[REPRODUCTOR.playPause] reproduciendo nuevo audio. Regeneramos el reproductor del area de notificacioes." );
+                    //    this.creaControlEnNotificaciones(true); 
+                    //}
                 }
                 else{
                     this.msgDescarga ("Sólo tiene permitida reproducción por streaming con la conexión WIFI activada.");
@@ -499,7 +512,8 @@ export class ReproductorPage implements OnDestroy{
     }
 
     actualizaPosicion(){
-        if (this.reproductor.inicializado && this.reproductor.dameStatus() != this.reproductor.dameStatusStop()){//} this.reproduciendo){
+        if (this.reproductor != null){
+            //if (this.reproductor.inicializado && this.reproductor.dameStatus() != this.reproductor.dameStatusStop()){//} this.reproduciendo){
             this.reproductor.seekTo(this.posicionRep);
             this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
         //    console.log("[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: " + this.posicionRepStr + " - " + this.posicionRep);
@@ -533,7 +547,7 @@ export class ReproductorPage implements OnDestroy{
         this.socialsharing.shareWithOptions(options).then(() => {
             console.log("[REPRODUCTOR.compartir] enviado Ok"); // On Android apps mostly return false even while it's true
         }).catch(() => {
-            console.log("[REPRODUCTOR.compartir] enviado KO");
+            console.error("[REPRODUCTOR.compartir] enviado KO");
         });
     }
 
@@ -547,13 +561,13 @@ export class ReproductorPage implements OnDestroy{
                             console.log ("[REPRODUCTOR.twitteaCapitulo] Twitteo OK: " + respuesta);
                         })
                         .catch((error) => {
-                            console.log ("[REPRODUCTOR.twitteaCapitulo] Twitteo KO: " + error);
+                            console.error ("[REPRODUCTOR.twitteaCapitulo] Twitteo KO: " + error);
                         });
                 }
                 this._configuracion.setTwitteado(this.episodio);
             })
             .catch((error) => {
-                console.log ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)
+                console.error ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)
             }); 
     }
 
@@ -579,12 +593,12 @@ export class ReproductorPage implements OnDestroy{
         if (this.audioEnRep != null){
             console.log("[REPRODUCTOR.ficheroDescargado] Segunda o más vez que entramos. AudioEnRep vale " + this.audioEnRep);
             if (this.audioEnRep != nombrerep){
-                //this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
-                //this.reproductor.release(this._configuracion);
+                this.stopPulsado = true; // Esto lo pongo para que no salte el "se ha producido un corte".
+                this.reproductor.release(this._configuracion);
                 this.audioEnRep = nombrerep;
                 if (!this.reproductor.inicializado) {
                     console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
-                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false);
+                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false, this.enVivo);
                 } else {
                     //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                     if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
@@ -601,9 +615,9 @@ export class ReproductorPage implements OnDestroy{
         else {
             console.log("[REPRODUCTOR.ficheroDescargado] Primera vez que entramos." + this.reproductor);
             this.audioEnRep = nombrerep;
-            if (!this.reproductor.inicializado) {
+            if (!this.reproductor == null) {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor es nulo");
-                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion, false);
+                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion, false, this.enVivo);
             }
             else {
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor no es nulo");
@@ -664,7 +678,7 @@ export class ReproductorPage implements OnDestroy{
                     }
                 })
                 .catch ((error) => {
-                    console.log("[REPRODUCTOR.meGustasMucho] Error descargando token:" + error);
+                    console.error("[REPRODUCTOR.meGustasMucho] Error descargando token:" + error);
                     this.msgDescarga ("Error extrayendo usuario de Spreaker.");
                 });
             }
@@ -674,7 +688,7 @@ export class ReproductorPage implements OnDestroy{
             }
         })
         .catch (() => {
-            this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+            //this.msgDescarga ("Error extrayendo usuario de Spreaker.");
             this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
         });
     }

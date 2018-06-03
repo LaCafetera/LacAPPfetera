@@ -21,6 +21,7 @@ export class PlayerIOS implements OnDestroy {
     private descargado:boolean = false;
     //private reproduciendo:boolean = false;
     private statusRep:number;
+    private enVivo: boolean = false;
 /*
     public MEDIA_NONE = 0; // MediaPlugin.MEDIA_NONE;
     public MEDIA_STARTING = 1; // this.media.MEDIA_STARTING;
@@ -67,7 +68,7 @@ export class PlayerIOS implements OnDestroy {
                 }
             })
             .catch ((err)=> {
-                console.log ("[PLAYERIOS.ngOnDestroy] Recibido error al pedir posición de reproducción: " + err);
+                console.error ("[PLAYERIOS.ngOnDestroy] Recibido error al pedir posición de reproducción: " + err);
             });
         }
         console.log("[PLAYERIOS.ngOnDestroy] Saliendo");
@@ -77,7 +78,8 @@ export class PlayerIOS implements OnDestroy {
         console.log("[PLAYERIOS.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService): MediaObject { //Promise<any>{
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService, live:boolean): MediaObject { //Promise<any>{
+        this.enVivo = live;
         console.log("[PLAYERIOS.crearepPlugin] recibida petición de audio: " + audio);
         //this._configuracion = configuracion;
         //this.audioRecibido = audio;
@@ -202,16 +204,16 @@ export class PlayerIOS implements OnDestroy {
     }
 */
     play(audioIn: string, configuracion: ConfiguracionService):boolean{
-        /*console.log ("[PLAYERIOS.play] Recibida petición de reproducción de "+ audioIn );
+        console.log ("[PLAYERIOS.play] Recibida petición de reproducción de "+ audioIn );
 		let capitulo = this.dameCapitulo();
         let audio = this.traduceAudio(audioIn);
         console.log ("[PLAYERIOS.play] traducimos audio a reproducir a "+ audio );
         if (this.reproduciendoEste(audio))
-        {*/
+        {
             console.log ("[PLAYERIOS.play] Play normal");
             this.repObject.play(); //this.repPlugin.play([repeticiones, sonarBloqueado]);
             return (false);
-        /*}
+        }
         else{
             console.log ("[PLAYERIOS.play] Modificado audio");
             if (this.repObject != null) {
@@ -231,11 +233,11 @@ export class PlayerIOS implements OnDestroy {
             }
             this.capitulo = audio;
             this.seekPdte = true;
-            this.repObject = this.crearepPlugin (audio, configuracion);
+            this.repObject = this.crearepPlugin (audio, configuracion, this.enVivo);
             console.log("[PLAYERIOS.play] Objeto reproductor creado."); 
             this.repObject.play();
             return (true);
-        }*/
+        }
     }
 
     cerrarAudio (){
@@ -251,7 +253,7 @@ export class PlayerIOS implements OnDestroy {
                     }
                 })
                 .catch ((err)=> {
-                    console.log ("[PLAYERIOS.play] Recibido error al pedir posición de reproducción: " + err);
+                    console.error ("[PLAYERIOS.play] Recibido error al pedir posición de reproducción: " + err);
                 });
             this.stop();
             this.repObject.release();
@@ -263,7 +265,8 @@ export class PlayerIOS implements OnDestroy {
     }
 
     guardaPos(configuracion: ConfiguracionService){
-        this.repObject.getCurrentPosition()
+        if (!this.enVivo){
+            this.repObject.getCurrentPosition()
             .then((pos)=>{
                 console.log("[PLAYERIOS.guardaPos] Recibida posición " + pos * 1000);
                 if (pos > 0) {
@@ -274,8 +277,9 @@ export class PlayerIOS implements OnDestroy {
                 }
             })
             .catch ((err)=> {
-                console.log ("[PLAYERIOS.guardaPos] Recibido error al pedir posición de reproducción: " + err);
+                console.error ("[PLAYERIOS.guardaPos] Recibido error al pedir posición de reproducción: " + err);
             });
+        }
     }
 
     pause(configuracion: ConfiguracionService){
@@ -316,7 +320,7 @@ export class PlayerIOS implements OnDestroy {
                 this.seekTo((position+15)*1000);
             })
             .catch(() =>{
-                console.log("[PLAYERIOS.retrocedeRep] Error retrocediendo.")
+                console.error("[PLAYERIOS.retrocedeRep] Error retrocediendo.")
             });
     }
 
@@ -331,7 +335,7 @@ export class PlayerIOS implements OnDestroy {
                 }
             })
             .catch(() =>{
-                console.log("[PLAYERIOS.retrocedeRep] Error retrocediendo.")
+                console.error("[PLAYERIOS.retrocedeRep] Error retrocediendo.")
             });
     }
 
