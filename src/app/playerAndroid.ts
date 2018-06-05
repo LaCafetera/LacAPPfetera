@@ -148,12 +148,12 @@ export class PlayerAndroid implements OnDestroy {
             else if (this.estadoExo.playbackState == "STATE_ENDED"){ 
                 // Esto por si queremos ir más allá del tamaño del audio.
                 if (Number(this.estadoExo.position) > Number(this.estadoExo.duration) && Number(this.estadoExo.duration) > 0 && this.estado == this.estadoPlayer.MEDIA_STARTING){
-                    console.error("[PLAYERANDROID.crearepPlugin] La posición de la reproducción está más alla de la longitud del audio");
+                    console.error("[PLAYERANDROID.actualizaStatus] La posición de la reproducción está más alla de la longitud del audio");
                     this.androidExoplayer.seekTo(0);
                 }
-                // Esto por si queremos ir más allá del tamaño del audio.
+                // Esto por si se produce un corte. Imposible probarlo; palo de ciego 100%
                 else if ((Number(this.estadoExo.position)+100) < Number(this.estadoExo.duration)  && this.estado == this.estadoPlayer.MEDIA_RUNNING){
-                    console.error("[PLAYERANDROID.crearepPlugin] Parece que se ha producido un corte. Relanzo.");
+                    console.error("[PLAYERANDROID.actualizaStatus] Parece que se ha producido un corte. Relanzo.");
                     this.guardaPos(this.configuracion);
                     this.androidExoplayer.seekTo(Number(this.estadoExo.position));
                 }
@@ -209,6 +209,7 @@ export class PlayerAndroid implements OnDestroy {
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
                 console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                this.inVigilando(true); // Pongo esto lo primero, porque quiero asegurarme de que funciona.
                 //if (this.estadoExo == null){
                     //this.estadoExo = data;
                 if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
@@ -222,13 +223,18 @@ export class PlayerAndroid implements OnDestroy {
                 if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                     this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                 }
-                if (data.eventType == "STATE_CHANGED_EVENT" && (data.playbackState == "STATE_READY" || data.playbackState == "STATE_BUFFERING")){
-                    if (Number(data.position) > Number(data.duration) && Number(data.duration) > 0){
-                        console.error("[PLAYERANDROID.crearepPlugin] La posición de la reproducción está más alla de la longitud del audio");
-                        this.androidExoplayer.seekTo(0);
+                if (data.eventType == "STATE_CHANGED_EVENT" && data.playbackState == "STATE_ENDED" && 
+                    (this.estado == this.estadoPlayer.MEDIA_STARTING || this.estado == this.estadoPlayer.MEDIA_RUNNING)){
+                // Esto por si se produce un corte. Imposible probarlo; palo de ciego 100%
+                    if (this.estadoExo != null) {
+                        if ((Number(this.estadoExo.position)+100) < Number(this.estadoExo.duration)  && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+                            console.error("[PLAYERANDROID.crearepPlugin] Parece que se ha producido un corte. Relanzo.");
+                            this.guardaPos(this.configuracion);
+                            this.androidExoplayer.seekTo(Number(this.estadoExo.position));
+                        }
                     }
                     this.estadoExo = data;
-                    this.inVigilando(true);
+                    //this.inVigilando(true);
                 }
                 //this.inVigilando(true);
                 //} 
@@ -245,7 +251,7 @@ export class PlayerAndroid implements OnDestroy {
             this.params.seekTo = 0;
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
-                console.error("recibidos datos " + JSON.stringify(data))
+                console.error("[PLAYERANDROID.crearepPlugin] Recibidos datos " + JSON.stringify(data))
                 if (this.estadoExo == null){
                     this.estadoExo = data;                    
                 } 

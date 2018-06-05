@@ -359,11 +359,6 @@ export class ReproductorPage implements OnDestroy{
                 this.parpadeoTiempoRep(false);
                 //this.chngDetector.markForCheck();
                 clearInterval(this.timer);
-            /*    if (!this.stopPulsado && this.corteEnDescarga){
-                    console.error("[REPRODUCTOR.cambiandoStatusRep] Parece que se ha producido un corte en las comunicaciones. " + this.stopPulsado + ' - ' + this.corteEnDescarga);
-                    this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
-                    this.stop();
-                }*/
                 this.stopPulsado = false; // Limpiamos el valor.
             }
             this.reproduciendo = false;
