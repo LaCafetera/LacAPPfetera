@@ -128,6 +128,7 @@ export class PlayerAndroid implements OnDestroy {
         .catch ((err)=> {
             console.error("[PLAYERANDROID.actualizaStatus] getState KO: " + err);
         });
+        
         if (this.estadoExo != null) {
             if (this.estadoExo.playbackState == "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
                 if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
@@ -145,25 +146,39 @@ export class PlayerAndroid implements OnDestroy {
                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);  
             }
             else if (this.estadoExo.playbackState == "STATE_ENDED"){ 
-                if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
-                    if (this.estado == this.estadoPlayer.MEDIA_STARTING) {
-                        this.events.publish('errorReproduccion:status', {status:666});
-                        this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
-                        this.stop();
-                        this.estadoExo = null;
-                    }
-                    else {
-                //this.estado = this.estadoPlayer.MEDIA_STOPPED;
-                        this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
-                        this.guardaPos(this.configuracion);
-                        this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
-                    }
+                // Esto por si queremos ir más allá del tamaño del audio.
+                if (Number(this.estadoExo.position) > Number(this.estadoExo.duration) && Number(this.estadoExo.duration) > 0 && this.estado == this.estadoPlayer.MEDIA_STARTING){
+                    console.error("[PLAYERANDROID.crearepPlugin] La posición de la reproducción está más alla de la longitud del audio");
+                    this.androidExoplayer.seekTo(0);
+                }
+                // Esto por si queremos ir más allá del tamaño del audio.
+                else if ((Number(this.estadoExo.position)+100) < Number(this.estadoExo.duration)  && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+                    console.error("[PLAYERANDROID.crearepPlugin] Parece que se ha producido un corte. Relanzo.");
+                    this.guardaPos(this.configuracion);
+                    this.androidExoplayer.seekTo(Number(this.estadoExo.position));
                 }
                 else {
-                    this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED); //No guardo la posición porque si ha cascado antes de comenzar a cantar, guardaría un 0
-                    //this.msgDescarga("No se ha conseguido conectar con el servidor.");
+                    if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
+                        if (this.estado == this.estadoPlayer.MEDIA_STARTING) {
+                            this.events.publish('errorReproduccion:status', {status:666});
+                            this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
+                            this.stop();
+                            this.estadoExo = null;
+                        }
+                        else {
+                    //this.estado = this.estadoPlayer.MEDIA_STOPPED;
+                            this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
+                            this.estadoExo.position = '0';
+                            this.guardaPos(this.configuracion);
+                            this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
+                        }
+                    }
+                    else {
+                        this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED); //No guardo la posición porque si ha cascado antes de comenzar a cantar, guardaría un 0
+                        //this.msgDescarga("No se ha conseguido conectar con el servidor.");
+                    }
+                    this.inVigilando(false);
                 }
-                this.inVigilando(false);
             }
         }
         //console.log("[PLAYERANDROID.actualizaStatus] PAQUETE: " + JSON.stringify(this.estadoExo));
@@ -188,6 +203,7 @@ export class PlayerAndroid implements OnDestroy {
         
         configuracion.getTimeRep(this.dameCapitulo())
         .then((data) => {
+            console.log("[PLAYERANDROID.crearepPlugin] Solicitado posicionar el audio en: " + Number(data));
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.params.seekTo = (this.enVivo ? 0 : Number(data));
             this.androidExoplayer.show(this.params).subscribe
@@ -207,6 +223,10 @@ export class PlayerAndroid implements OnDestroy {
                     this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                 }
                 if (data.eventType == "STATE_CHANGED_EVENT" && (data.playbackState == "STATE_READY" || data.playbackState == "STATE_BUFFERING")){
+                    if (Number(data.position) > Number(data.duration) && Number(data.duration) > 0){
+                        console.error("[PLAYERANDROID.crearepPlugin] La posición de la reproducción está más alla de la longitud del audio");
+                        this.androidExoplayer.seekTo(0);
+                    }
                     this.estadoExo = data;
                     this.inVigilando(true);
                 }
@@ -331,10 +351,10 @@ export class PlayerAndroid implements OnDestroy {
         return (this.capitulo.includes(audio));
     }
 
-/*    continuaPlayStreaming (tiempoSeek: number){
+    continuaPlayStreaming (tiempoSeek: number){
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Recuperando reproducción tras corte" );
-        this.crearepPlugin(this.capitulo, this.configuracion, true);
-    }*/
+        this.crearepPlugin (this.capitulo, this.configuracion, true, this.enVivo);
+    }
 
     //async play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
     play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
@@ -394,14 +414,14 @@ export class PlayerAndroid implements OnDestroy {
                 let capitulo = this.dameCapitulo();
                 if (posicionNum > 0 && capitulo != ""){
                     configuracion.setTimeRep(capitulo, posicionNum);
-                    console.log ("[PLAYERIOS.guardaPos] Guardando la posición en la configuración");
+                    console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + posicionNum + " - " + capitulo);
                 }
                 else{
-                    console.log ("[PLAYERIOS.guardaPos] No guardando la posición en la configuración " + posicionNum + " - " + capitulo);
+                    console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración " + posicionNum + " - " + capitulo);
                 }
             }
             else{
-                console.log ("[PLAYERIOS.guardaPos] No guardando la posición en la configuración porque no hemos comenzado ninguna reproducción");
+                console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración porque no hemos comenzado ninguna reproducción");
             }
         }
     }
