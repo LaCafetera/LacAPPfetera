@@ -23,25 +23,11 @@ export class InfoFerPage {
     esAndroid:boolean;
     
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private mensaje: Dialogs) {
-        this.dirJingle = this.repPlugin.create ('http://www.xpress.es/radiocable/audio/jingle-cafetera-tennesse.mp3')/*
-            .then((objeto)=> {
-                this.dirJingle = objeto;
-            })
-            .catch((error)=> {
-                console.log("[PLAYER.crearepPlugin] Error creando reproductor:"+ error); 
-            });*/
+        //this.dirJingle = this.repPlugin.create ('http://www.xpress.es/radiocable/audio/jingle-cafetera-tennesse.mp3');
     }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad InfoFerPage');
-     /*   this.esAndroid = this.platform.is('android');
-     //   if(this.esAndroid){
-            this.dirJingle.init.then(() => {
-                console.log('[INFO_FER.ionViewDidLoad] Audio terminado');
-            }, (err) => {
-                console.log('[INFO_FER.ionViewDidLoad] Algo falló. Código de error: ' + err.code + '; mensaje: ' + err.message);
-            });
-        }*/
     }
 
     ngOnDestroy(){
@@ -52,22 +38,18 @@ export class InfoFerPage {
     }
     
     reproduceJingle (){
-        if (this.dirJingle != null){
-            if (this.reproduciendo) {
-         //       if (this.esAndroid){
-                    this.dirJingle.pause();
-         //       }
-                this.reproduciendo=!this.reproduciendo;
-            }
-            else {
-         //       if (this.esAndroid){
-                    this.dirJingle.play();
-         //       }
-                this.mensaje.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Super-Gurú.');
-                this.reproduciendo=!this.reproduciendo;
-            }
+        if (this.dirJingle == null){
+            this.dirJingle = this.repPlugin.create ('http://www.xpress.es/radiocable/audio/jingle-cafetera-tennesse.mp3');
         }
-        else alert("Es nulo");
+        if (this.reproduciendo) {
+            this.dirJingle.pause();
+            this.reproduciendo=!this.reproduciendo;
+        }
+        else {
+            this.dirJingle.play();
+            this.mensaje.alert("El grupo JAVA no se hace responsable de la reproducción de este jingle", 'Super-Gurú.');
+            this.reproduciendo=!this.reproduciendo;
+        }
     }
 }
 

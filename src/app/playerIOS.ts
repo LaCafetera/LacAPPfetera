@@ -112,8 +112,8 @@ export class PlayerIOS implements OnDestroy {
             this.stop();
         };
         const onError = (error) => {
-            this.events.publish('errorReproduccion:status', {status:error.code});
             console.error("[PLAYERIOS.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
+            this.events.publish('errorReproduccion:status', {status:error.code});
         }
         console.log("[PLAYERIOS.crearepPlugin] Tratando de reproducir:" + this.capitulo);
         this.repObject = this.media.create (this.capitulo);
@@ -354,7 +354,9 @@ export class PlayerIOS implements OnDestroy {
     }
 
     stop(){
-        this.repObject.stop();
+        if (this.statusRep != this.media.MEDIA_STOPPED){
+            this.repObject.stop();
+        }
         this.capitulo = '';
         //this.reproduciendo = false;
     }

@@ -127,7 +127,7 @@ export class ReproductorPage implements OnDestroy{
             console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
         }
-        console.log("[REPRODUCTOR.ngOnInit] Estatus es :" +  this.reproductor.dameStatusRep());
+        //console.log("[REPRODUCTOR.ngOnInit] Estatus es :" +  this.reproductor.dameStatusRep());
     }
 
     /****************************************
@@ -170,10 +170,10 @@ export class ReproductorPage implements OnDestroy{
                     if (statusRep.status == 666) { // Si es Android
                         this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
                     }
-                    else {
+                    /*else { Esto provoca un bucle infinito al darle al stop en iOS. Como no tenemos el listado de posibles errores, parece que el stop genera uno... :-p
                         this.reproductor.play(this.audioEnRep, this._configuracion);
                         this.stopPulsado = false;
-                    }
+                    }*/
                 }
                 /*if (statusRep.status != 0) {
                     this.playPause();
@@ -363,7 +363,7 @@ export class ReproductorPage implements OnDestroy{
             }
             this.reproduciendo = false;
             this.iconoPlayPause = 'play';
-            this.chngDetector.markForCheck();
+            //this.chngDetector.markForCheck();
             //this.mscControl.updateIsPlaying(this.reproduciendo);
         } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
         else if (statusRep.status == this.reproductor.dameStatusRep() || 
@@ -371,23 +371,27 @@ export class ReproductorPage implements OnDestroy{
             if (statusRep.status == this.reproductor.dameStatusStarting()){
                 console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está buffereando.");
                 this.posicionRepStr = "Cargando café.";
-                this.iconoPlayPause = 'pause';
-                this.reproduciendo = true;
+                //this.iconoPlayPause = 'pause';
+                //this.reproduciendo = true;
                 //this.stopPulsado  = false; // Parece que esto aquí no pinta nada pero es importante.
-                console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+                //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
                 this.parpadeoTiempoRep(true);
             //    this.mscControl.updateIsPlaying(this.reproduciendo);
             }
             else {
                 console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
-                this.iconoPlayPause = 'pause';
-                this.reproduciendo = true;
+                //this.iconoPlayPause = 'pause';
+                //this.reproduciendo = true;
                 this.parpadeoTiempoRep(false);
-                console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+                //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
             //    this.mscControl.updateIsPlaying(this.reproduciendo);
                 this.iniciaContadorRep();
             }
+            this.iconoPlayPause = 'pause';
+            this.reproduciendo = true;
         }
+        this.chngDetector.markForCheck();
+        console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
         this.mscControl.updateIsPlaying(this.reproduciendo);
     }
 
