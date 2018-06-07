@@ -69,26 +69,26 @@ export class ReproductorPage implements OnDestroy{
     pagChat: any = ChatPage;
 
     ocultaTiempoRep: boolean = false;
-    
+
 
     longAudioLiveDescargado: number = 0;
     esIOS: boolean = false;
     capItemTxt: string;
 
-    // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo 
+    // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
     // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
     corteEnDescarga: boolean = false;
     // Puede haber terminado la reproducción porque hayan pulsado stop...
-    stopPulsado:boolean = false; 
+    stopPulsado:boolean = false;
 
-    constructor(public navCtrl: NavController, 
-                public navParams: NavParams, 
-                public platform : Platform, 
-                private episodiosService: EpisodiosService, 
-                public popoverCtrl: PopoverController, 
-                public events: Events, 
-                public toastCtrl: ToastController, 
-                private _configuracion: ConfiguracionService, 
+    constructor(public navCtrl: NavController,
+                public navParams: NavParams,
+                public platform : Platform,
+                private episodiosService: EpisodiosService,
+                public popoverCtrl: PopoverController,
+                public events: Events,
+                public toastCtrl: ToastController,
+                private _configuracion: ConfiguracionService,
                 public cadenaTwitter: CadenasTwitterService,
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
@@ -146,7 +146,7 @@ export class ReproductorPage implements OnDestroy{
 
     */
 
-    
+
     ngOnInit() {
     //console.log ('[app.component.ngOnInit]');
 
@@ -166,7 +166,7 @@ export class ReproductorPage implements OnDestroy{
             this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
             this.events.subscribe("errorReproduccion:status", (statusRep) => {
                 console.error("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
-                if (!this.stopPulsado) { 
+                if (!this.stopPulsado) {
                     if (statusRep.status == 666) { // Si es Android
                         this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
                     }
@@ -231,7 +231,7 @@ export class ReproductorPage implements OnDestroy{
 
     creaControlEnNotificaciones (destruir: boolean){
         if (destruir) {
-            this.mscControl.destroy();    
+            this.mscControl.destroy();
             this.creaControlEnNotificaciones (false);
         }
         else {
@@ -315,7 +315,7 @@ export class ReproductorPage implements OnDestroy{
             this.mscControl.listen();
         }
     }
-        
+
     gatoSchrodinger(){
         this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
             // this.episodiosService.sigueSiendoVivo(this.episodio) // Debería usar esto, ya que lo tengo.
@@ -344,56 +344,56 @@ export class ReproductorPage implements OnDestroy{
                 clearInterval(this.timerVigilaEnVivo);
                 //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
             }
-        )   
+        )
     }
 
     cambiandoStatusRep(statusRep) {
-        console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
-        if ((statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()) ){
-            console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
-            if (statusRep.status == this.reproductor.dameStatusStop()) {
-                //this.stopPulsado  = false; //tanto si lo habían pulsado como si no, ya no me sirve tenerlo.
-                this.posicionRep = 0;
-                this.posicionRepStr = "00:00:00";
-                console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-                this.parpadeoTiempoRep(false);
-                //this.chngDetector.markForCheck();
-                clearInterval(this.timer);
-                this.stopPulsado = false; // Limpiamos el valor.
-            }
-            this.reproduciendo = false;
-            this.iconoPlayPause = 'play';
-            //this.chngDetector.markForCheck();
-            //this.mscControl.updateIsPlaying(this.reproduciendo);
-        } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
-        else if (statusRep.status == this.reproductor.dameStatusRep() || 
-                 statusRep.status == this.reproductor.dameStatusStarting()){
-            if (statusRep.status == this.reproductor.dameStatusStarting()){
-                console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está buffereando.");
-                this.posicionRepStr = "Cargando café.";
-                //this.iconoPlayPause = 'pause';
-                //this.reproduciendo = true;
-                //this.stopPulsado  = false; // Parece que esto aquí no pinta nada pero es importante.
-                //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-                this.parpadeoTiempoRep(true);
-            //    this.mscControl.updateIsPlaying(this.reproduciendo);
-            }
-            else {
-                console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
-                //this.iconoPlayPause = 'pause';
-                //this.reproduciendo = true;
-                this.parpadeoTiempoRep(false);
-                //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-            //    this.mscControl.updateIsPlaying(this.reproduciendo);
-                this.iniciaContadorRep();
-            }
-            this.iconoPlayPause = 'pause';
-            this.reproduciendo = true;
-        }
-        this.chngDetector.markForCheck();
-        console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-        this.mscControl.updateIsPlaying(this.reproduciendo);
-    }
+       console.log('[REPRODUCTOR.cambiandoStatusRep] Se ha modificado el status de la reproducción a ' + statusRep.status);
+       if ((statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()) ){
+           console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está apagado o fuera de cobertura.");
+           if (statusRep.status == this.reproductor.dameStatusStop()) {
+               //this.stopPulsado  = false; //tanto si lo habían pulsado como si no, ya no me sirve tenerlo.
+               this.posicionRep = 0;
+               this.posicionRepStr = "00:00:00";
+               console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+               this.parpadeoTiempoRep(false);
+               //this.chngDetector.markForCheck();
+               clearInterval(this.timer);
+               this.stopPulsado = false; // Limpiamos el valor.
+           }
+           this.reproduciendo = false;
+           this.iconoPlayPause = 'play';
+           //this.chngDetector.markForCheck();
+           //this.mscControl.updateIsPlaying(this.reproduciendo);
+       } // Esto es importante. Cuando salimos del capítulo y entramos en otro, nos llega un status nulo y lo pone todo en marcha. Por eso no vale sólo un "else"
+       else if (statusRep.status == this.reproductor.dameStatusRep() ||
+                statusRep.status == this.reproductor.dameStatusStarting()){
+           if (statusRep.status == this.reproductor.dameStatusStarting()){
+               console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está buffereando.");
+               this.posicionRepStr = "Cargando café.";
+               //this.iconoPlayPause = 'pause';
+               //this.reproduciendo = true;
+               //this.stopPulsado  = false; // Parece que esto aquí no pinta nada pero es importante.
+               //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+               this.parpadeoTiempoRep(true);
+           //    this.mscControl.updateIsPlaying(this.reproduciendo);
+           }
+           else {
+               console.log("[REPRODUCTOR.cambiandoStatusRep] El reproductor está reproduciendo.");
+               //this.iconoPlayPause = 'pause';
+               //this.reproduciendo = true;
+               this.parpadeoTiempoRep(false);
+               //console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+           //    this.mscControl.updateIsPlaying(this.reproduciendo);
+               this.iniciaContadorRep();
+           }
+           this.iconoPlayPause = 'pause';
+           this.reproduciendo = true;
+       }
+       this.chngDetector.markForCheck();
+       console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
+       this.mscControl.updateIsPlaying(this.reproduciendo);
+   }
 
     parpadeoTiempoRep(iniciar: boolean){
         //if (!this.enVivo){
@@ -401,8 +401,8 @@ export class ReproductorPage implements OnDestroy{
             if (iniciar){
                 if ( this.timerParpadeo == 0){
                     console.log("[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo");
-                    this.timerParpadeo = setInterval(() =>{ 
-                        this.ocultaTiempoRep = !this.ocultaTiempoRep; 
+                    this.timerParpadeo = setInterval(() =>{
+                        this.ocultaTiempoRep = !this.ocultaTiempoRep;
                         this.chngDetector.markForCheck();
                         // console.log("[REPRODUCTOR.parpadeoTiempoRep] Parpadeando " + this.reproduciendo);
                     }, 1000);
@@ -486,7 +486,7 @@ export class ReproductorPage implements OnDestroy{
         if (this.reproductor != null){
             if (this.reproduciendo) {
                 console.log ("[REPRODUCTOR.playPause] Está reproduciendo y el timer vale " + this.timer );
-                clearInterval(this.timer);  
+                clearInterval(this.timer);
                 this.reproductor.pause(this._configuracion);
                 this.reproduciendo = false;
                 //this.parpadeoTiempoRep(false);
@@ -499,7 +499,7 @@ export class ReproductorPage implements OnDestroy{
                     //if (this.reproductor.play(this.audioEnRep, this._configuracion)){
                         // si estamos aquí al darle al play hemos cambiado el audio por lo que hay  que renovar el control del area de notificaciones.
                     //    console.log ("[REPRODUCTOR.playPause] reproduciendo nuevo audio. Regeneramos el reproductor del area de notificacioes." );
-                    //    this.creaControlEnNotificaciones(true); 
+                    //    this.creaControlEnNotificaciones(true);
                     //}
                 }
                 else{
@@ -567,7 +567,7 @@ export class ReproductorPage implements OnDestroy{
             })
             .catch((error) => {
                 console.error ("[REPRODUCTOR.twitteaCapitulo] Error en consulta: " + error)
-            }); 
+            });
     }
 
     muestraDetalle(myEvent) {
@@ -622,7 +622,7 @@ export class ReproductorPage implements OnDestroy{
                 console.log("[REPRODUCTOR.ficheroDescargado] reproductor no es nulo");
                 if (this.reproductor.reproduciendoEste(this.audioEnRep)){
                     console.log("[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo este mismo audio ");
-                    // Se trata de que "cambiandoStatusRep" centralice el cambio del icono del play/pause, el contador, etc...  
+                    // Se trata de que "cambiandoStatusRep" centralice el cambio del icono del play/pause, el contador, etc...
                     this.cambiandoStatusRep({status:this.reproductor.dameStatus()});
                     //this.iconoPlayPause = 'pause';
 					//this.reproduciendo = true;
@@ -647,7 +647,7 @@ export class ReproductorPage implements OnDestroy{
             if (dataUsuario != null && dataUsuario != ''){
                 this._configuracion.dameToken()
                 .then ((dataToken) => {
-                    if (this.episodioLike){ 
+                    if (this.episodioLike){
                         console.log("[REPRODUCTOR.meGustasMucho] solicitado envío de dislike para usuario " + dataUsuario);
                         this.episodiosService.episodioDislike(this.episodio, dataUsuario, dataToken ).subscribe(
                             data => {
