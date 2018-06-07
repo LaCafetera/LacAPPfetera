@@ -17,12 +17,12 @@ export class Player implements OnDestroy {
 
     private enVivo: boolean = false;
 
-    constructor(public platform : Platform, 
-                private playerIOS: PlayerIOS, 
+    constructor(public platform : Platform,
+                private playerIOS: PlayerIOS,
                 private playerAndroid: PlayerAndroid){
                     console.log ("[PLAYER] El dispositivo es : " + this.platform.platforms() );
     }
-    
+
     ngOnDestroy(){
     }
 
@@ -46,7 +46,7 @@ export class Player implements OnDestroy {
         }
     }
 
-    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean, live: boolean) { 
+    public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean, live: boolean) {
         this.enVivo = live;
         if (this.cantaIos_local(audio)){
             this.playerIOS.crearepPlugin(audio, configuracion, live);
@@ -137,7 +137,7 @@ export class Player implements OnDestroy {
             this.playerAndroid.capDescargado (idDescargado);
         }
     }
-    
+
     getCurrentPosition(){
         if (this.cantaIos_local('')){
             return (this.playerIOS.getCurrentPosition());
@@ -146,7 +146,7 @@ export class Player implements OnDestroy {
             return (this.playerAndroid.getCurrentPosition());
         }
     }
-    
+
     getDuration(){
         if (this.cantaIos_local('')){
             return (this.playerIOS.getDuration());
@@ -197,7 +197,7 @@ export class Player implements OnDestroy {
             }
         }
         else {
-            // Aquí no paso el audio porque quiero que el "cerrarAudio" se ejecute sobre el sistema que estaba reproduciendo,  
+            // Aquí no paso el audio porque quiero que el "cerrarAudio" se ejecute sobre el sistema que estaba reproduciendo,
             // que no tiene por qué ser el mismo que va a reproducir.
             if (this.cantaIos_local('')){
                 this.playerIOS.cerrarAudio();
@@ -207,10 +207,10 @@ export class Player implements OnDestroy {
             }
             // Ahora sí lo paso, porque no sé si estoy en android reproduciendo descargado, o en Android reproduciendo en streaming. (O en iOS, en cuyo caso da todo igual).
             if (this.cantaIos_local(audioIn)){
-                // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android 
-                // y he pasado de reproducir en local a reproducir en remoto, el reproductor 
+                // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android
+                // y he pasado de reproducir en local a reproducir en remoto, el reproductor
                 // me lo tiene que crear como "true"
-                this.crearepPlugin(audioIn,configuracion, true, this.enVivo ); 
+                this.crearepPlugin(audioIn,configuracion, true, this.enVivo );
                 return (this.playerIOS.play(audio, configuracion));
             }
             else {
@@ -244,9 +244,9 @@ export class Player implements OnDestroy {
             this.playerIOS.pause(configuracion);
         }
         else {
-            // El reproductor de android no tiene pause; solo "playpause". Por esto, el "pause" se hace solo, diciendo "play". Pero como hay que 
+            // El reproductor de android no tiene pause; solo "playpause". Por esto, el "pause" se hace solo, diciendo "play". Pero como hay que
             // pasarle un capítulo (por si acaso estuviéramos cambiando de capítulo) le paso el que está sonando.
-            this.playerAndroid.play(this.dameCapitulo(), configuracion); 
+            this.playerAndroid.play(this.dameCapitulo(), configuracion);
         }
     }
 
@@ -325,5 +325,3 @@ export class Player implements OnDestroy {
     }
 
 }
-
- 
