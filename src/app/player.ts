@@ -282,14 +282,14 @@ export class Player implements OnDestroy {
         this.getCurrentPosition()
         .then((position)=>{
             let diferencia = Number(position*1000) - milisegundos;
-            if (Math.abs(diferencia) > 100){
+            if (Math.abs(diferencia) > 1500){
                 if (this.cantaIos_local('')){
                     this.playerIOS.seekTo(milisegundos);
                 }
                 else {
                     this.playerAndroid.seekTo(milisegundos);
                 }
-                console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + milisegundos + "milésimas de segundo.")
+                console.log("[PLAYER.seekTo] Me han pedido hacer un cambio de posición de " + diferencia + "milésimas de segundo.")
             }
             else{
 //              console.log("[PLAYERIOS.seekTo] Me han pedido hacer un cambio de posición de " + diferencia + " milésimas de segundo. Paso 1000.")
