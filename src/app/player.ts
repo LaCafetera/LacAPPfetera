@@ -183,8 +183,9 @@ export class Player implements OnDestroy {
         }
     }*/
 
-    play(audioIn: string, configuracion: ConfiguracionService):boolean{
-        let capitulo = this.dameCapitulo();
+    play(audioIn: string, configuracion: ConfiguracionService, live: boolean):boolean{
+        //let capitulo = this.dameCapitulo();
+        this.enVivo = live;
         let audio = this.traduceAudio(audioIn);
         if (this.reproduciendoEste(audio)) {
             if (this.cantaIos_local(audioIn)){

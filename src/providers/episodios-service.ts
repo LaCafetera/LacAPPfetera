@@ -81,6 +81,7 @@ export class EpisodiosService {
                     );
                 },
                 err => {
+                    //[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:Response with status: 0  for URL: null
                     console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
                 }
             );

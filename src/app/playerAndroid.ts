@@ -3,12 +3,13 @@ import { File } from '@ionic-native/file';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
 import { Events, ToastController } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
+import { Dialogs } from '@ionic-native/dialogs';
 
 //declare var cordova: any;
 
 @Injectable()
 @Component({
-    providers: [File, AndroidExoplayer]
+    providers: [File, AndroidExoplayer, Dialogs]
 })
 
 export class PlayerAndroid implements OnDestroy {
@@ -24,6 +25,9 @@ export class PlayerAndroid implements OnDestroy {
     paradaEncolada: boolean = false;
     timerVigila: number = 0;
     timerGetReady: number = 0;
+
+    porcentajeBuffer: number = 0;
+    ultimaPosicion: number = 0;
 
     saltoSolicitado: boolean = false;
     enVivo: boolean = false;
@@ -74,7 +78,8 @@ export class PlayerAndroid implements OnDestroy {
                 private file: File, 
                 public toastCtrl: ToastController, 
                 private configuracion: ConfiguracionService, 
-                public events: Events){
+                public events: Events,
+                private dialogs: Dialogs,){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
@@ -130,6 +135,12 @@ export class PlayerAndroid implements OnDestroy {
         });
         
         if (this.estadoExo != null) {
+            if (this.estadoExo.bufferPercentage != null){
+                this.porcentajeBuffer = Number(this.estadoExo.bufferPercentage);
+            }
+            if (this.estadoExo.position != null){
+                this.ultimaPosicion = Number(this.estadoExo.position);
+            }
             if (this.estadoExo.playbackState == "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
                 if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
                     //this.estado = this.estadoPlayer.MEDIA_PAUSED;
@@ -151,19 +162,24 @@ export class PlayerAndroid implements OnDestroy {
                     console.error("[PLAYERANDROID.actualizaStatus] La posición de la reproducción está más alla de la longitud del audio");
                     this.androidExoplayer.seekTo(0);
                 }
-                // Esto por si se produce un corte. Imposible probarlo; palo de ciego 100%
-                else if ((Number(this.estadoExo.position)+100) < Number(this.estadoExo.duration)  && this.estado == this.estadoPlayer.MEDIA_RUNNING){
-                    console.error("[PLAYERANDROID.actualizaStatus] Parece que se ha producido un corte. Relanzo.");
-                    this.guardaPos(this.configuracion);
-                    this.androidExoplayer.seekTo(Number(this.estadoExo.position));
-                }
                 else {
                     if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
-                        if (this.estado == this.estadoPlayer.MEDIA_STARTING) {
-                            this.events.publish('errorReproduccion:status', {status:666});
-                            this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
-                            this.stop();
-                            this.estadoExo = null;
+                        if (this.estado == this.estadoPlayer.MEDIA_STARTING || this.estado == this.estadoPlayer.MEDIA_RUNNING) {
+                            if (this.porcentajeBuffer < 100){
+                                this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
+                                console.error("[PLAYERANDROID.actualizaStatus] Parece que se ha producido un corte. Relanzo. " + this.ultimaPosicion + " - " + this.porcentajeBuffer);
+                                this.guardaPos(this.configuracion);
+                                console.error("[PLAYERANDROID.actualizaStatus] Guardada posición. ");
+                                //this.androidExoplayer.seekTo(Number(this.ultimaPosicion));
+                                this.continuaPlayStreaming(0);
+                                console.error("[PLAYERANDROID.actualizaStatus] Relanzado. ");
+                            }
+                            /*else {
+                                this.events.publish('errorReproduccion:status', {status:666});
+                                this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
+                                this.stop();
+                                this.estadoExo = null;
+                            }*/
                         }
                         else {
                     //this.estado = this.estadoPlayer.MEDIA_STOPPED;
@@ -223,29 +239,8 @@ export class PlayerAndroid implements OnDestroy {
                 if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                     this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                 }
-                if (data.eventType == "STATE_CHANGED_EVENT" && data.playbackState == "STATE_ENDED" && 
-                    (this.estado == this.estadoPlayer.MEDIA_STARTING || this.estado == this.estadoPlayer.MEDIA_RUNNING)){
-                // Esto por si se produce un corte. Imposible probarlo; palo de ciego 100%
-                    if (this.estadoExo != null) {
-                        if ((Number(this.estadoExo.position)+100) < Number(this.estadoExo.duration)  && this.estado == this.estadoPlayer.MEDIA_RUNNING){
-                            console.error("[PLAYERANDROID.crearepPlugin] Parece que se ha producido un corte. Relanzo.");
-                            this.guardaPos(this.configuracion);
-                            this.androidExoplayer.seekTo(Number(this.estadoExo.position));
-                        }
-                    }
-                    this.estadoExo = data;
-                    //this.inVigilando(true);
-                }
-                //this.inVigilando(true);
-                //} 
             }),
             ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
-        /*    if (this.estado == this.estadoPlayer.MEDIA_NONE || 
-                this.estado == this.estadoPlayer.MEDIA_PAUSED || 
-                this.estado == this.estadoPlayer.MEDIA_STOPPED) {
-                this.estado = this.estadoPlayer.MEDIA_STARTING;
-                this.publicaEstado ();
-            }*/
         })
         .catch (() => {
             this.params.seekTo = 0;
@@ -258,15 +253,39 @@ export class PlayerAndroid implements OnDestroy {
                 this.inVigilando(true);
             }),
             ((error) => console.error("[PLAYERANDROID.crearepPlugin] Error recuperando posición: " + JSON.stringify(error)));
-          /*  if (this.estado == this.estadoPlayer.MEDIA_NONE || 
-                this.estado == this.estadoPlayer.MEDIA_PAUSED || 
-                this.estado == this.estadoPlayer.MEDIA_STOPPED) {
-                this.estado = this.estadoPlayer.MEDIA_STARTING;
-                this.publicaEstado ();
-            }*/
         })
-        //this.inVigilando(true);
-        //this.androidExoplayer.playPause(); // cuando pueda instalar una versión > 2.5.0 esto no hará falta.
+    }
+
+    
+
+    private crearepPluginTiempo (audio:string, configuracion: ConfiguracionService, autoplay: boolean, live: boolean, tiempo: number) {
+        console.log("[PLAYERANDROID.crearepPluginTiempo] recibida petición de audio: " + audio);
+        this.capitulo = audio;
+        this.params.url = audio;
+        this.params.autoPlay = autoplay;
+        this.enVivo = live;
+        this.saltoSolicitado = true; // Al dar al play la primera vez lo primero que hace es cascar error.
+        
+        console.log("[PLAYERANDROID.crearepPluginTiempo] Solicitado posicionar el audio en: " + tiempo);
+        this.estado = this.estadoPlayer.MEDIA_STOPPED;
+        this.params.seekTo = tiempo;
+        this.androidExoplayer.show(this.params).subscribe
+        ((data) => {
+            console.log("[PLAYERANDROID.crearepPluginTiempo] recibidos datos " + JSON.stringify(data))
+            this.inVigilando(true);
+            if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+                if (!this.saltoSolicitado){
+                    this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
+                }
+                else {
+                    this.saltoSolicitado = false;
+                }
+            }
+            if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
+                this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
+            }
+        }),
+        ((error) => console.error("[PLAYERANDROID.crearepPluginTiempo] recibido error " +  + JSON.stringify(error)));
     }
 
     private preparado() {
@@ -359,7 +378,9 @@ export class PlayerAndroid implements OnDestroy {
 
     continuaPlayStreaming (tiempoSeek: number){
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Recuperando reproducción tras corte" );
-        this.crearepPlugin (this.capitulo, this.configuracion, true, this.enVivo);
+        this.dialogs.alert(((tiempoSeek/1000)/60).toString(), 'Ojo al dato');
+        this.crearepPluginTiempo (this.capitulo, this.configuracion, true, this.enVivo, this.enVivo?0:tiempoSeek);
+        console.log ("[PLAYERANDROID.continuaPlayStreaming] Ya hemos lanzado. Volvemos." );
     }
 
     //async play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
