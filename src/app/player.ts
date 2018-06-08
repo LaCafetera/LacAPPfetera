@@ -247,7 +247,9 @@ export class Player implements OnDestroy {
         else {
             // El reproductor de android no tiene pause; solo "playpause". Por esto, el "pause" se hace solo, diciendo "play". Pero como hay que
             // pasarle un capítulo (por si acaso estuviéramos cambiando de capítulo) le paso el que está sonando.
-            this.playerAndroid.play(this.dameCapitulo(), configuracion);
+            if (this.dameStatus() == this.dameStatusRep()){
+                this.playerAndroid.play(this.dameCapitulo(), configuracion);
+            }
         }
     }
 

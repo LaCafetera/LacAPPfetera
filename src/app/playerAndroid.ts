@@ -171,7 +171,7 @@ export class PlayerAndroid implements OnDestroy {
                                 this.guardaPos(this.configuracion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Guardada posición. ");
                                 //this.androidExoplayer.seekTo(Number(this.ultimaPosicion));
-                                this.continuaPlayStreaming(0);
+                                this.continuaPlayStreaming(this.ultimaPosicion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Relanzado. ");
                             }
                             /*else {
@@ -230,7 +230,7 @@ export class PlayerAndroid implements OnDestroy {
                     //this.estadoExo = data;
                 if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
                     if (!this.saltoSolicitado){
-                        this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
+                        //this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
                     }
                     else {
                         this.saltoSolicitado = false;
@@ -273,14 +273,14 @@ export class PlayerAndroid implements OnDestroy {
         ((data) => {
             console.log("[PLAYERANDROID.crearepPluginTiempo] recibidos datos " + JSON.stringify(data))
             this.inVigilando(true);
-            if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+            /*if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
                 if (!this.saltoSolicitado){
                     this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
                 }
                 else {
                     this.saltoSolicitado = false;
                 }
-            }
+            }*/
             if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
             }
@@ -378,7 +378,7 @@ export class PlayerAndroid implements OnDestroy {
 
     continuaPlayStreaming (tiempoSeek: number){
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Recuperando reproducción tras corte" );
-        this.dialogs.alert(((tiempoSeek/1000)/60).toString(), 'Ojo al dato');
+        this.msgDescarga(((tiempoSeek/1000)/60).toString());
         this.crearepPluginTiempo (this.capitulo, this.configuracion, true, this.enVivo, this.enVivo?0:tiempoSeek);
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Ya hemos lanzado. Volvemos." );
     }
