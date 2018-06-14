@@ -29,7 +29,7 @@ export class HomePage implements OnDestroy {
     infoFer = InfoFerPage;
     reproductor: Player;
     capEnRep:string = "ninguno";
-    soloWifi:boolean = false;
+    //soloWifi:boolean = false;
     mscControl:MusicControls;
 
     hashtag:string ="";

@@ -74,6 +74,8 @@ export class ReproductorPage implements OnDestroy{
     longAudioLiveDescargado: number = 0;
     esIOS: boolean = false;
     capItemTxt: string;
+	
+	sinConexionCantando: boolean = false;
 
     // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
     // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
@@ -194,8 +196,7 @@ export class ReproductorPage implements OnDestroy{
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });
-    }
+        });   }
 
     ionViewDidLoad() {
         this._configuracion.getWIFI()
@@ -216,6 +217,57 @@ export class ReproductorPage implements OnDestroy{
         else{
             console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
         }
+		
+		this.network.onDisconnect().subscribe(
+            data => {
+				if (this.esIOS){
+					if (this.reproduciendo && !this.noRequiereDescarga) {
+						this.sinConexionCantando = this.reproduciendo;
+						this.reproductor.guardaPos(this._configuracion);
+						this.reproductor.stop();
+						console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.');
+						this.msgDescarga("Se ha producido un corte en la conexión a internet.");
+					}
+				}
+				else {console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.')}
+			},
+			err => {
+                console.error('[REPRODUCTOR.ngOnInit] Error en onDisconnect: '  + err.message)
+            }
+        );
+		
+		this.network.onConnect().subscribe(
+            data => {
+				if (this.esIOS){
+					if (this.sinConexionCantando){
+						if (this.network.type != "wifi" && 
+							this.soloWifi && 
+							this.reproduciendo && 
+							!this.noRequiereDescarga){
+								this.dialogs.alert("No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
+						}
+						else {
+							this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);	
+                            this.msgDescarga("Recuperando reproducción tras reconexión.");
+                            this.sinConexionCantando = false;
+						}
+					}
+				}
+				else { // Android
+					if (this.network.type != "wifi" && 
+					    this.soloWifi && 
+						this.reproduciendo && 
+						!this.noRequiereDescarga){
+							this.reproductor.guardaPos(this._configuracion);
+							this.reproductor.stop();
+							this.dialogs.alert("Está reproduciendo un audio por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
+					}
+				}
+			},
+			err => {
+                console.error('[REPRODUCTOR.ngOnInit] Error en onConnect: '  + err.message)
+            }
+        );
     }
 
     ngOnDestroy(){

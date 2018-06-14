@@ -29,7 +29,7 @@ export class PlayerAndroid implements OnDestroy {
     porcentajeBuffer: number = 0;
     ultimaPosicion: number = 0;
 
-    saltoSolicitado: boolean = false;
+    //saltoSolicitado: boolean = false;
     enVivo: boolean = false;
 
     estadoExo: AndroidExoplayerState = null;
@@ -141,13 +141,14 @@ export class PlayerAndroid implements OnDestroy {
             if (this.estadoExo.position != null){
                 this.ultimaPosicion = Number(this.estadoExo.position);
             }
-            if (this.estadoExo.playbackState == "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
+            if (this.estadoExo.playbackState === "STATE_READY"){ //Saco esto fuera porque si está dentro del ((datos) no sabemos quien es this.
                 if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
                     //this.estado = this.estadoPlayer.MEDIA_PAUSED;
                     this.publicaEstado(this.estadoPlayer.MEDIA_PAUSED);
                     this.guardaPos(this.configuracion);
                 }
-                else if (this.estadoExo.playWhenReady == "true" && this.estado != this.estadoPlayer.MEDIA_RUNNING){
+                else if (this.estadoExo.playWhenReady == "true" && 
+                         this.estado != this.estadoPlayer.MEDIA_RUNNING){
                     //this.estado = this.estadoPlayer.MEDIA_RUNNING;
                     this.publicaEstado(this.estadoPlayer.MEDIA_RUNNING);                
                 }    
@@ -155,6 +156,10 @@ export class PlayerAndroid implements OnDestroy {
             else if (this.estadoExo.playbackState == "STATE_BUFFERING" && this.estado != this.estadoPlayer.MEDIA_STARTING && this.estado != this.estadoPlayer.MEDIA_STOPPED){
                 //this.estado = this.estadoPlayer.MEDIA_STARTING;
                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);  
+            }
+            else if (this.estadoExo.playbackState == "STATE_IDLE" && this.estado != this.estadoPlayer.MEDIA_NONE && this.estado != this.estadoPlayer.MEDIA_STOPPED){
+                //this.estado = this.estadoPlayer.MEDIA_STARTING;
+                this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
             }
             else if (this.estadoExo.playbackState == "STATE_ENDED"){ 
                 // Esto por si queremos ir más allá del tamaño del audio.
@@ -215,7 +220,7 @@ export class PlayerAndroid implements OnDestroy {
         this.params.url = audio;
         this.params.autoPlay = autoplay;
         this.enVivo = live;
-        this.saltoSolicitado = true; // Al dar al play la primera vez lo primero que hace es cascar error.
+        //this.saltoSolicitado = true; // Al dar al play la primera vez lo primero que hace es cascar error.
         
         configuracion.getTimeRep(this.dameCapitulo())
         .then((data) => {
@@ -228,14 +233,14 @@ export class PlayerAndroid implements OnDestroy {
                 this.inVigilando(true); // Pongo esto lo primero, porque quiero asegurarme de que funciona.
                 //if (this.estadoExo == null){
                     //this.estadoExo = data;
-                if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
+                /*if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
                     if (!this.saltoSolicitado){
                         //this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
                     }
                     else {
                         this.saltoSolicitado = false;
                     }
-                }
+                }*/
                 if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                     this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                 }
@@ -264,7 +269,7 @@ export class PlayerAndroid implements OnDestroy {
         this.params.url = audio;
         this.params.autoPlay = autoplay;
         this.enVivo = live;
-        this.saltoSolicitado = true; // Al dar al play la primera vez lo primero que hace es cascar error.
+        //this.saltoSolicitado = true; // Al dar al play la primera vez lo primero que hace es cascar error.
         
         console.log("[PLAYERANDROID.crearepPluginTiempo] Solicitado posicionar el audio en: " + tiempo);
         this.estado = this.estadoPlayer.MEDIA_STOPPED;
@@ -486,7 +491,7 @@ export class PlayerAndroid implements OnDestroy {
 
     adelantaRep(){
         //this.androidExoplayer.seekBy(15000)
-        this.saltoSolicitado = true;
+        //this.saltoSolicitado = true;
         this.androidExoplayer.seekTo(parseInt(this.estadoExo.position) + 15000)
         .then(()=>{
             console.log("[PLAYERANDROID.adelantaRep] seekBy OK ");
@@ -497,7 +502,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     retrocedeRep(){
-        this.saltoSolicitado = true;
+        //this.saltoSolicitado = true;
         //this.androidExoplayer.seekBy(-15000)
         this.androidExoplayer.seekTo(parseInt(this.estadoExo.position) - 15000)
         .then(()=>{
@@ -509,14 +514,16 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     seekTo(milisegundos:number){
-        this.saltoSolicitado = true;
-        this.androidExoplayer.seekTo(milisegundos)
-        .then(()=>{
-            console.log("[PLAYERANDROID.seekTo] seekTo OK ");
-        })
-        .catch ((err)=> {
-            console.error("[PLAYERANDROID.seekTo] seekTo KO: " + err);
-        });;;
+        //this.saltoSolicitado = true;
+        if (this.estado != this.estadoPlayer.MEDIA_STOPPED && this.estado != this.estadoPlayer.MEDIA_NONE){
+            this.androidExoplayer.seekTo(milisegundos)
+            .then(()=>{
+                console.log("[PLAYERANDROID.seekTo] seekTo OK ");
+            })
+            .catch ((err)=> {
+                console.error("[PLAYERANDROID.seekTo] seekTo KO: " + err);
+            });
+        }
     }
 
     setVolume(volumen){
@@ -528,17 +535,11 @@ export class PlayerAndroid implements OnDestroy {
         this.inVigilando(false);
         if (this.estado != this.estadoPlayer.MEDIA_STOPPED && this.estado != this.estadoPlayer.MEDIA_NONE){
             this.androidExoplayer.stop()
-            .then((data)=>{  // por lo que he podido ver, aquí nunca entra :-p
-                //console.log("[PLAYERANDROID.stop] ************************************************ stop OK " + JSON.stringify(data));
-                this.estado = this.estadoPlayer.MEDIA_STOPPED;
-                console.log("[PLAYERANDROID.stop] Confirmada parada.");
-                this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);
-                this.capitulo = '';
-            })
+            .then((data)=>{})  // por lo que he podido ver, aquí nunca entra :-p            
             .catch ((err)=> {
                 console.error("[PLAYERANDROID.stop] stop KO " + err);
             });
-            //this.estado = this.estadoPlayer.MEDIA_NONE;
+            this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);
             this.publicaEstado (this.estadoPlayer.MEDIA_NONE);
         }
         this.capitulo = '';
