@@ -26,7 +26,7 @@ export class EpisodiosGuardadosService {
 
     guardaProgramas (programa: object){
         console.log("[EpisodiosGuardados.guardaProgramas] Guardando "+ JSON.stringify(programa))
-        let listaDescargados = {"programas":[programa]};
+        //let listaDescargados = {"programas":[programa]};
         this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
@@ -64,7 +64,7 @@ export class EpisodiosGuardadosService {
 
     borraProgramas (programa: object){
         console.log("[EpisodiosGuardados.borraProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
-        let listaDescargados = {"programas":[programa]};
+        //let listaDescargados = {"programas":[programa]};
         this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();

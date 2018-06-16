@@ -3,13 +3,12 @@ import { File } from '@ionic-native/file';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
 import { Events, ToastController } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
-import { Dialogs } from '@ionic-native/dialogs';
 
 //declare var cordova: any;
 
 @Injectable()
 @Component({
-    providers: [File, AndroidExoplayer, Dialogs]
+    providers: [File, AndroidExoplayer]
 })
 
 export class PlayerAndroid implements OnDestroy {
@@ -17,7 +16,7 @@ export class PlayerAndroid implements OnDestroy {
 
     private capitulo: string ="";
     private descargado:boolean = false;
-    private statusRep:number;
+    //private statusRep:number;
 
     seekPdte:boolean = false;
     ubicacionAudio:string ="";
@@ -78,8 +77,7 @@ export class PlayerAndroid implements OnDestroy {
                 private file: File, 
                 public toastCtrl: ToastController, 
                 private configuracion: ConfiguracionService, 
-                public events: Events,
-                private dialogs: Dialogs,){
+                public events: Events){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
@@ -293,7 +291,7 @@ export class PlayerAndroid implements OnDestroy {
         ((error) => console.error("[PLAYERANDROID.crearepPluginTiempo] recibido error " +  + JSON.stringify(error)));
     }
 
-    private preparado() {
+/*    private preparado() {
         return new Promise(resolve => this.timerGetReady = setInterval(() => {
             //console.log("Promesas que no valen nada " + this.estado + ' - ' + this.estadoPlayer.MEDIA_NONE); 
             if (this.estado != this.estadoPlayer.MEDIA_NONE) {
@@ -303,7 +301,7 @@ export class PlayerAndroid implements OnDestroy {
                 resolve (true);
             }
         }, 500));
-    }
+    }*/
 
     public dameStatus(){
         return (this.estado);
@@ -382,8 +380,8 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     continuaPlayStreaming (tiempoSeek: number){
-        console.log ("[PLAYERANDROID.continuaPlayStreaming] Recuperando reproducción tras corte" );
-        this.msgDescarga(((tiempoSeek/1000)/60).toString());
+        console.log ("[PLAYERANDROID.continuaPlayStreaming] Recuperando reproducción tras corte en posición " + ((tiempoSeek/1000)/60).toString());
+        //this.msgDescarga(((tiempoSeek/1000)/60).toString());
         this.crearepPluginTiempo (this.capitulo, this.configuracion, true, this.enVivo, this.enVivo?0:tiempoSeek);
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Ya hemos lanzado. Volvemos." );
     }

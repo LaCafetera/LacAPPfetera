@@ -240,9 +240,9 @@ export class ReproductorPage implements OnDestroy{
             data => {
 				if (this.esIOS){
 					if (this.sinConexionCantando){
+                        console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
 						if (this.network.type != "wifi" && 
 							this.soloWifi && 
-							this.reproduciendo && 
 							!this.noRequiereDescarga){
 								this.dialogs.alert("No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
 						}
