@@ -208,19 +208,13 @@ export class ReproductorPage implements OnDestroy{
             });
 
         //console.log ("[REPRODUCTOR.ionViewDidLoad] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
-
-        console.log("[REPRODUCTOR.ionViewDidLoad] EnVivo vale "+ this.enVivo);
-
-        if (this.enVivo){
-            this.timerVigilaEnVivo = setInterval(() => this.gatoSchrodinger(), 1000);
-        }
-        else{
-            console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
-        }
 		
 		this.network.onDisconnect().subscribe(
             data => {
-				if (this.esIOS){
+                console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte de conexión');
+				if (!this.esIOS){
+                    console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
+                    console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
 					if (this.reproduciendo && !this.noRequiereDescarga) {
 						this.sinConexionCantando = this.reproduciendo;
 						this.reproductor.guardaPos(this._configuracion);
@@ -229,7 +223,7 @@ export class ReproductorPage implements OnDestroy{
 						this.msgDescarga("Se ha producido un corte en la conexión a internet.");
 					}
 				}
-				else {console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.')}
+				else {console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet y no esty en iOS.')}
 			},
 			err => {
                 console.error('[REPRODUCTOR.ngOnInit] Error en onDisconnect: '  + err.message)
@@ -238,7 +232,9 @@ export class ReproductorPage implements OnDestroy{
 		
 		this.network.onConnect().subscribe(
             data => {
-				if (this.esIOS){
+                console.log('[REPRODUCTOR.ngOnInit] Se ha producido una reconexión');
+				if (!this.esIOS){
+                    console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
 					if (this.sinConexionCantando){
                         console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
 						if (this.network.type != "wifi" && 
@@ -268,6 +264,15 @@ export class ReproductorPage implements OnDestroy{
                 console.error('[REPRODUCTOR.ngOnInit] Error en onConnect: '  + err.message)
             }
         );
+
+        console.log("[REPRODUCTOR.ionViewDidLoad] EnVivo vale "+ this.enVivo);
+
+        if (this.enVivo){
+            this.timerVigilaEnVivo = setInterval(() => this.gatoSchrodinger(), 1000);
+        }
+        else{
+            console.log("[REPRODUCTOR.ionViewDidLoad] No es en vivo.");
+        }
     }
 
     ngOnDestroy(){
@@ -275,7 +280,7 @@ export class ReproductorPage implements OnDestroy{
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
         this.timer = this.timerVigilaEnVivo = 0;
-        this.events.unsubscribe("reproduccion:status");
+        this.events.unsubscribe("reproduccion:status", (()=> {}));
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError

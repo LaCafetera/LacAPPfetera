@@ -138,6 +138,9 @@ export class MyApp implements OnDestroy {
     ngOnDestroy(){
       console.log("[app.component.ngOnDestroy] Saliendoooooooooooooooooooooooooooooo");
    }
+   onDestroy(){
+     console.log("[app.component.onDestroy] Saliendoooooooooooooooooooooooooooooo");
+  }
 
 
     setTheme(e) {

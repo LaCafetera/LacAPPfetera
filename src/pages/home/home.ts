@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from "@angular/core";
 
 import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -22,7 +22,7 @@ import { Player } from "../../app/player";
   providers: [EpisodiosService, BackgroundMode, Dialogs, Network/*, ConfiguracionService*/, EpisodiosGuardadosService]
 })
 
-export class HomePage implements OnDestroy {
+export class HomePage implements OnDestroy, OnInit {
 
     items: Array<any>;
    // reproductor = ReproductorPage;
@@ -111,6 +111,18 @@ export class HomePage implements OnDestroy {
        });
     }
 
+    ionViewWillUnload() {
+        console.log("[HOME.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
+    }
+
+    ngOnDestroy(){
+        console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
+        this.events.unsubscribe("like:modificado");
+        this.events.unsubscribe("capitulo:fenecido");
+        this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+        this.reproductor.release(this._configuracion);
+    }
+
     compruebaConexion (){
         //console.log("[HOME.ionViewDidLoad] Entrando" );
         // BackgroundMode.enable();
@@ -142,18 +154,6 @@ export class HomePage implements OnDestroy {
                 .then((dato)=>this.mostrarFechasAbsolutas = dato)
                 .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
         }
-    }
-
-    ionViewWillUnload() {
-        console.log("[HOME.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
-    }
-
-    ngOnDestroy(){
-        console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
-        this.events.unsubscribe("like:modificado");
-        this.events.unsubscribe("capitulo:fenecido");
-        this.mscControl.destroy(); // <-- Revisar esto que no funciona.
-        this.reproductor.release(this._configuracion);
     }
 
     cargaUsuarioParaProgramas (episodio:string){
@@ -231,7 +231,7 @@ export class HomePage implements OnDestroy {
 
 
     pushPage(item){
-        console.log("[HOME.pushPage] Entro en episodio " + JSON.stringify (item));
+        console.log("[HOME.pushPage] Entro en episodio. ");// + JSON.stringify (item));
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
                                             controlador:this.mscControl,
