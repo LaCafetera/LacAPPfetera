@@ -118,7 +118,6 @@ export class ReproductorPage implements OnDestroy{
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
-        this.esIOS = this.platform.is('ios');
 
         if (this.mscControl == null) {
             console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
@@ -153,6 +152,7 @@ export class ReproductorPage implements OnDestroy{
     //console.log ('[app.component.ngOnInit]');
 
         this.platform.ready().then(() => {
+            this.esIOS = this.platform.is('ios');
             this._configuracion.getTwitteado(this.episodio)
             .then((val)=> {
             //    console.log("[REPRODUCTOR.constructor] recibida verificación de twitteado " + val + " para el capítulo " + this.episodio );
@@ -193,6 +193,63 @@ export class ReproductorPage implements OnDestroy{
                 }
                 console.log('[REPRODUCTOR.ngOnInit] Me dicen que ha terminado el programa en vivo.' + dato.valor);
             });*/
+
+            
+            this.network.onDisconnect().subscribe(
+                data => {
+                    console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte de conexión');
+                    if (this.esIOS){
+                        console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
+                        console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
+                        if (this.reproduciendo && !this.noRequiereDescarga) {
+                            this.sinConexionCantando = this.reproduciendo;
+                            this.reproductor.guardaPos(this._configuracion);
+                            this.reproductor.stop();
+                            console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.');
+                            this.msgDescarga("Se ha producido un corte en la conexión a internet.");
+                        }
+                    }
+                    else {console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet y no esty en iOS.')}
+                },
+                err => {
+                    console.error('[REPRODUCTOR.ngOnInit] Error en onDisconnect: '  + err.message)
+                }
+            );
+            
+            this.network.onConnect().subscribe(
+                data => {
+                    console.log('[REPRODUCTOR.ngOnInit] Se ha producido una reconexión');
+                    if (this.esIOS){
+                        console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
+                        if (this.sinConexionCantando){
+                            console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
+                            if (this.network.type != "wifi" && 
+                                this.soloWifi && 
+                                !this.noRequiereDescarga){
+                                    this.dialogs.alert("No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
+                            }
+                            else {
+                                this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);	
+                                this.msgDescarga("Recuperando reproducción tras reconexión.");
+                                this.sinConexionCantando = false;
+                            }
+                        }
+                    }
+                    else { // Android
+                        if (this.network.type != "wifi" && 
+                            this.soloWifi && 
+                            this.reproduciendo && 
+                            !this.noRequiereDescarga){
+                                this.reproductor.guardaPos(this._configuracion);
+                                this.reproductor.stop();
+                                this.dialogs.alert("Está reproduciendo un audio por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
+                        }
+                    }
+                },
+                err => {
+                    console.error('[REPRODUCTOR.ngOnInit] Error en onConnect: '  + err.message)
+                }
+            );
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
@@ -206,64 +263,6 @@ export class ReproductorPage implements OnDestroy{
                 this.soloWifi = true;
                 console.error("[REPRODUCTOR.ionViewDidLoad] Error recuperando valor WIFI. Forzando escuchar vía WIFI");
             });
-
-        //console.log ("[REPRODUCTOR.ionViewDidLoad] Esto " + this.platform.is("ios")?"sí":"no" + "es ios.");
-		
-		this.network.onDisconnect().subscribe(
-            data => {
-                console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte de conexión');
-				if (!this.esIOS){
-                    console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
-                    console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
-					if (this.reproduciendo && !this.noRequiereDescarga) {
-						this.sinConexionCantando = this.reproduciendo;
-						this.reproductor.guardaPos(this._configuracion);
-						this.reproductor.stop();
-						console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.');
-						this.msgDescarga("Se ha producido un corte en la conexión a internet.");
-					}
-				}
-				else {console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet y no esty en iOS.')}
-			},
-			err => {
-                console.error('[REPRODUCTOR.ngOnInit] Error en onDisconnect: '  + err.message)
-            }
-        );
-		
-		this.network.onConnect().subscribe(
-            data => {
-                console.log('[REPRODUCTOR.ngOnInit] Se ha producido una reconexión');
-				if (!this.esIOS){
-                    console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
-					if (this.sinConexionCantando){
-                        console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
-						if (this.network.type != "wifi" && 
-							this.soloWifi && 
-							!this.noRequiereDescarga){
-								this.dialogs.alert("No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
-						}
-						else {
-							this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);	
-                            this.msgDescarga("Recuperando reproducción tras reconexión.");
-                            this.sinConexionCantando = false;
-						}
-					}
-				}
-				else { // Android
-					if (this.network.type != "wifi" && 
-					    this.soloWifi && 
-						this.reproduciendo && 
-						!this.noRequiereDescarga){
-							this.reproductor.guardaPos(this._configuracion);
-							this.reproductor.stop();
-							this.dialogs.alert("Está reproduciendo un audio por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
-					}
-				}
-			},
-			err => {
-                console.error('[REPRODUCTOR.ngOnInit] Error en onConnect: '  + err.message)
-            }
-        );
 
         console.log("[REPRODUCTOR.ionViewDidLoad] EnVivo vale "+ this.enVivo);
 

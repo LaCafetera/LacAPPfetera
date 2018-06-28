@@ -103,12 +103,14 @@ export class HomePage implements OnDestroy, OnInit {
     // }
 
     ngOnInit() {
-       this.platform.ready().then(() => {
-        this.compruebaConexion();
-       })
-       .catch((error)=>{
-           console.log('[HOME.ngOnInit] Error:' + JSON.stringify(error));
-       });
+        this.platform.ready().then(() => {
+            this.compruebaConexion();
+            this.backgroundMode.enable();
+            console.log('[HOME.ngOnInit] Background activado');
+        })
+        .catch((error)=>{
+            console.error('[HOME.ngOnInit] Error:' + JSON.stringify(error));
+        });
     }
 
     ionViewWillUnload() {
@@ -121,6 +123,7 @@ export class HomePage implements OnDestroy, OnInit {
         this.events.unsubscribe("capitulo:fenecido");
         this.mscControl.destroy(); // <-- Revisar esto que no funciona.
         this.reproductor.release(this._configuracion);
+        this.backgroundMode.disable();
     }
 
     compruebaConexion (){
