@@ -228,6 +228,7 @@ export class PlayerAndroid implements OnDestroy {
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
                 console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                this.estadoExo=data;
                 this.inVigilando(true); // Pongo esto lo primero, porque quiero asegurarme de que funciona.
                 //if (this.estadoExo == null){
                     //this.estadoExo = data;

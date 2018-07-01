@@ -30,7 +30,6 @@ export class Player implements OnDestroy {
     }
 
     private cantaIos_local (audio: string): boolean {
-        return(true);/*
         if (audio != ''){ // Si me pasan el nombre del fichero, lo cambio; si no lo dejo como está.
             if (audio.includes('.mp3')) {
                 this.audiolocal = true;
@@ -44,7 +43,7 @@ export class Player implements OnDestroy {
         }
         else{
             return (false)
-        }*/
+        }
     }
 
     public crearepPlugin (audio:string, configuracion: ConfiguracionService, autoplay: boolean, live: boolean) {

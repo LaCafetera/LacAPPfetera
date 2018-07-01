@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media';
 import { Platform } from 'ionic-angular';
@@ -15,7 +15,7 @@ import { Dialogs } from '@ionic-native/dialogs';
   templateUrl: 'info-fer.html',
   providers: [Dialogs]
 })
-export class InfoFerPage {
+export class InfoFerPage implements OnDestroy{
     
     repPlugin = new Media ();
     dirJingle: MediaObject;

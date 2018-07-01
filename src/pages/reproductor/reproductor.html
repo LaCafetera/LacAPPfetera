@@ -10,7 +10,7 @@
       <ion-title>La cAPPfetera</ion-title>
 
       <ion-buttons end>
-        <button ion-button right icon-only (click)="muestraDetalle($event)">
+        <button ion-button right icon-only (click)="presentContactModal()" [outline]="noHayPuntos">  <!--muestraDetalle($event)"-->
           <ion-icon name='cafe'></ion-icon>
         </button>
       </ion-buttons>

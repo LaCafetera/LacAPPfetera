@@ -40,6 +40,7 @@ import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
 import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
 import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
 import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
+import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
 
 import { DescargaCafetera } from '../components/descarga.component';
 import { MenuExtComponent } from '../components/menuext/menuext';
@@ -66,7 +67,8 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
-    CapitulosDescargadosPage
+    CapitulosDescargadosPage,
+    listaPuntosCap
   ],
   imports: [
     BrowserModule,
@@ -88,7 +90,8 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
-    CapitulosDescargadosPage
+    CapitulosDescargadosPage,
+    listaPuntosCap
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,

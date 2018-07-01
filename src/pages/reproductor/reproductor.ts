@@ -1,5 +1,5 @@
-import { Component, ChangeDetectorRef,/*, Output, EventEmitter*/ OnDestroy} from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events, ToastController } from 'ionic-angular';
+import { Component, ChangeDetectorRef,/*, Output, EventEmitter*/OnInit,  OnDestroy} from '@angular/core';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -11,6 +11,7 @@ import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
 import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
+import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 
 /*
   Generated class for the Reproductor page.
@@ -23,7 +24,7 @@ import { Player } from '../../app/player';
   templateUrl: 'reproductor.html',
   providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player]
 })
-export class ReproductorPage implements OnDestroy{
+export class ReproductorPage implements OnInit, OnDestroy{
 
     capItem: any;
     reproductor: Player;
@@ -65,6 +66,8 @@ export class ReproductorPage implements OnDestroy{
     tituloObj: Array<Object>;
     episodioLike: boolean = false;
     colorLike: string = "";
+    noHayPuntos: boolean = false;
+    detallesCapitulo: string[];
 
     pagChat: any = ChatPage;
 
@@ -96,7 +99,8 @@ export class ReproductorPage implements OnDestroy{
                 private socialsharing: SocialSharing,
                 private network: Network,
                 private player: Player,
-                private chngDetector: ChangeDetectorRef) {
+                private chngDetector: ChangeDetectorRef,
+                public modalCtrl: ModalController) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -110,7 +114,7 @@ export class ReproductorPage implements OnDestroy{
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
         this.mscControl = this.navParams.get('controlador');
-        this.soloWifi = this.navParams.get('soloWifi');
+        //this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         this.dirTwitter = this.navParams.get('enlaceTwitter');// + "?f=tweets" ;
         this.titulo = this.capItem.title;
@@ -118,12 +122,6 @@ export class ReproductorPage implements OnDestroy{
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
-
-        if (this.mscControl == null) {
-            console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
-            this.mscControl = new MusicControls ();
-            this.creaControlEnNotificaciones (false);
-        }
         if (this.reproductor == null) {
             console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
@@ -149,8 +147,7 @@ export class ReproductorPage implements OnDestroy{
 
 
     ngOnInit() {
-    //console.log ('[app.component.ngOnInit]');
-
+    console.log ('[app.component.ngOnInit]');
         this.platform.ready().then(() => {
             this.esIOS = this.platform.is('ios');
             this._configuracion.getTwitteado(this.episodio)
@@ -172,34 +169,56 @@ export class ReproductorPage implements OnDestroy{
                     if (statusRep.status == '666') { // Si es Android
                         this.dialogs.alert("Se ha producido un corte del flujo de audio con Spreaker.", 'Super - Gurú');
                     }
-                    /*else { Esto provoca un bucle infinito al darle al stop en iOS. Como no tenemos el listado de posibles errores, parece que el stop genera uno... :-p
-                        this.reproductor.play(this.audioEnRep, this._configuracion);
-                        this.stopPulsado = false;
-                    }*/
                 }
-                /*if (statusRep.status != 0) {
-                    this.playPause();
-                }*/
             });
-/*
-            this.events.subscribe('streaming:descargado', (dato) => {
-                console.log('[REPRODUCTOR.ngOnInit] Me dicen que ha terminado el programa en vivo.' + JSON.stringify(dato));
-                if (dato.valor) {
-                    this.corteEnDescarga = true;
-                }
-                else{
-                    this.stop();
-                    this.dialogs.alert("Error descargando audio de Spreaker. ¿Problemas de conexión?", 'Error');
-                }
-                console.log('[REPRODUCTOR.ngOnInit] Me dicen que ha terminado el programa en vivo.' + dato.valor);
-            });*/
 
-            
+            if (this.mscControl == null) {
+                console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
+                this.mscControl = new MusicControls ();
+                this.creaControlEnNotificaciones (false);
+            }
+
+            this.network.onchange().subscribe(
+                data=> {
+                    console.log('[REPRODUCTOR.ngOnInit] Se ha producido un cambio de conexión ');
+                    console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga + ' this.sinConexionCantando ' + this.sinConexionCantando + ' this.esIOS ' + this.esIOS);
+                    if (this.esIOS){
+                        console.log('[REPRODUCTOR.ngOnInit] network.onchange - Estoy en iOS');
+                        if (this.reproduciendo && !this.noRequiereDescarga) {
+                            this.sinConexionCantando = this.reproduciendo;
+                            this.reproductor.guardaPos(this._configuracion);
+                            this.reproductor.stop();
+                            console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte en la conexión a internet.');
+                            this.msgDescarga("Se ha producido un corte en la conexión a internet.");
+                            if (this.network.type != "wifi" &&  this.soloWifi){
+                                this.dialogs.alert("No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.", 'Super - Gurú');
+                            }
+                            else {
+                                this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);	
+                                this.msgDescarga("Recuperando reproducción tras reconexión.");
+                                this.sinConexionCantando = false;
+                            }
+                        }
+                        else if (!this.reproduciendo && !this.noRequiereDescarga && (this.network.type == "wifi" || !this.soloWifi) && this.sinConexionCantando) {
+                            this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
+                        }
+                    }
+                    else if (this.reproduciendo && !this.noRequiereDescarga && this.network.type != "wifi" &&  this.soloWifi){
+                        this.reproductor.guardaPos(this._configuracion);
+                        this.reproductor.stop();
+                        this.dialogs.alert("Se ha desconectado de la red WIFI. Ha configurado que sin WIFI no quiere reproducir.", 'Super - Gurú');
+                    }
+                },
+                err => {
+                    console.error('[REPRODUCTOR.ngOnInit] Error en onDisconnect: '  + err.message)
+                }
+            )
+            /*
             this.network.onDisconnect().subscribe(
                 data => {
                     console.log('[REPRODUCTOR.ngOnInit] Se ha producido un corte de conexión');
                     if (this.esIOS){
-                        console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
+                        console.log('[REPRODUCTOR.ngOnInit] onDisconnect - Estoy en iOS');
                         console.log('[REPRODUCTOR.ngOnInit] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga);
                         if (this.reproduciendo && !this.noRequiereDescarga) {
                             this.sinConexionCantando = this.reproduciendo;
@@ -218,7 +237,7 @@ export class ReproductorPage implements OnDestroy{
             
             this.network.onConnect().subscribe(
                 data => {
-                    console.log('[REPRODUCTOR.ngOnInit] Se ha producido una reconexión');
+                    console.log('[REPRODUCTOR.ngOnInit] onConnect - Se ha producido una reconexión');
                     if (this.esIOS){
                         console.log('[REPRODUCTOR.ngOnInit] Estoy en iOS');
                         if (this.sinConexionCantando){
@@ -236,6 +255,7 @@ export class ReproductorPage implements OnDestroy{
                         }
                     }
                     else { // Android
+                        console.log('[REPRODUCTOR.ngOnInit] onConnect - Considera que estoy en Android' + this.network.type + ' - '+ this.soloWifi + ' - '+ this.reproduciendo + ' - ' +this.noRequiereDescarga );
                         if (this.network.type != "wifi" && 
                             this.soloWifi && 
                             this.reproduciendo && 
@@ -249,7 +269,21 @@ export class ReproductorPage implements OnDestroy{
                 err => {
                     console.error('[REPRODUCTOR.ngOnInit] Error en onConnect: '  + err.message)
                 }
-            );
+            );*/
+            this.episodiosService.damePuntosEpisodio(this.episodio).subscribe(
+                data => {
+                    this.detallesCapitulo = data.response.items;
+                    if (this.detallesCapitulo.length > 0) {
+                        this.noHayPuntos = false;
+                    }
+                    else{
+                        this.noHayPuntos = true;
+                    }
+                },
+                error => {
+                    console.error("[LISTA-PUNTOS-CAP.constructor] Error " + JSON.stringify(error));
+                }
+            )
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
@@ -279,6 +313,7 @@ export class ReproductorPage implements OnDestroy{
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
         this.timer = this.timerVigilaEnVivo = 0;
+        this.chngDetector.detach();
         this.events.unsubscribe("reproduccion:status", (()=> {}));
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
@@ -367,7 +402,7 @@ export class ReproductorPage implements OnDestroy{
                         break;
                 }
             },
-            (error) => {console.log("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")});
+            (error) => {console.error("[REPRODUCTOR.ionViewDidLoad] Error en valor recibido desde music-controls")});
             this.mscControl.listen();
         }
     }
@@ -395,7 +430,7 @@ export class ReproductorPage implements OnDestroy{
                 }
             },
             error => {
-                console.log("[REPRODUCTOR.gatoSchrodinger] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
+                console.error("[REPRODUCTOR.gatoSchrodinger] Error revisando si el capítulo " + this.episodio + " sigue estando vivo. Posible error de conexión.");
                 this.corteEnDescarga = true; //Si tengo problemas de conexión... true.
                 clearInterval(this.timerVigilaEnVivo);
                 //console.log ("[REPRODUCTOR.gatoSchrodinger] corte en descarga true");
@@ -488,7 +523,8 @@ export class ReproductorPage implements OnDestroy{
         if (!this.enVivo){
             console.log ("[REPRODUCTOR.iniciaContadorRep] Entrando");
             this.timer = setInterval(() => {
-                this.reproductor.getCurrentPosition()
+                if (this.timer > 0) { // Esto no debería hacer falta, pero aunque haga un clearInterval no me hace demasiado caso :-(
+                    this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
                         //console.log ("[REPRODUCTOR.iniciaContadorRep] this.posicionRep: " + this.posicionRep + " this.totDurPlay " + this.totDurPlay);
@@ -500,12 +536,15 @@ export class ReproductorPage implements OnDestroy{
                         }
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
                         if (!this.enVivo){ // No hay nada que refrescar en la pantalla si estamos en vivo. Pero me interesa el dato.
-                            this.chngDetector.detectChanges();
+                            if (!this.chngDetector['destroyed']) {
+                                this.chngDetector.detectChanges();
+                            }
                         }
                     })
                     .catch ((error) => {
                         console.error("[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: " + error);
                     });
+                }
             }, 1000);
         }
     }
@@ -739,6 +778,31 @@ export class ReproductorPage implements OnDestroy{
         return true;
     }
 */
+
+    presentContactModal() {
+        if (!this.noHayPuntos){
+            let listadoPosiciones = this.modalCtrl.create(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
+            listadoPosiciones.onDidDismiss(datos =>{
+                this.msgDescarga(datos.descripcion);
+                if (datos.posicion != 0){
+                    if (this.reproductor.dameStatusStop() == this.reproductor.dameStatus()){
+                        this._configuracion.setTimeRep(this.episodio, Number(datos.posicion));
+                        this.playPause();
+                    }
+                    else {
+                        if (this.reproductor.dameStatusPause() == this.reproductor.dameStatus()){
+                            this.playPause();
+                        }
+                        this.player.seekTo(datos.posicion);
+                    }
+                }
+            });
+            listadoPosiciones.present();
+        }
+        else {
+            this.msgDescarga("Este capítulo no tiene divisiones.")
+        }
+    }
 
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({

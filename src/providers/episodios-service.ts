@@ -205,6 +205,12 @@ export class EpisodiosService {
         });
         return (promesa);
     }
+
+    damePuntosEpisodio (episodio: string) {
+        console.log("[EPISODIOS-SERVICE.damePuntosEpisodio] Me preguntan hay puntos en el episodio  " + episodio);
+        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio+'/chapters').map(res => res.json());
+        return episodiosJSON;
+    }
     
 }
 

@@ -1,0 +1,22 @@
+<ion-content>
+    <ion-list>
+        <ion-card *ngFor="let item of capitulo" text-wrap>
+            <ion-row (click)="cierra(item.starts_at, item.title)">
+                <ion-col col-4>
+                    <div id="imagenloc" *ngIf="item.image_url==null">
+                        <img src="https://pbs.twimg.com/media/DF0ZJNvW0AEX6d8.jpg">
+                    </div>
+                    <div id="imagen"  *ngIf="item.image_url!=null">
+                        <img [src]="item.image_url" />
+                    </div>
+                </ion-col>
+                <ion-col col-8>
+                    <div class="texto">
+                        <h3>{{ item.title}}</h3>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-card>
+    </ion-list>
+
+</ion-content>

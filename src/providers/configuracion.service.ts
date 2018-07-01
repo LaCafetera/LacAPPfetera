@@ -118,7 +118,7 @@ export class ConfiguracionService {
         if (cap == null || pos == null){
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No puedo guardar un valor nulo")
         }
-        else if (cap.indexOf('str')!= -1){
+        else if (cap.toString().indexOf("str")!= -1){ // El toString es porque si me llega un número no se toma en serio que sea una cadena... :-\
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No debo guardar la posición para un capítulo en vivo")
         }
         else {

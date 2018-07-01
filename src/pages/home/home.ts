@@ -54,7 +54,7 @@ export class HomePage implements OnDestroy, OnInit {
                 public platform: Platform,
                 private network: Network,
                 private chngDetector: ChangeDetectorRef,
-                private episodiosGuardados: EpisodiosGuardadosService				) {
+                private episodiosGuardados: EpisodiosGuardadosService) {
         this.items = new Array();
         events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
@@ -105,6 +105,12 @@ export class HomePage implements OnDestroy, OnInit {
     ngOnInit() {
         this.platform.ready().then(() => {
             this.compruebaConexion();
+            
+            this.backgroundMode.setDefaults({
+                title: "La cAPPfetera",
+                text: "Bienvenido al bosque de Sherwood",
+                icon: 'icon.png'
+            });
             this.backgroundMode.enable();
             console.log('[HOME.ngOnInit] Background activado');
         })
