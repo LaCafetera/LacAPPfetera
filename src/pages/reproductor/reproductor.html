@@ -10,7 +10,7 @@
       <ion-title>La cAPPfetera</ion-title>
 
       <ion-buttons end>
-        <button ion-button right icon-only (click)="presentContactModal()" [outline]="noHayPuntos">  <!--muestraDetalle($event)"-->
+        <button ion-button right icon-only (click)="listaContenido()" *ngIf="!noHayPuntos">  <!--muestraDetalle($event)"-->
           <ion-icon name='cafe'></ion-icon>
         </button>
       </ion-buttons>
@@ -70,7 +70,8 @@
               <ion-label range-left>{{posicionRepStr}}</ion-label>
             </div>
             <div id="tiempo-falta">
-              <ion-label range-right>{{tamanyoStr}}</ion-label>
+              <!--ion-label range-right>{{tamanyoStr}}</ion-label-->
+              <ion-label range-right>{{ totDurPlay | formateaTiempo }}</ion-label>
             </div>
           </div>
 

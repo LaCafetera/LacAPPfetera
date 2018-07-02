@@ -112,6 +112,14 @@ export class HomePage implements OnDestroy, OnInit {
                 icon: 'icon.png'
             });
             this.backgroundMode.enable();
+            this.backgroundMode.on('activate').subscribe(
+            data => {
+                console.log('[HOME.ngOnInit] Background on: ' + JSON.stringify(data));
+                this.backgroundMode.disableWebViewOptimizations(); 
+            },
+            err => {
+                console.error('[HOME.ngOnInit] Background on error: ' + JSON.stringify(err));
+            });
             console.log('[HOME.ngOnInit] Background activado');
         })
         .catch((error)=>{

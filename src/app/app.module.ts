@@ -49,6 +49,7 @@ import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
 import { muestraHashtagPipe } from './muestraHashtag.pipe'
 import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
 import { formateaFechaPipe } from './formateaFecha.pipe'
+import { formateaTiempoPipe } from './formateaTiempo.pipe'
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { formateaFechaPipe } from './formateaFecha.pipe'
     muestraHashtagPipe,
     eliminaHashtagPipe,
     formateaFechaPipe,
+    formateaTiempoPipe,
     InfoUsuChatPage,
     InfoUsuarioPage,
     MapaCafeteroPage,

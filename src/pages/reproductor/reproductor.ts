@@ -779,18 +779,20 @@ export class ReproductorPage implements OnInit, OnDestroy{
     }
 */
 
-    presentContactModal() {
+    listaContenido() {
         if (!this.noHayPuntos){
             let listadoPosiciones = this.modalCtrl.create(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
             listadoPosiciones.onDidDismiss(datos =>{
                 this.msgDescarga(datos.descripcion);
+                let statusActual = this.reproductor.dameStatus();
                 if (datos.posicion != 0){
-                    if (this.reproductor.dameStatusStop() == this.reproductor.dameStatus()){
+                    console.log("[REPRODUCTOR.presentContaactModal] El estado de la reproducción es: " + statusActual);
+                    if (this.reproductor.dameStatusStop() == statusActual || statusActual === undefined){
                         this._configuracion.setTimeRep(this.episodio, Number(datos.posicion));
                         this.playPause();
                     }
                     else {
-                        if (this.reproductor.dameStatusPause() == this.reproductor.dameStatus()){
+                        if (this.reproductor.dameStatusPause() == statusActual){
                             this.playPause();
                         }
                         this.player.seekTo(datos.posicion);
