@@ -114,12 +114,47 @@ export class HomePage implements OnDestroy, OnInit {
             this.backgroundMode.enable();
             this.backgroundMode.on('activate').subscribe(
             data => {
-                console.log('[HOME.ngOnInit] Background on: ' + JSON.stringify(data));
+                console.log('[HOME.ngOnInit] Background activate: ' + JSON.stringify(data));
                 this.backgroundMode.disableWebViewOptimizations(); 
             },
             err => {
-                console.error('[HOME.ngOnInit] Background on error: ' + JSON.stringify(err));
+                console.error('[HOME.ngOnInit] Background activate error: ' + JSON.stringify(err));
             });
+
+            
+            this.backgroundMode.on('enable').subscribe(
+                data => {
+                    console.log('[HOME.ngOnInit] Background enable: ' + JSON.stringify(data));
+                },
+                err => {
+                    console.error('[HOME.ngOnInit] Background enable error: ' + JSON.stringify(err));
+                });
+                
+                this.backgroundMode.on('disable').subscribe(
+                data => {
+                    console.log('[HOME.ngOnInit] Background disable: ' + JSON.stringify(data));
+                },
+                err => {
+                    console.error('[HOME.ngOnInit] Background disable error: ' + JSON.stringify(err));
+                });
+                
+                this.backgroundMode.on('deactivate').subscribe(
+                data => {
+                    console.log('[HOME.ngOnInit] Background deactivate : ' + JSON.stringify(data));
+                },
+                err => {
+                    console.error('[HOME.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
+                });
+                
+                this.backgroundMode.on('failure').subscribe(
+                data => {
+                    console.log('[HOME.ngOnInit] Background failure : ' + JSON.stringify(data));
+                },
+                err => {
+                    console.error('[HOME.ngOnInit] Background failure  error: ' + JSON.stringify(err));
+                });
+
+
             console.log('[HOME.ngOnInit] Background activado');
         })
         .catch((error)=>{

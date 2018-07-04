@@ -4,6 +4,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
 import { MusicControls } from '@ionic-native/music-controls';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -22,7 +23,7 @@ import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player, BackgroundMode]
 })
 export class ReproductorPage implements OnInit, OnDestroy{
 
@@ -100,7 +101,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private network: Network,
                 private player: Player,
                 private chngDetector: ChangeDetectorRef,
-                public modalCtrl: ModalController) {
+                public modalCtrl: ModalController,
+                private backgroundMode: BackgroundMode,
+                private musicControls: MusicControls) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -145,9 +148,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     */
 
-
     ngOnInit() {
-    console.log ('[app.component.ngOnInit]');
+        console.log ('[app.component.ngOnInit]');
         this.platform.ready().then(() => {
             this.esIOS = this.platform.is('ios');
             this._configuracion.getTwitteado(this.episodio)
@@ -174,7 +176,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
             if (this.mscControl == null) {
                 console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
-                this.mscControl = new MusicControls ();
+                this.mscControl = this.musicControls; //new MusicControls ();
                 this.creaControlEnNotificaciones (false);
             }
 
@@ -284,10 +286,22 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     console.error("[LISTA-PUNTOS-CAP.constructor] Error " + JSON.stringify(error));
                 }
             )
+            
+            this.backgroundMode.enable();
+            this.backgroundMode.on('activate').subscribe(
+            data => {
+                console.log('[REPRODUCTOR.ngOnInit] Background on: ' + JSON.stringify(data));
+                this.backgroundMode.disableWebViewOptimizations(); 
+            },
+            err => {
+                console.error('[REPRODUCTOR.ngOnInit] Background on error: ' + JSON.stringify(err));
+            });
+            console.log('[REPRODUCTOR.ngOnInit] Background activado');
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   }
+        });   
+    }
 
     ionViewDidLoad() {
         this._configuracion.getWIFI()
@@ -315,6 +329,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.timer = this.timerVigilaEnVivo = 0;
         this.chngDetector.detach();
         this.events.unsubscribe("reproduccion:status", (()=> {}));
+        this.backgroundMode.disable();
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
@@ -322,7 +337,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     creaControlEnNotificaciones (destruir: boolean){
         if (destruir) {
-            this.mscControl.destroy();
+            this.mscControl.destroy()
+            .then((data) => {console.log("[REPRODUCTOR.creaControlEnNotificaciones] Control remoto destruido OK " + JSON.stringify(data)) })
+            .catch((error) => {console.error("[REPRODUCTOR.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO " + error) });
             this.creaControlEnNotificaciones (false);
         }
         else {

@@ -3,12 +3,13 @@ import { File } from '@ionic-native/file';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
 import { Events, ToastController } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 //declare var cordova: any;
 
 @Injectable()
 @Component({
-    providers: [File, AndroidExoplayer]
+    providers: [File, AndroidExoplayer, BackgroundMode]
 })
 
 export class PlayerAndroid implements OnDestroy {
@@ -77,7 +78,8 @@ export class PlayerAndroid implements OnDestroy {
                 private file: File, 
                 public toastCtrl: ToastController, 
                 private configuracion: ConfiguracionService, 
-                public events: Events){
+                public events: Events,
+                private backgroundMode: BackgroundMode){
 
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
@@ -112,6 +114,7 @@ export class PlayerAndroid implements OnDestroy {
         if (interruptor) {
             if (this.timerVigila == 0){
                 this.timerVigila = setInterval(() =>{
+                    this.mostrarhora();
                     this.actualizaStatus();
                 }, 500);
             }
@@ -122,6 +125,14 @@ export class PlayerAndroid implements OnDestroy {
         }
     }
     
+
+
+    mostrarhora(){
+        var f=new Date();
+        let cad=f.getHours()+":"+f.getMinutes()+":"+f.getSeconds();
+        console.log ("REPRODUCTOR.mostrarhora: " + cad);
+        } 
+
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
@@ -169,8 +180,10 @@ export class PlayerAndroid implements OnDestroy {
                     if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
                         if (this.estado == this.estadoPlayer.MEDIA_STARTING || this.estado == this.estadoPlayer.MEDIA_RUNNING) {
                             if (this.porcentajeBuffer < 100){
-                                this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                                 console.error("[PLAYERANDROID.actualizaStatus] Parece que se ha producido un corte. Relanzo. " + this.ultimaPosicion + " - " + this.porcentajeBuffer);
+                                console.error("[PLAYERANDROID.actualizaStatus] Pasamos al frente");
+                                this.backgroundMode.moveToForeground();
+                                this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                                 this.guardaPos(this.configuracion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Guardada posición. ");
                                 //this.androidExoplayer.seekTo(Number(this.ultimaPosicion));

@@ -21,7 +21,7 @@
     "@angular/platform-browser": "5.0.3",
     "@angular/platform-browser-dynamic": "5.0.3",
     "@ionic-native/android-exoplayer": "^4.7.0",
-    "@ionic-native/background-mode": "^4.7.0",
+    "@ionic-native/background-mode": "^4.9.0",
     "@ionic-native/contacts": "^4.7.0",
     "@ionic-native/core": "4.4.0",
     "@ionic-native/deeplinks": "^4.7.0",
