@@ -1,43 +1,39 @@
 <ion-header>
-
     <ion-navbar>
       <ion-title>
-            Contenido del programa
+          Contenido del programa
       </ion-title>
-        <ion-buttons start>
-            <button ion-button (click)="cancelar()">
-                <ion-icon name="close"></ion-icon>
-            </button>
-        </ion-buttons>
+      <ion-buttons start>
+          <button ion-button right icon-only clear (click)="cancelar()">
+              <ion-icon name="close"></ion-icon>
+          </button>
+      </ion-buttons>
     </ion-navbar>
-
 </ion-header>
 
-
-<ion-content>
+<ion-content main>
     <ion-list>
         <ion-card *ngFor="let item of capitulo" text-wrap>
             <ion-row (click)="cierra(item.starts_at, item.title)">
-                <ion-col col-4>
-                    <div id="imagenloc" *ngIf="item.image_url==null">
-                        <img src="https://pbs.twimg.com/media/DF0ZJNvW0AEX6d8.jpg">
-                    </div>
-                    <div id="imagen"  *ngIf="item.image_url!=null">
-                        <img [src]="item.image_url" />
-                    </div>
-                </ion-col>
-                <ion-col col-8>
+              <ion-col col-4>
+                  <div id="imagenloc" *ngIf="item.image_url==null">
+                      <img src="https://pbs.twimg.com/media/DF0ZJNvW0AEX6d8.jpg">
+                  </div>
+                  <div id="imagen"  *ngIf="item.image_url!=null">
+                      <img [src]="item.image_url" />
+                  </div>
+              </ion-col>
+              <ion-col col-8>
+                  <ion-row>
+                    <h2>{{ item.starts_at | formateaTiempo }}</h2>
+                  </ion-row>
+                  <ion-row>
                     <div class="texto">
                         <h3>{{ item.title}}</h3>
                     </div>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col col-5>
-                    <p>{{ item.starts_at | formateaTiempo }}</p>
-                </ion-col>
+                  </ion-row>
+              </ion-col>
             </ion-row>
         </ion-card>
     </ion-list>
-
 </ion-content>

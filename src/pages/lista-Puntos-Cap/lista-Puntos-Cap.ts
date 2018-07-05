@@ -3,7 +3,7 @@ import { ViewController , NavParams } from 'ionic-angular';
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'lista-Puntos-Cap',
+    selector: 'page-lista-Puntos-Cap',
     templateUrl: 'lista-Puntos-Cap.html'}
 )
 export class listaPuntosCap {
@@ -28,7 +28,7 @@ export class listaPuntosCap {
         }
         return (ret.substr(0,2));
     }
-    
+
     dameTiempo(totSegundos){
         let horas = Math.floor(totSegundos / 3600);
         let minutos = Math.floor((totSegundos % 3600) / 60);

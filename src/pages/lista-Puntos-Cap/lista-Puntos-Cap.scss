@@ -1,3 +1,18 @@
-page-mapa-cafetero {
+page-lista-Puntos-Cap {
 
+  ion-list {
+    padding-top: 2px;
+
+    .card {
+      h2 {
+        font-weight: bold;
+      }
+      h3 {
+        padding-bottom: 0px;
+      }
+      .texto{
+          padding: 0;
+      }
+    }
+  }
 }
