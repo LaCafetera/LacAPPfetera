@@ -112,5 +112,5 @@
     </plugin>
     <plugin name="cordova-plugin-exoplayer" spec="^2.5.4" />
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
-    <engine name="android" spec="~6.4.0" />
+    <engine name="android" spec="6.4.0" />
 </widget>

@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ChangeDetectorRef } from "@angular/core";
 
 import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
-import { BackgroundMode } from '@ionic-native/background-mode';
 import { MusicControls } from '@ionic-native/music-controls';
 import { Network } from '@ionic-native/network';
 
@@ -19,7 +18,7 @@ import { Player } from "../../app/player";
 @Component({
   selector: "page-home",
   templateUrl: "home.html",
-  providers: [EpisodiosService, BackgroundMode, Dialogs, Network/*, ConfiguracionService*/, EpisodiosGuardadosService]
+  providers: [EpisodiosService,  Dialogs, Network/*, ConfiguracionService*/, EpisodiosGuardadosService]
 })
 
 export class HomePage implements OnDestroy, OnInit {
@@ -47,7 +46,6 @@ export class HomePage implements OnDestroy, OnInit {
                 private episodiosService: EpisodiosService,
                 public events: Events,
                 public menuCtrl: MenuController,
-                private backgroundMode: BackgroundMode,
                 private dialogs: Dialogs,
                 private _configuracion: ConfiguracionService,
                 public popoverCtrl: PopoverController,
@@ -74,42 +72,20 @@ export class HomePage implements OnDestroy, OnInit {
             console.log('[HOME.constructor] Recibido mensaje de que ha terminado cap�tulo en vivo y en directo. Ahora es ' + JSON.stringify( nuevoEstado ));
             this.items[0].objeto.type= nuevoEstado;
         });
-        this.backgroundMode.setDefaults({title: "La cAPPfetera",
-                                  ticker: "Te est�s tomando un cafetito de actualidad",
-                                  text: "Bienvenido al bosque de Sherwood",
-                                  silent: true});
         events.subscribe("fechasAbsolutas:status", (dato) => {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas a ' + dato.valor);
             this.mostrarFechasAbsolutas = dato.valor;
             this.chngDetector.markForCheck();
         });
-        /*this.platform.registerBackButtonAction(
-            ()=>{
-                this.mscControl.destroy();
-                this.platform.exitApp();
-            }, 0);*/
-/*        this.platform.pause.subscribe(()=>{
-            if (this.reproductor != null){
-                this.reproductor.release(_configuracion);
-                console.log('[HOME.constructor] Nos han mandado a dormir.');
-            }
-        });*/
     }
-
-    // ionViewDidLoad() {
-    //     //console.log("[HOME.ionViewDidLoad] Entrando" );
-    //     // BackgroundMode.enable();
-    //     this.compruebaConexion();
-    // }
 
     ngOnInit() {
         this.platform.ready().then(() => {
             this.compruebaConexion();
-            
+            /*
             this.backgroundMode.setDefaults({
                 title: "La cAPPfetera",
                 text: "Bienvenido al bosque de Sherwood",
-                icon: 'icon.png'
             });
             this.backgroundMode.enable();
             this.backgroundMode.on('activate').subscribe(
@@ -123,39 +99,37 @@ export class HomePage implements OnDestroy, OnInit {
 
             
             this.backgroundMode.on('enable').subscribe(
-                data => {
-                    console.log('[HOME.ngOnInit] Background enable: ' + JSON.stringify(data));
-                },
-                err => {
-                    console.error('[HOME.ngOnInit] Background enable error: ' + JSON.stringify(err));
-                });
+            data => {
+                console.log('[HOME.ngOnInit] Background enable: ' + JSON.stringify(data));
+            },
+            err => {
+                console.error('[HOME.ngOnInit] Background enable error: ' + JSON.stringify(err));
+            });
                 
-                this.backgroundMode.on('disable').subscribe(
-                data => {
-                    console.log('[HOME.ngOnInit] Background disable: ' + JSON.stringify(data));
-                },
-                err => {
-                    console.error('[HOME.ngOnInit] Background disable error: ' + JSON.stringify(err));
-                });
+            this.backgroundMode.on('disable').subscribe(
+            data => {
+                console.log('[HOME.ngOnInit] Background disable: ' + JSON.stringify(data));
+            },
+            err => {
+                console.error('[HOME.ngOnInit] Background disable error: ' + JSON.stringify(err));
+            });
                 
-                this.backgroundMode.on('deactivate').subscribe(
-                data => {
-                    console.log('[HOME.ngOnInit] Background deactivate : ' + JSON.stringify(data));
-                },
-                err => {
-                    console.error('[HOME.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
-                });
-                
-                this.backgroundMode.on('failure').subscribe(
-                data => {
-                    console.log('[HOME.ngOnInit] Background failure : ' + JSON.stringify(data));
-                },
-                err => {
-                    console.error('[HOME.ngOnInit] Background failure  error: ' + JSON.stringify(err));
-                });
-
-
-            console.log('[HOME.ngOnInit] Background activado');
+            this.backgroundMode.on('deactivate').subscribe(
+            data => {
+                console.log('[HOME.ngOnInit] Background deactivate : ' + JSON.stringify(data));
+            },
+            err => {
+                console.error('[HOME.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
+            });
+            
+            this.backgroundMode.on('failure').subscribe(
+            data => {
+                console.log('[HOME.ngOnInit] Background failure : ' + JSON.stringify(data));
+            },
+            err => {
+                console.error('[HOME.ngOnInit] Background failure  error: ' + JSON.stringify(err));
+            });
+            console.log('[HOME.ngOnInit] Background activado');*/
         })
         .catch((error)=>{
             console.error('[HOME.ngOnInit] Error:' + JSON.stringify(error));
@@ -172,7 +146,7 @@ export class HomePage implements OnDestroy, OnInit {
         this.events.unsubscribe("capitulo:fenecido");
         this.mscControl.destroy(); // <-- Revisar esto que no funciona.
         this.reproductor.release(this._configuracion);
-        this.backgroundMode.disable();
+        //this.backgroundMode.disable();
     }
 
     compruebaConexion (){

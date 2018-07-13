@@ -182,7 +182,7 @@ export class PlayerAndroid implements OnDestroy {
                             if (this.porcentajeBuffer < 100){
                                 console.error("[PLAYERANDROID.actualizaStatus] Parece que se ha producido un corte. Relanzo. " + this.ultimaPosicion + " - " + this.porcentajeBuffer);
                                 console.error("[PLAYERANDROID.actualizaStatus] Pasamos al frente");
-                                this.backgroundMode.moveToForeground();
+                                this.backgroundMode.wakeUp();//moveToForeground();
                                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                                 this.guardaPos(this.configuracion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Guardada posición. ");
