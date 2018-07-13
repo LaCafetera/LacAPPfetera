@@ -35,6 +35,9 @@
         </div>
 
         <div id="imagen-cap">
+          <ion-fab center right *ngIf="hayEnlaceIntervalo">
+            <button ion-fab mini (click)="lanzaWeb()"><ion-icon name="globe"></ion-icon></button>
+          </ion-fab>
           <!--ion-img src={{imagen}}></ion-img-->
           <img [src]="imagen">
         </div>

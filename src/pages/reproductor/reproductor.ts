@@ -68,7 +68,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
     episodioLike: boolean = false;
     colorLike: string = "";
     noHayPuntos: boolean = false;
-    detallesCapitulo: string[];
+    detallesCapitulo: Array<any>;
+    detalleIntervalo: number = 0;
+    hayEnlaceIntervalo: boolean = false;
 
     pagChat: any = ChatPage;
 
@@ -467,6 +469,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                                 this.chngDetector.detectChanges();
                             }
                         }
+                        this.actualizaDetalle(position);
                     })
                     .catch ((error) => {
                         console.error("[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: " + error);
@@ -761,6 +764,48 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.reproductor.stop();
             this.dialogs.alert("Se ha desconectado de la red WIFI. Ha configurado que sin WIFI no quiere reproducir.", 'Super - Gurú');
         }
+    }
+
+    actualizaDetalle(position: number){
+    //detallesCapitulo: string[];
+    //detalleIntervalo: number = 0;
+        let i = 0;
+        let encontrado: boolean = false;
+        if (this.detallesCapitulo.length > 0){
+            do {
+                if ( i == 0  && this.detallesCapitulo[i].starts_at < (position * 1000)){
+                    if (this.detallesCapitulo.length > 1 ){
+                        if (this.detallesCapitulo[i+1].starts_at > (position * 1000) && (i+1) != this.detalleIntervalo){
+                            encontrado = true;
+                        }
+                    }
+                    else if (this.detalleIntervalo != 1){
+                        encontrado = true;
+                    }
+                }
+                if ( (i + 1) < this.detallesCapitulo.length  && 
+                     this.detallesCapitulo[i].starts_at < (position * 1000) && 
+                     this.detallesCapitulo[i+1].starts_at > (position * 1000) &&
+                     this.detalleIntervalo != (i + 1)){
+                    encontrado = true;                    
+                }
+                if ( (i + 1) == this.detallesCapitulo.length  && 
+                    this.detallesCapitulo[i].starts_at < (position * 1000) &&
+                    this.detalleIntervalo != (i + 1)){
+                    encontrado = true;                    
+                }
+                if ( encontrado ){
+                    this.imagen = (this.detallesCapitulo[i].image_url != null ? this.detallesCapitulo[i].image_url : this.capItem.image_url );
+                    this.hayEnlaceIntervalo = (this.detallesCapitulo[i].external_url != null);
+                    this.detalleIntervalo = ++i;
+                    encontrado = true;
+                };
+            } while (++i < this.detallesCapitulo.length && !encontrado);
+        };
+    };
+
+    lanzaWeb(){
+        window.open(this.detallesCapitulo[this.detalleIntervalo-1].external_url, '_system', 'location=no,clearsessioncache=yes,clearcache=yes');
     }
 
     msgDescarga  (mensaje: string) {

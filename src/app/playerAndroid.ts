@@ -114,7 +114,7 @@ export class PlayerAndroid implements OnDestroy {
         if (interruptor) {
             if (this.timerVigila == 0){
                 this.timerVigila = setInterval(() =>{
-                    this.mostrarhora();
+                    //this.mostrarhora();
                     this.actualizaStatus();
                 }, 500);
             }
@@ -130,13 +130,13 @@ export class PlayerAndroid implements OnDestroy {
     mostrarhora(){
         var f=new Date();
         let cad=f.getHours()+":"+f.getMinutes()+":"+f.getSeconds();
-        console.log ("REPRODUCTOR.mostrarhora: " + cad);
+        console.log ("PLAYERANDROID.mostrarhora: " + cad);
         } 
 
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
+            //console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
             this.estadoExo=datos;
         })
         .catch ((err)=> {
