@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
- 
+
 
 import 'rxjs/add/operator/map';
 
@@ -28,7 +28,7 @@ export class EpisodiosService {
 
         let direccion = 'https://api.spreaker.com/v2/shows/1060718/episodes?limit='+numCaps;
         if (ultimocap != null) {
-            console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );    
+            console.log("[EPISODIOS-SERVICE.dameEpisodios] Solicitados audios más allá del "+ ultimocap  );
             direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
         }
         console.log("[EPISODIOS-SERVICE.dameEpisodios] "+ direccion  );
@@ -56,7 +56,7 @@ export class EpisodiosService {
                                     if (token!= null) {
                                         this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
                                         .subscribe (
-                                            espureo=>{ 
+                                            espureo=>{
                                             //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
                                                 observer.next ({objeto:data.response.episode,
                                                                 like: true});
@@ -111,7 +111,7 @@ export class EpisodiosService {
         headers.append ('Authorization', 'Bearer ' + token);
         return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages?text='+comentario, null, {headers: headers}).map(res => res.json());
     }
-	
+
 	borraComentarios  (episodio_id:string, usuario: string, token: string, message_id: string){
         console.log("[EPISODIOS-SERVICE.borraComentarios] Solicitado borrar el comentario " + message_id + "para el episodio "+ episodio_id + " con token " + token);
         let headers = new Headers();
@@ -211,16 +211,16 @@ export class EpisodiosService {
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio+'/chapters').map(res => res.json());
         return episodiosJSON;
     }
-    
+
 }
 
 
 // consultas a revisar cuando esté conectado.
 // https://api.spreaker.com/v2/sync/users/7985950/notifications
-// https://api.spreaker.com/v2/sync/users/7985950/push-notifications 
-//  https://api.spreaker.com/v2/sync/users/7985950/favorites 
+// https://api.spreaker.com/v2/sync/users/7985950/push-notifications
+//  https://api.spreaker.com/v2/sync/users/7985950/favorites
 //  https://api.spreaker.com/v2/sync/users/7985950/bookmarks
-//  https://api.spreaker.com/v2/sync/users/7985950/likes 
+//  https://api.spreaker.com/v2/sync/users/7985950/likes
 //  https://api.spreaker.com/v2/sync/users/7985950/plays
 
 //https://api.spreaker.com/v2/episodes/:episodio/likes?limit=5--> Esto devuelve datos de personas que han dado a like al episodio

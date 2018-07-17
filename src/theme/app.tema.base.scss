@@ -350,8 +350,22 @@
 
   // ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
   page-lista-Puntos-Cap {
-    ion-icon {
-      color: $base-primary;
+    .bar-button {
+      color: green;
+    }
+    ion-list {
+
+      .card {
+        h2 {
+          color: $base-primary;
+        }
+        h3 {
+          color: $base-primary;
+        }
+        .texto{
+          color: $base-primary;
+        }
+      }
     }
   }
 
