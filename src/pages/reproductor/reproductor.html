@@ -42,6 +42,8 @@
           <img [src]="imagen">
         </div>
 
+          <button ion-fab mini (click)="lanzaWeb()"  *ngIf="hayEnlaceIntervalo" ><ion-icon name="globe"></ion-icon></button>
+
         <ion-card-content>
 
           <ion-row id="botonera" no-padding center *ngIf="!enVivo">

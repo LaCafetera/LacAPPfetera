@@ -48,7 +48,7 @@ export class MyApp implements OnDestroy {
               private _deepLink: Deeplinks,
               public menuCtrl: MenuController,
               private backgroundMode: BackgroundMode,
-              private network: Network,
+              public network: Network,
               public events: Events) {
 
     this.availableThemes = this._configuracion.availableThemes;
@@ -132,54 +132,56 @@ export class MyApp implements OnDestroy {
         .then((dato)=>this.fechasAbsolutas = dato==true)
         .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
+      
+        if (!this._platform.is("ios")){
+          this.backgroundMode.setDefaults({
+            title: "La cAPPfetera",
+            text: "Bienvenido al bosque de Sherwood",
+          });
+          this.backgroundMode.enable();
+          this.backgroundMode.on('activate').subscribe(
+          data => {
+              console.log('[app.component.ngOnInit] Background activate: ' + JSON.stringify(data));
+              this.backgroundMode.disableWebViewOptimizations(); 
+          },
+          err => {
+              console.error('[app.component.ngOnInit] Background activate error: ' + JSON.stringify(err));
+          });
 
-        this.backgroundMode.setDefaults({
-          title: "La cAPPfetera",
-          text: "Bienvenido al bosque de Sherwood",
-        });
-        this.backgroundMode.enable();
-        this.backgroundMode.on('activate').subscribe(
-        data => {
-            console.log('[app.component.ngOnInit] Background activate: ' + JSON.stringify(data));
-            this.backgroundMode.disableWebViewOptimizations(); 
-        },
-        err => {
-            console.error('[app.component.ngOnInit] Background activate error: ' + JSON.stringify(err));
-        });
-
-        
-        this.backgroundMode.on('enable').subscribe(
-        data => {
-            console.log('[app.component.ngOnInit] Background enable: ' + JSON.stringify(data));
-        },
-        err => {
-            console.error('[app.component.ngOnInit] Background enable error: ' + JSON.stringify(err));
-        });
-            
-        this.backgroundMode.on('disable').subscribe(
-        data => {
-            console.log('[app.component.ngOnInit] Background disable: ' + JSON.stringify(data));
-        },
-        err => {
-            console.error('[app.component.ngOnInit] Background disable error: ' + JSON.stringify(err));
-        });
-            
-        this.backgroundMode.on('deactivate').subscribe(
-        data => {
-            console.log('[app.component.ngOnInit] Background deactivate : ' + JSON.stringify(data));
-        },
-        err => {
-            console.error('[app.component.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
-        });
-        
-        this.backgroundMode.on('failure').subscribe(
-        data => {
-            console.log('[app.component.ngOnInit] Background failure : ' + JSON.stringify(data));
-        },
-        err => {
-            console.error('[app.component.ngOnInit] Background failure  error: ' + JSON.stringify(err));
-        });
-        console.log('[app.component.ngOnInit] Background activado');
+          
+          this.backgroundMode.on('enable').subscribe(
+          data => {
+              console.log('[app.component.ngOnInit] Background enable: ' + JSON.stringify(data));
+          },
+          err => {
+              console.error('[app.component.ngOnInit] Background enable error: ' + JSON.stringify(err));
+          });
+              
+          this.backgroundMode.on('disable').subscribe(
+          data => {
+              console.log('[app.component.ngOnInit] Background disable: ' + JSON.stringify(data));
+          },
+          err => {
+              console.error('[app.component.ngOnInit] Background disable error: ' + JSON.stringify(err));
+          });
+              
+          this.backgroundMode.on('deactivate').subscribe(
+          data => {
+              console.log('[app.component.ngOnInit] Background deactivate : ' + JSON.stringify(data));
+          },
+          err => {
+              console.error('[app.component.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
+          });
+          
+          this.backgroundMode.on('failure').subscribe(
+          data => {
+              console.log('[app.component.ngOnInit] Background failure : ' + JSON.stringify(data));
+          },
+          err => {
+              console.error('[app.component.ngOnInit] Background failure  error: ' + JSON.stringify(err));
+          });
+          console.log('[app.component.ngOnInit] Background activado');
+        }
 
         this.network.onchange().subscribe(
           data=> {
@@ -189,7 +191,7 @@ export class MyApp implements OnDestroy {
           err => {
               console.error('[app.component.ngOnInit] Error en onchange: '  + err.message)
           }
-      )
+        )
 
       })
       .catch((error)=>{
