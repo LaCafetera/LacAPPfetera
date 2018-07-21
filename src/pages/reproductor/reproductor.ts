@@ -104,7 +104,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private player: Player,
                 private chngDetector: ChangeDetectorRef,
                 public modalCtrl: ModalController,
-                private backgroundMode: BackgroundMode,
+                //private backgroundMode: BackgroundMode,
                 private musicControls: MusicControls) {
 
         this.capItem = this.navParams.get('episodio').objeto;
@@ -130,7 +130,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         if (this.reproductor == null) {
             console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
-        }
+        }        
         //console.log("[REPRODUCTOR.ngOnInit] Estatus es :" +  this.reproductor.dameStatusRep());
     }
 
@@ -168,6 +168,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             });
             this.events.subscribe("conexion:status", (conexion) => this.revisaConexion(conexion));
             this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+            this.events.subscribe("posicion:modificado", (posicionObj) => this.cambiaPosicion(posicionObj));
             this.events.subscribe("errorReproduccion:status", (statusRep) => {
                 console.error("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
                 if (!this.stopPulsado) {
@@ -181,6 +182,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
                 this.mscControl = this.musicControls; //new MusicControls ();
                 this.creaControlEnNotificaciones (false);
+            }
+            else {
+                console.log("[REPRODUCTOR.ngOnInit] mscControl != null " + JSON.stringify(this.mscControl));
             }
 
             this.episodiosService.damePuntosEpisodio(this.episodio).subscribe(
@@ -197,7 +201,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     console.error("[LISTA-PUNTOS-CAP.constructor] Error " + JSON.stringify(error));
                 }
             )
-            
+            /*
             this.backgroundMode.enable();
             this.backgroundMode.on('activate').subscribe(
             data => {
@@ -207,7 +211,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             err => {
                 console.error('[REPRODUCTOR.ngOnInit] Background on error: ' + JSON.stringify(err));
             });
-            console.log('[REPRODUCTOR.ngOnInit] Background activado');
+            console.log('[REPRODUCTOR.ngOnInit] Background activado');*/
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
@@ -238,10 +242,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
         this.timer = this.timerVigilaEnVivo = 0;
-        this.chngDetector.detach();
         this.events.unsubscribe("reproduccion:status", (()=> {}));
         this.events.unsubscribe("conexion:status", (()=> {}));
-        this.backgroundMode.disable();
+        //this.backgroundMode.disable();
         this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
@@ -398,8 +401,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
         }
         console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
         this.mscControl.updateIsPlaying(this.reproduciendo);
-        //this.chngDetector.markForCheck();
-        this.chngDetector.detectChanges();
+        this.chngDetector.markForCheck();
+        //this.chngDetector.detectChanges();
     }
 
     parpadeoTiempoRep(iniciar: boolean){
@@ -465,9 +468,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
                         }
                         this.posicionRepStr = this.dameTiempo(Math.round(position));
                         if (!this.enVivo){ // No hay nada que refrescar en la pantalla si estamos en vivo. Pero me interesa el dato.
-                            if (!this.chngDetector['destroyed']) {
+                            //if (!this.chngDetector['destroyed']) {
                                 this.chngDetector.detectChanges();
-                            }
+                            //}
                         }
                         this.actualizaDetalle(position);
                     })
@@ -708,8 +711,29 @@ export class ReproductorPage implements OnInit, OnDestroy{
         return true;
     }
 */
-
     listaContenido() {
+        this.navCtrl.push(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
+    }
+
+    cambiaPosicion(datos: any){
+        this.msgDescarga(datos.descripcion);
+        let statusActual = this.reproductor.dameStatus();
+        if (datos.posicion != 0){
+            console.log("[REPRODUCTOR.presentContaactModal] El estado de la reproducción es: " + statusActual);
+            if (this.reproductor.dameStatusStop() == statusActual || statusActual === undefined){
+                this._configuracion.setTimeRep(this.episodio, Number(datos.posicion));
+                this.playPause();
+            }
+            else {
+                if (this.reproductor.dameStatusPause() == statusActual){
+                    this.playPause();
+                }
+                this.player.seekTo(datos.posicion);
+            }
+        }
+    }
+/*
+    listaContenido_old() {
         if (!this.noHayPuntos){
             let listadoPosiciones = this.modalCtrl.create(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
             listadoPosiciones.onDidDismiss(datos =>{
@@ -735,7 +759,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.msgDescarga("Este capítulo no tiene divisiones.")
         }
     }
-
+*/
     revisaConexion(conexion) {
         console.log('[REPRODUCTOR.revisaConexion] this.network.type ' + this.network.type + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga + ' this.sinConexionCantando ' + this.sinConexionCantando + ' this.esIOS ' + this.esIOS);
         if (this.esIOS){
@@ -772,7 +796,11 @@ export class ReproductorPage implements OnInit, OnDestroy{
         let i = 0;
         let encontrado: boolean = false;
         if (this.detallesCapitulo.length > 0){
-            do {
+            if (this.detallesCapitulo[i].starts_at > (position * 1000)){
+                this.imagen = this.capItem.image_url;
+                this.hayEnlaceIntervalo = false;
+            }
+            else do {
                 if ( i == 0  && this.detallesCapitulo[i].starts_at < (position * 1000)){
                     if (this.detallesCapitulo.length > 1 ){
                         if (this.detallesCapitulo[i+1].starts_at > (position * 1000) && (i+1) != this.detalleIntervalo){

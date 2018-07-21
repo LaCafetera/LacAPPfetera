@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewController , NavParams } from 'ionic-angular';
+import { NavController , NavParams, Events } from 'ionic-angular';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,8 +11,9 @@ export class listaPuntosCap {
     mirable: Observable<any>;
     capitulo: string;
 
-    constructor(public viewCtrl: ViewController,
-                private params: NavParams) {
+    constructor(public navCtrl: NavController,
+                private params: NavParams,
+                public events: Events) {
                     this.capitulo = params.get('listadoPuntos');
     }
 
@@ -37,7 +38,9 @@ export class listaPuntosCap {
     }
 
     cierra(posicion: number, descripcion: string) {
-        this.viewCtrl.dismiss({ 'posicion': posicion, 'descripcion': descripcion });
+        this.events.publish('posicion:modificado', { 'posicion': posicion, 'descripcion': descripcion });
+        this.navCtrl.pop();
+        //this.viewCtrl.dismiss({ 'posicion': posicion, 'descripcion': descripcion });
     }
 
     cancelar() {
