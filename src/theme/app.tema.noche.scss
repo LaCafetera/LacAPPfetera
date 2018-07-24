@@ -126,6 +126,12 @@ page-home {
       box-shadow: 3px 3px 3px $noche-fondoApp;
     }
 
+    ion-fab {
+      button {
+        background-color: $noche-danger;
+      }
+    }
+
     .enVivoTexto {
       border: solid 2px $noche-danger;
       background-color: $noche-danger;
@@ -339,6 +345,25 @@ page-home {
       }
       .button {
         ion-icon {
+          color: $noche-primary;
+        }
+      }
+    }
+  }
+
+  // ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-lista-Puntos-Cap {
+
+    ion-list {
+
+      .card {
+        h2 {
+          color: $noche-primary;
+        }
+        h3 {
+          color: $noche-primary;
+        }
+        .texto{
           color: $noche-primary;
         }
       }

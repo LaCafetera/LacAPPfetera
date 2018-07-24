@@ -135,6 +135,12 @@
       box-shadow: 3px 3px 3px $base-dark;
     }
 
+    ion-fab {
+      button {
+        background-color: $base-danger;
+      }
+    }
+
     .enVivoTexto {
       border: solid 2px $base-danger;
       background-color: $base-danger;
@@ -350,9 +356,7 @@
 
   // ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
   page-lista-Puntos-Cap {
-    .bar-button {
-      color: green;
-    }
+
     ion-list {
 
       .card {

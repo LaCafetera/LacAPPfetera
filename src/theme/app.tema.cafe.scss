@@ -130,6 +130,12 @@ page-home {
       box-shadow: 3px 3px 3px $cafe-dark;
     }
 
+    ion-fab {
+      button {
+        background-color: $cafe-danger;
+      }
+    }
+
     .enVivoTexto {
       border: solid 2px $cafe-danger;
       background-color: $cafe-danger;
@@ -342,6 +348,25 @@ page-home {
       }
       .button {
         ion-icon {
+          color: $cafe-primary;
+        }
+      }
+    }
+  }
+
+  // ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-lista-Puntos-Cap {
+
+    ion-list {
+
+      .card {
+        h2 {
+          color: $cafe-primary;
+        }
+        h3 {
+          color: $cafe-primary;
+        }
+        .texto{
           color: $cafe-primary;
         }
       }

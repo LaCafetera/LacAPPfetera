@@ -41,6 +41,13 @@ page-reproductor {
       width: 50%;
       margin-left: auto;
       margin-right: auto;
+      position: relative;
+
+      ion-fab {
+        position: absolute;
+        bottom: 0px;
+        padding: 0px;
+      }
 
       img {
         /* imagen del capítulo, para proyección de sombra y encaje en caja sup */

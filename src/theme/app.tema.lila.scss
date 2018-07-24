@@ -126,6 +126,12 @@ page-home {
       box-shadow: 3px 3px 3px $lila-dark;
     }
 
+    ion-fab {
+      button {
+        background-color: $lila-danger;
+      }
+    }
+
     .enVivoTexto {
       border: solid 2px $lila-danger;
       background-color: $lila-danger;
@@ -338,6 +344,25 @@ page-home {
       }
       .button {
         ion-icon {
+          color: $lila-primary;
+        }
+      }
+    }
+  }
+
+  // ******************************************************************* Estilos página listado de capítulos descargados capitulos-descargados.html
+  page-lista-Puntos-Cap {
+
+    ion-list {
+
+      .card {
+        h2 {
+          color: $lila-primary;
+        }
+        h3 {
+          color: $lila-primary;
+        }
+        .texto{
           color: $lila-primary;
         }
       }
