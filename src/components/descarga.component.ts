@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef} from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, OnInit, OnDestroy} from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
-import { Events, ToastController } from 'ionic-angular';
+import { Events, ToastController, Platform } from 'ionic-angular';
 
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
@@ -22,7 +22,7 @@ import { EpisodiosGuardadosService } from "../providers/episodios_guardados.serv
     providers: [FileTransfer, FileTransferObject, ConfiguracionService, Dialogs, Network, EpisodiosGuardadosService]
 })
 
-export class DescargaCafetera {
+export class DescargaCafetera implements OnInit, OnDestroy {
 
     @Input() capDownload: string;
     @Output() ficheroDescargado = new EventEmitter();
@@ -55,7 +55,8 @@ export class DescargaCafetera {
                 private dialogs: Dialogs,
                 private transfer: FileTransfer,
                 private chngDetector: ChangeDetectorRef,
-                private guardaDescargados: EpisodiosGuardadosService ) {
+                private guardaDescargados: EpisodiosGuardadosService,
+                public platform : Platform ) {
                 };
 
     ngOnInit(){
@@ -79,12 +80,15 @@ export class DescargaCafetera {
             this.ficheroDescargado.emit({existe: false});
         });
 
-        if (this.enVivo){
-            this.icono = 'lock';
-            this.ficheroDescargado.emit({existe: false});
-        }
-        else {
-            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        
+        this.platform.ready().then(() => {
+
+            if (this.enVivo){
+                this.icono = 'lock';
+                this.ficheroDescargado.emit({existe: false});
+            }
+            else {
+                this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
                 .then((entry) => {
                     this.dirdestino = entry.toInternalURL();
                     if (this.fileDownload != null) {
@@ -118,7 +122,13 @@ export class DescargaCafetera {
                     this.icono = 'bug';
                     this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
                 });
-        }
+            }
+        });
+    }
+
+    ngOnDestroy(){
+        this.events.unsubscribe("capitulo:fenecido", (()=> {}));
+        console.log("[descarga.componentes.ngOnDestroy] Saliendo");
     }
 
     msgDescarga  (mensaje: string) {

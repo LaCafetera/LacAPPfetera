@@ -61,7 +61,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     porcentajeDescargado: number = 0;
 
     pantallaChat= ChatPage;
-    mscControl: MusicControls;
+    //mscControl: MusicControls;
     soloWifi: boolean;
     dirTwitter: string = "";
     tituloObj: Array<Object>;
@@ -104,6 +104,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private player: Player,
                 private chngDetector: ChangeDetectorRef,
                 public modalCtrl: ModalController,
+                public mscControl: MusicControls,
                 //private backgroundMode: BackgroundMode,
                 private musicControls: MusicControls) {
 
