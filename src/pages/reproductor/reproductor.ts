@@ -14,6 +14,7 @@ import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
 import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 
+
 /*
   Generated class for the Reproductor page.
 
@@ -25,6 +26,7 @@ import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
   templateUrl: 'reproductor.html',
   providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, Player, BackgroundMode]
 })
+
 export class ReproductorPage implements OnInit, OnDestroy{
 
     capItem: any;
@@ -81,7 +83,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     esIOS: boolean = false;
     capItemTxt: string;
 	
-	sinConexionCantando: boolean = false;
+    sinConexionCantando: boolean = false;
 
     // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
     // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
@@ -101,12 +103,12 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
                 private network: Network,
-                private player: Player,
+                //private player: Player,
                 private chngDetector: ChangeDetectorRef,
-                public modalCtrl: ModalController,
-                public mscControl: MusicControls,
+                public modalCtrl: ModalController/*,
+                //public mscControl: MusicControls,
                 //private backgroundMode: BackgroundMode,
-                private musicControls: MusicControls) {
+                private musicControls: MusicControls*/) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -119,7 +121,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.imagen = this.capItem.image_url;
         this.enVivo = this.capItem.type=="LIVE";
         this.reproductor = this.navParams.get('player');
-        this.mscControl = this.navParams.get('controlador');
+        //this.mscControl = this.navParams.get('controlador');
         //this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         this.dirTwitter = this.navParams.get('enlaceTwitter');// + "?f=tweets" ;
@@ -128,10 +130,11 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
-        if (this.reproductor == null) {
+        /*if (this.reproductor == null) {
             console.log("[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.");
             this.reproductor = this.player;
-        }        
+            this.events.publish('audio:modificado', {reproductor:this.reproductor/*, controlador:this.mscControl});
+        }*/
         //console.log("[REPRODUCTOR.ngOnInit] Estatus es :" +  this.reproductor.dameStatusRep());
     }
 
@@ -167,9 +170,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
             .catch(()=>{
                 console.log("[REPRODUCTOR.ngOnInit] Error recuperando posición de la reproducción.");
             });
+            this.events.subscribe("audio:peticion", (peticion: string) => this.atiendePeticion(peticion));
             this.events.subscribe("conexion:status", (conexion) => this.revisaConexion(conexion));
             this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
-            this.events.subscribe("posicion:modificado", (posicionObj) => this.cambiaPosicion(posicionObj));
+            //this.events.subscribe("posicion:modificado", (posicionObj) => this.cambiaPosicion(posicionObj));
             this.events.subscribe("errorReproduccion:status", (statusRep) => {
                 console.error("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
                 if (!this.stopPulsado) {
@@ -178,7 +182,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     }
                 }
             });
-
+/*
             if (this.mscControl == null) {
                 console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
                 this.mscControl = this.musicControls; //new MusicControls ();
@@ -187,7 +191,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             else {
                 console.log("[REPRODUCTOR.ngOnInit] mscControl != null " + JSON.stringify(this.mscControl));
             }
-
+*/
             this.episodiosService.damePuntosEpisodio(this.episodio).subscribe(
                 data => {
                     this.detallesCapitulo = data.response.items;
@@ -202,17 +206,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     console.error("[LISTA-PUNTOS-CAP.constructor] Error " + JSON.stringify(error));
                 }
             )
-            /*
-            this.backgroundMode.enable();
-            this.backgroundMode.on('activate').subscribe(
-            data => {
-                console.log('[REPRODUCTOR.ngOnInit] Background on: ' + JSON.stringify(data));
-                this.backgroundMode.disableWebViewOptimizations(); 
-            },
-            err => {
-                console.error('[REPRODUCTOR.ngOnInit] Background on error: ' + JSON.stringify(err));
-            });
-            console.log('[REPRODUCTOR.ngOnInit] Background activado');*/
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
@@ -242,15 +235,19 @@ export class ReproductorPage implements OnInit, OnDestroy{
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
-        this.timer = this.timerVigilaEnVivo = 0;
-        this.events.unsubscribe("reproduccion:status", (()=> {}));
-        this.events.unsubscribe("conexion:status", (()=> {}));
+        this.timer = 0;
+        this.timerVigilaEnVivo = 0;
+        if (!this.events.unsubscribe("audio:peticion")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de audio.")};
+        if (!this.events.unsubscribe("conexion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de conexion.")};
+        if (!this.events.unsubscribe("reproduccion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.")};
+        //if (!this.events.unsubscribe("posicion:modificados")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de posicion.")};
+        if (!this.events.unsubscribe("errorReproduccion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de errorReproduccion.")};
         //this.backgroundMode.disable();
-        this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
+        //this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
         //MusicControls.destroy(); // onSuccess, onError
     }
-
+/*
     creaControlEnNotificaciones (destruir: boolean){
         if (destruir) {
             this.mscControl.destroy()
@@ -339,7 +336,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.mscControl.listen();
         }
     }
-
+*/
     gatoSchrodinger(){
         this.episodiosService.dameDetalleEpisodio(this.episodio).subscribe(
             // this.episodiosService.sigueSiendoVivo(this.episodio) // Debería usar esto, ya que lo tengo.
@@ -401,7 +398,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.iconoPlayPause = 'pause';
         }
         console.log("[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto");
-        this.mscControl.updateIsPlaying(this.reproduciendo);
+        //this.mscControl.updateIsPlaying(this.reproduciendo);
         this.chngDetector.markForCheck();
         //this.chngDetector.detectChanges();
     }
@@ -729,7 +726,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 if (this.reproductor.dameStatusPause() == statusActual){
                     this.playPause();
                 }
-                this.player.seekTo(datos.posicion);
+                this.reproductor.seekTo(datos.posicion);
             }
         }
     }
@@ -837,6 +834,39 @@ export class ReproductorPage implements OnInit, OnDestroy{
         window.open(this.detallesCapitulo[this.detalleIntervalo-1].external_url, '_system', 'location=no,clearsessioncache=yes,clearcache=yes');
     }
 
+    atiendePeticion (peticion: string){
+        switch(peticion){
+            case 'NEXT':
+                this.reproductor.adelantaRep();
+                console.log("[REPRODUCTOR.atiendePeticion] NEXT");
+                break;
+            case 'PREV':
+                this.reproductor.retrocedeRep();
+                console.log("[REPRODUCTOR.atiendePeticion] PREV");
+                break;
+            case 'PAUSE':
+                console.log("[REPRODUCTOR.atiendePeticion] PAUSE");
+                this.reproductor.pause(this._configuracion);
+                break;
+            case 'PLAY':
+                console.log("[REPRODUCTOR.atiendePeticion] PLAY");
+                this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
+                break;
+            case 'EXIT':
+                console.log("[REPRODUCTOR.atiendePeticion] EXIT");
+                this.stopPulsado = true;
+                this.reproductor.release(this._configuracion);
+                this.platform.exitApp();
+                break;
+            case 'PLAYPAUSE' :
+                console.log("[REPRODUCTOR.atiendePeticion] PLAYPAUSE");
+                this.playPause();
+                break;
+            default:
+                break;
+        }
+    }
+
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
@@ -845,6 +875,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
         });
         toast.present();
     }
+
+
 
 }
 

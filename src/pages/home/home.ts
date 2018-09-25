@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ChangeDetectorRef } from "@angular/core";
 
 import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
-import { MusicControls } from '@ionic-native/music-controls';
+import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls';
 import { Network } from '@ionic-native/network';
 
 import { EpisodiosService } from "../../providers/episodios-service";
@@ -26,10 +26,10 @@ export class HomePage implements OnDestroy, OnInit {
     items: Array<any>;
    // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
-    reproductor: Player;
-    capEnRep:string = "ninguno";
+    // reproductor: Player;
+    //capEnRep:string = "ninguno";
     //soloWifi:boolean = false;
-    mscControl:MusicControls;
+    //mscControl:MusicControls;
 
     hashtag:string ="";
 
@@ -41,6 +41,7 @@ export class HomePage implements OnDestroy, OnInit {
     mostrarFechasAbsolutas : boolean = false;
 
     desconectado : boolean = false;
+    mscControlOpt: MusicControlsOptions;
 
     constructor(public navCtrl: NavController,
                 private episodiosService: EpisodiosService,
@@ -52,18 +53,20 @@ export class HomePage implements OnDestroy, OnInit {
                 public platform: Platform,
                 private network: Network,
                 private chngDetector: ChangeDetectorRef,
-                private episodiosGuardados: EpisodiosGuardadosService) {
+                public mscControl: MusicControls,
+                private episodiosGuardados: EpisodiosGuardadosService,
+                public reproductor: Player) {
         this.items = new Array();
-        events.subscribe("audio:modificado", (reproductorIn) => {
+        /*events.subscribe("audio:modificado", (reproductorIn) => {
             console.log('[HOME.constructor] Recibido mensaje Audio Modificado');
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
-                this.mscControl = reproductorIn.controlador;
+                //this.mscControl = reproductorIn.controlador;
             }
             if( this.reproductor != null) {
                 this.capEnRep = this.reproductor.dameCapitulo();
             }
-        });
+        });*/
         events.subscribe("like:modificado", (valoresLike) => {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');
             this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
@@ -79,7 +82,7 @@ export class HomePage implements OnDestroy, OnInit {
         });
     }
 
-    ngOnInit() {
+ngOnInit() {        
         this.platform.ready().then(() => {
             this.compruebaConexion();
             /*
@@ -134,6 +137,32 @@ export class HomePage implements OnDestroy, OnInit {
         .catch((error)=>{
             console.error('[HOME.ngOnInit] Error:' + JSON.stringify(error));
         });
+        //this.events.subscribe("reproduccion:status", (statusRep) => this.cambiamscControl(statusRep));
+        
+        this.mscControlOpt = 
+        {
+            track       : '',//this.capItem.title,        // optional, default : ''
+            artist      : 'Radiocable.com',             // optional, default : ''
+            cover       : '',//this.capItem.image_url,      // optional, default : nothing
+            isPlaying   : false,                         // optional, default : true
+            dismissable : true,                       // Esto es importante ponerlo a true para que no vuelva a arrancar si matan la app
+
+            // hide previous/next/close buttons:
+            hasPrev   : true,      // show previous button, optional, default: true
+            hasNext   : true,      // show next button, optional, default: true
+            hasClose  : !this.platform.is('ios'),       // Si es iOS le quito el botón de cerrar.
+
+            // Android only, optional
+            // text displayed in the status bar when the notification (and the ticker) are updated
+            ticker    : 'Bienvenido a Sherwood',
+            // iOS only, optional
+            album : 'Bienvenido a Sherwood',
+            duration: 0,
+            elapsed: 0,
+            skipForwardInterval: 15, // display number for skip forward, optional, default: 0
+            skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
+            hasScrubbing: false // enable scrubbing from control center and lockscreen progress bar, optional
+        }
     }
 
     ionViewWillUnload() {
@@ -144,7 +173,8 @@ export class HomePage implements OnDestroy, OnInit {
         console.log("[HOME.ngOnDestroy] Cerrandoooooooooooooooooooooooo");
         this.events.unsubscribe("like:modificado");
         this.events.unsubscribe("capitulo:fenecido");
-        this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+        this.events.unsubscribe("reproduccion:status");
+        //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
         this.reproductor.release(this._configuracion);
         //this.backgroundMode.disable();
     }
@@ -258,9 +288,12 @@ export class HomePage implements OnDestroy, OnInit {
 
     pushPage(item){
         console.log("[HOME.pushPage] Entro en episodio. ");// + JSON.stringify (item));
+        this.mscControlOpt.cover = item.objeto.image_url;
+        this.mscControlOpt.track = item.objeto.title;
+        this.creaControlEnNotificaciones();
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
-                                            controlador:this.mscControl,
+                                       //     controlador:this.mscControl,
                                        //     soloWifi:this.soloWifi,
                                             enlaceTwitter: this.dameEnlace(item.objeto.title)});
     }
@@ -340,7 +373,7 @@ export class HomePage implements OnDestroy, OnInit {
     }
 */
     muestraMenu(myEvent) {
-        let datosObjeto = {player: this.reproductor, controlador:this.mscControl}
+        let datosObjeto = {player: this.reproductor/*, controlador:this.mscControl*/}
         let popover = this.popoverCtrl.create(MenuExtComponent, datosObjeto );
         popover.present({
             ev: myEvent
@@ -364,6 +397,82 @@ export class HomePage implements OnDestroy, OnInit {
 
     normalizaUbicacion (ubicacion: string ):string {
         return (normalizeURL(ubicacion));
+    }
+
+    creaControlEnNotificaciones (){
+        this.mscControl.destroy()
+        .then((data) => {
+            console.log("[HOME.creaControlEnNotificaciones] Control remoto destruido OK " + JSON.stringify(data));
+            this.events.unsubscribe("reproduccion:status");
+            this.mscControl.create(this.mscControlOpt)
+            .then((data) => {console.log("[HOME.creaControlEnNotificaciones] Control remoto creado OK " + JSON.stringify(data)) })
+            .catch((error) => {console.error("[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO " + error) });
+
+            this.mscControl.subscribe()
+            .subscribe((action) => {
+                console.log("[HOME.creaControlEnNotificaciones] Recibido " + JSON.stringify(action));
+                const message = JSON.parse(action).message;
+                    switch(message) {
+                        case 'music-controls-next':
+                            //this.reproductor.adelantaRep();
+                            this.events.publish('audio:peticion', 'NEXT');
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-next");
+                            break;
+                        case 'music-controls-previous':
+                            //this.reproductor.retrocedeRep();
+                            this.events.publish('audio:peticion','PREV');
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-previous");
+                            break;
+                        case 'music-controls-pause':
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-pause");
+                            //this.playPause(this._configuracion);
+                            this.events.publish('audio:peticion','PAUSE');
+                            this.reproductor.pause(this._configuracion);
+                            break;
+                        case 'music-controls-play':
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-play");
+                            this.events.publish('audio:peticion','PLAY');
+                            //this.reproductor.justPlay(this._configuracion);
+                            //this.playPause(this._configuracion);
+                            break;
+                        case 'music-controls-destroy':
+                            //this.reproductor.release(this._configuracion);
+                            this.events.publish('audio:peticion','EXIT');
+                            this.platform.exitApp();
+                            break;
+                        case 'music-controls-stop-listening':
+                            //this.mscControl.destroy();
+                            break;
+                        case 'music-controls-media-button' :
+                    // External controls (iOS only)
+                        case 'music-controls-toggle-play-pause' :
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-toggle-play-pause");
+                            this.events.publish('audio:peticion','PLAYPAUSE');
+                            break;
+                        case 'music-controls-headset-unplugged':
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-headset-unplugged");
+                            this.reproductor.pause(this._configuracion);
+                            this.events.publish('audio:peticion','PAUSE');
+                            break;
+                        case 'music-controls-headset-plugged':
+                            console.log("[HOME.creaControlEnNotificaciones] music-controls-headset-plugged");
+                            this.reproductor.pause(this._configuracion);
+                            this.events.publish('audio:peticion','PAUSE');
+                            break;
+                        default:
+                            break;
+                    }   
+            },
+            (error) => {console.error("[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls")});
+            this.mscControl.listen();
+            this.events.subscribe("reproduccion:status", (statusRep) => this.cambiamscControl(statusRep));
+        })
+        .catch((error) => {console.error("[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO " + error) });
+    }
+
+    cambiamscControl(statusRep){
+        console.log("[HOME.cambiamscControl] ***** OKO ***** cambiado status de la reproducción a  " + statusRep.status)
+        this.mscControl.updateIsPlaying(!(statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()));
     }
 
 /*------------------------- salir -----------------

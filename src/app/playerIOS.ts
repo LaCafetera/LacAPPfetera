@@ -205,15 +205,15 @@ export class PlayerIOS implements OnDestroy {
 */
     play(audioIn: string, configuracion: ConfiguracionService):boolean{
         console.log ("[PLAYERIOS.play] Recibida petición de reproducción de "+ audioIn );
-		let capitulo = this.dameCapitulo();
-        let audio = this.traduceAudio(audioIn);
-        console.log ("[PLAYERIOS.play] traducimos audio a reproducir a "+ audio );
-        if (this.reproduciendoEste(audio))
-        {
-            console.log ("[PLAYERIOS.play] Play normal");
+//		let capitulo = this.dameCapitulo();
+//        let audio = this.traduceAudio(audioIn);
+//        console.log ("[PLAYERIOS.play] traducimos audio a reproducir a "+ audio );
+//        if (this.reproduciendoEste(audio))
+//        {
+//            console.log ("[PLAYERIOS.play] Play normal");
             this.repObject.play(); //this.repPlugin.play([repeticiones, sonarBloqueado]);
             return (false);
-        }
+/*        }
         else{
             console.log ("[PLAYERIOS.play] Modificado audio");
             if (this.repObject != null) {
@@ -237,7 +237,7 @@ export class PlayerIOS implements OnDestroy {
             console.log("[PLAYERIOS.play] Objeto reproductor creado."); 
             this.repObject.play();
             return (true);
-        }
+        }*/
     }
 
     cerrarAudio (){

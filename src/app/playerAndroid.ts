@@ -452,6 +452,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     guardaPos(configuracion: ConfiguracionService){
+        console.log ("[PLAYERANDROID.guardaPos] Tratando de guardar la posición");
         if (!this.enVivo) {    
             if (this.estadoExo != null) {
                 let posicionNum = parseInt(this.estadoExo.position);
