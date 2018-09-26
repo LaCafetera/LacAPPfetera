@@ -103,7 +103,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
                 private network: Network,
-                //private player: Player,
+                private player: Player,
                 private chngDetector: ChangeDetectorRef,
                 public modalCtrl: ModalController/*,
                 //public mscControl: MusicControls,
@@ -172,9 +172,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
             });
             this.events.subscribe("audio:peticion", (peticion: string) => this.atiendePeticion(peticion));
             this.events.subscribe("conexion:status", (conexion) => this.revisaConexion(conexion));
-            this.events.subscribe("reproduccion:status", (statusRep) => this.cambiandoStatusRep(statusRep));
+            this.events.subscribe("reproduccionHome:status", (statusRep) => this.cambiandoStatusRep(statusRep));
             //this.events.subscribe("posicion:modificado", (posicionObj) => this.cambiaPosicion(posicionObj));
-            this.events.subscribe("errorReproduccion:status", (statusRep) => {
+ /*            this.events.subscribe("errorReproduccion:status", (statusRep) => {
                 console.error("[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido " + statusRep.status);
                 if (!this.stopPulsado) {
                     if (statusRep.status == '666') { // Si es Android
@@ -182,7 +182,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     }
                 }
             });
-/*
+
             if (this.mscControl == null) {
                 console.log("[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.");
                 this.mscControl = this.musicControls; //new MusicControls ();
@@ -239,9 +239,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.timerVigilaEnVivo = 0;
         if (!this.events.unsubscribe("audio:peticion")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de audio.")};
         if (!this.events.unsubscribe("conexion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de conexion.")};
-        if (!this.events.unsubscribe("reproduccion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.")};
+        if (!this.events.unsubscribe("reproduccionHome:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.")};
         //if (!this.events.unsubscribe("posicion:modificados")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de posicion.")};
-        if (!this.events.unsubscribe("errorReproduccion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de errorReproduccion.")};
+        //if (!this.events.unsubscribe("errorReproduccion:status")) {console.error("[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de errorReproduccion.")};
         //this.backgroundMode.disable();
         //this.events.publish('audio:modificado', {reproductor:this.reproductor, controlador:this.mscControl});
         console.log("[REPRODUCTOR.ngOnDestroy] Saliendoooooooooooooooooooooooooooo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");

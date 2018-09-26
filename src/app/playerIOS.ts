@@ -113,7 +113,7 @@ export class PlayerIOS implements OnDestroy {
         };
         const onError = (error) => {
             console.error("[PLAYERIOS.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);
-            this.events.publish('errorReproduccion:status', {status:error.code});
+            //this.events.publish('errorReproduccion:status', {status:error.code});
         }
         console.log("[PLAYERIOS.crearepPlugin] Tratando de reproducir:" + this.capitulo);
         this.repObject = this.media.create (this.capitulo);

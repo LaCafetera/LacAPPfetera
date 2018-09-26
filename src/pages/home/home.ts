@@ -472,6 +472,7 @@ ngOnInit() {
 
     cambiamscControl(statusRep){
         console.log("[HOME.cambiamscControl] ***** OKO ***** cambiado status de la reproducción a  " + statusRep.status)
+        this.events.publish('reproduccionHome:status', statusRep);
         this.mscControl.updateIsPlaying(!(statusRep.status == this.reproductor.dameStatusStop() || statusRep.status == this.reproductor.dameStatusPause()));
     }
 
