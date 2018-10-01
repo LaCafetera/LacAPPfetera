@@ -268,7 +268,7 @@ export class ChatPage {
     }
 
     ocultaTeclado(){
-        this.keyboard.close(); 
+        this.keyboard.hide(); 
     }
 
     muestraDatosUsuario(user_id){

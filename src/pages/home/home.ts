@@ -163,6 +163,7 @@ ngOnInit() {
             skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
             hasScrubbing: false // enable scrubbing from control center and lockscreen progress bar, optional
         }
+        //this.creaControlEnNotificaciones();
     }
 
     ionViewWillUnload() {
@@ -404,9 +405,15 @@ ngOnInit() {
         .then((data) => {
             console.log("[HOME.creaControlEnNotificaciones] Control remoto destruido OK " + JSON.stringify(data));
             this.events.unsubscribe("reproduccion:status");
+            
+        })
+        .catch((error) => {console.error("[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO " + error) });
+
+        
+            console.log('[HOME.creaControlEnNotificaciones] Creando'); 
             this.mscControl.create(this.mscControlOpt)
-            .then((data) => {console.log("[HOME.creaControlEnNotificaciones] Control remoto creado OK " + JSON.stringify(data)) })
-            .catch((error) => {console.error("[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO " + error) });
+            .then((data) => {console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data)) })
+            .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
 
             this.mscControl.subscribe()
             .subscribe((action) => {
@@ -463,11 +470,9 @@ ngOnInit() {
                             break;
                     }   
             },
-            (error) => {console.error("[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls")});
+            (error) => {console.error('[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls')});
             this.mscControl.listen();
-            this.events.subscribe("reproduccion:status", (statusRep) => this.cambiamscControl(statusRep));
-        })
-        .catch((error) => {console.error("[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO " + error) });
+            this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
     }
 
     cambiamscControl(statusRep){
