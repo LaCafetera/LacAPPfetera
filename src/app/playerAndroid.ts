@@ -124,8 +124,6 @@ export class PlayerAndroid implements OnDestroy {
             this.timerVigila = 0;
         }
     }
-    
-
 
     mostrarhora(){
         var f=new Date();
@@ -217,10 +215,10 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     publicaEstado (nuevoEstado: number){
-        console.log("[PLAYERANDROID.publicaEstado] Me piden que cambie el estado " + this.estado + " por " + nuevoEstado);
+        console.log('[PLAYERANDROID.publicaEstado] Me piden que cambie el estado ' + this.estado + ' por ' + nuevoEstado);
         if (this.estado != nuevoEstado){
             this.estado = nuevoEstado;
-            this.events.publish('reproduccion:status', {status:this.estado});
+            this.events.publish('reproduccion:status', this.estado);
         }
     }
 
@@ -242,17 +240,7 @@ export class PlayerAndroid implements OnDestroy {
             ((data) => {
                 console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                 this.estadoExo=data;
-                this.inVigilando(true); // Pongo esto lo primero, porque quiero asegurarme de que funciona.
-                //if (this.estadoExo == null){
-                    //this.estadoExo = data;
-                /*if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
-                    if (!this.saltoSolicitado){
-                        //this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
-                    }
-                    else {
-                        this.saltoSolicitado = false;
-                    }
-                }*/
+                this.inVigilando(true); 
                 if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                     this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
                 }
