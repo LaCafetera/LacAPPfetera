@@ -88,7 +88,7 @@ export class PlayerIOS implements OnDestroy {
         const onStatusUpdate = ((status) =>{
             console.log("[PLAYERIOS.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.media.MEDIA_RUNNING);
             this.statusRep = status;
-            this.events.publish('reproduccion:status', {status:this.statusRep});
+            this.events.publish('reproduccion:status', this.statusRep);
             if (this.seekPdte && status == this.media.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
                 configuracion.getTimeRep(capitulo)
@@ -297,7 +297,7 @@ export class PlayerIOS implements OnDestroy {
                     //Hay un fallo en este plugin. Si damos a pause / stop cuando está en "MEDIA_STARTING no nos hace ni caso. ASí que hay que parchear."
                     console.log ("[PLAYERIOS.pause] Dejando parada en espera");
                     this.paradaEncolada = true;
-                    this.events.publish('reproduccion:status', {status:this.media.MEDIA_PAUSED});
+                    this.events.publish('reproduccion:status', this.media.MEDIA_PAUSED);
                 }
         }
         else {
