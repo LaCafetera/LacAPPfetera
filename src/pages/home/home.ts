@@ -58,7 +58,7 @@ export class HomePage implements OnDestroy, OnInit {
                 public reproductor: Player) {
         this.items = new Array();
 
-        this.mscControlOpt = 
+        this.mscControlOpt =
         {
             track       : '',//this.capItem.title,        // optional, default : ''
             artist      : 'Radiocable.com',             // optional, default : ''
@@ -98,7 +98,7 @@ export class HomePage implements OnDestroy, OnInit {
         //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
     }
 
-    ngOnInit() {        
+    ngOnInit() {
         this.platform.ready()
         .then(() => {
             this.compruebaConexion();
@@ -350,11 +350,11 @@ export class HomePage implements OnDestroy, OnInit {
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO ' + error) });
 
-        console.log('[HOME.creaControlEnNotificaciones] Creando'); 
+        console.log('[HOME.creaControlEnNotificaciones] Creando');
         this.mscControl.create(this.mscControlOpt)
         .then((data) => {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data));
-            this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
 
@@ -411,10 +411,11 @@ export class HomePage implements OnDestroy, OnInit {
                         break;
                     default:
                         break;
-                }   
+                }
         },
         (error) => {console.error('[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls')});
         this.mscControl.listen();
+        this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
     }
 
     cambiamscControl(statusRep: number){
