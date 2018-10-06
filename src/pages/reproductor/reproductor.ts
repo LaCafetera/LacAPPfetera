@@ -550,12 +550,24 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     compartir(){
         console.log ('[REPRODUCTOR.compartir] Compartiendo url ' + this.httpAudio);
-        var options = {
-            message: this.titulo, // not supported on some apps (Facebook, Instagram)
-            subject: 'Creo que esto puede interesarte.', // fi. for email
-            files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
-            url: this.httpAudio,
-            chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
+        
+        if (!this.esIOS){
+            var options = {
+                message: this.titulo, // not supported on some apps (Facebook, Instagram)
+                subject: 'Creo que esto puede interesarte.', // fi. for email
+                files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
+                url: this.httpAudio,
+                chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
+            }
+        }
+        else {
+            var options = {
+                message: this.titulo + ' ' + this.httpAudio, // not supported on some apps (Facebook, Instagram)
+                subject: 'Creo que esto puede interesarte.', // fi. for email
+                files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
+                url: '',
+                chooserTitle: 'Selecciona aplicación.' // Android only, you can override the default share sheet title
+            }
         }
 
         this.socialsharing.shareWithOptions(options).then(() => {
@@ -570,13 +582,24 @@ export class ReproductorPage implements OnInit, OnDestroy{
             .then((respuesta) => {
                 console.log ('[REPRODUCTOR.twitteaCapitulo] Recibida respuesta: ' + respuesta);
                 if (respuesta == 1) {// café para todos
-                    this.socialsharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
+                    if (!this.esIOS){
+                        this.socialsharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
                         .then((respuesta) => {
                             console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
                         })
                         .catch((error) => {
                             console.error ('[REPRODUCTOR.twitteaCapitulo] Twitteo KO: ' + error);
                         });
+                    }
+                    else {
+                        this.socialsharing.shareViaTwitter(this.titulo + ' ' + this.httpAudio, this.imagen)
+                        .then((respuesta) => {
+                            console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
+                        })
+                        .catch((error) => {
+                            console.error ('[REPRODUCTOR.twitteaCapitulo] Twitteo KO: ' + error);
+                        });
+                    }
                 }
                 this._configuracion.setTwitteado(this.episodio);
             })
