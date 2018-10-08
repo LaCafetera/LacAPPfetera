@@ -354,7 +354,9 @@ export class HomePage implements OnDestroy, OnInit {
         this.mscControl.create(this.mscControlOpt)
         .then((data) => {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data));
-
+            if (!this.platform.is('ios')) {
+                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+            }
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
 
@@ -392,6 +394,12 @@ export class HomePage implements OnDestroy, OnInit {
                         break;
                     case 'music-controls-stop-listening':
                         //this.mscControl.destroy();
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
+                        this.events.unsubscribe('like:modificado');
+                        this.events.unsubscribe('capitulo:fenecido');
+                        this.events.unsubscribe('reproduccion:status');
+                        //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+                        this.reproductor.release(this._configuracion);
                         break;
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
@@ -415,7 +423,9 @@ export class HomePage implements OnDestroy, OnInit {
         },
         (error) => {console.error('[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls')});
         this.mscControl.listen();
-        this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+        if (this.platform.is('ios')) {
+            this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+        }
     }
 
     cambiamscControl(statusRep: number){
