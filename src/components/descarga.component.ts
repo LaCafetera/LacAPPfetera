@@ -171,27 +171,28 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                                     this.porcentajeDescargado = 0;
                                     this.descargando = false;
                                     this.msgDescarga('Descarga completa');
-                                    let inicioNombreImagen : number = this.imagenDownload.lastIndexOf('\/')+1;
-                                    let nombreImagen : string = this.imagenDownload.substr(inicioNombreImagen,this.imagenDownload.lastIndexOf('.') - inicioNombreImagen);
-                                    this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + nombreImagen + '.jpg'), true, {})
+                                    //let inicioNombreImagen : number = this.imagenDownload.lastIndexOf('\/')+1;
+                                    //let nombreImagen : string = this.imagenDownload.substr(inicioNombreImagen,this.imagenDownload.lastIndexOf('.') - inicioNombreImagen);
+                                    //this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + nombreImagen + '.jpg'), true, {})
+                                    this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + this.fileDownload + '.jpg'), true, {})
                                     .then((entrada) => {
                                         console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
                                         this.capItem.image_url = entrada.nativeURL;              
-                                        this.porcentajeDescargado = 0;               
+                                        this.porcentajeDescargado = 0;
                                         this.guardaDescargados.guardaProgramas(this.capItem);
-                                        this.file.checkFile(this.dirdestino, nombreImagen + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+                                        this.file.checkFile(this.dirdestino, this.fileDownload + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
                                         .then((resultado) => {
                                             if (resultado){
-                                                console.log("[descarga.components.descargarFichero] Imagen encontrada en carpeta destino");
+                                                console.log("[descarga.components.descargarFichero] Imagen " + this.fileDownload + ".jpg encontrada en carpeta destino " + this.dirdestino);
                                             }
                                             else {
-                                                console.log("[descarga.components.descargarFichero] Imagen NO encontrada en carpeta destino");
+                                                console.log("[descarga.components.descargarFichero] Imagen " + this.fileDownload + ".jpg NO encontrada en carpeta destino " + this.dirdestino);
                                             }
                                         })
                                         .catch((error) => {
                                             console.log("[descarga.components.descargarFichero] Se ha producido un error buscando la imagen en carpeta destinoo: " + JSON.stringify(error));
                                         }); 
-                                        this.file.readAsBinaryString(this.dirdestino, nombreImagen + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+                                        this.file.readAsBinaryString(this.dirdestino, this.fileDownload + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
                                         .then((resultado) => {
                                             console.log("[descarga.components.descargarFichero] Imagen abierta en carpeta destino");
                                         })

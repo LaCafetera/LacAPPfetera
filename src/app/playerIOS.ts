@@ -241,19 +241,19 @@ export class PlayerIOS implements OnDestroy {
     }
 
     cerrarAudio (){
-        console.log ("[PLAYERIOS.play] Modificado audio");
+        console.log ("[PLAYERIOS.cerrarAudio] Cerrando audio");
         let capitulo = this.dameCapitulo();
         if (this.repObject != null) {
             this.repObject.getCurrentPosition()
                 .then((pos)=>{
-                    console.log("[PLAYERIOS.play] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
+                    console.log("[PLAYERIOS.cerrarAudio] Recibida posición " + pos * 1000 + " para el capítulo "+ capitulo+ ". Guardando posición.");
                     if (pos > 0 && capitulo != ""){
                         this.configuracion.setTimeRep(capitulo, pos * 1000);
-                        console.log ("[PLAYERIOS.play] Guardando la posición en la configuración");
+                        console.log ("[PLAYERIOS.cerrarAudio] Guardando la posición en la configuración");
                     }
                 })
                 .catch ((err)=> {
-                    console.error ("[PLAYERIOS.play] Recibido error al pedir posición de reproducción: " + err);
+                    console.error ("[PLAYERIOS.cerrarAudio] Recibido error al pedir posición de reproducción: " + err);
                 });
             this.stop();
             this.repObject.release();

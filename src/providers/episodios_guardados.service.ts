@@ -122,7 +122,8 @@ export class EpisodiosGuardadosService {
         let posicion = programasArray.findIndex((elemento) => {
 			return (elemento.episode_id == programa.episode_id)
         })
-		programasArray.splice (posicion-1,1);
+        // programasArray.splice (posicion-1,1);
+        programasArray.splice (posicion,1);
         return (programasArray);
 	}
 

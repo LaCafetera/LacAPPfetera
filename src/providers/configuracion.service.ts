@@ -131,9 +131,10 @@ export class ConfiguracionService {
         //return this.theme.asObservable();
         return new Promise ((resolve,reject) =>{
 
-            if (cap == null){
-                console.log("[CONFIGURACION_SERVICE.getTimeRep] No puedo guardar un valor nulo");
-                reject("No puedo devolver la posición de un capítulo vacío.")
+            if (cap == null || cap == ''){
+                console.log("[CONFIGURACION_SERVICE.getTimeRep] No puedo devlver el valor de un capítulo nulo");
+                // reject("No puedo devolver la posición de un capítulo vacío.")
+                resolve(0);
             }
             else if (cap.indexOf('str')!= -1){
                 console.log ("[CONFIGURACION.SERVICE.getTimeRep] De un capítulo en vivo siempre mando 0");

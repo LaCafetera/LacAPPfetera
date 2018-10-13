@@ -172,18 +172,18 @@ export class CapitulosDescargadosPage {
     }
 
     borrarElemento(episodio){
-        console.log("[HOME.borrarElemento] recibido " +episodio.episodio_id );
+        console.log("[capitulos-descargados.borrarElemento] recibido " +episodio.episodio_id );
         var encontrado = false;
         for (var i = 0; i < this.items.length && !encontrado; i+=1) {
         // console.log("En el índice '" + i + "' hay este valor: " + miArray[i]);
             if (this.items[i].objeto.episode_id == episodio.episodio_id) {
                 this.items.splice(i, 1);
                 encontrado = true;
-                console.log("[HOME.borrarElemento] Encontrado capítulo en posición " + i);
+                console.log("[capitulos-descargados.borrarElemento] Encontrado capítulo en posición " + i);
             }
         }
         if (!encontrado){
-            console.log("[HOME.borrarElemento] Capítulo no Encontrado");
+            console.log("[capitulos-descargados.borrarElemento] Capítulo no Encontrado");
         }
     }
 
@@ -194,11 +194,11 @@ export class CapitulosDescargadosPage {
             if (this.items[i].objeto.episode_id == episodio) {
                 this.items[i].like = valorLike;
                 encontrado = true;
-                console.log("[HOME.actualizaLike] Encontrado capítulo");
+                console.log("[capitulos-descargados.actualizaLike] Encontrado capítulo");
             }
         }
         if (!encontrado){
-            console.log("[HOME.actualizaLike] Capítulo no Encontrado");
+            console.log("[capitulos-descargados.actualizaLike] Capítulo no Encontrado");
         }
     }
 

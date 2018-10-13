@@ -399,7 +399,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.reproduciendo = true;
             this.iconoPlayPause = 'pause';
         }
-        console.log('[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto');
+        console.log('[REPRODUCTOR.cambiandoStatusRep] actualizando status control remoto ' + this.iconoPlayPause);
         //this.mscControl.updateIsPlaying(this.reproduciendo);
         this.chngDetector.markForCheck();
         //this.chngDetector.detectChanges();
@@ -414,7 +414,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.ocultaTiempoRep = !this.ocultaTiempoRep;
                     this.iconoPlayPause = 'pause'; // Esto aquí es un poco bestia, pero en realidad es una forma de intentar forzar que ponga el pause...
                     this.chngDetector.markForCheck();
-                    // console.log('[REPRODUCTOR.parpadeoTiempoRep] Parpadeando ' + this.reproduciendo);
+                    console.log('[REPRODUCTOR.parpadeoTiempoRep] Parpadeando. El icono debería ser ' + this.iconoPlayPause);
                 }, 1000);
             }
             else {
@@ -428,6 +428,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.iconoPlayPause = 'pause'; // Esto aquí es un poco bestia, pero en realidad es una forma de intentar forzar que ponga el pause...
             this.ocultaTiempoRep = false;
             this.chngDetector.markForCheck();
+            console.log('[REPRODUCTOR.parpadeoTiempoRep] Quitando parpadeo. El icono debería ser ' + this.iconoPlayPause);
         }
     }
 
