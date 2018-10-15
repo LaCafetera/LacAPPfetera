@@ -59,7 +59,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                 public platform : Platform ) {
                 };
 
-    ngOnInit(){
+    ngOnInit(){ 
         // externalDataDirectory --> cdvfile://localhost/files-external/
         // dataDirectory --> cdvfile://localhost/files/
         if (typeof this.capDownload == 'object'){
@@ -127,7 +127,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(){
-        this.events.unsubscribe("capitulo:fenecido", (()=> {}));
+        if (!this.events.unsubscribe("capitulo:fenecido")) {console.error('[Descarga.ngOnDestroy] No me he dessuscrito de capitulo.')};
         console.log("[descarga.componentes.ngOnDestroy] Saliendo");
     }
 

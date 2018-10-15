@@ -1,7 +1,7 @@
 import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
-import { Events, ToastController } from 'ionic-angular';
+import { Events, ToastController, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { BackgroundMode } from '@ionic-native/background-mode';
 
@@ -79,8 +79,9 @@ export class PlayerAndroid implements OnDestroy {
                 public toastCtrl: ToastController, 
                 private configuracion: ConfiguracionService, 
                 public events: Events,
+                public platform : Platform,
                 private backgroundMode: BackgroundMode){
-
+/*
         file.resolveLocalFilesystemUrl(file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
@@ -88,8 +89,23 @@ export class PlayerAndroid implements OnDestroy {
             })
             .catch((error)=>{
                 console.error("[PLAYERANDROID] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)
-            });
+            });*/
 //        this.repPlugin = new MediaPlugin ();
+    }
+
+    ngOnInit(){ 
+
+        this.platform.ready().then(() => {
+            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
+            .then((entry)=>{
+                this.ubicacionAudio = entry.toInternalURL();
+                console.log("[PLAYERANDROID.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
+            })
+            .catch((error)=>{console.error("[PLAYERANDROID.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
+        })
+        .catch((error)=>{
+            console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
+        });   
     }
 
     ngOnDestroy(){

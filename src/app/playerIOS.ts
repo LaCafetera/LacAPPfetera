@@ -1,7 +1,7 @@
-import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
+import { Injectable, Component, OnInit, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Media, MediaObject } from '@ionic-native/media';
-import { Events } from 'ionic-angular';
+import { Events, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
 
 //declare var cordova: any;
@@ -11,7 +11,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
     providers: [File, Media, MediaObject]
 })
 
-export class PlayerIOS implements OnDestroy {
+export class PlayerIOS implements OnInit, OnDestroy {
 
   //  private repPlugin: MediaPlugin;
     private repObject: MediaObject;
@@ -43,16 +43,30 @@ export class PlayerIOS implements OnDestroy {
 
     constructor(public media: Media, 
                 private file: File, 
+                public platform : Platform,
                 private configuracion: ConfiguracionService, 
                 public events: Events){
-
-        file.resolveLocalFilesystemUrl(file.dataDirectory)
+                    
+            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
-                //this.crearepPlugin (audio);
+                console.log("[PLAYERIOS.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
             })
-            .catch((error)=>{console.log("[PLAYERIOS] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-//        this.repPlugin = new MediaPlugin ();
+            .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
+    }
+
+    ngOnInit(){ 
+        this.platform.ready().then(() => {
+            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
+            .then((entry)=>{
+                this.ubicacionAudio = entry.toInternalURL();
+                console.log("[PLAYERIOS.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
+            })
+            .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
+        })
+        .catch((error)=>{
+            console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
+        });   
     }
 
     ngOnDestroy(){

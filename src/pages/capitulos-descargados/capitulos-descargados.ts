@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component,  OnDestroy } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ToastController, normalizeURL } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 
-import { MusicControls } from '@ionic-native/music-controls';
+//import { MusicControls } from '@ionic-native/music-controls';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -23,12 +23,12 @@ import { ReproductorPage } from "../reproductor/reproductor";
   templateUrl: 'capitulos-descargados.html',
   providers: [File, EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
 })
-export class CapitulosDescargadosPage {
+export class CapitulosDescargadosPage implements OnDestroy {
 
     dirdestino:string;
     datosDestino: Array<any>
     items: Array<any>;
-    mscControl: MusicControls;
+    //mscControl: MusicControls;
     reproductor: Player;
     capEnRep:string = "ninguno";
 
@@ -42,7 +42,7 @@ export class CapitulosDescargadosPage {
                 public toastCtrl: ToastController) {
         this.items = new Array();
         this.reproductor = this.navParams.get('player');
-        this.mscControl = this.navParams.get('controlador');
+        //this.mscControl = this.navParams.get('controlador');
         if( this.reproductor != null) {
             this.capEnRep = this.reproductor.dameCapitulo();
             console.log('[CAPITULOS-DESCARGADOS.constructor] El capítulo que se está reproduciendo es ' + this.capEnRep);
@@ -54,7 +54,7 @@ export class CapitulosDescargadosPage {
             console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje Audio Modificado');
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
-                this.mscControl = reproductorIn.controlador;
+                //this.mscControl = reproductorIn.controlador;
             }
         });
         events.subscribe("like:modificado", (valoresLike) => {
@@ -86,6 +86,13 @@ export class CapitulosDescargadosPage {
             console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
             this.creaListaCapitulos (null, null);
         });
+    }
+
+    ngOnDestroy(){
+        console.log('[CAPITULOS-DESCARGADOS.ngOnDestroy] Cerrandoooooooooooooooooooooooo');
+        this.events.unsubscribe('like:modificado');
+        this.events.unsubscribe('reproduccion:status');
+        this.events.unsubscribe('audio:modificado');
     }
 
     creaListaCapitulos (usuario: string, token:string){
@@ -164,11 +171,18 @@ export class CapitulosDescargadosPage {
     }
 
     pushPage(item){
-    this.navCtrl.push(ReproductorPage, {episodio:   item,
-                                        player:     this.reproductor,
-                                        controlador:this.mscControl,
-                                    //     soloWifi:this.soloWifi,
-                                        enlaceTwitter: this.dameEnlace(item.objeto.title)});
+        this.navCtrl.push(ReproductorPage, {episodio:   item,
+                                            player:     this.reproductor,
+                                            //controlador:this.mscControl,
+                                        //     soloWifi:this.soloWifi,
+                                            enlaceTwitter: this.dameEnlace(item.objeto.title)});
+        this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+    }
+
+    cambiamscControl(statusRep: number){
+        console.log('[capitulos-descargados.cambiamscControl] ***** OJO ***** cambiado status de la reproducción a  ' + statusRep)
+        this.events.publish('reproduccionHome:status', statusRep);
+        //this.mscControl.updateIsPlaying(!(statusRep == this.reproductor.dameStatusStop() || statusRep == this.reproductor.dameStatusPause()));
     }
 
     borrarElemento(episodio){
