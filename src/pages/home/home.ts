@@ -27,7 +27,7 @@ export class HomePage implements OnDestroy, OnInit {
    // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
     // reproductor: Player;
-    //capEnRep:string = 'ninguno';
+    capEnRep:string = 'ninguno';
     //soloWifi:boolean = false;
     //mscControl:MusicControls;
 
@@ -234,6 +234,7 @@ export class HomePage implements OnDestroy, OnInit {
         this.mscControlOpt.cover = item.objeto.image_url;
         this.mscControlOpt.track = item.objeto.title;
         this.creaControlEnNotificaciones();
+        this.capEnRep = 'pdte' + item.objeto.episode_id;
         this.navCtrl.push(ReproductorPage, {episodio:   item,
                                             player:     this.reproductor,
                                        //     controlador:this.mscControl,
@@ -385,7 +386,7 @@ export class HomePage implements OnDestroy, OnInit {
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-play');
                         this.events.publish('audio:peticion','PLAY');
                         //this.reproductor.justPlay(this._configuracion);
-                        //this.playPause(this._configuracion);
+                        //this.reproductor.play()
                         break;
                     case 'music-controls-destroy':
                         //this.reproductor.release(this._configuracion);
@@ -429,9 +430,21 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     cambiamscControl(statusRep: number){
-        console.log('[HOME.cambiamscControl] ***** OJO ***** cambiado status de la reproducción a  ' + statusRep)
+        console.log('[HOME.cambiamscControl] ***** OJO ***** cambiado status de la reproducción a  ' + statusRep);
+        let status = !(statusRep == this.reproductor.dameStatusStop() || statusRep == this.reproductor.dameStatusPause());
         this.events.publish('reproduccionHome:status', statusRep);
-        this.mscControl.updateIsPlaying(!(statusRep == this.reproductor.dameStatusStop() || statusRep == this.reproductor.dameStatusPause()));
+        this.mscControl.updateIsPlaying(status);
+        if (status){
+            if (this.capEnRep[0] == 'p'){
+                this.capEnRep = this.capEnRep.slice(4);
+            }
+        }
+        else {
+            if (this.capEnRep[0] != 'p'){
+                this.capEnRep = 'pdte' + this.capEnRep;
+            }
+        }
+        this.chngDetector.detectChanges();
     }
 
 /*------------------------- salir -----------------

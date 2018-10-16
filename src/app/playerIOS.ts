@@ -47,26 +47,26 @@ export class PlayerIOS implements OnInit, OnDestroy {
                 private configuracion: ConfiguracionService, 
                 public events: Events){
                     
-            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
+    /*        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
                 console.log("[PLAYERIOS.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
             })
-            .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
+            .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});*/
     }
 
     ngOnInit(){ 
-        this.platform.ready().then(() => {
+    //    this.platform.ready().then(() => {
             this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
                 console.log("[PLAYERIOS.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
             })
             .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-        })
+    /*    })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   
+        });   */
     }
 
     ngOnDestroy(){

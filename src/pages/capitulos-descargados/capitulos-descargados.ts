@@ -1,6 +1,6 @@
 import { Component,  OnDestroy } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ToastController, normalizeURL } from 'ionic-angular';
-import { File } from '@ionic-native/file';
+//import { File } from '@ionic-native/file';
 
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 
@@ -21,7 +21,7 @@ import { ReproductorPage } from "../reproductor/reproductor";
 @Component({
   selector: 'page-capitulos-descargados',
   templateUrl: 'capitulos-descargados.html',
-  providers: [File, EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
+  providers: [/*File, */EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
 })
 export class CapitulosDescargadosPage implements OnDestroy {
 
@@ -34,7 +34,7 @@ export class CapitulosDescargadosPage implements OnDestroy {
 
     constructor(public navCtrl: NavController, 
                 public navParams: NavParams, 
-                private file: File, 
+                //private file: File, 
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
                 public events: Events,

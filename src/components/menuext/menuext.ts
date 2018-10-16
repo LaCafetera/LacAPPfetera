@@ -6,6 +6,8 @@ import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
 import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
 import { CapitulosDescargadosPage } from "../../pages/capitulos-descargados/capitulos-descargados";
 
+import { Player } from '../../app/player';
+
 /**
  * Generated class for the MenuExtComponent component.
  *
@@ -30,8 +32,13 @@ export class MenuExtComponent {
   infoUsuario = InfoUsuarioPage;
   descargados = CapitulosDescargadosPage;
 
+  reproductor: Player;
+
+  // let datosObjeto = {player: this.reproductor, controlador:this.mscControl}
+
   constructor(public viewCtrl: ViewController, public appCtrl: App, public navParams: NavParams) {
-    console.log('Hello MenuExtComponent Component');
+    console.log('[MenuExtComponent constructor]');
+    this.reproductor = this.navParams.get('player');
   }
 
   mostrarLaCafetera(){

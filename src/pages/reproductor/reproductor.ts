@@ -3,7 +3,7 @@ import { NavController, NavParams, Platform, PopoverController, Events, ToastCon
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
-import { MusicControls } from '@ionic-native/music-controls';
+//import { MusicControls } from '@ionic-native/music-controls';
 import { BackgroundMode } from '@ionic-native/background-mode';
 
 import { EpisodiosService } from '../../providers/episodios-service';
