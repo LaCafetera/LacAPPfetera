@@ -1,5 +1,5 @@
 import { Injectable, Component, OnInit, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
-import { File } from '@ionic-native/file';
+//import { File } from '@ionic-native/file';
 import { Media, MediaObject } from '@ionic-native/media';
 import { Events, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -8,17 +8,17 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 
 @Injectable()
 @Component({
-    providers: [File, Media, MediaObject]
+    providers: [/*File, */Media, MediaObject]
 })
 
-export class PlayerIOS implements OnInit, OnDestroy {
+export class PlayerIOS implements /*OnInit, */OnDestroy {
 
   //  private repPlugin: MediaPlugin;
     private repObject: MediaObject;
   //  private _configuracion: ConfiguracionService;
 
     private capitulo: string ="";
-    private descargado:boolean = false;
+    //private descargado:boolean = false;
     //private reproduciendo:boolean = false;
     private statusRep:number;
     private enVivo: boolean = false;
@@ -35,14 +35,14 @@ export class PlayerIOS implements OnInit, OnDestroy {
     public MEDIA_ERR_NONE_SUPPORTED = 4; // this.media.MEDIA_ERR_NONE_SUPPORTED;
 */
     seekPdte:boolean = false;
-    ubicacionAudio:string ="";
+    //ubicacionAudio:string ="";
     //audioRecibido: string = "";
     // Cuando damos a pause / stop y la reproducción está en MEDIA_STARTING, no para la descarga del buffer, ni se lo guarda ni nada. Así que hay que hacer 
     // una guarrería.
     paradaEncolada: boolean = false;
 
     constructor(public media: Media, 
-                private file: File, 
+                //private file: File, 
                 public platform : Platform,
                 private configuracion: ConfiguracionService, 
                 public events: Events){
@@ -55,7 +55,7 @@ export class PlayerIOS implements OnInit, OnDestroy {
             .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});*/
     }
 
-    ngOnInit(){ 
+    /*ngOnInit(){ 
     //    this.platform.ready().then(() => {
             this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
             .then((entry)=>{
@@ -63,11 +63,11 @@ export class PlayerIOS implements OnInit, OnDestroy {
                 console.log("[PLAYERIOS.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
             })
             .catch((error)=>{console.error("[PLAYERIOS.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-    /*    })
+        })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   */
-    }
+        });   
+    }*/
 
     ngOnDestroy(){
         if (this.statusRep == this.media.MEDIA_PAUSED || this.statusRep == this.media.MEDIA_STOPPED ){
@@ -97,7 +97,7 @@ export class PlayerIOS implements OnInit, OnDestroy {
         console.log("[PLAYERIOS.crearepPlugin] recibida petición de audio: " + audio);
         //this._configuracion = configuracion;
         //this.audioRecibido = audio;
-        this.capitulo = this.traduceAudio(audio);
+        this.capitulo = audio;//this.traduceAudio(audio);
         this.seekPdte = true;
         const onStatusUpdate = ((status) =>{
             console.log("[PLAYERIOS.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.media.MEDIA_RUNNING);
@@ -157,9 +157,9 @@ export class PlayerIOS implements OnInit, OnDestroy {
         return this.media.MEDIA_STARTING;
     }
 
-    traduceAudio(audio):string{
+    /*traduceAudio(audio):string{
         return (audio.includes('mp3')?this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3":audio);
-    }
+    }*/
 
     public dameCapitulo():string{
         return (this.extraeCapitulo(this.capitulo));
@@ -189,9 +189,9 @@ export class PlayerIOS implements OnInit, OnDestroy {
         }
     }
 
-    capDescargado (idDescargado){
+    /*capDescargado (idDescargado){
         this.descargado = idDescargado;
-    }
+    }*/
     
     getCurrentPosition(){
         return this.repObject.getCurrentPosition();

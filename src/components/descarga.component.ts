@@ -98,23 +98,23 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                             if(value == true) { //Aqu� hay que ver si VALUE se considera boolean y podemos quitar el " == true"
                                 console.log("[Descarga.ngOnInit] El fichero " + this.fileDownload + ' existe.');
                                 this.icono = 'trash';
-                                this.ficheroDescargado.emit({existe: true}); //Aqu� hay que ver si VALUE se considera boolean y dejar s�lo un "emit existe:value"
+                                this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino}); //Aqu� hay que ver si VALUE se considera boolean y dejar s�lo un "emit existe:value"
                             }
                             else {
                                 console.log("[Descarga.ngOnInit] El fichero " + this.fileDownload + ' no existe.');
                                 this.icono = 'ios-cloud-download'; // Fuerzo a que salga el icono de iOS que mola m�s :b
-                                this.ficheroDescargado.emit({existe: false});
+                                this.ficheroDescargado.emit({existe: false, direccion: null});
                             }
                         })
                         .catch((err) => {
                             this.icono = 'ios-cloud-download';
-                            this.ficheroDescargado.emit({existe: false});
+                            this.ficheroDescargado.emit({existe: false, direccion: null});
                                 console.log("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que no existe.");
                         });
                     }
                     else {
                         this.icono = 'lock';
-                        this.ficheroDescargado.emit({existe: false});
+                        this.ficheroDescargado.emit({existe: false, direccion: null});
                     }
                 })
                 .catch((error) => {

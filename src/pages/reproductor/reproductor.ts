@@ -622,7 +622,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         let nombrerep: string;
         //let meVoyPorAqui: number = 0;
         if (fichero.existe ){
-            nombrerep = encodeURI(/*cordova.file.dataDirectory + */this.episodio + '.mp3');
+            nombrerep = encodeURI(/*cordova.file.dataDirectory + */fichero.direccion + this.episodio + '.mp3');
             console.log('[REPRODUCTOR.ficheroDescargado] EL fichero existe. Reproduciendo descarga. ' + nombrerep + ' . ');
             this.noRequiereDescarga = true;
         } else {

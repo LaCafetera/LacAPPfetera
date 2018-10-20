@@ -1,5 +1,5 @@
 import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
-import { File } from '@ionic-native/file';
+//import { File } from '@ionic-native/file';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
 import { Events, ToastController, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -9,18 +9,18 @@ import { BackgroundMode } from '@ionic-native/background-mode';
 
 @Injectable()
 @Component({
-    providers: [File, AndroidExoplayer, BackgroundMode]
+    providers: [/*File, */AndroidExoplayer, BackgroundMode]
 })
 
 export class PlayerAndroid implements OnDestroy {
 
 
     private capitulo: string ="";
-    private descargado:boolean = false;
+    //private descargado:boolean = false;
     //private statusRep:number;
 
     seekPdte:boolean = false;
-    ubicacionAudio:string ="";
+    //ubicacionAudio:string ="";
     //audioRecibido: string = "";
     paradaEncolada: boolean = false;
     timerVigila: number = 0;
@@ -75,7 +75,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     constructor(private androidExoplayer: AndroidExoplayer,
-                private file: File, 
+                //private file: File, 
                 public toastCtrl: ToastController, 
                 private configuracion: ConfiguracionService, 
                 public events: Events,
@@ -95,7 +95,7 @@ export class PlayerAndroid implements OnDestroy {
 
     ngOnInit(){ 
 
-        this.platform.ready().then(() => {
+    /*    this.platform.ready().then(() => {
             this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
             .then((entry)=>{
                 this.ubicacionAudio = entry.toInternalURL();
@@ -105,7 +105,7 @@ export class PlayerAndroid implements OnDestroy {
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   
+        });   */
     }
 
     ngOnDestroy(){
@@ -341,9 +341,9 @@ export class PlayerAndroid implements OnDestroy {
         return (this.estadoPlayer.MEDIA_STARTING);
     }
 
-    traduceAudio(audio):string{
+    /*traduceAudio(audio):string{
         return (audio.includes('mp3')?this.ubicacionAudio + this.extraeCapitulo(audio) + ".mp3":audio);
-    }
+    }*/
 
     public dameCapitulo():string{
         return (this.extraeCapitulo(this.capitulo));
@@ -373,9 +373,9 @@ export class PlayerAndroid implements OnDestroy {
         }
     }
 
-    capDescargado (idDescargado){
+    /*capDescargado (idDescargado){
         this.descargado = idDescargado;
-    }
+    }*/
     
     getCurrentPosition(){
         let posicion = new Promise ((resolve, reject) => {

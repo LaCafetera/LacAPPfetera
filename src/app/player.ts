@@ -102,14 +102,14 @@ export class Player implements OnDestroy {
         }
     }
 
-    traduceAudio(audio):string{
+    /*traduceAudio(audio):string{
         if (this.cantaIos_local('')){ // no paso el audio porque no quiero que me cambie el si es un adudio local o no. Además, ambos sistemas funcionan igual.
             return (this.playerIOS.traduceAudio(audio));
         }
         else {
             return (this.playerAndroid.traduceAudio(audio));
         }
-    }
+    }*/
 
     public dameCapitulo():string{
         if (this.cantaIos_local('')){
@@ -128,15 +128,15 @@ export class Player implements OnDestroy {
             return (this.playerAndroid.extraeCapitulo(capituloEntrada));
         }
     }
-
-    capDescargado (idDescargado){
+    
+    /*capDescargado (idDescargado){
         if (this.cantaIos_local('')){
             this.playerIOS.capDescargado (idDescargado);
         }
         else {
             this.playerAndroid.capDescargado (idDescargado);
         }
-    }
+    }*/
 
     getCurrentPosition(){
         if (this.cantaIos_local('')){
@@ -186,7 +186,7 @@ export class Player implements OnDestroy {
     play(audioIn: string, configuracion: ConfiguracionService, live: boolean):boolean{
         //let capitulo = this.dameCapitulo();
         this.enVivo = live;
-        let audio = this.traduceAudio(audioIn);
+        let audio = audioIn ; //this.traduceAudio(audioIn);
         if (this.reproduciendoEste(audio)) {
             if (this.cantaIos_local(audioIn)){
                 return (this.playerIOS.play(audio, configuracion));
