@@ -217,6 +217,11 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
         this.repObject.seekTo(tiempoSeek);
     }
 */
+
+    resumePlay(){
+        this.play('lo que ya estaba sonando.', null);
+    }
+
     play(audioIn: string, configuracion: ConfiguracionService):boolean{
         console.log ("[PLAYERIOS.play] Recibida petición de reproducción de "+ audioIn );
 //		let capitulo = this.dameCapitulo();

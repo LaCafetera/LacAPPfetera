@@ -174,14 +174,14 @@ export class Player implements OnDestroy {
         }
     }
 
-/*    continuaPlayStreaming (tiempoSeek: number){
-        if (this.cantaIos_local('')){
-            console.error("[PLAYER.continuaPlayStreaming] Han llamado a iOS, y no deberían");
+    resumePlay (){
+        if (this.cantaIos_local('')){ // no paso el audio porque no quiero que me cambie el si es un adudio local o no. Además, ambos sistemas funcionan igual.
+            this.playerIOS.resumePlay();
         }
         else {
-            this.playerAndroid.continuaPlayStreaming (tiempoSeek);
+            this.playerAndroid.resumePlay();
         }
-    }*/
+    }
 
     play(audioIn: string, configuracion: ConfiguracionService, live: boolean):boolean{
         //let capitulo = this.dameCapitulo();

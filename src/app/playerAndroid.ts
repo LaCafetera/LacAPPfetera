@@ -404,6 +404,10 @@ export class PlayerAndroid implements OnDestroy {
         console.log ("[PLAYERANDROID.continuaPlayStreaming] Ya hemos lanzado. Volvemos." );
     }
 
+    resumePlay (){
+        this.play('', this.configuracion);
+    }
+
     //async play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
     play(audioIn: string, configuracion: ConfiguracionService){//:boolean{
         console.log ("[PLAYERANDROID.play] Play normal");
