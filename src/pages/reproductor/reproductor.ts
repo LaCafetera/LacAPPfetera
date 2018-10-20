@@ -415,7 +415,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.iconoPlayPause = 'pause'; // Esto aquí es un poco bestia, pero en realidad es una forma de intentar forzar que ponga el pause...
                     //this.chngDetector.markForCheck();
                     this.chngDetector.detectChanges();
-                    console.log('[REPRODUCTOR.parpadeoTiempoRep] Parpadeando. El icono debería ser ' + this.iconoPlayPause);
+                    //console.log('[REPRODUCTOR.parpadeoTiempoRep] Parpadeando. El icono debería ser ' + this.iconoPlayPause);
                 }, 1000);
             }
             else {

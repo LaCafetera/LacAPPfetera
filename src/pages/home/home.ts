@@ -384,7 +384,7 @@ export class HomePage implements OnDestroy, OnInit {
                         break;
                     case 'music-controls-play':
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-play');
-                        this.events.publish('audio:peticion','PLAY');
+                        //this.events.publish('audio:peticion','PLAY');
                         //this.reproductor.justPlay(this._configuracion);
                         this.reproductor.resumePlay()
                         break;
