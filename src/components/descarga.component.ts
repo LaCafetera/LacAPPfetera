@@ -77,7 +77,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
         this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
             console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
             this.icono = 'ios-cloud-download'; // Si justo acaba de morir el capítulo, no puede ser que está ya descargado.
-            this.ficheroDescargado.emit({existe: false});
+            this.ficheroDescargado.emit({existe: false, direccion: null});
         });
 
         
@@ -85,7 +85,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 
             if (this.enVivo){
                 this.icono = 'lock';
-                this.ficheroDescargado.emit({existe: false});
+                this.ficheroDescargado.emit({existe: false, direccion: null});
             }
             else {
                 this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
@@ -167,7 +167,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                                 .then(() => {
                                     console.log("[descarga.components.descargarFichero]  Descarga completa.");
                                     this.icono = 'trash';
-                                    this.ficheroDescargado.emit({existe: true});
+                                    this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
                                     this.porcentajeDescargado = 0;
                                     this.descargando = false;
                                     this.msgDescarga('Descarga completa');
@@ -277,7 +277,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
             .then(() => {
                 console.log("[Descarga.borrarDescarga] El fichero " + this.fileDownload + '.se ha eliminado.');
                 this.icono = 'ios-cloud-download';
-                this.ficheroDescargado.emit({existe: false});
+                this.ficheroDescargado.emit({existe: false, direccion: null});
                 this.msgDescarga('Programa borrado');
                 this.guardaDescargados.borraProgramas(this.capItem);
 				this.file.removeFile(this.dirdestino, this.fileDownload + '.jpg')
