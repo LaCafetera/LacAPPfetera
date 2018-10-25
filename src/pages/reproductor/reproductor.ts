@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef,/*, Output, EventEmitter*/OnInit,  OnDestroy} from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController } from 'ionic-angular';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL} from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -82,7 +82,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     longAudioLiveDescargado: number = 0;
     esIOS: boolean = false;
     capItemTxt: string;
-	
+
     sinConexionCantando: boolean = false;
 
     // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
@@ -119,6 +119,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.httpAudio = this.capItem.site_url;
         this.episodio = this.capItem.episode_id;
         this.imagen = this.capItem.image_url;
+        console.log('[REPRODUCTOR.constructor] El fichero de imagen es: ' + this.imagen);
         this.enVivo = this.capItem.type=='LIVE';
         this.reproductor = this.navParams.get('player');
         //this.mscControl = this.navParams.get('controlador');
@@ -210,7 +211,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         })
         .catch((error)=>{
             console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   
+        });
     }
 
     ionViewDidLoad() {
@@ -553,7 +554,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     compartir(){
         console.log ('[REPRODUCTOR.compartir] Compartiendo url ' + this.httpAudio);
-        
+
         if (!this.esIOS){
             var options = {
                 message: this.titulo, // not supported on some apps (Facebook, Instagram)
@@ -800,7 +801,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.dialogs.alert('No podemos recuperar la reproducción por streaming sin estar conectado a una red Wifi.', 'Super - Gurú');
                 }
                 else {
-                    this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);	
+                    this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
                     this.msgDescarga('Recuperando reproducción tras reconexión.');
                     this.sinConexionCantando = false;
                 }
@@ -837,16 +838,16 @@ export class ReproductorPage implements OnInit, OnDestroy{
                         encontrado = true;
                     }
                 }
-                if ( (i + 1) < this.detallesCapitulo.length  && 
-                     this.detallesCapitulo[i].starts_at < (position * 1000) && 
+                if ( (i + 1) < this.detallesCapitulo.length  &&
+                     this.detallesCapitulo[i].starts_at < (position * 1000) &&
                      this.detallesCapitulo[i+1].starts_at > (position * 1000) &&
                      this.detalleIntervalo != (i + 1)){
-                    encontrado = true;                    
+                    encontrado = true;
                 }
-                if ( (i + 1) == this.detallesCapitulo.length  && 
+                if ( (i + 1) == this.detallesCapitulo.length  &&
                     this.detallesCapitulo[i].starts_at < (position * 1000) &&
                     this.detalleIntervalo != (i + 1)){
-                    encontrado = true;                    
+                    encontrado = true;
                 }
                 if ( encontrado ){
                     this.imagen = (this.detallesCapitulo[i].image_url != null ? this.detallesCapitulo[i].image_url : this.capItem.image_url );
@@ -904,7 +905,15 @@ export class ReproductorPage implements OnInit, OnDestroy{
         toast.present();
     }
 
-
+    normalizaUbicacion (ubicacion: string ):string {
+      if (ubicacion.includes('file')) {
+        return (normalizeURL(ubicacion));
+      }
+      else
+      {
+        return (ubicacion);
+      }
+    }
 
 }
 
