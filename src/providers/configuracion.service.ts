@@ -56,7 +56,9 @@ export class ConfiguracionService {
             console.log("[CONFIGURACION_SERVICE.setTheme] No puedo guardar un valor nulo")
         }
         else {
-            this.storage.set ("tema",val);
+            this.storage.set ("tema",val)
+            .then ((data) => console.log ("[CONFIGURACION.SERVICE.primeraVez] Dato guardado: tema - " + val))
+            .catch ((error) => console.error ("[CONFIGURACION.SERVICE.primeraVez] Error guardando dato : tema - " + val + " - " + error));;
             this.theme.next(val);
         }
         //console.log("[CONFIGURACION.SERVICE.setTheme] cambiado el tema a "+ val );
@@ -95,7 +97,9 @@ export class ConfiguracionService {
             console.log("[CONFIGURACION_SERVICE.setWIFI] No puedo guardar un valor nulo")
         }
         else {
-            this.storage.set ("WIFI",val);
+            this.storage.set ("WIFI",val)
+            .then ((data) => console.log ("[CONFIGURACION.SERVICE.setWIFI] Dato guardado: WIFI - " + val))
+            .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setWIFI] Error guardando dato : WIFI - " + val + " - " + error));
         //console.log("[CONFIGURACION.SERVICE.setWIFI] cambiado el WIFI a "+ val );
         }
     }
@@ -109,7 +113,9 @@ export class ConfiguracionService {
             console.log("[CONFIGURACION_SERVICE.setFechasAbsolutas] No puedo guardar un valor nulo")
         }
         else {
-            this.storage.set ("FechasAbsolutas",val);
+            this.storage.set ("FechasAbsolutas",val)
+            .then ((data) => console.log ("[CONFIGURACION.SERVICE.setFechasAbsolutas] Dato guardado: FechasAbsolutas - " + val))
+            .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setFechasAbsolutas] Error guardando dato : FechasAbsolutas - " + val + " - " + error));
         }
     }
 
@@ -122,7 +128,9 @@ export class ConfiguracionService {
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No debo guardar la posición para un capítulo en vivo")
         }
         else {
-            this.storage.set ("pos_"+cap, Math.round(pos));
+            this.storage.set ("pos_"+cap, Math.round(pos))
+            .then ((data) => console.log ("[CONFIGURACION.SERVICE.setTimeRep] Dato guardado: pos_" + cap + " - " + Math.round(pos)))
+            .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setTimeRep] Error guardando dato: pos_" + cap + " - " + Math.round(pos) + " - " + error));
         }
     }
 
@@ -148,7 +156,7 @@ export class ConfiguracionService {
                         resolve(data);
                     },
                     error=> {
-                        console.log ("[CONFIGURACION.SERVICE.getTimeRep] Error "+ error);
+                        console.error ("[CONFIGURACION.SERVICE.getTimeRep] Error "+ error);
                         resolve(0);
                     }
             )}});
@@ -160,7 +168,9 @@ export class ConfiguracionService {
             console.log("[CONFIGURACION_SERVICE.setTwitteado] No puedo guardar un valor nulo")
         }
         else {
-            this.storage.set ("Twit_"+cap, true); // la cosa es guardar si se ha preguntado el twitear este capítulo; no qué ha respondido.
+            this.storage.set ("Twit_"+cap, true)
+            .then ((data) => console.log ("[CONFIGURACION.SERVICE.setTwitteado] Dato guardado: Twit_"+cap + " - true"))
+            .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setTwitteado] Error guardando dato: Twit_"+cap + " - true - " + error));; // la cosa es guardar si se ha preguntado el twitear este capítulo; no qué ha respondido.
         }
     }
 
@@ -181,7 +191,7 @@ export class ConfiguracionService {
                         resolve(data);
                     },
                     error=> {
-                        console.log ("[CONFIGURACION.SERVICE.getTwitteado] Error "+ error);
+                        console.error ("[CONFIGURACION.SERVICE.getTwitteado] Error "+ error);
                         resolve(0);
                     }
                 )
@@ -191,7 +201,9 @@ export class ConfiguracionService {
 
     setTokenSpreaker (token: string){
         console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Guardando token login spreaker " + token);
-        this.storage.set ("tokenSpreaker", token);
+        this.storage.set ("tokenSpreaker", token)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.setTokenSpreaker] Dato guardado: tokenSpreaker"))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setTokenSpreaker] Error guardando dato : tokenSpreaker - " + error));;
         if (token != null){
             this.episodioSrvc.whoAMi(token).subscribe(
             data => {
@@ -200,7 +212,7 @@ export class ConfiguracionService {
                 this.guardaUsuario(data.response.user.user_id);
             },
             err => {
-                console.log("[CONFIGURACION.SERVICE.setTokenSpreaker] Error solicitando datos de usuario:" + err);
+                console.error("[CONFIGURACION.SERVICE.setTokenSpreaker] Error solicitando datos de usuario:" + err);
             });
         }
         else
@@ -225,7 +237,7 @@ export class ConfiguracionService {
                                 this.guardaUsuario(data.response.user.user_id);
                             },
                             err => {
-                                console.log("[CONFIGURACION.SERVICE.getTokenSpreaker] Error solicitando datos de usuario:" + err);
+                                console.error("[CONFIGURACION.SERVICE.getTokenSpreaker] Error solicitando datos de usuario:" + err);
                             }
                         )
                     }
@@ -233,7 +245,7 @@ export class ConfiguracionService {
                 }
             )
             .catch ((error) => {
-                console.log ("[CONFIGURACION.SERVICE.getTokenSpreaker] Error recuperando tokenSpreaker "+ error);
+                console.error ("[CONFIGURACION.SERVICE.getTokenSpreaker] Error recuperando tokenSpreaker "+ error);
                 //this.storage.set ("usuarioSpreaker", "");
                 this.guardaUsuario("");
                 resolve(0);
@@ -251,7 +263,29 @@ export class ConfiguracionService {
     }
 
     guardaUsuario(usuario:string){
-        this.storage.set ("usuarioSpreaker", usuario);
+        this.storage.set ("usuarioSpreaker", usuario)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.guardaUsuario] Dato guardado: usuarioSpreaker - " + usuario))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.guardaUsuario] Error guardando dato : usuarioSpreaker - " + usuario + " - " + error));;
         this.events.publish('conexion:status', {});
+    }
+
+    primeraVez(version: string):Promise<any>{
+        console.log ("[CONFIGURACION.SERVICE.primeraVez] Buscando si es la primera vez que ejeecutamos la versión " + version);
+        return new Promise ((resolve,reject) =>{
+            this.storage.get (version)
+            .then ((data) => {
+                console.log ("[CONFIGURACION.SERVICE.primeraVez] Recibido " + data);
+                if (data == null || data == ""){
+                    this.storage.set (version, true)
+                    .then ((data) => console.log ("[CONFIGURACION.SERVICE.primeraVez] Dato guardado: " + version + " - true"))
+                    .catch ((error) => console.error ("[CONFIGURACION.SERVICE.primeraVez] Error guardando dato " + version + " - true"));
+                }
+                resolve(data);
+            })
+            .catch ((error) => {
+                console.error ("[CONFIGURACION.SERVICE.primeraVez] Error recuperando dato "+ error);
+                resolve(0);
+            }); 
+        });
     }
 }

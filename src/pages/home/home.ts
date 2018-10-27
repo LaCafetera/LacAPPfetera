@@ -96,6 +96,12 @@ export class HomePage implements OnDestroy, OnInit {
             this.chngDetector.markForCheck();
         });
         //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+        // https://ionicframework.com/docs/native/app-version/
+            
+        //this.navCtrl.setRoot(SlideInicioPage);
+
+
+
     }
 
     ngOnInit() {

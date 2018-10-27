@@ -7,11 +7,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { Network } from '@ionic-native/network';
+import { AppVersion } from '@ionic-native/app-version';
 
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from '../providers/episodios-service';
 import { InfoUsuarioPage } from '../pages/info-usuario/info-usuario';
+import { SlideInicioPage } from '../pages/slide-inicio/slide-inicio';
 
 
 @Component({
@@ -31,11 +33,12 @@ export class MyApp implements OnDestroy {
   //modoNoche:boolean = false;
     availableThemes: {className: string, prettyName: string}[];
 
-  rootPage = HomePage;
+  rootPage: any; //HomePage;
   imgItem: string = "assets/icon/icon.png";
   nombreUsu: string = "Proscrito";
   descripcion: string = "Resistente de Sherwood"
   datosUsu: Array<any> = null;
+  verApp: string = ''
 
   constructor(public _platform: Platform, 
               private _configuracion: ConfiguracionService, 
@@ -49,7 +52,8 @@ export class MyApp implements OnDestroy {
               public menuCtrl: MenuController,
               private backgroundMode: BackgroundMode,
               public network: Network,
-              public events: Events) {
+              public events: Events,
+              private appVersion: AppVersion) {
 
     this.availableThemes = this._configuracion.availableThemes;
 //    _platform.ready().then(() => {
@@ -90,6 +94,26 @@ export class MyApp implements OnDestroy {
       //console.log ('[app.component.ngOnInit]');
 
       this._platform.ready().then(() => {
+
+        this.appVersion.getVersionNumber()
+        .then ((version) => {
+            this.verApp = version;
+            console.info('[app.component.ngOnInit] ************** La versión es: ' + this.verApp)
+            this._configuracion.primeraVez(version)
+            .then ((yasTadoAqui) => {
+                console.info ('No es la primera vez que ejecutamos esta versión de la app');
+                if (!yasTadoAqui){
+                  this.rootPage = SlideInicioPage;
+                }
+                else {
+                  this.rootPage = HomePage;
+                }
+            })
+            .catch ((error)=> console.error('[HOME.ngOnInit] Error tratando de averiguar si es nuestra primera vez: ' + error));
+        })
+        .catch ((error)=> console.error('[HOME.ngOnInit] Error extrayendo versión de la app: ' + error));
+
+
         this.barraEstado.styleDefault();
         this.splashscreen.hide(); 
         this._configuracion.getWIFI()
@@ -192,7 +216,6 @@ export class MyApp implements OnDestroy {
               console.error('[app.component.ngOnInit] Error en onchange: '  + err.message)
           }
         )
-
       })
       .catch((error)=>{
         console.log("[app.ngAfterViewInit] Error esperando a que el terminal responda: " + error);
@@ -203,11 +226,8 @@ export class MyApp implements OnDestroy {
     ngOnDestroy(){
       this.backgroundMode.disable();
       console.log("[app.component.ngOnDestroy] Saliendoooooooooooooooooooooooooooooo");
-   }
-   onDestroy(){
-     console.log("[app.component.onDestroy] Saliendoooooooooooooooooooooooooooooo");
-  }
-
+    }
+   
 
     setTheme(e) {
     // https://webcake.co/theming-an-ionic-2-application/
