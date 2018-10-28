@@ -14,13 +14,13 @@
 
 
 <ion-content padding>
-  <ion-slides pager = true centeredSlides = true>
+  <ion-slides pager = true centeredSlides = true initialSlide = 0>
     <ion-slide *ngFor="let diapo of diapos">
-      <!--ion-toolbar>
+      <ion-toolbar>
         <ion-buttons end>
           <button ion-button color="primary">Skip</button>
         </ion-buttons>
-      </ion-toolbar-->
+      </ion-toolbar>
       <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
       <img [src]="diapo.imagen" class="diapo-imagen"/>
       <p [innerHTML]="diapo.descripcion"></p>

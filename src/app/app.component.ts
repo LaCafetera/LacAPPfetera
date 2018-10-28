@@ -102,12 +102,12 @@ export class MyApp implements OnDestroy {
             this._configuracion.primeraVez(version)
             .then ((yasTadoAqui) => {
                 console.info ('No es la primera vez que ejecutamos esta versión de la app');
-                if (!yasTadoAqui){
+                //if (!yasTadoAqui){
                   this.rootPage = SlideInicioPage;
-                }
-                else {
-                  this.rootPage = HomePage;
-                }
+                //}
+                //else {
+                //  this.rootPage = HomePage;
+                //}
             })
             .catch ((error)=> console.error('[HOME.ngOnInit] Error tratando de averiguar si es nuestra primera vez: ' + error));
         })
