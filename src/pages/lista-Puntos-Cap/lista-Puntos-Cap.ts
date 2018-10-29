@@ -23,20 +23,29 @@ export class listaPuntosCap {
                 else if (element.title.includes('ENTREVISTA')){
                     element.image_url = 'assets/images/ENTREVISTA.png'
                 }
-                else if (element.title.includes('PRENSA INTERNACIONAL')){
-                    element.image_url = 'assets/images/PRENSA_INTERNACIONAL.jpg'
-                }
-                else if (element.title.includes('VIDEOFORUM')){
-                    element.image_url = 'assets/images/VIDEOFORUM.jpg'
-                }
                 else if (element.title.includes('AGENDA CAFETERA')){
-                    element.image_url = 'assets/images/AGENDA_CAFERA.png'
+                    element.image_url = 'assets/images/AGENDA_CAFETERA.png'
                 }
                 else if (element.title.includes('SOBREMESA')){
                     element.image_url = 'assets/images/SOBREMESA.png'
                 }
+                else if (element.title.includes('PRENSA INTERNACIONAL')){
+                    element.image_url = 'assets/images/PRENSA_INTERNACIONAL.png'
+                }
+                else if (element.title.includes('VIDEOFORUM')){
+                    element.image_url = 'assets/images/VIDEOFORUM.png'
+                }
+                else if (element.title.includes('CIENCIA')){
+                    element.image_url = 'assets/images/CIENCIA.png'
+                }
+                else if (element.title.includes('ECOLOGÍA')){
+                    element.image_url = 'assets/images/ECOLOGIA.png'
+                }
+                else {
+                    element.image_url = 'assets/images/GENERICO.png'
+                }
             }
-        }); 
+        });
     }
 
     numerosDosCifras(numero):string {
