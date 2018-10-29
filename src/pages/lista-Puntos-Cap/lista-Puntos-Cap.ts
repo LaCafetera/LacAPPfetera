@@ -18,31 +18,31 @@ export class listaPuntosCap {
         this.capitulo.forEach(element => {
             if (element.image_url == null) {
                 if (element.title.includes('EDITORIAL')){
-                    element.image_url = 'assets/images/EDITORIAL.png'
+                    element.image_original_url = 'assets/images/EDITORIAL.png'
                 }
                 else if (element.title.includes('ENTREVISTA')){
-                    element.image_url = 'assets/images/ENTREVISTA.png'
+                    element.image_original_url = 'assets/images/ENTREVISTA.png'
                 }
                 else if (element.title.includes('AGENDA CAFETERA')){
-                    element.image_url = 'assets/images/AGENDA_CAFETERA.png'
+                    element.image_original_url = 'assets/images/AGENDA_CAFETERA.png'
                 }
                 else if (element.title.includes('SOBREMESA')){
-                    element.image_url = 'assets/images/SOBREMESA.png'
+                    element.image_original_url = 'assets/images/SOBREMESA.png'
                 }
                 else if (element.title.includes('PRENSA INTERNACIONAL')){
-                    element.image_url = 'assets/images/PRENSA_INTERNACIONAL.png'
+                    element.image_original_url = 'assets/images/PRENSA_INTERNACIONAL.png'
                 }
                 else if (element.title.includes('VIDEOFORUM')){
-                    element.image_url = 'assets/images/VIDEOFORUM.png'
+                    element.image_original_url = 'assets/images/VIDEOFORUM.png'
                 }
                 else if (element.title.includes('CIENCIA')){
-                    element.image_url = 'assets/images/CIENCIA.png'
+                    element.image_original_url = 'assets/images/CIENCIA.png'
                 }
                 else if (element.title.includes('ECOLOGÍA')){
-                    element.image_url = 'assets/images/ECOLOGIA.png'
+                    element.image_original_url = 'assets/images/ECOLOGIA.png'
                 }
                 else {
-                    element.image_url = 'assets/images/GENERICO.png'
+                    element.image_original_url = 'assets/images/GENERICO.png'
                 }
             }
         });
