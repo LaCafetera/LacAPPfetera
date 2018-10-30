@@ -17,28 +17,28 @@ export class listaPuntosCap {
         this.capitulo = params.get('listadoPuntos');
         this.capitulo.forEach(element => {
             if (element.image_url == null) {
-                if (element.title.includes('EDITORIAL')){
+                if (element.title.toUpperCase().includes('EDITORIAL')){
                     element.image_original_url = 'assets/images/EDITORIAL.png'
                 }
                 else if (element.title.includes('ENTREVISTA')){
                     element.image_original_url = 'assets/images/ENTREVISTA.png'
                 }
-                else if (element.title.includes('AGENDA CAFETERA')){
+                else if (element.title.toUpperCase().includes('AGENDA CAFETERA')){
                     element.image_original_url = 'assets/images/AGENDA_CAFETERA.png'
                 }
-                else if (element.title.includes('SOBREMESA')){
+                else if (element.title.toUpperCase().includes('SOBREMESA')){
                     element.image_original_url = 'assets/images/SOBREMESA.png'
                 }
-                else if (element.title.includes('PRENSA INTERNACIONAL')){
+                else if (element.title.toUpperCase().includes('PRENSA INTERNACIONAL')){
                     element.image_original_url = 'assets/images/PRENSA_INTERNACIONAL.png'
                 }
-                else if (element.title.includes('VIDEOFORUM')){
+                else if (element.title.toUpperCase().includes('VIDEOFORUM')){
                     element.image_original_url = 'assets/images/VIDEOFORUM.png'
                 }
-                else if (element.title.includes('CIENCIA')){
+                else if (element.title.toUpperCase().includes('CIENCIA')){
                     element.image_original_url = 'assets/images/CIENCIA.png'
                 }
-                else if (element.title.includes('ECOLOGÍA')){
+                else if (element.title.toUpperCase().includes('ECOLOGÍA')){
                     element.image_original_url = 'assets/images/ECOLOGIA.png'
                 }
                 else {

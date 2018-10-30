@@ -20,10 +20,16 @@
           <button ion-button color="primary">Saltar ayuda</button>
         </ion-buttons>
       </ion-toolbar>
-
-      <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
-      <img [src]="diapo.imagen" class="diapo-imagen"/>
-      <p [innerHTML]="diapo.descripcion"></p>
+      <div  *ngIf="!horizontal">
+        <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
+        <img [src]="diapo.imagenV" class="diapo-imagen"/>
+        <p [innerHTML]="diapo.descripcion"></p>
+      </div>
+      <div  *ngIf="horizontal">
+        <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
+        <img [src]="diapo.imagenH" class="diapo-imagen"/>
+        <p [innerHTML]="diapo.descripcion"></p>
+      </div>
     </ion-slide>
 
     <ion-slide>
