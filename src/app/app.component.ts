@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
 import { StatusBar} from '@ionic-native/status-bar';
-import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts'; 
+import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
 import { SplashScreen } from '@ionic-native/splash-screen';
 //import { InAppBrowser} from '@ionic-native/in-app-browser'
 import { Deeplinks } from '@ionic-native/deeplinks';
@@ -40,11 +40,11 @@ export class MyApp implements OnDestroy {
   datosUsu: Array<any> = null;
   verApp: string = ''
 
-  constructor(public _platform: Platform, 
-              private _configuracion: ConfiguracionService, 
-              public toastCtrl: ToastController, 
-              private barraEstado: StatusBar, 
-              private splashscreen: SplashScreen, 
+  constructor(public _platform: Platform,
+              private _configuracion: ConfiguracionService,
+              public toastCtrl: ToastController,
+              private barraEstado: StatusBar,
+              private splashscreen: SplashScreen,
               private contacts: Contacts,
               private epService: EpisodiosService,
               //private iab: InAppBrowser,
@@ -102,12 +102,12 @@ export class MyApp implements OnDestroy {
             this._configuracion.primeraVez(version)
             .then ((yasTadoAqui) => {
                 console.info ('No es la primera vez que ejecutamos esta versión de la app');
-                if (!yasTadoAqui){
-                  this.rootPage = SlideInicioPage;
-                }
-                else {
-                  this.rootPage = HomePage;
-                }
+                // if (!yasTadoAqui){
+                   this.rootPage = SlideInicioPage;
+                // }
+                // else {
+                //   this.rootPage = HomePage;
+                // }
             })
             .catch ((error)=> console.error('[HOME.ngOnInit] Error tratando de averiguar si es nuestra primera vez: ' + error));
         })
@@ -115,7 +115,7 @@ export class MyApp implements OnDestroy {
 
 
         this.barraEstado.styleDefault();
-        this.splashscreen.hide(); 
+        this.splashscreen.hide();
         this._configuracion.getWIFI()
           .then((val)=> {
             this.soloWifi = val==true;
@@ -149,14 +149,14 @@ export class MyApp implements OnDestroy {
             this.barraEstado.overlaysWebView(true);
           }
           this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
-          //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-( 
+          //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-(
         });
 
         this._configuracion.getFechasAbsolutas()
         .then((dato)=>this.fechasAbsolutas = dato==true)
         .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
-      
+
         if (!this._platform.is("ios")){
           this.backgroundMode.setDefaults({
             title: "La cAPPfetera",
@@ -166,13 +166,13 @@ export class MyApp implements OnDestroy {
           this.backgroundMode.on('activate').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background activate: ' + JSON.stringify(data));
-              this.backgroundMode.disableWebViewOptimizations(); 
+              this.backgroundMode.disableWebViewOptimizations();
           },
           err => {
               console.error('[app.component.ngOnInit] Background activate error: ' + JSON.stringify(err));
           });
 
-          
+
           this.backgroundMode.on('enable').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background enable: ' + JSON.stringify(data));
@@ -180,7 +180,7 @@ export class MyApp implements OnDestroy {
           err => {
               console.error('[app.component.ngOnInit] Background enable error: ' + JSON.stringify(err));
           });
-              
+
           this.backgroundMode.on('disable').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background disable: ' + JSON.stringify(data));
@@ -188,7 +188,7 @@ export class MyApp implements OnDestroy {
           err => {
               console.error('[app.component.ngOnInit] Background disable error: ' + JSON.stringify(err));
           });
-              
+
           this.backgroundMode.on('deactivate').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background deactivate : ' + JSON.stringify(data));
@@ -196,7 +196,7 @@ export class MyApp implements OnDestroy {
           err => {
               console.error('[app.component.ngOnInit] Background deactivate  error: ' + JSON.stringify(err));
           });
-          
+
           this.backgroundMode.on('failure').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background failure : ' + JSON.stringify(data));
@@ -221,24 +221,24 @@ export class MyApp implements OnDestroy {
         console.log("[app.ngAfterViewInit] Error esperando a que el terminal responda: " + error);
       });
     }
-    
+
 
     ngOnDestroy(){
       this.backgroundMode.disable();
       console.log("[app.component.ngOnDestroy] Saliendoooooooooooooooooooooooooooooo");
     }
-   
+
 
     setTheme(e) {
     // https://webcake.co/theming-an-ionic-2-application/
         this._configuracion.setTheme(e);
     }
-    
+
     setWIFI(e) {
         console.log("[app.component.setWIFI] El valor que trato de guardar es " + e.checked );
         this._configuracion.setWIFI(e.checked);
     }
-    
+
     setFechasAbsolutas(e) {
         console.log("[app.component.setFechasAbsolutas] El valor que trato de guardar es " + e.checked );
         this._configuracion.setFechasAbsolutas(e.checked);
@@ -297,22 +297,22 @@ export class MyApp implements OnDestroy {
       }
       this.iniciando= false;
     }
-// cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=cappfetera --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=lacappfetera.mo 
-// npm install --save @ionic-native/deeplinks    
+// cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=cappfetera --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=lacappfetera.mo
+// npm install --save @ionic-native/deeplinks
     loginSpreaker(){
-      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=cappfetera://lacappfetera.mo', 
-                                    '_system', 
+      /*let browser = */window.open('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=cappfetera://lacappfetera.mo',
+                                    '_system',
                                     'location=no,clearsessioncache=yes,clearcache=yes');
     }
 /*
     loginSpreaker2(){
       // una conexión
-      //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      //let browser = this.iab.create('https://www.spreaker.com/connect/login?redirect=https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100',
       // cuatro conexiones.
-      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100', 
+      let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=token&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=http://localhost:8100',
       // Cuatro conexiones, tirando de CODE
-      //let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo', 
-                                    '_blank', 
+      //let browser = this.iab.create('https://www.spreaker.com/oauth2/authorize?client_id=1093&response_type=code&state=cG9J6z16F2qHtZFr3w79sfd1aYqzK6ST&scope=basic&redirect_uri=https://lacappfetera.mo',
+                                    '_blank',
                                     'location=no,clearsessioncache=yes,clearcache=yes');
       browser.on('loadstart')
         .subscribe((event) => {
@@ -335,7 +335,7 @@ export class MyApp implements OnDestroy {
                 this.habemusConexion(parsedResponse["access_token"]);
                 //this._configuracion.setTokenSpreaker(parsedResponse["access_token"]);
                 //this.actualizaAvatar(parsedResponse["access_token"]);
-              } 
+              }
             }
             else {
               this.conectadoASpreaker = false;
@@ -363,7 +363,7 @@ export class MyApp implements OnDestroy {
                 ((error) => {
                     console.log("[APP.loginSpreaker] Error recibiendo token " + error);
                 });
-            } 
+            }
           }
         });
     /*  browser.on("exit") //comento esto, porque cuando conectas con un servicio que ya te "conoce" directamente cierra la web (Twitter) y lo considero como cancelado, por esto.
@@ -410,4 +410,3 @@ export class MyApp implements OnDestroy {
       }
     }
 }
-

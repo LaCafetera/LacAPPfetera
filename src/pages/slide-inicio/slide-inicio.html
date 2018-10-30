@@ -5,34 +5,34 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar>
-    <ion-title>Bienvenido a La cAPPfetera.</ion-title>
+    <ion-title>Ayuda</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
-<ion-content padding>
-  <ion-slides pager = true centeredSlides = true initialSlide = 0>
+<ion-content>
+  <ion-slides direction=horizontal pager=true centeredSlides=true initialSlide=0>
+
     <ion-slide *ngFor="let diapo of diapos">
       <ion-toolbar>
         <ion-buttons end>
-          <button ion-button color="primary">Skip</button>
+          <button ion-button color="primary">Saltar ayuda</button>
         </ion-buttons>
       </ion-toolbar>
+
       <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
       <img [src]="diapo.imagen" class="diapo-imagen"/>
       <p [innerHTML]="diapo.descripcion"></p>
     </ion-slide>
+
     <ion-slide>
-      <ion-toolbar>
-      </ion-toolbar>
+      <ion-toolbar> </ion-toolbar>
       <img src="assets/images/SI6.png" class="diapo-image"/>
       <button ion-button large clear icon-end color="primary" (click)="letsRock()">
-          ¿Empezamos?
-        <ion-icon name="arrow-forward"></ion-icon>
+          ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
       </button>
     </ion-slide>
+
   </ion-slides>
 </ion-content>
