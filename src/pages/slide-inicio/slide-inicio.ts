@@ -1,5 +1,5 @@
 import { Component, ViewChild  } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Platform } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { errorHandler } from '@angular/platform-browser/src/browser';
@@ -18,6 +18,7 @@ import { errorHandler } from '@angular/platform-browser/src/browser';
 export class SlideInicioPage {
 
   horizontal :boolean = false;
+  movil : boolean = true;
 
   @ViewChild(Slides) slides: Slides;
 
@@ -44,20 +45,23 @@ export class SlideInicioPage {
     imagenH: "assets/images/SI5H.png"}
   ]
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private screenOrientation: ScreenOrientation) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private screenOrientation: ScreenOrientation, public _platform: Platform) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SlideInicioPage');
-    
-      this.screenOrientation.onChange().subscribe(
-        data => {
-          this.horizontal = this.screenOrientation.type.includes ("landscape");
-        },
-        err => {
-          console.error ("La orientación del terminal es: " + this.screenOrientation.type + " - " + JSON.stringify(err) );
-        }
-    );
+    this._platform.ready().then(() => {
+
+        this.movil = this._platform.is('mobile');
+        this.screenOrientation.onChange().subscribe(
+          data => {
+            this.horizontal = this.screenOrientation.type.includes ("landscape");
+          },
+          err => {
+            console.error ("La orientación del terminal es: " + this.screenOrientation.type + " - " + JSON.stringify(err) );
+          }
+        );
+      })
   }
 
   letsRock(){

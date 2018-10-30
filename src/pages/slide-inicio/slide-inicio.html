@@ -20,12 +20,22 @@
           <button ion-button color="primary">Saltar ayuda</button>
         </ion-buttons>
       </ion-toolbar>
-      <div  *ngIf="!horizontal">
+      <div  *ngIf="!horizontal && movil">
         <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
         <img [src]="diapo.imagenV" class="diapo-imagen"/>
         <p [innerHTML]="diapo.descripcion"></p>
       </div>
-      <div  *ngIf="horizontal">
+      <div  *ngIf="!horizontal && !movil">
+        <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
+        <img [src]="diapo.imagenV" class="diapo-imagen"/>
+        <p [innerHTML]="diapo.descripcion"></p>
+      </div>
+      <div  *ngIf="horizontal && movil">
+        <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
+        <img [src]="diapo.imagenH" class="diapo-imagen"/>
+        <p [innerHTML]="diapo.descripcion"></p>
+      </div>
+      <div  *ngIf="horizontal && !movil">
         <h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2>
         <img [src]="diapo.imagenH" class="diapo-imagen"/>
         <p [innerHTML]="diapo.descripcion"></p>
