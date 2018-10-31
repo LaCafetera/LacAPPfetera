@@ -1,33 +1,39 @@
 page-slide-inicio {
 
+    .saltar {
+      font-family: "roboto";
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
     .toolbar-background {
         border-color: transparent;
       }
 
-      .diapo-zoom {
-        height: 100%;
-      }
-
-      .diapo-title {
-        margin-top: 2.8rem;
-      }
-
-      .diapo-image {
-        max-height: 50%;
-        max-width: 60%;
-        //margin: 18px 0;
-      }
-
-      b {
-        font-weight: 500;
-      }
-
-      p {
-        padding: 0 40px;
-        font-size: 14px;
-        line-height: 1.5;
-
-        b {
-        }
+    .diapo-zoom {
+      //height: 100%;
     }
+
+    .diapo-title {
+      margin-top: 2.8rem;
+    }
+
+    .diapo-image {
+      max-height: 50%;
+      max-width: 60%;
+      //margin: 18px 0;
+    }
+
+    b {
+      font-weight: 500;
+    }
+
+    p {
+      padding: 0 40px;
+      font-size: 14px;
+      line-height: 1.5;
+
+    b {
+    }
+  }
 }

@@ -22,11 +22,11 @@ export class SlideInicioPage {
 
   @ViewChild(Slides) slides: Slides;
 
-  diapos = [ 
+  diapos = [
     {titulo: "Diapo1",
      descripcion: "Paseaba @radiocable por la calle...",
      imagenV: "assets/images/SI1V.jpg",
-     imagenH: "assets/images/SI1H.png"},
+     imagenH: "assets/images/SI1H.jpg"},
     {titulo: "Diapo2",
     descripcion: "...cuando se encontró con Inda que le miraba golosón...",
     imagenV: "assets/images/SI2V.jpg",
