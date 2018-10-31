@@ -82,6 +82,17 @@ page-reproductor {
         padding: 0px;
       }
 
+      // Correcciones visuales de iconos para ser similares
+      // .botonDirectoAtras {
+      //   font-size: 3rem;
+      //   font-weight: bold;
+      //
+      //   ion-icon {
+      //     // centrado para hacerlo visualmente similar al resto
+      //     padding-top: 24px;
+      //   }
+      //  }
+
       .botonDirecto {
         font-size: 5rem;
         font-weight: bold;
@@ -129,6 +140,7 @@ page-reproductor {
       /* div barra de reproducción, para poder bajar los otros */
       width: 100%;
       clear: both;
+      margin-bottom: 60px;
 
       #tiempo-lleva {
         /* div con el tiempo de reproducción */
@@ -193,7 +205,7 @@ page-reproductor {
       #botonera {
         /* botonera completa de reproducción en diferido */
         float: left;
-        margin-top: -1%;
+        margin-top: -3%;
         margin-left: 7%;
         width: 50%;
       }
@@ -201,9 +213,10 @@ page-reproductor {
       #barra_reprod {
         float:left;
         width: 30%;
-        height: 50px;
         margin-left: 17%;
         clear: none;
+        margin-bottom: 0px;
+
 
         #tiempo-lleva {
           position: relative;
@@ -249,6 +262,7 @@ page-reproductor {
         width: 45%;
         padding-left: 5%;
         clear: none;
+        margin-bottom:-40px;
       }
 
       .social {
