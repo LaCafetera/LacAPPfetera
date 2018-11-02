@@ -82,17 +82,6 @@ page-reproductor {
         padding: 0px;
       }
 
-      // Correcciones visuales de iconos para ser similares
-      // .botonDirectoAtras {
-      //   font-size: 3rem;
-      //   font-weight: bold;
-      //
-      //   ion-icon {
-      //     // centrado para hacerlo visualmente similar al resto
-      //     padding-top: 24px;
-      //   }
-      //  }
-
       .botonDirecto {
         font-size: 5rem;
         font-weight: bold;
@@ -247,6 +236,11 @@ page-reproductor {
         float: left;
         padding-left: 5%;
         width: 50%;
+      }
+
+      #enVivo {
+          width: 50%;
+          margin-top: 100px;
       }
 
       #botonera {
