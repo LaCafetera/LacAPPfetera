@@ -102,6 +102,9 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
         const onStatusUpdate = ((status) =>{
             console.log("[PLAYERIOS.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.media.MEDIA_RUNNING);
             this.statusRep = status;
+            if (this.statusRep == this.media.MEDIA_PAUSED || this.statusRep == this.media.MEDIA_STOPPED){
+                this.guardaPos(this.configuracion);
+            }
             this.events.publish('reproduccion:status', this.statusRep);
             if (this.seekPdte && status == this.media.MEDIA_RUNNING){
                 let capitulo = this.dameCapitulo();
