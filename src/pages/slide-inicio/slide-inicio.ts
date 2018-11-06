@@ -2,7 +2,7 @@ import { Component, ViewChild  } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, Platform } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
-import { errorHandler } from '@angular/platform-browser/src/browser';
+//import { errorHandler } from '@angular/platform-browser/src/browser';
 
 /**
  * Generated class for the SlideInicioPage page.
@@ -17,8 +17,9 @@ import { errorHandler } from '@angular/platform-browser/src/browser';
 })
 export class SlideInicioPage {
 
-  horizontal :boolean = false;
-  movil : boolean = true;
+  horizontal: boolean = false;
+  movil: boolean = true;
+  panoramico: boolean = true;
   ulti : boolean = false;
 
   @ViewChild(Slides) slides: Slides;
@@ -62,7 +63,10 @@ export class SlideInicioPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SlideInicioPage');
     this._platform.ready().then(() => {
-
+        let ancho = this._platform.width();
+        let alto = this._platform.height();
+        this.panoramico = Math.abs((alto / ancho) - 1.77) < Math.abs((alto / ancho) - 1.33 );
+        console.log (' ************** Ancho ' + ancho + '; alto ' + alto + ". Panoramico " + this.panoramico);
         this.movil = this._platform.is('mobile');
         this.screenOrientation.onChange().subscribe(
           data => {
