@@ -6,16 +6,25 @@ page-slide-inicio {
       font-weight: bold;
     }
 
-    .toolbar-background {
-        border-color: transparent;
-      }
-
-    .diapo-zoom {
-      //height: 100%;
+    .contenedor{
+    position: relative;
+    display: inline-block;
+    text-align: center;
     }
 
-    .diapo-title {
-      margin-top: 2.8rem;
+      .empieza {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-family: "roboto";
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+    .toolbar-background {
+        border-color: transparent;
     }
 
     .diapo-image {
@@ -24,16 +33,4 @@ page-slide-inicio {
       //margin: 18px 0;
     }
 
-    b {
-      font-weight: 500;
-    }
-
-    p {
-      padding: 0 40px;
-      font-size: 14px;
-      line-height: 1.5;
-
-    b {
-    }
-  }
 }

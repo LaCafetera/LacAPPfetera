@@ -22,34 +22,34 @@
           <button ion-button color="primary">Saltar ayuda</button>
         </ion-buttons>
       </ion-toolbar-->
-      <div  *ngIf="!horizontal && panoramico">
+      <div class="contenedor" *ngIf="!horizontal && panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
-        <img [src]="diapo.imagenV" class="diapo-imagen"/>
-        <p [innerHTML]="diapo.descripcion"></p>
-        <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
-            ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
+        <img [src]="diapo.imagenV169" class="diapo-imagen"/>
+        <!--<p [innerHTML]="diapo.descripcion"></p>-->
+        <button class="empieza" icon-end (click)="letsRock()" *ngIf="diapo.boton">
+          ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
       <div  *ngIf="!horizontal && !panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
-        <img [src]="diapo.imagenV" class="diapo-imagen"/>
-        <p [innerHTML]="diapo.descripcion"></p>
+        <img [src]="diapo.imagenV43" class="diapo-imagen"/>
+        <!--<p [innerHTML]="diapo.descripcion"></p>-->
         <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
       <div  *ngIf="horizontal && panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
-        <img [src]="diapo.imagenH" class="diapo-imagen"/>
-        <p [innerHTML]="diapo.descripcion"></p>
+        <img [src]="diapo.imagenH169" class="diapo-imagen"/>
+        <!--<p [innerHTML]="diapo.descripcion"></p>-->
         <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
       <div  *ngIf="horizontal && !panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
-        <img [src]="diapo.imagenH" class="diapo-imagen"/>
-        <p [innerHTML]="diapo.descripcion"></p>
+        <img [src]="diapo.imagenH43" class="diapo-imagen"/>
+        <!--<p [innerHTML]="diapo.descripcion"></p>-->
         <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
