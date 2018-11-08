@@ -75,14 +75,24 @@ export class SlideInicioPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SlideInicioPage');
     this._platform.ready().then(() => {
-        let ancho = this._platform.width();
-        let alto = this._platform.height();
-        this.panoramico = Math.abs((alto / ancho) - 1.77) < Math.abs((alto / ancho) - 1.33 );
-        console.log (' ************** Ancho ' + ancho + '; alto ' + alto + ". Panoramico " + this.panoramico);
+        let tamaño1 = this._platform.width();
+        let largo = this._platform.width();
+        let corto = this._platform.height();
+        if (tamaño1 >= corto) {
+          largo = tamaño1
+        }
+        else {
+          largo = corto;
+          corto = tamaño1;
+        }
+        this.panoramico = Math.abs((largo / corto) - 1.77) < Math.abs((largo / corto) - 1.33 );
+        console.log ('[SlideInicioPage.ionViewDidLoad]  Ancho ' + largo + '; alto ' + corto + ". Panoramico " + this.panoramico);
         this.movil = this._platform.is('mobile');
+        this.horizontal = this.screenOrientation.type.includes ("landscape");
         this.screenOrientation.onChange().subscribe(
           data => {
             this.horizontal = this.screenOrientation.type.includes ("landscape");
+            console.log ('[SlideInicioPage.ionViewDidLoad]  Orientación :' + this.screenOrientation.type);
           },
           err => {
             console.error ("[SlideInicioPage.ionViewDidLoad] La orientación del terminal es: " + this.screenOrientation.type + " - " + JSON.stringify(err) );
@@ -97,7 +107,7 @@ export class SlideInicioPage {
 
   slideChanged(){
     this.ulti = this.slides.getActiveIndex()==this.slides.length()-1;
-    console.log ("Activo " +  this.slides.getActiveIndex() + " longitud " + this.slides.length() + " ulti vale " + this.ulti);
+    console.log ("[SlideInicioPage.slideChanged] Activo " +  this.slides.getActiveIndex() + " longitud " + this.slides.length() + " ulti vale " + this.ulti);
   }
 
 }
