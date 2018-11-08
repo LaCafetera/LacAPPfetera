@@ -30,7 +30,12 @@ page-slide-inicio {
     .diapo-image {
       max-height: 50%;
       max-width: 60%;
-      //margin: 18px 0;
+    }
+
+    .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets {
+      background-color: rgba(255,255,255,0.6);
+      bottom: 0px;
+      padding-bottom: 10px;
     }
 
 }

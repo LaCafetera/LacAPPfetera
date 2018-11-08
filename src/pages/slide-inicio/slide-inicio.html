@@ -15,7 +15,6 @@
 
 <ion-content>
   <ion-slides direction=horizontal pager=true centeredSlides=true initialSlide="0"  (ionSlideDidChange)="slideChanged()">
-
     <ion-slide *ngFor="let diapo of diapos">
       <!--ion-toolbar>
         <ion-buttons end>
@@ -30,27 +29,30 @@
           ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
+
       <div  *ngIf="!horizontal && !panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
         <img [src]="diapo.imagenV43" class="diapo-imagen"/>
         <!--<p [innerHTML]="diapo.descripcion"></p>-->
-        <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
+        <button class="empieza" icon-end (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
+
       <div  *ngIf="horizontal && panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
         <img [src]="diapo.imagenH169" class="diapo-imagen"/>
         <!--<p [innerHTML]="diapo.descripcion"></p>-->
-        <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
+        <button class="empieza" icon-end (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
+
       <div  *ngIf="horizontal && !panoramico">
         <!--h2 class="diapo-title" [innerHTML]="diapo.titulo"></h2-->
         <img [src]="diapo.imagenH43" class="diapo-imagen"/>
         <!--<p [innerHTML]="diapo.descripcion"></p>-->
-        <button ion-button large clear icon-end color="primary" (click)="letsRock()" *ngIf="diapo.boton">
+        <button class="empieza" icon-end (click)="letsRock()" *ngIf="diapo.boton">
             ¿Empezamos? <ion-icon name="arrow-forward"></ion-icon>
         </button>
       </div>
