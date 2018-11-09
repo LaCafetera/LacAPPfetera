@@ -66,6 +66,13 @@ export class SlideInicioPage {
     imagenV169: "assets/images/SI6V_16-9.jpg",
     imagenH43: "assets/images/SI6H_4-3.jpg",
     imagenH169: "assets/images/SI6H_16-9.jpg",
+    boton: false},
+    {titulo: "Diapo7",
+    descripcion: "",
+    imagenV43: "assets/images/SI7V_4-3.jpg",
+    imagenV169: "assets/images/SI7V_16-9.jpg",
+    imagenH43: "assets/images/SI7H_4-3.jpg",
+    imagenH169: "assets/images/SI7H_16-9.jpg",
     boton: true}
   ]
 
