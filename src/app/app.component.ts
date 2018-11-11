@@ -409,4 +409,8 @@ export class MyApp implements OnDestroy {
         this.nombreUsu = "Proscrito";
       }
     }
+
+    ayuda(){
+      this.nav.setRoot (SlideInicioPage);
+    }
 }

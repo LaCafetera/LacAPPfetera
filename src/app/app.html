@@ -43,6 +43,10 @@
             </ion-item>
 
             <ion-item>
+                <button ion-button full menuToggle (click)="ayuda()">ayuda</button>
+            </ion-item>
+
+            <ion-item>
                 <ion-label>
                     <ion-icon name="color-palette"></ion-icon> Elige un tema</ion-label>
                 <ion-select (ionChange)="setTheme($event)" [(ngModel)]="chosenTheme">

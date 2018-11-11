@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.lacappfetera828555" version="0.99.46" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.ionicframework.lacappfetera828555" version="0.99.50" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>LacAPPfetera</name>
     <description>App para que los cafeteros puedan escuchar el programa desde el bosque de Sherwood.</description>
     <author email="estudio@radiocable.com" href="http://radiocable.com/">El grupo Java de La Cafetera</author>
