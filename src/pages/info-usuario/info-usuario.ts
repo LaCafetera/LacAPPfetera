@@ -23,10 +23,10 @@ export class InfoUsuarioPage {
     datosUsu:Array<any>;
 
     imgItem: string = "assets/icon/icon.png";
-    nombreUsu: string = "Proscrito";
-    descripcion: string = "Resistente de Sherwood";
-    emilio: string = "resistente@tree.sherwood.for";
-    dirWeb: string = "http://www.sherwood.for";
+    nombreUsu: string = "";
+    descripcion: string = "";
+    emilio: string = "";
+    dirWeb: string = "";
     dirFacebook: string = "";
     usuTwitter: string = "";
 
@@ -88,6 +88,7 @@ export class InfoUsuarioPage {
             else {
                 console.log ("[INFO-USUARIO.actualizaDatosUsuario] El usuario no está loggeado en Spreaker.");
                 this.dataUsuario = '';
+                this.msgDescarga ("No estás conectado a Spreaker. Para ver tus datos, haz login a través de la opción del menú principal")
             }
         })
         .catch (() => {
@@ -108,7 +109,7 @@ export class InfoUsuarioPage {
         if (parsedResponse["code"] !== undefined && parsedResponse["code"] !== null) { //conexión vía spreaker
             this.episodiosService.solicitaTokenViaCode(parsedResponse["code"]).subscribe(
                 data => {
-                    this.msgDescarga  (JSON.stringify(data));
+                    //this.msgDescarga  (JSON.stringify(data));
                     console.log("[INFO-USUARIO.procesaDatosConexion] Descargados datos de conexión: " + JSON.stringify(data));
                     console.log("[INFO-USUARIO.procesaDatosConexion] Recibido token: " + data["access_token"]);
                     this._configuracion.setTokenSpreaker(data["access_token"]);
@@ -192,10 +193,10 @@ export class InfoUsuarioPage {
         }  
         else {
             this.msgDescarga ("Para actualizar sus datos de Spreaker primero debe loguearse.");
-            this.nombreUsu = "Proscrito";
-            this.descripcion = "Resistente de Sherwood";
-            this.emilio = "resistente@tree.sherwood.for";
-            this.dirWeb = "www.sherwood.for";
+            this.nombreUsu = "";
+            this.descripcion = "";
+            this.emilio = "";
+            this.dirWeb = "";
             this.dirFacebook = "";
             this.usuTwitter = "";
         }
@@ -204,7 +205,7 @@ export class InfoUsuarioPage {
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
-            duration: 20000,
+            duration: 7000,
             cssClass: 'msgDescarga'
         });
         toast.present();
