@@ -20,6 +20,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { AndroidExoplayer } from '@ionic-native/android-exoplayer';
 import { AppVersion } from '@ionic-native/app-version';
+import { Geolocation } from '@ionic-native/geolocation';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -43,6 +44,7 @@ import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
 import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
 import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
 import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
+import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
 
 import { DescargaCafetera } from '../components/descarga.component';
 import { MenuExtComponent } from '../components/menuext/menuext';
@@ -73,7 +75,8 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     MenuExtComponent,
     CapitulosDescargadosPage,
     listaPuntosCap,
-    SlideInicioPage
+    SlideInicioPage,
+    MapaOyentesPage
   ],
   imports: [
     BrowserModule,
@@ -97,7 +100,8 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     MenuExtComponent,
     CapitulosDescargadosPage,
     listaPuntosCap,
-    SlideInicioPage
+    SlideInicioPage,
+    MapaOyentesPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,
@@ -122,6 +126,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               EpisodiosGuardadosService,
               AndroidExoplayer,
               SQLite,
-              AppVersion]
+              AppVersion,
+              Geolocation]
 })
 export class AppModule {}

@@ -5,6 +5,7 @@ import { InfoFerPage } from "../../pages/info-fer/info-fer";
 import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
 import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
 import { CapitulosDescargadosPage } from "../../pages/capitulos-descargados/capitulos-descargados";
+import { MapaOyentesPage } from "../../pages/mapa-oyentes/mapa-oyentes";
 
 import { Player } from '../../app/player';
 
@@ -21,6 +22,7 @@ import { Player } from '../../app/player';
         <button ion-item (click)="mostrarInfoUsuarioSpreaker()"><ion-icon name="contact"></ion-icon>Tú en Spreaker</button>
         <button ion-item (click)="programasDescargados()"><ion-icon name="folder"></ion-icon>Programas Descargados</button>
         <button ion-item (click)="mostrarMapaCafetero()"><ion-icon name="map"></ion-icon>Mapa Cafetero</button>
+        <button ion-item (click)="mostrarMapaOyentes()"><ion-icon name="information-circle"></ion-icon>Mapa de Oyentes</button>
         <button ion-item (click)="mostrarLaCafetera()"><ion-icon name="information-circle"></ion-icon>Acerca de La Cafetera</button>
       </ion-list>
     `
@@ -31,6 +33,7 @@ export class MenuExtComponent {
   mapaCafetero = MapaCafeteroPage;
   infoUsuario = InfoUsuarioPage;
   descargados = CapitulosDescargadosPage;
+  mapaOyentes = MapaOyentesPage;
 
   reproductor: Player;
 
@@ -66,6 +69,13 @@ export class MenuExtComponent {
      console.log('[MENUEXT.programasDescargados] Abriendo capítulos descargados ');
       this.viewCtrl.dismiss();
       this.appCtrl.getRootNav().push(this.descargados, this.navParams.data);
+  //  close();
+  }
+
+  mostrarMapaOyentes(){
+     console.log('[MENUEXT.programasDescargados] Abriendo mapa oyentes ');
+      this.viewCtrl.dismiss();
+      this.appCtrl.getRootNav().push(this.mapaOyentes, this.navParams.data);
   //  close();
   }
 

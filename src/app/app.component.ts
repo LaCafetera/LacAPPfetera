@@ -114,7 +114,7 @@ export class MyApp implements OnDestroy {
         .catch ((error)=> console.error('[HOME.ngOnInit] Error extrayendo versión de la app: ' + error));
 
 
-        this.barraEstado.styleDefault();
+        //this.barraEstado.styleDefault();
         this.splashscreen.hide();
         this._configuracion.getWIFI()
           .then((val)=> {
@@ -148,7 +148,7 @@ export class MyApp implements OnDestroy {
           if (this._platform.is("ios")){
             this.barraEstado.overlaysWebView(true);
           }
-          this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+          //this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
           //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-(
         });
 
