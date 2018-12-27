@@ -41,7 +41,7 @@ export class listaPuntosCap {
                 else if (element.title.toUpperCase().includes('ECOLOGÍA')){
                     element.image_original_url = 'assets/images/ECOLOGIA.png'
                 }
-                else if (element.title.toUpperCase().includes('MEMORIA HISTóRICA')){
+                else if (element.title.toUpperCase().includes('MEMORIA HISTÓRICA')){
                     element.image_original_url = 'assets/images/MEMORIA_HISTORICA.png'
                 }
                 else {
