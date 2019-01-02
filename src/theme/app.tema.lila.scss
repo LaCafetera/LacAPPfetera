@@ -369,4 +369,15 @@ page-home {
     }
   }
 
+  // ******************************************************************* Estilos página info info-fer.html
+  page-info-fer {
+    a:link {
+      color: $lila-danger;
+    }
+
+    hr {
+      border-color: $lila-light;
+    }
+  }
+
 }

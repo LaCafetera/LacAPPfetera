@@ -370,4 +370,15 @@ page-home {
     }
   }
 
+  // ******************************************************************* Estilos página info info-fer.html
+  page-info-fer {
+    a:link {
+      color: $noche-danger;
+    }
+
+    hr {
+      border-color: $noche-light;
+    }
+  }
+
 }
