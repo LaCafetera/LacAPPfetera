@@ -382,4 +382,15 @@
     }
   }
 
+  // ******************************************************************* Estilos página info info-fer.html
+  page-info-fer {
+    a:link {
+      color: $base-danger;
+    }
+
+    hr {
+      border-color: $base-light;
+    }
+  }
+
 }
