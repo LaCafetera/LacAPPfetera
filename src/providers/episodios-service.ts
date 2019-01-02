@@ -212,6 +212,29 @@ export class EpisodiosService {
         return episodiosJSON;
     }
 
+
+///////////////////////////////////// Mapa Cafetero /////////////////////////////////////
+    mapaCafeteroSolicitaToken (){
+        console.log("[EPISODIOS-SERVICE.mapaCafeteroSolicitaToken] Solicitado token del mapa cafetero para código que tenemos metido a piñón.");
+        let headers = new Headers();
+        headers.append ('Content-Type', 'application/x-www-form-urlencoded');
+        let gt = "grant_type=authorization_code";
+        let cID = "client_id=56867005-647b-4c11-a08e-93c93ae998a2";
+        let cs = "client_secret=vWLL3TL7+MiS/CfONmSiPvmlIX2/mtKLO4xS8bBUkOo=";
+        let ru = "redirect_uri=https://www.mapa.radiolacafetera.com";
+        let code = "code=5wZFbgNJHgO3Y2nE6kNO";
+        console.log('[EPISODIOS-SERVICE.mapaCafeteroSolicitaToken] https://www.scribblemaps.com/oauth/token ?' + gt + '&' + cID + '&' + cs + '&' + ru + '&' + code );
+        return this.http.post('https://www.scribblemaps.com/oauth/token ',(gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code), {headers: headers}).map(res => res.json());
+    }
+
+    damePuntosMapa () {
+        console.log("[EPISODIOS-SERVICE.damePuntosMapa] Me preguntan por los puntos del mapa cafetero");
+        //let episodiosJSON = this.http.get('https://www.scribblemaps.com/api/maps/ghQCV2cSHo/smjson').map(res => res.json());
+        let episodiosJSON = this.http.get('https://www.scribblemaps.com/api/maps/ghQCV2cSHo/geojson').map(res => res.json());
+        return episodiosJSON;
+    }
+
+
 }
 
 

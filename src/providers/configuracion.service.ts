@@ -288,4 +288,16 @@ export class ConfiguracionService {
             }); 
         });
     }
+
+    setTokenScribble (token: string){
+        console.log("[CONFIGURACION.SERVICE.setTokenScribble] Guardando token login Scribble " + token);
+        this.storage.set ("tokenScribble", token)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.setTokenScribble] Dato guardado: tokenScribble"))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setTokenScribble] Error guardando dato: tokenSpreaker - " + error));
+    }
+    
+    getTokenScribble ():Promise<any>{
+        console.log("[CONFIGURACION.SERVICE.getTokenScribble] Devolviendo token Scribble ");
+        return (this.storage.get ("tokenScribble"));
+    }
 }
