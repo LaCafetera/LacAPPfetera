@@ -10,6 +10,10 @@ page-chat {
     p {
       /* comentario de usuario */
       font-size: 1.4rem;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
     }
     .button {
       height: 35px;
