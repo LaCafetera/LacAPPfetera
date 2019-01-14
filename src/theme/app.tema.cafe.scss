@@ -285,7 +285,7 @@ page-home {
       border-bottom: solid 1px $cafe-light;
       background-color: $cafe-fondoCard;
 
-      ion-label {
+      ion-label, .label {
         // Etiquetas de las opciones
         color: $cafe-primary;
       }
