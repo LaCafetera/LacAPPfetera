@@ -166,7 +166,7 @@ export class MyApp implements OnDestroy {
           this.backgroundMode.on('activate').subscribe(
           data => {
               console.log('[app.component.ngOnInit] Background activate: ' + JSON.stringify(data));
-              this.backgroundMode.disableWebViewOptimizations();
+              //this.backgroundMode.disableWebViewOptimizations(); // <-- Esto evita que se duerma pero gasta mucha batería.
           },
           err => {
               console.error('[app.component.ngOnInit] Background activate error: ' + JSON.stringify(err));

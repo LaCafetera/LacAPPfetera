@@ -152,47 +152,20 @@ export class ChatPage {
     }
 
     enviarComentario(){
-        console.log ("[CHAT.enviarComentario] Solicitado envío " + this.mensajeTxt );
+        let cadena = this.mensajeTxt.replace("#","%23");
+        console.log ("[CHAT.enviarComentario] Solicitado envío " + cadena );
 
-        if ( this.usuario_id != "" && this.token_id != "" && this.mensajeTxt != null) {
-
-        /*this._configuracion.dameUsuario()
-        .then ((dataUsuario) => {
-            if (dataUsuario != null){
-                console.log ("[CHAT.enviarComentario] recibido usuario " + dataUsuario );
-                this._configuracion.dameToken()
-                .then ((dataToken) => {
-                    console.log ("[CHAT.enviarComentario] recibido token " + dataToken );
-                    if (dataToken != null) {
-                        console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);*/
-                        this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  this.mensajeTxt).subscribe(
-                            data => {
-                                console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/);
-                                this.mensajeTxt = null;
-                            },
-                            err => {
-                                console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
-                                this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
-                            }
-                        );
-/*                    }
-                    else {
-                        this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-                    }
-                })
-                .catch ((error) => {
-                    console.log("[CHAT.enviarComentario] Error descargando token:" + error);
-                    this.msgDescarga ("Error extrayendo usuario de Spreaker.");
-                });
-            }
-            else {
-                this.msgDescarga ("Error extrayendo usuario de Spreaker.");
-            }
-        })
-        .catch (() => {
-            this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-        });*/
-
+        if ( this.usuario_id != "" && this.token_id != "" && cadena != null) {
+            this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  cadena).subscribe(
+                data => {
+                    console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/);
+                    this.mensajeTxt = null;
+                },
+                err => {
+                    console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
+                    this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
+                }
+            );
         }
     }
 
