@@ -281,7 +281,7 @@ page-home {
       border-bottom: solid 1px $noche-light;
       background-color: $noche-fondoCard;
 
-      ion-label {
+      ion-label, .label {
         // Etiquetas de las opciones
         color: $noche-primary;
       }
