@@ -354,97 +354,93 @@ export class HomePage implements OnDestroy, OnInit {
     creaControlEnNotificaciones (){
         this.mscControl.destroy()
         .then((data) => {
-            console.log('[HOME.creaControlEnNotificaciones] /////////////////////////////////////Control remoto destruido OK ' + JSON.stringify(data));
-            if (!this.events.unsubscribe('reproduccion:status')) {
-                console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de reproduccion.')
-            };
-            console.log('[HOME.creaControlEnNotificaciones] Creando');
-            this.mscControl.create(this.mscControlOpt)
-            .then((data) => {
-                console.log('[HOME.creaControlEnNotificaciones] ///////////////////////////////////////////Control remoto creado OK ' + JSON.stringify(data));
-                if (!this.platform.is('ios')) {
-                    this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
-
-                }
-                this.mscControl.subscribe()
-                .subscribe((action) => {
-                    console.log('[HOME.creaControlEnNotificaciones] Recibido ' + JSON.stringify(action));
-                    const message = JSON.parse(action).message;
-                        switch(message) {
-                            case 'music-controls-next':
-                                //this.reproductor.adelantaRep();
-                                this.events.publish('audio:peticion', 'NEXT');
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-next');
-                                break;
-                            case 'music-controls-previous':
-                                //this.reproductor.retrocedeRep();
-                                this.events.publish('audio:peticion','PREV');
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-previous');
-                                break;
-                            case 'music-controls-pause':
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-pause');
-                                //this.playPause(this._configuracion);
-                                this.events.publish('audio:peticion','PAUSE');
-                                this.reproductor.pause(this._configuracion);
-                                break;
-                            case 'music-controls-play':
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-play');
-                                //this.events.publish('audio:peticion','PLAY');
-                                //this.reproductor.justPlay(this._configuracion);
-                                this.reproductor.resumePlay()
-                                break;
-                            case 'music-controls-destroy':
-                                //this.reproductor.release(this._configuracion);
-                                this.events.publish('audio:peticion','EXIT');
-                                this.platform.exitApp();
-                                break;
-                            case 'music-controls-stop-listening':
-                                //this.mscControl.destroy();
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
-                                if (!this.entrandoEnRep){
-                                    this.events.unsubscribe('like:modificado');
-                                    this.events.unsubscribe('capitulo:fenecido');
-                                    this.events.unsubscribe('reproduccion:status');
-                                    //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
-                                    this.reproductor.release(this._configuracion);
-                                }
-                                else {
-                                    console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  No cierro porque estoy entrando en el reproductor.');  
-                                    this.entrandoEnRep = false;
-                                }
-                                break;
-                            case 'music-controls-media-button' :
-                        // External controls (iOS only)
-                            case 'music-controls-toggle-play-pause' :
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-toggle-play-pause');
-                                this.events.publish('audio:peticion','PLAYPAUSE');
-                                break;
-                            case 'music-controls-headset-unplugged':
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-headset-unplugged');
-                                this.reproductor.pause(this._configuracion);
-                                this.events.publish('audio:peticion','PAUSE');
-                                break;
-                            case 'music-controls-headset-plugged':
-                                console.log('[HOME.creaControlEnNotificaciones] music-controls-headset-plugged');
-                                this.reproductor.pause(this._configuracion);
-                                this.events.publish('audio:peticion','PAUSE');
-                                break;
-                            default:
-                                break;
-                        }
-                },
-                (error) => {console.error('[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls')});
-                this.mscControl.listen();
-                if (this.platform.is('ios')) {
-                    this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
-                }
-            })
-            .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
-            })
+            console.log('[HOME.creaControlEnNotificaciones] Control remoto destruido OK ' + JSON.stringify(data));
+            if (!this.events.unsubscribe('reproduccion:status')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de reproduccion.')};
+        })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO ' + error) });
 
+        console.log('[HOME.creaControlEnNotificaciones] Creando');
+        this.mscControl.create(this.mscControlOpt)
+        .then((data) => {
+            console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data));
+            if (!this.platform.is('ios')) {
+                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+            }
+        })
+        .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
 
-
+        this.mscControl.subscribe()
+        .subscribe((action) => {
+            console.log('[HOME.creaControlEnNotificaciones] Recibido ' + JSON.stringify(action));
+            const message = JSON.parse(action).message;
+                switch(message) {
+                    case 'music-controls-next':
+                        //this.reproductor.adelantaRep();
+                        this.events.publish('audio:peticion', 'NEXT');
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-next');
+                        break;
+                    case 'music-controls-previous':
+                        //this.reproductor.retrocedeRep();
+                        this.events.publish('audio:peticion','PREV');
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-previous');
+                        break;
+                    case 'music-controls-pause':
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-pause');
+                        //this.playPause(this._configuracion);
+                        this.events.publish('audio:peticion','PAUSE');
+                        this.reproductor.pause(this._configuracion);
+                        break;
+                    case 'music-controls-play':
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-play');
+                        //this.events.publish('audio:peticion','PLAY');
+                        //this.reproductor.justPlay(this._configuracion);
+                        this.reproductor.resumePlay()
+                        break;
+                    case 'music-controls-destroy':
+                        //this.reproductor.release(this._configuracion);
+                        this.events.publish('audio:peticion','EXIT');
+                        this.platform.exitApp();
+                        break;
+                    case 'music-controls-stop-listening':
+                        //this.mscControl.destroy();
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
+                        if (!this.entrandoEnRep){
+                            this.events.unsubscribe('like:modificado');
+                            this.events.unsubscribe('capitulo:fenecido');
+                            this.events.unsubscribe('reproduccion:status');
+                            //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+                            this.reproductor.release(this._configuracion);
+                        }
+                        else {
+                            console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  No cierro porque estoy entrando en el reproductor.');  
+                            this.entrandoEnRep = false;
+                        }
+                        break;
+                    case 'music-controls-media-button' :
+                // External controls (iOS only)
+                    case 'music-controls-toggle-play-pause' :
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-toggle-play-pause');
+                        this.events.publish('audio:peticion','PLAYPAUSE');
+                        break;
+                    case 'music-controls-headset-unplugged':
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-headset-unplugged');
+                        this.reproductor.pause(this._configuracion);
+                        this.events.publish('audio:peticion','PAUSE');
+                        break;
+                    case 'music-controls-headset-plugged':
+                        console.log('[HOME.creaControlEnNotificaciones] music-controls-headset-plugged');
+                        this.reproductor.pause(this._configuracion);
+                        this.events.publish('audio:peticion','PAUSE');
+                        break;
+                    default:
+                        break;
+                }
+        },
+        (error) => {console.error('[HOME.creaControlEnNotificaciones] Error en valor recibido desde music-controls')});
+        this.mscControl.listen();
+        if (this.platform.is('ios')) {
+            this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+        }
     }
 
     cambiamscControl(statusRep: number){

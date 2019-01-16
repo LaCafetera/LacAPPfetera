@@ -101,22 +101,27 @@ export class ChatPage {
     });
 
     this.timer = setInterval(() =>{
-        console.log("[CHAT.dameComentarios] Actualizando Chat");
+        console.log("[CHAT.dameComentarios] Actualizando Chat " + this.items.length + "  " + this.items);
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
             data => {
-                if (this.items == null){
+                if (this.items.length == 0){
                     this.items=data.response.items;
                 }
                 else {
                     let longArray = data.response.items.length;
-                    let i:number=0;
-                    //console.log("[CHAT] LA nueva remesa de mensajes tiene de longitud " + longArray  ); 
-                    while (data.response.items[i].message_id != this.items[0].message_id && (i+1) < longArray) {
-                        i++;
-                        console.log("[CHAT.dameComentarios] " + i );   
+                    if (longArray > 0) {
+                        let i:number=0;
+                        //console.log("[CHAT] LA nueva remesa de mensajes tiene de longitud " + longArray  ); 
+                        while (data.response.items[i].message_id != this.items[0].message_id && (i+1) < longArray) {
+                            i++;
+                            console.log("[CHAT.dameComentarios] " + i );   
+                        }
+                        this.items = data.response.items.slice(0,i).concat(this.items);
+    //                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
                     }
-                    this.items = data.response.items.slice(0,i).concat(this.items);
-//                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
+                    else {
+                        this.items = []; // Ya, ya sé que es la segunda vez que pongo esto... :-(
+                    }
                 }
             },
             err => {
@@ -233,7 +238,12 @@ export class ChatPage {
     }
 
     borraItemComentario(item){
-        this.items.splice(this.items.indexOf(item) ,1);
+        if (this.items.length == 1){
+            this.items = []; //si borramos el único comentario que hay puede dar problemas.
+        }
+        else {
+            this.items.splice(this.items.indexOf(item) ,1);
+        }
     }
 
     muestraTeclado(){
