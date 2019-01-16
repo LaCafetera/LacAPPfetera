@@ -191,6 +191,7 @@ page-home {
       }
       .porcentaje p {
         color: $noche-danger;
+        background-color: $noche-light;
       }
     }
 
@@ -281,7 +282,7 @@ page-home {
       border-bottom: solid 1px $noche-light;
       background-color: $noche-fondoCard;
 
-      ion-label {
+      ion-label, .label {
         // Etiquetas de las opciones
         color: $noche-primary;
       }

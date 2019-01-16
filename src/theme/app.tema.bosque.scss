@@ -195,6 +195,7 @@ page-home {
       }
       .porcentaje p {
         color: $bosque-danger;
+        background-color: $bosque-light;
       }
     }
 
@@ -285,7 +286,7 @@ page-home {
       border-bottom: solid 1px $bosque-light;
       background-color: $bosque-fondoCard;
 
-      ion-label {
+      ion-label, .label {
         // Etiquetas de las opciones
         color: $bosque-primary;
       }

@@ -191,6 +191,7 @@ page-home {
       }
       .porcentaje p {
         color: $lila-danger;
+        background-color: $lila-light;
       }
     }
 
@@ -281,7 +282,7 @@ page-home {
       border-bottom: solid 1px $lila-light;
       background-color: $lila-fondoCard;
 
-      ion-label {
+      ion-label, .label {
         // Etiquetas de las opciones
         color: $lila-primary;
       }
