@@ -101,7 +101,7 @@ export class ChatPage {
     });
 
     this.timer = setInterval(() =>{
-        console.log("[CHAT.dameComentarios] Actualizando Chat " + this.items.length + "  " + this.items);
+        //console.log("[CHAT.dameComentarios] Actualizando Chat " + this.items.length + "  " + this.items);
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
             data => {
                 if (this.items.length == 0){

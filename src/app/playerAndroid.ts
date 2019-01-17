@@ -254,7 +254,7 @@ export class PlayerAndroid implements OnDestroy {
             this.params.seekTo = (this.enVivo ? 0 : Number(data));
             this.androidExoplayer.show(this.params).subscribe
             ((data) => {
-                console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                //console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                 this.estadoExo=data;
                 this.inVigilando(true); 
                 if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
@@ -352,7 +352,7 @@ export class PlayerAndroid implements OnDestroy {
     extraeCapitulo(capituloEntrada):string{
         let inicio:number;
         let fin:number;
-        console.log("[PLAYERANDROID.extraeCapitulo] Extrayendo capítulo de la cadena "+ capituloEntrada);
+        //console.log("[PLAYERANDROID.extraeCapitulo] Extrayendo capítulo de la cadena "+ capituloEntrada);
         if (capituloEntrada != null){
             if (capituloEntrada.includes('play')){
                 fin = capituloEntrada.length-5;
@@ -364,7 +364,7 @@ export class PlayerAndroid implements OnDestroy {
                 fin = capituloEntrada.length-4;
             }
             inicio = capituloEntrada.substring(0, fin).lastIndexOf("/")+1;
-            console.log("[PLAYERANDROID.extraeCapitulo] Devolviendo "+ capituloEntrada.substring(inicio, fin));
+            //console.log("[PLAYERANDROID.extraeCapitulo] Devolviendo "+ capituloEntrada.substring(inicio, fin));
             return (capituloEntrada.substring(inicio, fin));
         }
         else {
@@ -460,21 +460,21 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     guardaPos(configuracion: ConfiguracionService){
-        console.log ("[PLAYERANDROID.guardaPos] Tratando de guardar la posición");
+        //console.log ("[PLAYERANDROID.guardaPos] Tratando de guardar la posición");
         if (!this.enVivo) {    
             if (this.estadoExo != null) {
                 let posicionNum = parseInt(this.estadoExo.position);
                 let capitulo = this.dameCapitulo();
                 if (posicionNum > 0 && capitulo != ""){
                     configuracion.setTimeRep(capitulo, posicionNum);
-                    console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + posicionNum + " - " + capitulo);
+                    //console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + posicionNum + " - " + capitulo);
                 }
                 else{
-                    console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración " + posicionNum + " - " + capitulo);
+                    //console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración " + posicionNum + " - " + capitulo);
                 }
             }
             else{
-                console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración porque no hemos comenzado ninguna reproducción");
+                //console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración porque no hemos comenzado ninguna reproducción");
             }
         }
     }

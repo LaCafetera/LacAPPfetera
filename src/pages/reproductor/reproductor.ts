@@ -388,7 +388,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                             //}
                         }
                         this.actualizaDetalle(position);
-                        console.log ('[REPRODUCTOR.iniciaContadorRep] Guardando posición');
+                        //console.log ('[REPRODUCTOR.iniciaContadorRep] Guardando posición');
                         this.reproductor.guardaPos(this._configuracion);
                     })
                     .catch ((error) => {
@@ -706,7 +706,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             console.log('[REPRODUCTOR.revisaConexion] network.onchange - Estoy en iOS');
             if (this.reproduciendo && !this.noRequiereDescarga) {
                 this.sinConexionCantando = this.reproduciendo;
-                this.reproductor.guardaPos(this._configuracion);
+                //this.reproductor.guardaPos(this._configuracion); Como guardo cada segundo, esto sobra
                 this.reproductor.stop();
                 console.log('[REPRODUCTOR.revisaConexion] Se ha producido un corte en la conexión a internet.');
                 this.msgDescarga('Se ha producido un corte en la conexión a internet.');
@@ -724,7 +724,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             }
         }
         else if (this.reproduciendo && !this.noRequiereDescarga && conexion.valor != 'wifi' &&  this.soloWifi){
-            this.reproductor.guardaPos(this._configuracion);
+            //this.reproductor.guardaPos(this._configuracion); // Como guardo cada segundo, esto sobra
             this.reproductor.stop();
             this.dialogs.alert('Se ha desconectado de la red WIFI. Ha configurado que sin WIFI no quiere reproducir.', 'Super - Gurú');
         }
