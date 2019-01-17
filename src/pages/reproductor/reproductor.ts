@@ -388,6 +388,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
                             //}
                         }
                         this.actualizaDetalle(position);
+                        console.log ('[REPRODUCTOR.iniciaContadorRep] Guardando posición');
+                        this.reproductor.guardaPos(this._configuracion);
                     })
                     .catch ((error) => {
                         console.error('[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: ' + error);

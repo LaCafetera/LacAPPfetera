@@ -168,7 +168,7 @@ export class ChatPage {
                 },
                 err => {
                     console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
-                    this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
+                    this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje: " + err);
                 }
             );
         }
