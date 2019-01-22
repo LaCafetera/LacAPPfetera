@@ -118,5 +118,7 @@
         <variable name="DEEPLINK_5_HOST" value=" " />
     </plugin>
     <plugin name="cordova-plugin-inappbrowser" spec="^3.0.0" />
+    <plugin name="integrator-cordova-plugin-downloader" spec="1.1.0" />
+    <plugin name="cordova-plugin-vibration" spec="3.1.0" />
     <engine name="android" spec="6.4.0" />
 </widget>

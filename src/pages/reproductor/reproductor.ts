@@ -13,6 +13,7 @@ import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
 import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
+import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 
 
 /*
@@ -24,7 +25,7 @@ import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, /*Player,*/ BackgroundMode]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, /*Player,*/ BackgroundMode, EpisodiosGuardadosService]
 })
 
 export class ReproductorPage implements OnInit, OnDestroy{
@@ -43,7 +44,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     reproduciendo: boolean = false;
     descargando: boolean = false;
     //statusRep: number;
-    ficheroExiste: boolean;
+    //ficheroExiste: boolean;
     posicionRepStr: string = '00:00:00';
     tamanyoStr: string = '01:00:00'
     posicionRep: number = 0;
@@ -84,6 +85,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
     capItemTxt: string;
 
     sinConexionCantando: boolean = false;
+    icono: string;
+    iconoDescarga: string = 'ios-cloud-download';
 
     // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
     // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
@@ -103,12 +106,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
                 private network: Network,
-                //private player: Player,
                 private chngDetector: ChangeDetectorRef,
-                public modalCtrl: ModalController/*,
-                //public mscControl: MusicControls,
-                //private backgroundMode: BackgroundMode,
-                private musicControls: MusicControls*/) {
+                public modalCtrl: ModalController,
+                private episodiosDescargados: EpisodiosGuardadosService) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -122,8 +122,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
         console.log('[REPRODUCTOR.constructor] El fichero de imagen es: ' + this.imagen);
         this.enVivo = this.capItem.type=='LIVE';
         this.reproductor = this.navParams.get('player');
-        //this.mscControl = this.navParams.get('controlador');
-        //this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         this.dirTwitter = this.navParams.get('enlaceTwitter');// + '?f=tweets' ;
         this.titulo = this.capItem.title;
@@ -135,35 +133,14 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.events.subscribe('conexion:status', (conexion) => this.revisaConexion(conexion));
         this.events.subscribe('reproduccionHome:status', (statusRep) => this.cambiandoStatusRep(statusRep));
         this.events.subscribe('posicion:modificado', (posicionObj) => this.cambiaPosicion(posicionObj));
-        //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiandoStatusRep(statusRep));
-        /*if (this.reproductor == null) {
-            console.log('[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.');
-            this.reproductor = this.player;
-            this.events.publish('audio:modificado', {reproductor:this.reproductor/*, controlador:this.mscControl});
-        }*/
-        //console.log('[REPRODUCTOR.ngOnInit] Estatus es :' +  this.reproductor.dameStatusRep());
     }
 
-    /****************************************
-     Hay que estudiar esto. Salir de la página cancelará la descarga. ¿Seguro que quiere salir?
-
-
-  ionViewCanLeave(): boolean{
-   // here we can either return true or false
-   // depending on if we want to leave this view
-   if(isValid(randomValue)){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-    */
 
     ngOnInit() {
         console.log ('[app.component.ngOnInit]');
         this.platform.ready().then(() => {
             this.esIOS = this.platform.is('ios');
+            this.ficheroExiste(this.episodio);
             this._configuracion.getTwitteado(this.episodio)
             .then((val)=> {
             //    console.log('[REPRODUCTOR.constructor] recibida verificación de twitteado ' + val + ' para el capítulo ' + this.episodio );
@@ -171,29 +148,11 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.twitteaCapitulo ();
                     this._configuracion.setTwitteado(this.episodio);
                 }
-                //this.actualizaPosicion();
             })
             .catch(()=>{
                 console.log('[REPRODUCTOR.ngOnInit] Error recuperando posición de la reproducción.');
             });
- /*            this.events.subscribe('errorReproduccion:status', (statusRep) => {
-                console.error('[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido ' + statusRep);
-                if (!this.stopPulsado) {
-                    if (statusRep == '666') { // Si es Android
-                        this.dialogs.alert('Se ha producido un corte del flujo de audio con Spreaker.', 'Super - Gurú');
-                    }
-                }
-            });
-
-            if (this.mscControl == null) {
-                console.log('[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.');
-                this.mscControl = this.musicControls; //new MusicControls ();
-                this.creaControlEnNotificaciones (false);
-            }
-            else {
-                console.log('[REPRODUCTOR.ngOnInit] mscControl != null ' + JSON.stringify(this.mscControl));
-            }
-*/
+            
             this.episodiosService.damePuntosEpisodio(this.episodio).subscribe(
                 data => {
                     this.detallesCapitulo = data.response.items;
@@ -374,6 +333,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
+                        this.events.publish('reproduccion:posicion', Math.round(position));
                         //console.log ('[REPRODUCTOR.iniciaContadorRep] this.posicionRep: ' + this.posicionRep + ' this.totDurPlay ' + this.totDurPlay);
                         if (Math.abs(this.posicionRep - this.totDurPlay) < 1000) {
                             this.corteEnDescarga = false;
@@ -824,6 +784,72 @@ export class ReproductorPage implements OnInit, OnDestroy{
       {
         return (ubicacion);
       }
+    }
+
+    ficheroExiste(fichero: string):void{
+        let nombrerep: string;
+        this.episodiosDescargados.dimeSiLoTengo(fichero)
+        .then((nombreConUbicacion) => {
+            if (nombreConUbicacion != null) {
+                nombrerep = encodeURI(nombreConUbicacion);
+                console.log('[REPRODUCTOR.ficheroExiste] EL fichero existe. Reproduciendo descarga. ' + nombrerep + ' . ');
+                this.noRequiereDescarga = true;
+                this.icono = 'trash';
+            }
+            else {
+                nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
+                console.log('[REPRODUCTOR.ficheroExiste] EL fichero no existe. Reproduciendo de red. ' + nombrerep + ' . ');
+                this.noRequiereDescarga = false;
+                this.iconoDescarga = 'ios-cloud-download'; 
+            }
+            this.parametrizaReproduccion(nombrerep);
+        })
+        .catch ((error) => {           
+            console.error('[REPRODUCTOR.ficheroExiste] Se ha producido un error. Reproduciendo de red. ' + error + ' . ');
+            nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
+            this.noRequiereDescarga = false;
+            this.iconoDescarga = 'ios-cloud-download'; 
+            this.parametrizaReproduccion(nombrerep);
+        });
+    }
+
+    parametrizaReproduccion (nombreConUbicacion: string){
+        if (this.audioEnRep != null){
+            console.log('[REPRODUCTOR.parametrizaReproduccion] Segunda o más vez que entramos. AudioEnRep vale ' + this.audioEnRep);
+            if (this.audioEnRep != nombreConUbicacion){
+                this.stopPulsado = true; // Esto lo pongo para que no salte el 'se ha producido un corte'.
+                this.reproductor.release(this._configuracion);
+                this.audioEnRep = nombreConUbicacion;
+                if (!this.reproductor.inicializado) {
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor es nulo');
+                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false, this.enVivo);
+                } else {
+                    if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
+                        this.stopPulsado = true; // Esto lo pongo para que no salte el 'se ha producido un corte'.
+                        this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
+                        console.log('[REPRODUCTOR.parametrizaReproduccion] ya estaba reproduciendo. Se iba por ' + this.posicionRep/1000);
+                    }
+                }
+            }
+        }
+        else {
+            console.log('[REPRODUCTOR.parametrizaReproduccion] Primera vez que entramos.' + this.reproductor);
+            this.audioEnRep = nombreConUbicacion;
+            if (!this.reproductor == null) {
+                console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor es nulo');
+                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion, false, this.enVivo);
+            }
+            else {
+                console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor no es nulo');
+                if (this.reproductor.reproduciendoEste(this.audioEnRep)){
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] Estábamos reproduciendo este mismo audio ');
+                    this.cambiandoStatusRep(this.reproductor.dameStatus());
+                }
+                else {
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] Estábamos reproduciendo otro audio');
+                }
+            }
+        }
     }
 
 }

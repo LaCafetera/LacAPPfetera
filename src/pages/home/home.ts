@@ -42,6 +42,7 @@ export class HomePage implements OnDestroy, OnInit {
 
     desconectado : boolean = false;
     mscControlOpt: MusicControlsOptions;
+    statusPlay: boolean = false;
 
     constructor(public navCtrl: NavController,
                 private episodiosService: EpisodiosService,
@@ -76,7 +77,7 @@ export class HomePage implements OnDestroy, OnInit {
             ticker    : 'Bienvenido a Sherwood',
             // iOS only, optional
             album : 'Bienvenido a Sherwood',
-            duration: 0,
+            duration: 3560000,
             elapsed: 0,
             skipForwardInterval: 15, // display number for skip forward, optional, default: 0
             skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
@@ -353,7 +354,8 @@ export class HomePage implements OnDestroy, OnInit {
         this.mscControl.destroy()
         .then((data) => {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto destruido OK ' + JSON.stringify(data));
-            if (!this.events.unsubscribe('reproduccion:status')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de reproduccion.')};
+            if (!this.events.unsubscribe('reproduccion:status')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito del status de reproduccion.')};
+            if (!this.events.unsubscribe('reproduccion:posicion')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de la posición de la reproduccion.')};
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO ' + error) });
 
@@ -362,7 +364,14 @@ export class HomePage implements OnDestroy, OnInit {
         .then((data) => {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data));
             if (!this.platform.is('ios')) {
-                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));            
+                this.events.subscribe('reproduccion:posicion', (posicion) => {
+                    /*this.mscControl.updateElapsed({
+                        elapsed: posicion,
+                        isPlaying: true
+                      });*/
+                    console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
+                });
             }
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto creado KO ' + error) });
@@ -432,15 +441,22 @@ export class HomePage implements OnDestroy, OnInit {
         this.mscControl.listen();
         if (this.platform.is('ios')) {
             this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
+            this.events.subscribe('reproduccion:posicion', (posicion) => {
+                this.mscControl.updateElapsed({
+                    elapsed: posicion,
+                    isPlaying: this.statusPlay
+                });
+                console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
+            });
         }
     }
 
     cambiamscControl(statusRep: number){
         console.log('[HOME.cambiamscControl] ***** OJO ***** cambiado status de la reproducción a  ' + statusRep);
-        let status = !(statusRep == this.reproductor.dameStatusStop() || statusRep == this.reproductor.dameStatusPause());
+        this.statusPlay = !(statusRep == this.reproductor.dameStatusStop() || statusRep == this.reproductor.dameStatusPause());
         this.events.publish('reproduccionHome:status', statusRep);
-        this.mscControl.updateIsPlaying(status);
-        if (status){
+        this.mscControl.updateIsPlaying(this.statusPlay);
+        if (this.statusPlay){
             if (this.capEnRep[0] == 'p'){
                 this.capEnRep = this.capEnRep.slice(4);
             }

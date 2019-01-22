@@ -14,7 +14,7 @@ export class EpisodiosGuardadosService {
     }
 
     ngOnInit(){
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
             console.log("[EpisodiosGuardados.ngOnInit] ********************************* BIEEEEEENNNNNN ********************************");
@@ -27,7 +27,7 @@ export class EpisodiosGuardadosService {
     guardaProgramas (programa: object){
         console.log("[EpisodiosGuardados.guardaProgramas] Guardando "+ JSON.stringify(programa))
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
@@ -65,7 +65,7 @@ export class EpisodiosGuardadosService {
     borraProgramas (programa: object){
         console.log("[EpisodiosGuardados.borraProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
@@ -129,7 +129,7 @@ export class EpisodiosGuardadosService {
 
     dameDatosFichero (): Promise <any>{
         let promesa = new Promise ((resolve, reject) => {
-            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+            this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 this.dirdestino = entry.toInternalURL();
                 this.file.checkFile(this.dirdestino, this.fichero)
@@ -176,5 +176,33 @@ export class EpisodiosGuardadosService {
                 observer.complete();
             })
         })
+    }
+
+    dimeSiLoTengo(nombreFichero: string): Promise <any>{
+        let nombreYExtension = nombreFichero + ".mp3";
+        console.log("[EpisodiosGuardados.dimeSiLoTengo] Buscando si tengo el fichero " + nombreYExtension)
+        let promesa = new Promise ((resolve, reject) => {
+            this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+            .then((entry) => {
+                this.file.checkFile(entry.toInternalURL(), nombreYExtension)
+                .then((value)=>{
+                    if(value == true) {
+                        resolve (this.file.externalDataDirectory + '/' + nombreYExtension);
+                    }
+                    else {
+                        resolve (null);
+                    }
+                })
+                .catch((error) => {
+                    console.warn ("[EpisodiosGuardados.dimeSiLoTengo] Parece que no hemos encontrado el fichero: " + error.body);
+                    resolve (null);
+                });
+            })
+            .catch((error) => {
+                console.log("[EpisodiosGuardados.dimeSiLoTengo] Problemas entrando en carpeta: " + error.body);
+                reject("Problemas Problemas entrando en carpeta: " + error.body);
+            });
+        });
+        return (promesa);
     }
 }

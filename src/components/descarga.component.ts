@@ -4,6 +4,7 @@ import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Events, ToastController, Platform } from 'ionic-angular';
+import { Downloader } from '@ionic-native/downloader';
 
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
@@ -137,6 +138,11 @@ export class DescargaCafetera implements OnInit, OnDestroy {
             duration: 3000
         });
         toast.present();
+    }
+
+    descargarFicheroNG(){
+        
+
     }
 
     descargarFichero(evento) {

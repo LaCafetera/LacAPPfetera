@@ -21,6 +21,8 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { AndroidExoplayer } from '@ionic-native/android-exoplayer';
 import { AppVersion } from '@ionic-native/app-version';
 import { Geolocation } from '@ionic-native/geolocation';
+import { Downloader } from '@ionic-native/downloader';
+import { Vibration } from '@ionic-native/vibration';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -127,6 +129,8 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               AndroidExoplayer,
               SQLite,
               AppVersion,
-              Geolocation]
+              Geolocation,
+              Downloader,
+              Vibration]
 })
 export class AppModule {}
