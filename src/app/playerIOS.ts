@@ -40,6 +40,7 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
     // Cuando damos a pause / stop y la reproducción está en MEDIA_STARTING, no para la descarga del buffer, ni se lo guarda ni nada. Así que hay que hacer 
     // una guarrería.
     paradaEncolada: boolean = false;
+    timerVigila: number = 0;
 
     constructor(public media: Media, 
                 //private file: File, 
@@ -85,11 +86,28 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
                 console.error ("[PLAYERIOS.ngOnDestroy] Recibido error al pedir posición de reproducción: " + err);
             });
         }
+		this.inVigilando(false);
         console.log("[PLAYERIOS.ngOnDestroy] Saliendo");
     }
 
     ionViewWillUnload() {
         console.log("[PLAYERIOS.ionViewWillUnload] Cerrandoooooooooooooooooooooooo");
+    }
+	
+
+    private inVigilando (interruptor:boolean){
+        //var _that = this;
+        if (interruptor) {
+            if (this.timerVigila == 0){
+                this.timerVigila = setInterval(() =>{
+					this.guardaPos(this.configuracion);
+                }, 500);
+            }
+        }
+        else {
+            clearInterval(this.timerVigila);
+            this.timerVigila = 0;
+        }
     }
 
     public crearepPlugin (audio:string, configuracion: ConfiguracionService, live:boolean): MediaObject { //Promise<any>{
@@ -103,30 +121,39 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
             console.log("[PLAYERIOS.crearepPlugin] actualizado status de la reproducción a " + status + " - " + this.media.MEDIA_RUNNING);
             this.statusRep = status;
             if (this.statusRep == this.media.MEDIA_PAUSED || this.statusRep == this.media.MEDIA_STOPPED){
-                this.guardaPos(this.configuracion);
+                //this.guardaPos(this.configuracion);
+				this.inVigilando(false);
             }
             this.events.publish('reproduccion:status', this.statusRep);
-            if (this.seekPdte && status == this.media.MEDIA_RUNNING){
-                let capitulo = this.dameCapitulo();
-                configuracion.getTimeRep(capitulo)
-                .then((val)=> {
-                    console.log("[PLAYERIOS.crearepPlugin] recibida posición de reproducción " + val + " para el capítulo " + capitulo );
-                    if (val != null && Number(val) > 0){
-                        this.seekTo (Number(val));
-                    }
-                }).catch(()=>{
-                    console.log("[PLAYERIOS.crearepPlugin] Error recuperando posición de la reproducción.");
-                });
-                this.seekPdte = false;
-            }
-            if (this.paradaEncolada && status == this.media.MEDIA_RUNNING){
-                this.pause(configuracion);
-                this.paradaEncolada = false;
-            }
+            if (status == this.media.MEDIA_RUNNING){
+				if (this.seekPdte){
+					let capitulo = this.dameCapitulo();
+					configuracion.getTimeRep(capitulo)
+					.then((val)=> {
+						console.log("[PLAYERIOS.crearepPlugin] recibida posición de reproducción " + val + " para el capítulo " + capitulo );
+						this.inVigilando(true);
+						if (val != null && Number(val) > 0){
+							this.seekTo (Number(val));
+						}
+					}).catch(()=>{
+						this.inVigilando(true);
+						console.log("[PLAYERIOS.crearepPlugin] Error recuperando posición de la reproducción.");
+					});
+					this.seekPdte = false;
+				}
+				else {
+					this.inVigilando(true);
+				}
+				if (this.paradaEncolada){
+					this.pause(configuracion); 
+					this.paradaEncolada = false; // No llamo a "inVigilando(false) porque cuando se pause la reproducción lo hará solo.
+				}
+			}
         });
         const onSuccess = () => {
             console.log('[PLAYERIOS.crearepPlugin] La reprodución ha terminado.');
             this.stop();
+			this.inVigilando(false);
         };
         const onError = (error) => {
             console.error("[PLAYERIOS.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);

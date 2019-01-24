@@ -28,6 +28,7 @@ export class PlayerAndroid implements OnDestroy {
 
     porcentajeBuffer: number = 0;
     ultimaPosicion: number = 0;
+    ultimaPosicionGuardada: number = 0;
 
     //saltoSolicitado: boolean = false;
     enVivo: boolean = false;
@@ -132,6 +133,7 @@ export class PlayerAndroid implements OnDestroy {
                 this.timerVigila = setInterval(() =>{
                     //this.mostrarhora();
                     this.actualizaStatus();
+					this.guardaPos(this.configuracion);
                 }, 500);
             }
         }
@@ -168,7 +170,7 @@ export class PlayerAndroid implements OnDestroy {
                 if (this.estadoExo.playWhenReady == "false" && this.estado != this.estadoPlayer.MEDIA_PAUSED){
                     //this.estado = this.estadoPlayer.MEDIA_PAUSED;
                     this.publicaEstado(this.estadoPlayer.MEDIA_PAUSED);
-                    this.guardaPos(this.configuracion);
+                    //this.guardaPos(this.configuracion);
                 }
                 else if (this.estadoExo.playWhenReady == "true" && 
                          this.estado != this.estadoPlayer.MEDIA_RUNNING){
@@ -198,7 +200,7 @@ export class PlayerAndroid implements OnDestroy {
                                 console.error("[PLAYERANDROID.actualizaStatus] Pasamos al frente");
                                 this.backgroundMode.wakeUp();//moveToForeground();
                                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
-                                this.guardaPos(this.configuracion);
+                                //this.guardaPos(this.configuracion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Guardada posición. ");
                                 //this.androidExoplayer.seekTo(Number(this.ultimaPosicion));
                                 this.continuaPlayStreaming(this.ultimaPosicion);
@@ -215,7 +217,7 @@ export class PlayerAndroid implements OnDestroy {
                     //this.estado = this.estadoPlayer.MEDIA_STOPPED;
                             this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
                             this.estadoExo.position = '0';
-                            this.guardaPos(this.configuracion);
+                            //this.guardaPos(this.configuracion);
                             this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
                         }
                     }
@@ -424,7 +426,7 @@ export class PlayerAndroid implements OnDestroy {
         {
             //this.estado = this.estadoPlayer.MEDIA_PAUSED;
             this.publicaEstado (this.estadoPlayer.MEDIA_PAUSED);
-            this.guardaPos(configuracion);
+            //this.guardaPos(configuracion);
         }
         else if (this.estado == this.estadoPlayer.MEDIA_NONE ||
             this.estado == this.estadoPlayer.MEDIA_PAUSED||
@@ -439,7 +441,7 @@ export class PlayerAndroid implements OnDestroy {
 
     cerrarAudio (){
         if (this.androidExoplayer != null) {
-            this.guardaPos(this.configuracion);
+            //this.guardaPos(this.configuracion);
             if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
                 this.androidExoplayer.stop();
             }
@@ -465,9 +467,10 @@ export class PlayerAndroid implements OnDestroy {
             if (this.estadoExo != null) {
                 let posicionNum = parseInt(this.estadoExo.position);
                 let capitulo = this.dameCapitulo();
-                if (posicionNum > 0 && capitulo != ""){
+                if (posicionNum > 0 && capitulo != "" && this.ultimaPosicionGuardada != Math.round(posicionNum/1000)){ // Sólo voy a guardar posiciones si han variado en más de 1"
                     configuracion.setTimeRep(capitulo, posicionNum);
-                    //console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + posicionNum + " - " + capitulo);
+					this.ultimaPosicionGuardada = Math.round(posicionNum/1000)
+                    console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + posicionNum + " - " + capitulo);
                 }
                 else{
                     //console.log ("[PLAYERANDROID.guardaPos] No guardando la posición en la configuración " + posicionNum + " - " + capitulo);
@@ -480,7 +483,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     pause(configuracion: ConfiguracionService){
-        this.guardaPos(configuracion);
+        //this.guardaPos(configuracion);
         this.androidExoplayer.playPause()
         .then(()=>{
             console.log("[PLAYERANDROID.pause] playPause OK ");
@@ -493,7 +496,7 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     release(configuracion: ConfiguracionService){
-        this.guardaPos(configuracion);
+        //this.guardaPos(configuracion);
         this.androidExoplayer.close()
         .then(()=>{
             console.log("[PLAYERANDROID.release] close OK ");
