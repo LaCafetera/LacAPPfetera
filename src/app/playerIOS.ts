@@ -320,9 +320,11 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
                 console.log("[PLAYERIOS.guardaPos] Recibida posición " + pos * 1000);
                 if (pos > 0) {
                     configuracion.setTimeRep(this.dameCapitulo(), pos * 1000);
+                    //console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + pos + " - " + this.dameCapitulo());
                 }
                 else { // Cuando la reproducción está parada, la posición es -1
                     configuracion.setTimeRep(this.dameCapitulo(), 0);
+                    //console.log ("[PLAYERANDROID.guardaPos] Guardando la posición en la configuración " + pos + " - " + this.dameCapitulo());
                 }
             })
             .catch ((err)=> {
@@ -406,7 +408,7 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
         if (this.statusRep != this.media.MEDIA_STOPPED){
             this.repObject.stop();
         }
-        this.capitulo = '';
+        //this.capitulo = '';
         //this.reproduciendo = false;
     }
 
