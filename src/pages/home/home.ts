@@ -8,6 +8,7 @@ import { Network } from '@ionic-native/network';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { EpisodiosGuardadosService } from '../../providers/episodios_guardados.service';
+import { DescargaCafetera } from '../../providers/descarga.service';
 import { MenuExtComponent } from '../../components/menuext/menuext';
 
 import { InfoFerPage } from '../info-fer/info-fer';
@@ -56,7 +57,8 @@ export class HomePage implements OnDestroy, OnInit {
                 private chngDetector: ChangeDetectorRef,
                 public mscControl: MusicControls,
                 private episodiosGuardados: EpisodiosGuardadosService,
-                public reproductor: Player) {
+                public reproductor: Player,
+                private descargaCafetera: DescargaCafetera) {
         this.items = new Array();
 
         this.mscControlOpt =
@@ -77,7 +79,7 @@ export class HomePage implements OnDestroy, OnInit {
             ticker    : 'Bienvenido a Sherwood',
             // iOS only, optional
             album : 'Bienvenido a Sherwood',
-            duration: 3560000,
+            duration: 0,
             elapsed: 0,
             skipForwardInterval: 15, // display number for skip forward, optional, default: 0
             skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
@@ -124,6 +126,7 @@ export class HomePage implements OnDestroy, OnInit {
         this.events.unsubscribe('like:modificado');
         this.events.unsubscribe('capitulo:fenecido');
         this.events.unsubscribe('reproduccion:status');
+        this.events.unsubscribe('reproduccion:descarga');
         //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
         this.reproductor.release(this._configuracion);
         //this.backgroundMode.disable();
@@ -240,6 +243,7 @@ export class HomePage implements OnDestroy, OnInit {
         console.log('[HOME.pushPage] Entro en episodio. ');// + JSON.stringify (item));
         this.mscControlOpt.cover = item.objeto.image_url;
         this.mscControlOpt.track = item.objeto.title;
+		this.mscControlOpt.duration = Math.round(item.objeto.duration/1000);
         this.creaControlEnNotificaciones();
         this.capEnRep = 'pdte' + item.objeto.episode_id;
         this.navCtrl.push(ReproductorPage, {episodio:   item,
@@ -356,6 +360,7 @@ export class HomePage implements OnDestroy, OnInit {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto destruido OK ' + JSON.stringify(data));
             if (!this.events.unsubscribe('reproduccion:status')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito del status de reproduccion.')};
             if (!this.events.unsubscribe('reproduccion:posicion')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de la posición de la reproduccion.')};
+            if (!this.events.unsubscribe('reproduccion:descarga')) {console.error('[HOME.creaControlEnNotificaciones] No me he dessuscrito de los avisos de descarga.')};
         })
         .catch((error) => {console.error('[HOME.creaControlEnNotificaciones] ***** ERROR ***** Control remoto destruido KO ' + error) });
 
@@ -371,6 +376,16 @@ export class HomePage implements OnDestroy, OnInit {
                         isPlaying: true
                       });*/
                     console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
+                });
+                this.events.subscribe('reproduccion:descarga', (dato) => {
+                    if (dato.descargar ) {
+                        console.log('[HOME.constructor] Solicitada descarga de capítulo ' + dato.datosEpisodio.episodio_id);
+                        this.descargaCafetera.descargaFichero(dato.datosEpisodio);
+                    }
+                    else {
+                        console.log('[HOME.constructor] Solicitado borrado de capítulo ' + dato.datosEpisodio.episodio_id);
+                        this.descargaCafetera.borrarDescarga(dato.datosEpisodio.episodio_id);
+                    }
                 });
             }
         })
@@ -414,6 +429,7 @@ export class HomePage implements OnDestroy, OnInit {
                         this.events.unsubscribe('like:modificado');
                         this.events.unsubscribe('capitulo:fenecido');
                         this.events.unsubscribe('reproduccion:status');
+						this.events.unsubscribe('reproduccion:descarga');
                         //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
                         this.reproductor.release(this._configuracion);
                         break;
@@ -447,6 +463,16 @@ export class HomePage implements OnDestroy, OnInit {
                     isPlaying: this.statusPlay
                 });
                 console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
+            });
+            this.events.subscribe('reproduccion:descarga', (dato) => {
+                if (dato.descargar ) {
+                    console.log('[HOME.constructor] Solicitada descarga de capítulo ' + dato.episodio_id);
+                    this.descargaCafetera.descargaFichero(dato.datosEpisodio);
+                }
+                else {
+                    console.log('[HOME.constructor] Solicitado borrado de capítulo ' + dato.episodio_id);
+                    this.descargaCafetera.borrarDescarga(dato.episodio_id);
+                }
             });
         }
     }

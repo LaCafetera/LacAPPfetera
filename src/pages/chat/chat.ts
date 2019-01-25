@@ -29,6 +29,7 @@ export class ChatPage {
     usuario_id:string = "";
     token_id:string = "";
     mostrarFechasAbsolutas : boolean = false;
+    iconoEnvioTotal: string = "unlock";
 
     constructor(public navCtrl: NavController, 
                 public navParams: NavParams, 
@@ -151,63 +152,48 @@ export class ChatPage {
         );
     }
 
-    enviarComentario(){
-        console.log ("[CHAT.enviarComentario] Solicitado envío " + this.mensajeTxt );
-
-        if ( this.usuario_id != "" && this.token_id != "" && this.mensajeTxt != null) {
-
-        /*this._configuracion.dameUsuario()
-        .then ((dataUsuario) => {
-            if (dataUsuario != null){
-                console.log ("[CHAT.enviarComentario] recibido usuario " + dataUsuario );
-                this._configuracion.dameToken()
-                .then ((dataToken) => {
-                    console.log ("[CHAT.enviarComentario] recibido token " + dataToken );
-                    if (dataToken != null) {
-                        console.log("[CHAT.enviarComentario] solicitado envío para usuario " + dataUsuario);*/
-                        this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  this.mensajeTxt).subscribe(
-                            data => {
-                                console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/);
-                                this.mensajeTxt = null;
-                            },
-                            err => {
-                                console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
-                                this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
-                            }
-                        );
-/*                    }
-                    else {
-                        this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-                    }
-                })
-                .catch ((error) => {
-                    console.log("[CHAT.enviarComentario] Error descargando token:" + error);
-                    this.msgDescarga ("Error extrayendo usuario de Spreaker.");
-                });
+    enviarComentario(mensaje: any, donde:string){
+        if (this.mensajeTxt != null){
+            if (this.iconoEnvioTotal == 'lock') {
+                console.log ("[CHAT.enviarComentario] Mandar texto a todas partes" );
+                this.sprikearComentario(this.mensajeTxt);
+                this.twittearComentario(this.mensajeTxt);
             }
             else {
-                this.msgDescarga ("Error extrayendo usuario de Spreaker.");
+                    console.log ("[CHAT.enviarComentario] Mandar texto a " + donde );
+                if (donde == 'spreaker'){
+                    this.sprikearComentario(this.mensajeTxt);
+                }
+                else {
+                    this.twittearComentario(this.mensajeTxt);
+                }
             }
-        })
-        .catch (() => {
-            this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-        });*/
-
+            this.mensajeTxt = null;
         }
     }
 
-    twittearComentario(){
-        console.log ("[CHAT.twittearComentario] Solicitado envío");
-        if (this.mensajeTxt != null){
-            this.socialsharing.shareViaTwitter(this.hashtag + " " + this.mensajeTxt)
-            .then((respuesta) => {
-                console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
-                this.mensajeTxt = null;
-            })
-            .catch((error) => {
-                console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
-            });
+    sprikearComentario(texto: string){
+        if ( this.usuario_id != "" && this.token_id != "") {
+            this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  texto).subscribe(
+                data => {
+                    console.log("[CHAT.enviarComensprikearComentariotario] Mensaje enviado");
+                },
+                err => {
+                    console.log("[CHAT.sprikearComentario] Error enviando mensaje:" + err);
+                    this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
+                }
+            );
         }
+    }
+
+    twittearComentario(texto: string){
+        this.socialsharing.shareViaTwitter(this.hashtag + " " + texto)
+        .then((respuesta) => {
+            console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
+        })
+        .catch((error) => {
+            console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
+        });
     }
     
     msgDescarga  (mensaje: string) {
@@ -226,32 +212,14 @@ export class ChatPage {
             //reproductor.stop();
             console.log("[CHAT.borraComentario] Confirmación de borrado:" + respuesta);
             if (respuesta == 1){
-/*                this._configuracion.dameUsuario()
-                .then ((dataUsuario) => {
-                    if (dataUsuario != null){
-                        this._configuracion.dameToken()
-                        .then ((dataToken) => {*/
-                            this.episodiosService.borraComentarios(this.episodio, this.usuario_id, this.token_id, item.message_id).subscribe(
-                            data =>{
-                                console.log("[CHAT.borraComentario] Comentario " + item.message_id + " borrado");
-                                this.borraItemComentario(item);
-                            }, 
-                            err =>{
-                                console.log("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
-                            })
-/*                        })
-                        .catch ((error) => {
-                            this.msgDescarga ("Error borrando mensaje.");
-                            console.log("[CHAT.borraComentario] Error extrayendo token " + error);
-                        });
-                    }
-                    else {
-                        this.msgDescarga ("Error extrayendo usuario de Spreaker.");
-                    }
+                this.episodiosService.borraComentarios(this.episodio, this.usuario_id, this.token_id, item.message_id).subscribe(
+                data =>{
+                    console.log("[CHAT.borraComentario] Comentario " + item.message_id + " borrado");
+                    this.borraItemComentario(item);
+                }, 
+                err =>{
+                    console.log("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
                 })
-                .catch (() => {
-                    this.msgDescarga ("Debe estar conectado a Spreaker para poder realizar esa acción.");
-                });*/
             }
         })
         .catch (() => {
@@ -275,5 +243,17 @@ export class ChatPage {
         console.log("[CHAT.muestraDatosUser] Usuario " + user_id);
         this.navCtrl.push(InfoUsuChatPage, {usuario: user_id});
     }
+
+    cambiaEnviaDos(){
+        if (this.iconoEnvioTotal == 'lock') {
+            this.iconoEnvioTotal = 'unlock';
+            this.msgDescarga('Enviando a los canales por separado.')
+        }
+        else {
+            this.iconoEnvioTotal = 'lock';
+            this.msgDescarga('Enviando a Spreaker y a Twitter indistintamente.')
+        }
+    }
+
 }
 

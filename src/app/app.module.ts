@@ -6,6 +6,7 @@ import { SQLite } from '@ionic-native/sqlite';
 import { HttpModule } from '@angular/http';
 
 import { File } from '@ionic-native/file';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Media } from '@ionic-native/media';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -33,6 +34,7 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
 import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
+import { DescargaCafetera } from '../providers/descarga.service';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -48,7 +50,6 @@ import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
 import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
 import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
 
-import { DescargaCafetera } from '../components/descarga.component';
 import { MenuExtComponent } from '../components/menuext/menuext';
 
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
@@ -61,7 +62,6 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   declarations: [
     MyApp,
     HomePage,
-    DescargaCafetera,
     InfoFerPage,
     ReproductorPage,
     //DetalleCapituloPage,
@@ -107,6 +107,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,
+              FileTransfer, FileTransferObject,
               Media,
               Dialogs,
               SocialSharing,
@@ -126,6 +127,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               EpisodiosService,
               CadenasTwitterService,
               EpisodiosGuardadosService,
+              DescargaCafetera,
               AndroidExoplayer,
               SQLite,
               AppVersion,

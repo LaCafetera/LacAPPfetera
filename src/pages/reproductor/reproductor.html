@@ -126,7 +126,7 @@
         <ion-col col-3>
           <!-->descargaCafetera [capDownload]="capItemTxt" (ficheroDescargado)="ficheroDescargado($event)">
           </descargaCafetera-->
-            <button ion-button clear (click)="msgDescarga('No es posible descargar reproducciones en vivo')">
+            <button ion-button clear (click)="procesaDescarga()">
               <ion-icon  [name]="iconoDescarga"></ion-icon>
             </button>
         </ion-col>

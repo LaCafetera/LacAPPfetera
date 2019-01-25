@@ -40,17 +40,22 @@
 
 <ion-footer class="cajaTexto">
     <ion-row no-padding text-center>
-        <ion-col col-10>
+        <ion-col col-20>
             <ion-item>
                 <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
             </ion-item>
         </ion-col>
         <ion-col col-2>
-            <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario)">
+            <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario, 'spreaker')">
                 <ion-icon name='send' class="envio"></ion-icon>
             </button>
-            <button ion-button clear (click)="twittearComentario(formulario)">
+            <button ion-button clear (click)="enviarComentario(formulario, 'twitter')">
                 <ion-icon name='logo-twitter' class="logoTW"></ion-icon>
+            </button>
+        </ion-col>
+        <ion-col col-3>
+            <button ion-button clear (click)="cambiaEnviaDos()">
+                <ion-icon [name]='iconoEnvioTotal' class="envio"></ion-icon>
             </button>
         </ion-col>
     </ion-row>

@@ -59,18 +59,17 @@ export class InfoFerPage implements OnDestroy{
 
     goodVibrations(){
         if (!this.vibrando) {
+			this.vibrando = true;
+            this.imagenFer = "assets/images/Vibracion_ON.jpg";
             this.timer = setInterval(() =>{
-                // Vibrate the device for a second
                 // Duration is ignored on iOS.
                 this.vibration.vibrate(1000);
-                this.vibrando = true;
-                this.imagenFer = "https://www.elplural.com/uploads/s1/43/25/05/fernandoberlin_4_800x450.jpeg";
             }, 2000); // que vibre un segundo sí y otro no
         }
         else {
             clearInterval (this.timer);
             this.timer = 0;
-            this.vibration.vibrate(0);
+            //this.vibration.vibrate(0); Esto sobra; cuando termine de vibrar, ha terminado.
             this.vibrando = false;
             this.imagenFer = "https://d1bm3dmew779uf.cloudfront.net/large/85c07fc70ab7c568dc559432042148c3.jpg";
         }
