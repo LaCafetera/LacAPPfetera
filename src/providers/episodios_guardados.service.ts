@@ -34,7 +34,8 @@ export class EpisodiosGuardadosService {
                 .then ((datos)=> {
                     let programasObjeto = JSON.parse(datos);
                     if (!this.yaEstaba(programa, programasObjeto)) {
-                        var todosProgramas = JSON.stringify(this.tidyYourRoom(programasObjeto.concat([programa])));
+                        //var todosProgramas = JSON.stringify(this.tidyYourRoom(programasObjeto.concat([programa])));
+                        var todosProgramas = JSON.stringify(programasObjeto.concat([programa]));
                         console.log("[EpisodiosGuardados.guardaProgramas] ." + todosProgramas);
                         this.file.writeFile (this.dirdestino, this.fichero, todosProgramas, {replace: true, append:false, truncate:0})
                         .then ((data) => {
@@ -62,7 +63,7 @@ export class EpisodiosGuardadosService {
         });
     }
 
-    borraProgramas (programa: object){
+    borraProgramas (programa: string){
         console.log("[EpisodiosGuardados.borraProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
         //let listaDescargados = {"programas":[programa]};
         this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
@@ -161,14 +162,21 @@ export class EpisodiosGuardadosService {
         return (promesa);
     }
 
-    daListaProgramas () : Observable <any> {
+    daListaProgramas (orden: boolean) : Observable <any> {
         return Observable.create(observer => {
             this.dameDatosFichero ()
             .then ((datos)=> {
-                console.log("[EpisodiosGuardados.daListaProgramas] enviado: " + JSON.stringify(JSON.parse(datos).programas));
-                JSON.parse(datos).forEach((elemento, index, array) => {
-                    observer.next(elemento);
-                });
+                console.log("[EpisodiosGuardados.daListaProgramas] enviado datos ordenados / sin ordenar " + orden);
+                if (! orden){
+                    JSON.parse(datos).forEach((elemento, index, array) => {
+                        observer.next(elemento);
+                    });
+                }
+                else {
+                    this.tidyYourRoom(JSON.parse(datos)).forEach((elemento, index, array) => {
+                        observer.next(elemento);
+                    });
+                }
                 observer.complete();
             })
             .catch ((error)=> {

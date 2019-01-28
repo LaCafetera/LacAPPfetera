@@ -51,6 +51,7 @@ import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
 import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
 
 import { MenuExtComponent } from '../components/menuext/menuext';
+import { MenuExtDescComponent } from '../components/menuext_descargados/menuext_descargados';
 
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
 import { muestraHashtagPipe } from './muestraHashtag.pipe'
@@ -75,6 +76,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
+    MenuExtDescComponent, 
     CapitulosDescargadosPage,
     listaPuntosCap,
     SlideInicioPage,
@@ -100,6 +102,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
+    MenuExtDescComponent, 
     CapitulosDescargadosPage,
     listaPuntosCap,
     SlideInicioPage,

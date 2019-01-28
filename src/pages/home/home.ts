@@ -19,7 +19,7 @@ import { Player } from '../../app/player';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  providers: [EpisodiosService,  Dialogs, Network/*, ConfiguracionService*/, EpisodiosGuardadosService]
+  providers: [EpisodiosService,  Dialogs, Network, EpisodiosGuardadosService]
 })
 
 export class HomePage implements OnDestroy, OnInit {
@@ -140,7 +140,7 @@ export class HomePage implements OnDestroy, OnInit {
         while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
         if (this.desconectado){
             this.dialogs.alert('El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo', 'Super-Gurú.');
-			this.episodiosGuardados.daListaProgramas().subscribe(
+			this.episodiosGuardados.daListaProgramas(true).subscribe(
             data => {
 				if (this.items == null){
                     this.items = [{objeto:data, like: false}];
@@ -379,12 +379,12 @@ export class HomePage implements OnDestroy, OnInit {
                 });
                 this.events.subscribe('reproduccion:descarga', (dato) => {
                     if (dato.descargar ) {
-                        console.log('[HOME.constructor] Solicitada descarga de capítulo ' + dato.datosEpisodio.episodio_id);
+                        console.log('[HOME.creaControlEnNotificaciones] Solicitada descarga de capítulo ' + dato.datosEpisodio.episode_id);
                         this.descargaCafetera.descargaFichero(dato.datosEpisodio);
                     }
                     else {
-                        console.log('[HOME.constructor] Solicitado borrado de capítulo ' + dato.datosEpisodio.episodio_id);
-                        this.descargaCafetera.borrarDescarga(dato.datosEpisodio.episodio_id);
+                        console.log('[HOME.creaControlEnNotificaciones] Solicitado borrado de capítulo ' + dato.datosEpisodio.episode_id);
+                        this.descargaCafetera.borrarDescarga(dato.datosEpisodio.episode_id);
                     }
                 });
             }
