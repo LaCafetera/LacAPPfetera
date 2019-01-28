@@ -1,21 +1,17 @@
 <ion-header>
     <ion-navbar color=(color)>
 
-        <!--ion-nav-buttons left-->
-        	<button ion-button ion-icon menuToggle icon-only left>
-                <ion-icon name="settings"></ion-icon>
-                <!--<ion-icon name="settings"></ion-icon>-->
-            </button>
-        <!--/ion-nav-buttons-->
+        <button ion-button ion-icon menuToggle icon-only left>
+            <ion-icon name="settings"></ion-icon>
+        </button>
+        
         <ion-title>
             La cAPPfetera
         </ion-title>
 
         <ion-buttons end>
-            <!--button ion-button right icon-only clear [navPush]="infoFer"-->
             <button ion-button right icon-only clear (click)="muestraMenu($event)">
                 <ion-icon name="menu"></ion-icon>
-                <!--<ion-icon name="menu"></ion-icon>-->
             </button>
         </ion-buttons>
 

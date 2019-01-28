@@ -126,19 +126,20 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 
     descargarFicheroAndroid(datosCapitulo: any){
 		var descarga = {
-			uri: "https://api.spreaker.com/v2/episodes/"+datosCapitulo.episodio_id+"/download",
-			title: 'Descargando el cafecito del día ' + datosCapitulo.episodio_fecha.substring(8, 10) + '/' + datosCapitulo.episodio_fecha.substring(5, 7) + '/' + datosCapitulo.episodio_fecha.substring(0, 4),
+			uri: "https://api.spreaker.com/v2/episodes/"+datosCapitulo.episode_id+"/download",
+			//title: 'Descargando el cafecito del día ' + datosCapitulo.published_at.substring(8, 10) + '/' + datosCapitulo.published_at.substring(5, 7) + '/' + datosCapitulo.published_at.substring(0, 4),
+			title: 'Descargando ' + datosCapitulo.published_at.substring(8, 10) + '/' + datosCapitulo.published_at.substring(5, 7) + '/' + datosCapitulo.published_at.substring(0, 4),
 			description: '',
 			mimeType: '',
 			visibleInDownloadsUi: true,
 			notificationVisibility: 0,
 			destinationInExternalFilesDir: {
 				dirType: '',
-				subPath: datosCapitulo.episodio_id +'.mp3'
+				subPath: datosCapitulo.episode_id +'.mp3'
 			}
 		}
 		var descargaImg = {
-			uri: datosCapitulo.episodio_imagen,
+			uri: datosCapitulo.image_url,
 			title: 'Descargando imagen',
 			description: '',
 			mimeType: '',
@@ -146,7 +147,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 			notificationVisibility: 0,
 			destinationInExternalFilesDir: {
 				dirType: '',
-				subPath: datosCapitulo.episodio_id +'.jpg'
+				subPath: datosCapitulo.episode_id +'.jpg'
 			}
 		}
 		this.downloader.download(descarga)
@@ -154,6 +155,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 			//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
 			this.events.publish('descarga.ficheroDescargado', {existe: true, direccion: this.dirdestino});
 			console.log('[Descarga.components.descargarFicheroNG] Fichero descargado en la carpeta'+location);
+			this.guardaDescargados.guardaProgramas(datosCapitulo);
 			this.downloader.download(descargaImg)
 			.then((location: string) => {
 				//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
@@ -274,6 +276,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 					this.ficheroDescargado.emit({existe: false, direccion: null});
 					this.msgDescarga('Programa borrado');
 					this.guardaDescargados.borraProgramas(this.capItem);
+					this.events.publish('descarga.ficheroDescargado', {existe: false, direccion: this.dirdestino});
 					this.file.removeFile(this.dirdestino, capitulo + '.jpg')
 					.then(() => {
 						console.log("[Descarga.borrarDescarga] Borrada imagen asociada.");

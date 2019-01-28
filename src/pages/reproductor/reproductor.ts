@@ -815,10 +815,11 @@ export class ReproductorPage implements OnInit, OnDestroy{
 	procesaDescarga(){
 		if (!this.enVivo) {
             console.log('[REPRODUCTOR.procesaDescarga] Solicitada descarga / borrado: ' + !this.noRequiereDescarga);
-			this.events.publish('reproduccion:descarga',{descargar: !this.noRequiereDescarga, 
-										 datosEpisodio: {episodio_id: this.episodio,
+            this.events.publish('reproduccion:descarga',{descargar: !this.noRequiereDescarga, 
+                                                         datosEpisodio: this.capItem});
+									/*	 datosEpisodio: {episodio_id: this.episodio,
                                                          episodio_fecha: this.fechaCapitulo,
-                                                         episodio_imagen: this.imagen}});
+                                                         episodio_imagen: this.imagen}});*/
 		}
 		else {
 			this.msgDescarga('No es posible descargar reproducciones en vivo');
