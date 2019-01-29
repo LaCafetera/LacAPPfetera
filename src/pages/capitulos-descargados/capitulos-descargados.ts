@@ -167,25 +167,7 @@ export class CapitulosDescargadosPage implements OnDestroy {
             return listaProgramas[el.index];
         }));
     }
-
-/*
-    tidyYourRoom(){
-        let ordenado = this.items;
-        let mapped = ordenado.map((el, i) => {
-            return { index: i, value: el.objeto.episode_id };
-        });
-
-        // ordenando el array mapeado conteniendo los valores reducidos
-        mapped.sort((a, b) => {
-            return (b.value - a.value);
-        });
-
-        // contenedor para el orden resultante
-        this.items = mapped.map((el) =>{
-            return ordenado[el.index];
-        });
-    }
-*/
+    
     damehashtag(cadena:string):string{
         let hashtag:string ="";
         let posHT = cadena.indexOf('#');

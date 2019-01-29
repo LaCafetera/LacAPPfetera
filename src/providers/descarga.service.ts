@@ -22,7 +22,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
     icono: string;
 
     dirdestino:string;
-    fileTransfer: FileTransferObject;
+    //fileTransfer: FileTransferObject;
 
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
@@ -49,7 +49,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
         //this.enVivo = this.capItem.type=="LIVE";
         this.imagenDownload = this.capItem.image_url;
 
-        this.fileTransfer = this.transfer.create();
+        //this.fileTransfer = this.transfer.create();
 
         this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
             console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
@@ -117,7 +117,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 	
 	descargaFichero (datosCapitulo: any){
 		if (this.platform.is("ios")){
-			console.error('[Descarga.components.descargarFicheroNG] TO DO');
+			this.descargarFicheroIOS (datosCapitulo.episode_id);
 		}
 		else {
             this.descargarFicheroAndroid(datosCapitulo);
@@ -167,7 +167,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 		.catch((error: any) => console.error('[Descarga.components.descargarFicheroNG] ' + error));
     }
 
-    descargarFicheroIOS(capitulo: string, fecha: string) {
+    descargarFicheroIOS(capitulo: string/*, fecha: string*/) {
 		let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+capitulo+"/download";
 		this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
 		.then((entry) => {
@@ -175,14 +175,15 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 			let fileURL:string = this.dirdestino + capitulo + ".mp3" ;
 			console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
 			console.log ("[Descarga.components.descargarFichero] Descargando " + fileURL);
+			const fileTransfer: FileTransferObject = this.transfer.create();
 			if (!this.descargando){
 				this._configuracion.getWIFI()
 				.then((val) => {
 					console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
 					if(this.network.type === "wifi" || !val  ) {
 						console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ capitulo + " en la carpeta " + this.dirdestino );
-						this.msgDescarga("Descargando audio.")
-						this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {})
+						this.msgDescarga("Descargando audio.");
+						fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {})
 						.then(() => {
 							console.log("[descarga.components.descargarFichero]  Descarga completa.");
 							//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
@@ -190,7 +191,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 							this.porcentajeDescargado = 0;
 							this.descargando = false;
 							this.msgDescarga('Descarga completa');
-							this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + capitulo + '.jpg'), true, {})
+							fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + capitulo + '.jpg'), true, {})
 							.then((entrada) => {
 								console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
 								this.capItem.image_url = entrada.nativeURL;              
@@ -234,32 +235,32 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 							this.icono = 'ios-cloud-download';
 							this.porcentajeDescargado = 0;
 						});
-						this.descargando = true;                                
+						this.descargando = true;
+						fileTransfer.onProgress((progress) => {
+							this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
+							if (this.porcentajeCalculado != this.porcentajeDescargado){
+								console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
+								this.porcentajeDescargado = this.porcentajeCalculado;
+								//this.chngDetector.detectChanges();
+					//         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado}); <----- AQUI
+							}
+						})                             
 					}
 					else {
 						this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
 					}
-				}).catch(() => {
-					console.log("[descarga.components.descargarFichero] Error recuperando valor WIFI");
+				}).catch((error) => {
+					console.error("[descarga.components.descargarFichero] Error recuperando valor WIFI");
 				});
-				this.fileTransfer.onProgress((progress) => {
-					this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
-					if (this.porcentajeCalculado != this.porcentajeDescargado){
-						console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
-						this.porcentajeDescargado = this.porcentajeCalculado;
-						//this.chngDetector.detectChanges();
-			//         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado}); <----- AQUI
-					}
-				})
 			}
 			else{
-				this.fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
+				fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
 				this.msgDescarga ("Cancelando descarga");
 				this.borrarDescarga(capitulo);
 			}
 		})
 		.catch((error) => {
-			console.log("[Descarga.descargarFichero] Error recuperando carpeta de destino: " + error.body);
+			console.error("[Descarga.descargarFichero] Error recuperando carpeta de destino: " + error.body);
 			this.icono = 'bug';
 			this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
 		});

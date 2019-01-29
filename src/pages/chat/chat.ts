@@ -247,11 +247,11 @@ export class ChatPage {
     cambiaEnviaDos(){
         if (this.iconoEnvioTotal == 'lock') {
             this.iconoEnvioTotal = 'unlock';
-            this.msgDescarga('Enviando a los canales por separado.')
+            this.msgDescarga('Enviando a Spreaker y a Twitter indistintamente.')
         }
         else {
             this.iconoEnvioTotal = 'lock';
-            this.msgDescarga('Enviando a Spreaker y a Twitter indistintamente.')
+            this.msgDescarga('Enviando a los canales por separado.')
         }
     }
 
