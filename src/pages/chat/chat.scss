@@ -24,7 +24,7 @@ page-chat {
       }
     }
     .card-content p{
-      /* esacio bajo la línea */
+      /* espacio bajo la línea */
       padding-top: 6px;
     }
   }
@@ -34,12 +34,16 @@ page-chat {
     height: 55px;
     padding-top: 5px;
     padding-left: 5px;
+    display: flex;
+    flex-direction: row;
 
     .item-textarea {
       /* caja de texto */
       border-radius: 5px;
       height: 30px;
-      width: 63%
+      //width: 63%
+      flex: 8 0;
+      align-self: center;
     }
 
       .input-ios[clearInput] .text-input {
@@ -50,7 +54,9 @@ page-chat {
       /* botones */
       height: 30px;
       width: 30px;
-      
+      flex: 0 0 30px;
+      align-self: center;
+
       .envio {
         /* botón enviar al chat*/
         font-size: 3.5rem;

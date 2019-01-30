@@ -39,19 +39,17 @@
 </ion-content>
 
 <ion-footer class="cajaTexto">
-    <ion-row no-padding text-center>
-        <button ion-button clear (click)="cambiaEnviaDos()">
-            <i [class]='iconoEnvioTotal'></i>
-        </button>
-        <ion-item>
-            <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
-            <!-- <textarea #myInput id="myInput" rows="1" maxLength="500" (keyup)="resize()" [(ngModel)]="myStuff"></textarea> -->
-        </ion-item>
-        <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario, 'spreaker')">
-            <ion-icon name='send' class="envio"></ion-icon>
-        </button>
-        <button ion-button clear (click)="enviarComentario(formulario, 'twitter')">
-            <ion-icon name='logo-twitter' class="logoTW"></ion-icon>
-        </button>
-    </ion-row>
+    <button ion-button clear (click)="cambiaEnviaDos()">
+        <i [class]='iconoEnvioTotal'></i>
+    </button>
+    <ion-item>
+        <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
+        <!-- <textarea #myInput id="myInput" rows="1" maxLength="500" (keyup)="resize()" [(ngModel)]="myStuff"></textarea> -->
+    </ion-item>
+    <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario, 'spreaker')">
+        <ion-icon name='send' class="envio"></ion-icon>
+    </button>
+    <button ion-button clear (click)="enviarComentario(formulario, 'twitter')">
+        <ion-icon name='logo-twitter' class="logoTW"></ion-icon>
+    </button>
 </ion-footer>
