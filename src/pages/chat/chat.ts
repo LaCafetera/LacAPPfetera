@@ -29,16 +29,16 @@ export class ChatPage {
     usuario_id:string = "";
     token_id:string = "";
     mostrarFechasAbsolutas : boolean = false;
-    iconoEnvioTotal: string = "unlock";
+    iconoEnvioTotal: string = "fas fa-unlink";
 
-    constructor(public navCtrl: NavController, 
-                public navParams: NavParams, 
+    constructor(public navCtrl: NavController,
+                public navParams: NavParams,
                 private episodiosService: EpisodiosService,
                 private socialsharing: SocialSharing,
-                private _configuracion: ConfiguracionService, 
+                private _configuracion: ConfiguracionService,
                 private toastCtrl: ToastController,
                 private dialogs: Dialogs,
-                private keyboard: Keyboard, 
+                private keyboard: Keyboard,
                 public events: Events ) {
         this.episodio = this.navParams.get('episodioMsg');
         this.hashtag = this.navParams.get('hashtag');
@@ -53,9 +53,9 @@ export class ChatPage {
         events.subscribe("fechasAbsolutas:status", (valor) => {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas');
             this.mostrarFechasAbsolutas = valor;
-        });                                  
+        });
     }
-  
+
     ngOnDestroy(){
         clearInterval(this.timer);
     }
@@ -111,10 +111,10 @@ export class ChatPage {
                 else {
                     let longArray = data.response.items.length;
                     let i:number=0;
-                    //console.log("[CHAT] LA nueva remesa de mensajes tiene de longitud " + longArray  ); 
+                    //console.log("[CHAT] LA nueva remesa de mensajes tiene de longitud " + longArray  );
                     while (data.response.items[i].message_id != this.items[0].message_id && (i+1) < longArray) {
                         i++;
-                        console.log("[CHAT.dameComentarios] " + i );   
+                        console.log("[CHAT.dameComentarios] " + i );
                     }
                     this.items = data.response.items.slice(0,i).concat(this.items);
 //                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
@@ -124,7 +124,7 @@ export class ChatPage {
                 //Dialogs.alert('Error actualizando chat', 'Oh oh...');
                 console.log ("[CHAT.dameComentarios] Error actualizando chat: " + err)
             }
-        );       
+        );
     }, 200);
   }
 /*
@@ -137,7 +137,7 @@ export class ChatPage {
     }
   }
   */
-  
+
   quieroMas(event){
       this.episodiosService.dameMasComentarios(this.episodio, this.items[this.items.length-1].message_id).subscribe(
             data => {
@@ -195,7 +195,7 @@ export class ChatPage {
             console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
         });
     }
-    
+
     msgDescarga  (mensaje: string) {
         let toast = this.toastCtrl.create({
             message: mensaje,
@@ -216,7 +216,7 @@ export class ChatPage {
                 data =>{
                     console.log("[CHAT.borraComentario] Comentario " + item.message_id + " borrado");
                     this.borraItemComentario(item);
-                }, 
+                },
                 err =>{
                     console.log("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
                 })
@@ -236,7 +236,7 @@ export class ChatPage {
     }
 
     ocultaTeclado(){
-        this.keyboard.hide(); 
+        this.keyboard.hide();
     }
 
     muestraDatosUsuario(user_id){
@@ -245,15 +245,14 @@ export class ChatPage {
     }
 
     cambiaEnviaDos(){
-        if (this.iconoEnvioTotal == 'lock') {
-            this.iconoEnvioTotal = 'unlock';
+        if (this.iconoEnvioTotal == 'fas fa-link') {
+            this.iconoEnvioTotal = 'fas fa-unlink';
             this.msgDescarga('Enviando a Spreaker y a Twitter indistintamente.')
         }
         else {
-            this.iconoEnvioTotal = 'lock';
-            this.msgDescarga('Enviando a los canales por separado.')
+            this.iconoEnvioTotal = 'fas fa-link';
+            this.msgDescarga('Enviando a los canales simultáneamente.')
         }
     }
 
 }
-

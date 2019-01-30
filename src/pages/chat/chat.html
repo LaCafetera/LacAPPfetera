@@ -41,7 +41,7 @@
 <ion-footer class="cajaTexto">
     <ion-row no-padding text-center>
         <button ion-button clear (click)="cambiaEnviaDos()">
-            <ion-icon [name]='iconoEnvioTotal' class="envioTotal"></ion-icon>
+            <i [class]='iconoEnvioTotal'></i>
         </button>
         <ion-item>
             <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
