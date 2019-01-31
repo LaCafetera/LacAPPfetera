@@ -4,7 +4,7 @@
         <button ion-button ion-icon menuToggle icon-only left>
             <ion-icon name="settings"></ion-icon>
         </button>
-        
+
         <ion-title>
             La cAPPfetera
         </ion-title>
@@ -49,7 +49,7 @@
                         <div class="capDirecto" *ngIf="item.objeto.type=='LIVE'">
                             <!-- Muestra el icono y el texto en directo -->
                             <div class="iconoCD">
-                                <ion-icon name="ios-radio-outline"></ion-icon>
+                                <ion-icon name="ios-radio"></ion-icon>
                             </div>
                             <div class="textoCD">
                                 Directo
@@ -79,8 +79,8 @@
                     {{ item.objeto.likes_count}}
                 </ion-col>
 
-                <ion-col col-1 icon-right text-center>
-                    <ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
+                <ion-col col-1 icon-left>
+                    <ion-icon name="play" class="reproduciendo" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
                 </ion-col>
             </ion-row>
         </ion-card>
