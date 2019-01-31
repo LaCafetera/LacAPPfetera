@@ -34,6 +34,7 @@
     "@ionic-native/geolocation": "^4.18.0",
     "@ionic-native/in-app-browser": "^4.18.0",
     "@ionic-native/keyboard": "^4.15.0",
+    "@ionic-native/local-notifications": "^4.20.0",
     "@ionic-native/media": "^4.15.0",
     "@ionic-native/music-controls": "^4.15.0",
     "@ionic-native/network": "^4.15.0",
@@ -49,6 +50,7 @@
     "cordova-android": "6.4.0",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-background-mode": "^0.7.2",
+    "cordova-plugin-badge": "0.8.8",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialogs": "^2.0.1",
@@ -59,6 +61,7 @@
     "cordova-plugin-inappbrowser": "^3.0.0",
     "cordova-plugin-ionic-keyboard": "^2.1.3",
     "cordova-plugin-ionic-webview": "^2.3.1",
+    "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-media": "^5.0.2",
     "cordova-plugin-music-controls": "^2.2.0",
     "cordova-plugin-network-information": "^2.0.1",
@@ -136,7 +139,8 @@
       },
       "cordova-plugin-inappbrowser": {},
       "integrator-cordova-plugin-downloader": {},
-      "cordova-plugin-vibration": {}
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-local-notification": {}
     },
     "platforms": [
       "android"

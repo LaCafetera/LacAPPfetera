@@ -192,7 +192,7 @@ export class EpisodiosGuardadosService {
         let promesa = new Promise ((resolve, reject) => {
             this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
             .then((entry) => {
-                console.log ("****************** [EpisodiosGuardados.dimeSiLoTengo] "  + entry.toInternalURL());
+                console.log (" [EpisodiosGuardados.dimeSiLoTengo] "  + entry.toInternalURL());
                 this.file.checkFile(entry.toInternalURL(), nombreYExtension)
                 .then((value)=>{
                     if(value == true) {

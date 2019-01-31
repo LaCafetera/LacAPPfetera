@@ -202,8 +202,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
+        clearInterval(this.timerParpadeo);
         this.timer = 0;
         this.timerVigilaEnVivo = 0;
+        this.timerParpadeo = 0;
         if (!this.events.unsubscribe('audio:peticion')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de audio.')};
         if (!this.events.unsubscribe('conexion:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de conexion.')};
         if (!this.events.unsubscribe('reproduccionHome:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.')};

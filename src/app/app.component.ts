@@ -237,6 +237,7 @@ export class MyApp implements OnDestroy {
     setWIFI(e) {
         console.log("[app.component.setWIFI] El valor que trato de guardar es " + e.checked );
         this._configuracion.setWIFI(e.checked);
+        this.events.publish('descargaWIFI:status', {valor:e.checked});
     }
 
     setFechasAbsolutas(e) {

@@ -1,10 +1,11 @@
-import { Injectable,Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
+import { Injectable,Input, Output, EventEmitter, /*OnInit,*/ OnDestroy} from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Events, ToastController, Platform } from 'ionic-angular';
 import { Downloader } from '@ionic-native/downloader';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 import { ConfiguracionService } from './configuracion.service';
 import { EpisodiosGuardadosService } from "./episodios_guardados.service";
@@ -12,7 +13,7 @@ import { EpisodiosGuardadosService } from "./episodios_guardados.service";
 
 @Injectable()
 
-export class DescargaCafetera implements OnInit, OnDestroy {
+export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 
    /* @Input() capDownload: string;*/
     @Output() ficheroDescargado = new EventEmitter();
@@ -22,7 +23,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
     icono: string;
 
     dirdestino:string;
-    //fileTransfer: FileTransferObject;
+    fileTransfer: FileTransferObject;
 
     porcentajeDescargado:number = 0;
     porcentajeCalculado:number = 0;
@@ -30,7 +31,8 @@ export class DescargaCafetera implements OnInit, OnDestroy {
     capItem: any;
     fileDownload:string;
     enVivo: boolean;
-    imagenDownload: string;
+	imagenDownload: string;
+	pemitidoWIFI: boolean;
 
     constructor(public events: Events,
                 public toastCtrl: ToastController,
@@ -41,20 +43,41 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                 private transfer: FileTransfer,
                 private guardaDescargados: EpisodiosGuardadosService,
                 public platform : Platform,
-				private downloader: Downloader) {
+				private downloader: Downloader,
+				private localNotifications: LocalNotifications) {
+					this.inicializa();
                 };
 
-    ngOnInit(){ 
+    //ngOnInit(){ 
+	inicializa(){
         //this.fileDownload = this.capItem.episode_id;
         //this.enVivo = this.capItem.type=="LIVE";
-        this.imagenDownload = this.capItem.image_url;
+        //this.imagenDownload = this.capItem.image_url;
 
-        //this.fileTransfer = this.transfer.create();
+		this.fileTransfer = this.transfer.create();
+		
+		this._configuracion.getWIFI()
+		.then((val) => {
+			this.pemitidoWIFI = val;
+		})
+		.catch((error) => {
+			console.error("[descarga.components.ngOnInit] Error recuperando valor WIFI");
+			this.pemitidoWIFI = true;
+		});
+
+		this.localNotifications.setDefaults({
+			vibrate: false,
+			sound: false
+		});
 
         this.events.subscribe("capitulo:fenecido", (nuevoEstado) => {
             console.log('[Descarga.ngOnInit] Recibido mensaje de que ha terminado capítulo en vivo y en directo. Ahora es ' + nuevoEstado);
             this.icono = 'ios-cloud-download'; // Si justo acaba de morir el capítulo, no puede ser que está ya descargado.
             this.ficheroDescargado.emit({existe: false, direccion: null});
+        });
+        this.events.subscribe('descargaWIFI:status', (dato) => {
+			console.log('[Descarga.ngOnInit] Cambiado posibilidad de descarga sin wifi a ' + dato.valor);
+			this.pemitidoWIFI = dato.valor;
         });
 
         
@@ -85,7 +108,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                         .catch((err) => {
                             this.icono = 'ios-cloud-download';
                             this.ficheroDescargado.emit({existe: false, direccion: null});
-                                console.log("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que no existe.");
+                                console.error("[Descarga.ngOnInit] ERROR en respuesta: "+ err.message +". Considero que no existe.");
                         });
                     }
                     else {
@@ -94,7 +117,7 @@ export class DescargaCafetera implements OnInit, OnDestroy {
                     }
                 })
                 .catch((error) => {
-                    console.log("[Descarga.ngOnInit] Error recuperando carpeta de destino: " + error.body);
+                    console.error("[Descarga.ngOnInit] Error recuperando carpeta de destino: " + error.body);
                     this.icono = 'bug';
                     this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
                 });
@@ -116,12 +139,13 @@ export class DescargaCafetera implements OnInit, OnDestroy {
     }
 	
 	descargaFichero (datosCapitulo: any){
+		this.descargarFicheroIOS (datosCapitulo);/*.episode_id);/
 		if (this.platform.is("ios")){
 			this.descargarFicheroIOS (datosCapitulo.episode_id);
 		}
 		else {
             this.descargarFicheroAndroid(datosCapitulo);
-		}
+		}*/
 	}
 
     descargarFicheroAndroid(datosCapitulo: any){
@@ -167,103 +191,115 @@ export class DescargaCafetera implements OnInit, OnDestroy {
 		.catch((error: any) => console.error('[Descarga.components.descargarFicheroNG] ' + error));
     }
 
-    descargarFicheroIOS(capitulo: string/*, fecha: string*/) {
+    descargarFicheroIOS(datosCapitulo: any/*, fecha: string*/) {
+		let capitulo = datosCapitulo.episode_id;
+		this.imagenDownload =  datosCapitulo.image_url;
 		let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+capitulo+"/download";
-		this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
-		.then((entry) => {
-			this.dirdestino = entry.toInternalURL();
-			let fileURL:string = this.dirdestino + capitulo + ".mp3" ;
-			console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
-			console.log ("[Descarga.components.descargarFichero] Descargando " + fileURL);
-			const fileTransfer: FileTransferObject = this.transfer.create();
-			if (!this.descargando){
-				this._configuracion.getWIFI()
-				.then((val) => {
-					console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + val);
-					if(this.network.type === "wifi" || !val  ) {
-						console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ capitulo + " en la carpeta " + this.dirdestino );
-						this.msgDescarga("Descargando audio.");
-						fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {})
-						.then(() => {
-							console.log("[descarga.components.descargarFichero]  Descarga completa.");
-							//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
-							this.events.publish('descarga.ficheroDescargado', {existe: false, direccion: null});
-							this.porcentajeDescargado = 0;
-							this.descargando = false;
-							this.msgDescarga('Descarga completa');
-							fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + capitulo + '.jpg'), true, {})
-							.then((entrada) => {
-								console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
-								this.capItem.image_url = entrada.nativeURL;              
-								this.porcentajeDescargado = 0;
-								this.guardaDescargados.guardaProgramas(this.capItem);
-								this.file.checkFile(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
-								.then((resultado) => {
-									if (resultado){
-										console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg encontrada en carpeta destino " + this.dirdestino);
-									}
-									else {
-										console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg NO encontrada en carpeta destino " + this.dirdestino);
-									}
-								})
-								.catch((error) => {
-									console.log("[descarga.components.descargarFichero] Se ha producido un error buscando la imagen en carpeta destinoo: " + JSON.stringify(error));
-								}); 
-								this.file.readAsBinaryString(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
-								.then((resultado) => {
-									console.log("[descarga.components.descargarFichero] Imagen abierta en carpeta destino");
-								})
-								.catch((error) => {
-									console.log("[descarga.components.descargarFichero] Se ha producido un error abriendo imagen en carpeta destino: " + JSON.stringify(error));
-								});
-							})
-							.catch((error) => {
-								if (error.code != 4){
-									console.log("[descarga.components.descargarFichero] Error descargando imagen " + JSON.stringify(error));
-								}
-							});
+		//this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+		//.then((entry) => {
+		//	this.dirdestino = entry.toInternalURL();
+		let fileURL:string = this.dirdestino + capitulo + ".mp3" ;
+		console.log ("[Descarga.components.descargarFichero] Descargando vale " + this.descargando + " e icono vale " + this.icono);
+		console.log ("[Descarga.components.descargarFichero] Descargando " + fileURL);
+		//const fileTransfer: FileTransferObject = this.transfer.create();
+		if (!this.descargando){
+			console.log ("[Descarga.components.descargarFichero] La conexión es " + this.network.type + " y la obligación de tener wifi es " + this.pemitidoWIFI);
+			if(this.network.type === "wifi" || !this.pemitidoWIFI  ) {
+				console.log("[descarga.components.descargarFichero] Comenzando la descarga del fichero "+ capitulo + " en la carpeta " + this.dirdestino );
+				this.msgDescarga("Descargando audio.");
+				this.localNotifications.schedule({
+					id: 1,
+					title: 'Descargando programa.',
+					text: '',
+					icon: this.imagenDownload,
+					progressBar: { value: 0 }
+				});
+				this.fileTransfer.download( encodeURI(audio_en_desc), encodeURI(fileURL), true, {})
+				.then(() => {
+					console.log("[descarga.components.descargarFichero]  Descarga completa.");
+					//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
+					this.events.publish('descarga.ficheroDescargado', {existe: false, direccion: null});
+					this.porcentajeDescargado = 0;
+					this.descargando = false;
+					this.msgDescarga('Descarga completa');
+					this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + capitulo + '.jpg'), true, {})
+					.then((entrada) => {
+						console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
+						this.capItem.image_url = entrada.nativeURL;              
+						this.porcentajeDescargado = 0;
+						this.guardaDescargados.guardaProgramas(this.capItem);
+						this.file.checkFile(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+						.then((resultado) => {
+							if (resultado){
+								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg encontrada en carpeta destino " + this.dirdestino);
+							}
+							else {
+								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg NO encontrada en carpeta destino " + this.dirdestino);
+							}
 						})
 						.catch((error) => {
-							if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
-								console.log("[descarga.components.descargarFichero] Kagada " + error);
-								console.log("[descarga.components.descargarFichero] download error source " + error.source);
-								console.log("[descarga.components.descargarFichero] download error target " + error.target);
-								console.log("[descarga.components.descargarFichero] " + error.body);
-								this.msgDescarga("Error en Descargar capítulo " + capitulo + ". Código de error " + error.code);
-							}
-							this.descargando = false;
-							this.icono = 'ios-cloud-download';
-							this.porcentajeDescargado = 0;
+							console.log("[descarga.components.descargarFichero] Se ha producido un error buscando la imagen en carpeta destinoo: " + JSON.stringify(error));
+						}); 
+						this.file.readAsBinaryString(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
+						.then((resultado) => {
+							console.log("[descarga.components.descargarFichero] Imagen abierta en carpeta destino");
+						})
+						.catch((error) => {
+							console.log("[descarga.components.descargarFichero] Se ha producido un error abriendo imagen en carpeta destino: " + JSON.stringify(error));
 						});
-						this.descargando = true;
-						fileTransfer.onProgress((progress) => {
-							this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
-							if (this.porcentajeCalculado != this.porcentajeDescargado){
-								console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
-								this.porcentajeDescargado = this.porcentajeCalculado;
-								//this.chngDetector.detectChanges();
-					//         this.porcentajeDescarga.emit({porcentaje: this.porcentajeDescargado}); <----- AQUI
-							}
-						})                             
+					})
+					.catch((error) => {
+						if (error.code != 4){
+							console.log("[descarga.components.descargarFichero] Error descargando imagen " + JSON.stringify(error));
+						}
+					});
+				})
+				.catch((error) => {
+					if (error.code != 4 /*this.fileTransferError.ABORT_ERR*/){
+						console.log("[descarga.components.descargarFichero] Kagada " + error);
+						console.log("[descarga.components.descargarFichero] download error source " + error.source);
+						console.log("[descarga.components.descargarFichero] download error target " + error.target);
+						console.log("[descarga.components.descargarFichero] " + error.body);
+						this.msgDescarga("Error en Descargar capítulo " + capitulo + ". Código de error " + error.code);
 					}
-					else {
-						this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
-					}
-				}).catch((error) => {
-					console.error("[descarga.components.descargarFichero] Error recuperando valor WIFI");
+					this.descargando = false;
+					this.icono = 'ios-cloud-download';
+					this.porcentajeDescargado = 0;
+					this.localNotifications.clearAll();
 				});
+				this.descargando = true;
+				this.fileTransfer.onProgress((progress) => {
+					this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
+					if (this.porcentajeCalculado != this.porcentajeDescargado){
+						console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
+						this.porcentajeDescargado = this.porcentajeCalculado;
+						this.localNotifications.update({
+							id: 1,
+							title: 'Descargando programa.',
+							text: '',
+							icon: this.imagenDownload,
+							//smallIcon: 'res://icon.png',
+							progressBar: { value: this.porcentajeDescargado }
+						});
+					}
+				})                             
 			}
-			else{
-				fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
-				this.msgDescarga ("Cancelando descarga");
-				this.borrarDescarga(capitulo);
+			else {
+				this.msgDescarga ("Sólo tiene permitidas descargas con la conexión WIFI activada.");
 			}
-		})
-		.catch((error) => {
-			console.error("[Descarga.descargarFichero] Error recuperando carpeta de destino: " + error.body);
-			this.icono = 'bug';
-			this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
-		});
+		}
+		else{
+			this.fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
+			this.msgDescarga ("Cancelando descarga");
+			this.localNotifications.clearAll();
+			this.borrarDescarga(capitulo);
+		}
+		//})
+		//.catch((error) => {
+		//	console.error("[Descarga.descargarFichero] Error recuperando carpeta de destino: " + error.body);
+		//	this.icono = 'bug';
+		//	this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
+		//});
     }
 
     borrarDescarga (capitulo: string) {

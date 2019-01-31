@@ -24,6 +24,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Downloader } from '@ionic-native/downloader';
 import { Vibration } from '@ionic-native/vibration';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -136,6 +137,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               AppVersion,
               Geolocation,
               Downloader,
-              Vibration]
+              Vibration,
+              LocalNotifications]
 })
 export class AppModule {}
