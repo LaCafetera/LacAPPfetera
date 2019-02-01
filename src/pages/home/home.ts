@@ -83,7 +83,12 @@ export class HomePage implements OnDestroy, OnInit {
             elapsed: 0,
             skipForwardInterval: 15, // display number for skip forward, optional, default: 0
             skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
-            hasScrubbing: false // enable scrubbing from control center and lockscreen progress bar, optional
+            hasScrubbing: false, // enable scrubbing from control center and lockscreen progress bar, optional
+            playIcon: 'media_play.png',
+            pauseIcon: 'media_pause.png',
+            prevIcon: 'media_prev.png',
+            nextIcon: 'media_next.png',
+            closeIcon: 'media_close.png'
         }
         this.events.subscribe('like:modificado', (valoresLike) => {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');
@@ -204,6 +209,22 @@ export class HomePage implements OnDestroy, OnInit {
             data => {
                 this.contadorCapitulos--;
                 console.log('[HOME.cargaProgramas] faltan por descargar ' + this.contadorCapitulos + ' capítulos');
+                this._configuracion.getTimeRep(data.objeto.episode_id.toString())
+                .then ((dataEscuchado) => {
+                    console.log('[HOME.cargaProgramas] ha escuchado ' + dataEscuchado + ' y dura ' + data.objeto.duration);
+                    if (dataEscuchado == 0) {
+                        data.escuchado = 0;
+                    }
+                    else if ((data.objeto.duration - dataEscuchado) < 60000){
+                        data.escuchado = 2;
+                    }
+                    else {
+                        data.escuchado = 1;
+                    }
+                })
+                .catch ((error) => {
+                    console.error('[HOME.cargaProgramas] lakagaste ' + error);
+                });
                 //this.items=data.response.items;
                 //console.log('[HOME.cargaProgramas] Recibido ' + JSON.stringify(data));
                 //console.log('[HOME.cargaProgramas] like vale  ' + data.like + ' para el cap '+ data.objeto.episode_id) ;
@@ -397,22 +418,35 @@ export class HomePage implements OnDestroy, OnInit {
             const message = JSON.parse(action).message;
                 switch(message) {
                     case 'music-controls-next':
+                    case 'music-controls-skip-forward':
+                    case 'music-controls-media-button-next':
+                    case 'music-controls-media-button-fast-forward':
+                    case 'music-controls-media-button-skip-forward':
+                    case 'music-controls-media-button-step-forward':
+                    case 'music-controls-media-button-meta-right':
                         //this.reproductor.adelantaRep();
                         this.events.publish('audio:peticion', 'NEXT');
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-next');
                         break;
                     case 'music-controls-previous':
+                    case 'music-controls-media-button-previous':
+                    case 'music-controls-media-button-rewind':
+                    case 'music-controls-media-button-skip-backward':
+                    case 'music-controls-media-button-step-backward':
+                    case 'music-controls-media-button-meta-left':
                         //this.reproductor.retrocedeRep();
                         this.events.publish('audio:peticion','PREV');
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-previous');
                         break;
                     case 'music-controls-pause':
+                    case 'music-controls-media-button-pause':
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-pause');
                         //this.playPause(this._configuracion);
                         this.events.publish('audio:peticion','PAUSE');
                         this.reproductor.pause(this._configuracion);
                         break;
                     case 'music-controls-play':
+                    case 'music-controls-media-button-play':
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-play');
                         //this.events.publish('audio:peticion','PLAY');
                         //this.reproductor.justPlay(this._configuracion);
@@ -424,6 +458,7 @@ export class HomePage implements OnDestroy, OnInit {
                         this.platform.exitApp();
                         break;
                     case 'music-controls-stop-listening':
+                    case 'music-controls-media-button-stop':
                         //this.mscControl.destroy();
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
                         this.events.unsubscribe('like:modificado');
@@ -436,6 +471,7 @@ export class HomePage implements OnDestroy, OnInit {
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
                     case 'music-controls-toggle-play-pause' :
+                    case 'music-controls-media-button-play-pause':
                         console.log('[HOME.creaControlEnNotificaciones] music-controls-toggle-play-pause');
                         this.events.publish('audio:peticion','PLAYPAUSE');
                         break;

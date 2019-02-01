@@ -247,7 +247,7 @@ export class ChatPage {
     cambiaEnviaDos(){
         if (this.iconoEnvioTotal == 'fas fa-link') {
             this.iconoEnvioTotal = 'fas fa-unlink';
-            this.msgDescarga('Enviando a Spreaker y a Twitter indistintamente.')
+            this.msgDescarga('Enviando a Spreaker y a Twitter por separado.')
         }
         else {
             this.iconoEnvioTotal = 'fas fa-link';

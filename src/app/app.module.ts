@@ -36,6 +36,7 @@ import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
 import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
 import { DescargaCafetera } from '../providers/descarga.service';
+import { StoreProvider } from '../providers/store.service';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -138,6 +139,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               Geolocation,
               Downloader,
               Vibration,
-              LocalNotifications]
+              LocalNotifications,
+    StoreProvider]
 })
 export class AppModule {}

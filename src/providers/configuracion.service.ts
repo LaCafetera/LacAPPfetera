@@ -134,7 +134,7 @@ export class ConfiguracionService {
         }
     }
 
-    getTimeRep(cap: string){
+    getTimeRep(cap: string) : Promise <number>{
         console.log("[CONFIGURACION.SERVICE.getTimeRep] Recuperando posición del cap. " + cap + ".");
         //return this.theme.asObservable();
         return new Promise ((resolve,reject) =>{
@@ -153,7 +153,12 @@ export class ConfiguracionService {
                 .then (
                     data=> {
                         console.log ("[CONFIGURACION.SERVICE.getTimeRep] Enviado "+ data);
-                        resolve(data);
+                        if (data == null) {
+                            resolve(0);
+                        }
+                        else {
+                            resolve(data);
+                        }
                     },
                     error=> {
                         console.error ("[CONFIGURACION.SERVICE.getTimeRep] Error "+ error);

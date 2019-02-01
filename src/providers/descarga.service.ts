@@ -6,6 +6,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Events, ToastController, Platform } from 'ionic-angular';
 import { Downloader } from '@ionic-native/downloader';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { StoreProvider } from './store.service';
 
 import { ConfiguracionService } from './configuracion.service';
 import { EpisodiosGuardadosService } from "./episodios_guardados.service";
@@ -44,7 +45,9 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
                 private guardaDescargados: EpisodiosGuardadosService,
                 public platform : Platform,
 				private downloader: Downloader,
-				private localNotifications: LocalNotifications) {
+				private localNotifications: LocalNotifications, 
+				private store: StoreProvider
+				) {
 					this.inicializa();
                 };
 
@@ -87,7 +90,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
                 this.ficheroDescargado.emit({existe: false, direccion: null});
             }
             else {
-                this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+                this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
                 .then((entry) => {
                     this.dirdestino = entry.toInternalURL();
                     if (this.fileDownload != null) {
@@ -195,7 +198,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 		let capitulo = datosCapitulo.episode_id;
 		this.imagenDownload =  datosCapitulo.image_url;
 		let audio_en_desc : string  = "https://api.spreaker.com/v2/episodes/"+capitulo+"/download";
-		//this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+		//this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
 		//.then((entry) => {
 		//	this.dirdestino = entry.toInternalURL();
 		let fileURL:string = this.dirdestino + capitulo + ".mp3" ;
@@ -278,7 +281,6 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 							title: 'Descargando programa.',
 							text: '',
 							icon: this.imagenDownload,
-							//smallIcon: 'res://icon.png',
 							progressBar: { value: this.porcentajeDescargado }
 						});
 					}
@@ -291,7 +293,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 		else{
 			this.fileTransfer.abort(); //se genera un error "abort", as� que es en la funci�n de error donde pongo el false a descargando.
 			this.msgDescarga ("Cancelando descarga");
-			this.localNotifications.clearAll();
+			this.localNotifications.clear(1);
 			this.borrarDescarga(capitulo);
 		}
 		//})
@@ -303,7 +305,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
     }
 
     borrarDescarga (capitulo: string) {
-		this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+		this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
 		.then((entry) => {
 			this.dirdestino = entry.toInternalURL();
 			this.file.removeFile(this.dirdestino, capitulo + '.mp3')

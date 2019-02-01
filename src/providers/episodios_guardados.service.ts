@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Observable } from 'rxjs/Observable';
+import { StoreProvider } from './store.service';
 import 'rxjs/add/operator/map';
 
 
@@ -10,11 +11,11 @@ export class EpisodiosGuardadosService {
     dirdestino:string;
     fichero : string = 'cafesLocales.lst'
 
-    constructor(private file: File) {
+    constructor(private file: File, private store: StoreProvider ) {
     }
 
     ngOnInit(){
-        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
             console.log("[EpisodiosGuardados.ngOnInit] ********************************* BIEEEEEENNNNNN ********************************");
@@ -27,7 +28,7 @@ export class EpisodiosGuardadosService {
     guardaProgramas (programa: object){
         console.log("[EpisodiosGuardados.guardaProgramas] Guardando "+ JSON.stringify(programa))
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
@@ -66,7 +67,7 @@ export class EpisodiosGuardadosService {
     borraProgramas (programa: string){
         console.log("[EpisodiosGuardados.borraProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
@@ -130,7 +131,7 @@ export class EpisodiosGuardadosService {
 
     dameDatosFichero (): Promise <any>{
         let promesa = new Promise ((resolve, reject) => {
-            this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+            this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 this.dirdestino = entry.toInternalURL();
                 this.file.checkFile(this.dirdestino, this.fichero)
@@ -190,13 +191,13 @@ export class EpisodiosGuardadosService {
         let nombreYExtension = nombreFichero + ".mp3";
         console.log("[EpisodiosGuardados.dimeSiLoTengo] Buscando si tengo el fichero " + nombreYExtension)
         let promesa = new Promise ((resolve, reject) => {
-            this.file.resolveLocalFilesystemUrl(this.file.externalDataDirectory) // --> Probar esto: externalDataDirectory
+            this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 console.log (" [EpisodiosGuardados.dimeSiLoTengo] "  + entry.toInternalURL());
                 this.file.checkFile(entry.toInternalURL(), nombreYExtension)
                 .then((value)=>{
                     if(value == true) {
-                        resolve (this.file.externalDataDirectory + '/' + nombreYExtension);
+                        resolve (this.store.andeLoDejo() + '/' + nombreYExtension);
                     }
                     else {
                         resolve (null);
@@ -209,7 +210,7 @@ export class EpisodiosGuardadosService {
             })
             .catch((error) => {
                 console.log("[EpisodiosGuardados.dimeSiLoTengo] Problemas entrando en carpeta: " + error.body);
-                reject("Problemas Problemas entrando en carpeta: " + error.body);
+                reject("Problemas entrando en carpeta: " + error.body);
             });
         });
         return (promesa);

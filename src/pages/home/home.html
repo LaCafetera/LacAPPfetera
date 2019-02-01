@@ -31,10 +31,10 @@
                     <!-- <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a> -->
                     <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} </a>
                 </ion-col>
-                <ion-col col-1 icon-left *ngIf="1==1">
+                <ion-col col-1 icon-left *ngIf="item.escuchado == 0">
                     <i class="fas fa-circle"></i> <!-- Si no se ha reproducido -->
                 </ion-col>
-                <ion-col col-1 icon-left *ngIf="1==2">
+                <ion-col col-1 icon-left *ngIf="item.escuchado == 1">
                     <i class="fas fa-adjust"></i> <!-- Si está empezado -->
                 </ion-col>
             </ion-row>

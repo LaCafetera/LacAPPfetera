@@ -59,18 +59,21 @@ export class EpisodiosService {
                                             espureo=>{
                                             //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
                                                 observer.next ({objeto:data.response.episode,
-                                                                like: true});
+                                                                like: true,
+                                                                escuchado: 0});
                                             },
                                             error=>{
                                             // console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
                                                 observer.next ({objeto:data.response.episode,
-                                                                like: false});
+                                                                like: false,
+                                                                escuchado: 0});
                                             }
                                         )
                                     }
                                     else{
                                         observer.next ({objeto:data.response.episode,
-                                                        like: false});
+                                                        like: false,
+                                                        escuchado: 0});
                                     }
 //                                }
                             },
