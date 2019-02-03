@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, Events } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { NavController, NavParams, ToastController, Events, Content } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -23,13 +23,17 @@ import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 export class ChatPage {
     episodio: string;
     hashtag: string;
-    items: Array<any>;
+    items: Array<any> = [];
     timer:number = 0;
     mensajeTxt:string = "";
     usuario_id:string = "";
     token_id:string = "";
     mostrarFechasAbsolutas : boolean = false;
     iconoEnvioTotal: string = "fas fa-unlink";
+
+    @ViewChild(Content) content: Content;
+    bajar: boolean = false;
+    desactivado: boolean = true;
 
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
@@ -43,13 +47,13 @@ export class ChatPage {
         this.episodio = this.navParams.get('episodioMsg');
         this.hashtag = this.navParams.get('hashtag');
         console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
-        this._configuracion.dameUsuario()
+        /*this._configuracion.dameUsuario()
         .then ((dataUsuario) => {
             this.usuario_id = dataUsuario;
         })
         .catch (() => {
             console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
-        });
+        });*/
         events.subscribe("fechasAbsolutas:status", (valor) => {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas');
             this.mostrarFechasAbsolutas = valor;
@@ -67,14 +71,14 @@ export class ChatPage {
         .then((dato)=>this.mostrarFechasAbsolutas = dato)
         .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
-    this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
+    /*this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
     data => {
         this.items=data.response.items;
         console.log("[CHAT.ionViewDidLoad]: chat recibido");
     },
     err => {
         console.log("[CHAT.ionViewDidLoad] Error recuperando chat: " + err)
-    })
+    })*/
 
     this._configuracion.dameUsuario()
     .then ((dataUsuario) => {
@@ -85,6 +89,7 @@ export class ChatPage {
             .then ((dataToken) => {
                 console.log ("[CHAT.ionViewDidLoad] recibido token " + dataToken );
                 this.token_id = dataToken;
+                this.desactivado = false;
             })
             .catch ((error) => {
                 console.log("[CHAT.ionViewDidLoad] Error descargando token:" + error);
@@ -100,12 +105,16 @@ export class ChatPage {
     .catch (() => {
         this.msgDescarga ("Error extrayendo usuario de Spreaker.");
     });
-
+    //this.vigilaMensajesAsc();
+    this.vigilaMensajesDesc();
+  }
+  
+  vigilaMensajesAsc (){
     this.timer = setInterval(() =>{
-        console.log("[CHAT.dameComentarios] Actualizando Chat");
+        //console.log("[CHAT.dameComentarios] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
             data => {
-                if (this.items == null){
+                if (this.items == []){
                     this.items=data.response.items;
                 }
                 else {
@@ -114,29 +123,55 @@ export class ChatPage {
                     //console.log("[CHAT] LA nueva remesa de mensajes tiene de longitud " + longArray  );
                     while (data.response.items[i].message_id != this.items[0].message_id && (i+1) < longArray) {
                         i++;
-                        console.log("[CHAT.dameComentarios] " + i );
+                        //console.log("[CHAT.dameComentarios] " + i );
                     }
                     this.items = data.response.items.slice(0,i).concat(this.items);
-//                    console.log("[CHAT.dameComentarios] Se han encontrado " + i + " nuevos mensajes");
                 }
             },
             err => {
-                //Dialogs.alert('Error actualizando chat', 'Oh oh...');
-                console.log ("[CHAT.dameComentarios] Error actualizando chat: " + err)
+                console.error ("[CHAT.dameComentarios] Error actualizando chat: " + err)
             }
         );
-    }, 200);
+    }, 1000);
+}
+
+  vigilaMensajesDesc (){
+    this.timer = setInterval(() =>{
+        //console.log("[CHAT.vigilaMensajesDesc] Actualizando Chat");
+        this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
+            data => {
+                if (this.items.length == 0){
+                    data.response.items.forEach(element => {
+                        //console.log("[CHAT.vigilaMensajesDesc] iniciando con " + element.message_id);
+                        this.items.unshift(element);
+                        this.bajar = true;
+                    });
+                }
+                else {
+                    let longArray = data.response.items.length;
+                    let i:number=0;
+                    //console.log("[CHAT.vigilaMensajesDesc] último: " + this.items[this.items.length - 1].message_id );
+                    while (data.response.items[i].message_id != this.items[this.items.length - 1].message_id && (i+1) < longArray) {
+                        i++;
+                        //console.log("[CHAT.vigilaMensajesDesc] " + i );
+                    }
+                    data.response.items.splice(i, data.response.items.length - i );
+                    data.response.items.forEach(element => {
+                        this.items = this.items.concat(element);
+                        this.bajar = true;
+                    });
+                }
+            },
+            err => {
+                console.error ("[CHAT.vigilaMensajesDesc] Error actualizando chat: " + err)
+            }
+        );
+        if (this.bajar) {
+            this.content.scrollToBottom();
+            this.bajar = false;
+        }
+    }, 1000);
   }
-/*
-  concatenaChat (arrayChat, nuevoArray){
-    if (arrayChat[0].message_id == nuevoArray[0].message_id){
-        return arrayChat;
-    }
-    else{
-        return nuevoArray[0].concat(this.concatenaChat(arrayChat, nuevoArray.slice(1)));
-    }
-  }
-  */
 
   quieroMas(event){
       this.episodiosService.dameMasComentarios(this.episodio, this.items[this.items.length-1].message_id).subscribe(
@@ -173,13 +208,13 @@ export class ChatPage {
     }
 
     sprikearComentario(texto: string){
-        if ( this.usuario_id != "" && this.token_id != "") {
+        if (!this.desactivado) { //( this.usuario_id != "" && this.token_id != "") {
             this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  texto).subscribe(
                 data => {
                     console.log("[CHAT.enviarComensprikearComentariotario] Mensaje enviado");
                 },
                 err => {
-                    console.log("[CHAT.sprikearComentario] Error enviando mensaje:" + err);
+                    console.error("[CHAT.sprikearComentario] Error enviando mensaje:" + err);
                     this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje.");
                 }
             );
@@ -192,7 +227,7 @@ export class ChatPage {
             console.log ("[CHAT.twittearComentario] Twitteo OK: " + respuesta);
         })
         .catch((error) => {
-            console.log ("[CHAT.twittearComentario] Twitteo KO: " + error);
+            console.error ("[CHAT.twittearComentario] Twitteo KO: " + error);
         });
     }
 
@@ -218,12 +253,12 @@ export class ChatPage {
                     this.borraItemComentario(item);
                 },
                 err =>{
-                    console.log("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
+                    console.error("[CHAT.borraComentario] Error borrando comentario " + item.message_id);
                 })
             }
         })
         .catch (() => {
-            console.log("[descarga.components.descargarFichero] Rechazada opción de borrado.")
+            console.error("[descarga.components.descargarFichero] Rechazada opción de borrado.")
         })
     }
 
@@ -245,14 +280,22 @@ export class ChatPage {
     }
 
     cambiaEnviaDos(){
-        if (this.iconoEnvioTotal == 'fas fa-link') {
-            this.iconoEnvioTotal = 'fas fa-unlink';
-            this.msgDescarga('Enviando a Spreaker y a Twitter por separado.')
-        }
-        else {
-            this.iconoEnvioTotal = 'fas fa-link';
-            this.msgDescarga('Enviando a los canales simultáneamente.')
+        if (!this.desactivado) {
+            if (this.iconoEnvioTotal == 'fas fa-link') {
+                this.iconoEnvioTotal = 'fas fa-unlink';
+                this.msgDescarga('Enviando a Spreaker y a Twitter por separado.')
+            }
+            else {
+                this.iconoEnvioTotal = 'fas fa-link';
+                this.msgDescarga('Enviando a los canales simultáneamente.')
+            }
         }
     }
 
+    activaDesactiva(){
+        console.log("[CHAT.activaDesactiva] activaDesactiva ");
+        this.desactivado = !(this.mensajeTxt.length != 0 && this.token_id != "");
+    }
+
+    
 }

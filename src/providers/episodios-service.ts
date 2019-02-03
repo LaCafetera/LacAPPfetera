@@ -98,7 +98,7 @@ export class EpisodiosService {
     }
 
     dameChatEpisodio(episodio_id){
-        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages').map(res => res.json());
+        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages?limit=5').map(res => res.json());
         return episodiosJSON;
     }
 

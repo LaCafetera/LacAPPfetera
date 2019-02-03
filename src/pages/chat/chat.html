@@ -9,7 +9,7 @@
     </ion-navbar>
 </ion-header>
 
-<ion-content class="chat">
+<ion-content #content class="chat">
     <ion-card class="comentario" *ngFor="let item of items">
         <ion-item>
             <ion-avatar item-left  (click)="muestraDatosUsuario(item.author_id)">
@@ -33,9 +33,9 @@
         </ion-card-content>
     </ion-card>
 
-    <ion-infinite-scroll (ionInfinite)="quieroMas($event)">
+    <!--ion-infinite-scroll (ionInfinite)="quieroMas($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    </ion-infinite-scroll-->
 </ion-content>
 
 <ion-footer class="cajaTexto">
@@ -43,10 +43,10 @@
         <i [class]='iconoEnvioTotal'></i>
     </button>
     <ion-item>
-        <ion-textarea type="text" name="mensaje" clearInput="true" autoComplete="true" spellcheck="true" autocorrect="true" placeholder="!Exprésate!" [(ngModel)]="mensajeTxt" (focus)="muestraTeclado()" (blur)="ocultaTeclado()"></ion-textarea>
+        <ion-textarea type='text' name='mensaje' autocomplete='true' autocorrect='on' spellcheck='on' placeholder='¡Exprésate!' [(ngModel)]='mensajeTxt' (ionFocus)='muestraTeclado()' (ionBlur)='ocultaTeclado()' (ionInput)= 'activaDesactiva()'></ion-textarea>
         <!-- <textarea #myInput id="myInput" rows="1" maxLength="500" (keyup)="resize()" [(ngModel)]="myStuff"></textarea> -->
     </ion-item>
-    <button ion-button clear [disabled]="!mensajeTxt" (click)="enviarComentario(formulario, 'spreaker')">
+    <button ion-button clear [disabled]="desactivado" (click)="enviarComentario(formulario, 'spreaker')">
         <ion-icon name='send' class="envio"></ion-icon>
     </button>
     <button ion-button clear (click)="enviarComentario(formulario, 'twitter')">
