@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef,/* Output,*/ EventEmitter, OnInit,  OnDestroy} from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL} from 'ionic-angular';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL, ActionSheetController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -13,7 +13,8 @@ import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
 import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
-import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
+import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service"
+import { AutoDestruccionComponent } from "../../components/auto-destruccion";
 
 
 /*
@@ -112,7 +113,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private network: Network,
                 private chngDetector: ChangeDetectorRef,
                 public modalCtrl: ModalController,
-                private episodiosDescargados: EpisodiosGuardadosService) {
+                private episodiosDescargados: EpisodiosGuardadosService,
+                private actionSheet: ActionSheetController) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -826,7 +828,43 @@ export class ReproductorPage implements OnInit, OnDestroy{
 		else {
 			this.msgDescarga('No es posible descargar reproducciones en vivo');
 		}
-	}
+    }
+
+    async muestraMenuAutodestruccion() {
+        const actionSheet = await this.actionSheet.create({
+          title: 'Esta cafetera se autodestruirá...',
+          buttons: [{
+            text: '... al terminar el episodio',
+            handler: () => {
+              console.log('Al terminar el episodio');
+            }
+          }, {
+            text: '... dentro de 60 minutos',
+            handler: () => {
+              console.log('60 minutos');
+            }
+          }, {
+            text: '... dentro de 30 minutos',
+            handler: () => {
+              console.log('30 minutos');
+            }
+          }, {
+            text: '... dentro de 15 minutos',
+            handler: () => {
+              console.log('15 minutos');
+            }
+          }, {
+            text: 'Ya lo apago yo si eso',
+            icon: 'close',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancelado');
+            }
+          }]
+        });
+        await actionSheet.present();
+      }
+
 }
 
 /*/---------------------- revisar ------------------------

@@ -186,6 +186,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 			this.downloader.download(descargaImg)
 			.then((location: string) => {
 				//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
+				this.guardaDescargados.guardaProgramas(this.capItem);
 			})
 			.catch((error: any) => 
 				console.error('[Descarga.components.descargarFicheroNG] imagen: ' + error)
@@ -225,12 +226,15 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 					this.porcentajeDescargado = 0;
 					this.descargando = false;
 					this.msgDescarga('Descarga completa');
+					this.localNotifications.clearAll();
 					this.fileTransfer.download( encodeURI(this.imagenDownload), encodeURI(this.dirdestino + capitulo + '.jpg'), true, {})
 					.then((entrada) => {
 						console.log("[descarga.components.descargarFichero]  Descarga de imagen completa." + JSON.stringify(entrada));
-						this.capItem.image_url = entrada.nativeURL;              
+						//this.capItem.image_url = entrada.nativeURL;              
+						datosCapitulo.image_url = entrada.nativeURL;
 						this.porcentajeDescargado = 0;
-						this.guardaDescargados.guardaProgramas(this.capItem);
+						//this.guardaDescargados.guardaProgramas(this.capItem);
+						this.guardaDescargados.guardaProgramas(datosCapitulo);
 						this.file.checkFile(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
 						.then((resultado) => {
 							if (resultado){
