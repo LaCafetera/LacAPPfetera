@@ -78,6 +78,13 @@ page-home {
       }
       .capDirecto {
         color: $noche-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $noche-danger;
+          }
+        }
       }
       p {
         color: $noche-light;

@@ -77,6 +77,13 @@ page-home {
       }
       .capDirecto {
         color: $cafe-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $cafe-danger;
+          }
+        }
       }
       p {
         color: $cafe-primary;

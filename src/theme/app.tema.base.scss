@@ -91,6 +91,13 @@
         .capDirecto {
           /* Texto + icono Directo */
           color: $base-danger;
+
+          .iconoCD {
+
+            .fas {
+              color: $base-danger;
+            }
+          }
         }
         p {
           /* Texto tiempo que hace del capítulo */
