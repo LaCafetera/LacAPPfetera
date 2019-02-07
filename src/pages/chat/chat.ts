@@ -189,7 +189,7 @@ export class ChatPage {
 
     enviarComentario(mensaje: any, donde:string){
         if (this.mensajeTxt != null){
-            if (this.iconoEnvioTotal == 'lock') {
+            if (this.iconoEnvioTotal == 'fas fa-link') {
                 console.log ("[CHAT.enviarComentario] Mandar texto a todas partes" );
                 this.sprikearComentario(this.mensajeTxt);
                 this.twittearComentario(this.mensajeTxt);
