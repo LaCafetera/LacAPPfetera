@@ -167,7 +167,6 @@ page-reproductor {
   @media screen and (min-width: 35em) and (max-width: 47em) {
     // Móvil 4" Horizontal
     .reproductor {
-      height: 94%;
 
       #titular {
         /* div para centrar el titular en la tarjeta y separarlo */
@@ -183,6 +182,7 @@ page-reproductor {
         float: left;
         padding-left: 5%;
         width: 38%;
+        margin-right: 5%;
       }
 
       #enVivo {
@@ -195,14 +195,14 @@ page-reproductor {
         /* botonera completa de reproducción en diferido */
         float: left;
         margin-top: -3%;
-        margin-left: 7%;
+        margin-left: 5%;
         width: 50%;
       }
 
       #barra_reprod {
         float:left;
         width: 30%;
-        margin-left: 17%;
+        margin-left: 15%;
         clear: none;
         margin-bottom: 0px;
 
@@ -220,7 +220,7 @@ page-reproductor {
       }
 
       .social {
-        width: 50%;
+        width: 55%;
         margin-right: auto;
         margin-left: auto;
       }

@@ -65,3 +65,32 @@ a:link, a:visited {
     }
 
   }
+
+  // ******************************************************************* Estilos del menú de autoapagado
+
+  .action-sheet-group {
+    // Menú flotante
+    border-radius: 3px !important;
+
+    .action-sheet-title {
+      // Titular
+      font-size: 1.6rem;
+    }
+    .action-sheet-button {
+      // Botones
+      font-size: 1.6rem;
+    }
+
+  }
+
+  .action-sheet-cancel {
+    // Botón cancelar
+    border-radius: 3px !important;
+  }
+
+  // ******************************************************************* Estilos del menú principal
+
+  .popover-content {
+    // Menú flotante
+    border-radius: 3px !important;
+  }

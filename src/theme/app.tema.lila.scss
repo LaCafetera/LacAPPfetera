@@ -77,6 +77,13 @@ page-home {
       }
       .capDirecto {
         color: $lila-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $lila-danger;
+          }
+        }
       }
       p {
         color: $lila-primary;

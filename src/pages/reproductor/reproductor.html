@@ -116,14 +116,14 @@
       <ion-row class="social" no-padding text-center>
         <!-- Botones corazón, descarga, compartir y chat -->
 
-        <ion-col col-3>
+        <ion-col col-2 offset-1>
           <button ion-button clear (click)='meGustasMucho()'>
             <ion-icon name='heart' [color]='colorLike'></ion-icon>
             <!--ion-icon name='heart' color='danger'></ion-icon-->
           </button>
         </ion-col>
 
-        <ion-col col-3>
+        <ion-col col-2>
           <!-->descargaCafetera [capDownload]="capItemTxt" (ficheroDescargado)="ficheroDescargado($event)">
           </descargaCafetera-->
             <button ion-button clear (click)="procesaDescarga()">
@@ -131,14 +131,19 @@
             </button>
         </ion-col>
 
-        <ion-col col-3>
-          <!--button ion-button clear (click)="compartir()"-->
-              <button ion-button clear (click)="muestraMenuAutodestruccion()">
+        <ion-col col-2>
+          <button ion-button clear (click)="muestraMenuAutodestruccion()">
+            <ion-icon name='timer'></ion-icon>
+          </button>
+        </ion-col>
+
+        <ion-col col-2>
+          <button ion-button clear (click)="compartir()">
             <ion-icon name='share'></ion-icon>
           </button>
         </ion-col>
 
-        <ion-col col-3 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio, hashtag:titulo | muestraHashtag}">
+        <ion-col col-2 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio, hashtag:titulo | muestraHashtag}">
           <button ion-button clear>
             <ion-icon name='chatbubbles'></ion-icon>
           </button>

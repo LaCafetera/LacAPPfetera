@@ -25,9 +25,10 @@ page-home {
             float:left;
             margin-left: 10%;
             margin-right: 10px;
+            margin-top: 11px;
 
-            ion-icon {
-              font-size: 5rem;
+            .fas {
+              font-size: 3rem;
             }
           }
           .textoCD {
@@ -51,7 +52,7 @@ page-home {
     }
   }
 
-  @media screen and (min-width: 35em) and (max-width: 64em) {
+  @media screen and (min-width: 35em) and (max-width: 40em) { //(max-width: 64em) {
     // Móvil 4" Horizontal y Tablet Vertical a dos columnas
     ion-list {
       overflow: hidden;
@@ -59,7 +60,19 @@ page-home {
     ion-list >.card {
       float: left;
       width: 47%;
-      margin: 6px;
+      margin: 8px;
+    }
+    ion-list >.card:nth-child(odd) {
+      clear: left;
+    }
+  }
+
+  @media screen and (min-width: 40em) and (max-width: 64em) {
+    // Tablet Vertical a dos columnas
+    ion-list >.card {
+      float: left;
+      width: 48%;
+      margin: 7px;
     }
     ion-list >.card:nth-child(odd) {
       clear: left;
@@ -70,6 +83,8 @@ page-home {
     // Tablet Horizontal a tres columnas
     ion-list >.card {
       width: 32%;
+      margin: 6px;
+      float: left;
     }
     ion-list >.card:nth-child(odd) {
       clear: none;
