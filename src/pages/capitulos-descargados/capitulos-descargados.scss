@@ -45,16 +45,27 @@ page-capitulos-descargados {
       }
     }
   }
-  @media screen and (min-width: 35em) and (max-width: 64em) {
-    // Móvil 4" Horizontal
-    // iPad Vertical a dos columnas
+  @media screen and (min-width: 35em) and (max-width: 40em) { //(max-width: 64em) {
+    // Móvil 4" Horizontal y Tablet Vertical a dos columnas
     ion-list {
       overflow: hidden;
     }
     ion-list >.card {
       float: left;
+      width: 47%;
+      margin: 8px;
+    }
+    ion-list >.card:nth-child(odd) {
+      clear: left;
+    }
+  }
+
+  @media screen and (min-width: 40em) and (max-width: 64em) {
+    // Tablet Vertical a dos columnas
+    ion-list >.card {
+      float: left;
       width: 48%;
-      margin: 5px;
+      margin: 7px;
     }
     ion-list >.card:nth-child(odd) {
       clear: left;
@@ -62,9 +73,11 @@ page-capitulos-descargados {
   }
 
   @media screen and (min-width: 64em) {
-    // iPad Horizontal a tres columnas
+    // Tablet Horizontal a tres columnas
     ion-list >.card {
       width: 32%;
+      margin: 6px;
+      float: left;
     }
     ion-list >.card:nth-child(odd) {
       clear: none;
