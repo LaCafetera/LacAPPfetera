@@ -6,6 +6,8 @@ import { ConfiguracionService } from '../../providers/configuracion.service';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Keyboard } from '@ionic-native/keyboard';
 import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
+import anchorme from "anchorme";
+
 // https://www.npmjs.com/package/ng2-emoji
 //import { Ng2EmojiModule } from 'ng2-emoji';
 
@@ -34,6 +36,7 @@ export class ChatPage {
     @ViewChild(Content) content: Content;
     bajar: boolean = false;
     desactivado: boolean = true;
+    textoTroceado: Array<Object>;
 
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
@@ -43,7 +46,7 @@ export class ChatPage {
                 private toastCtrl: ToastController,
                 private dialogs: Dialogs,
                 private keyboard: Keyboard,
-                public events: Events ) {
+                public events: Events) {
         this.episodio = this.navParams.get('episodioMsg');
         this.hashtag = this.navParams.get('hashtag');
         console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
@@ -143,6 +146,9 @@ export class ChatPage {
                 if (this.items.length == 0){
                     data.response.items.forEach(element => {
                         //console.log("[CHAT.vigilaMensajesDesc] iniciando con " + element.message_id);
+                        //this.textoTroceado = this.cadenaTwitter.troceaCadena(element.text);
+                        element.text = anchorme(element.text);
+                        //element.textoTroceado= this.cadenaTwitter.troceaCadena(element.text);
                         this.items.unshift(element);
                         this.bajar = true;
                     });
@@ -157,6 +163,7 @@ export class ChatPage {
                     }
                     data.response.items.splice(i, data.response.items.length - i );
                     data.response.items.forEach(element => {
+                        element.text = anchorme(element.text);
                         this.items = this.items.concat(element);
                         this.bajar = true;
                     });

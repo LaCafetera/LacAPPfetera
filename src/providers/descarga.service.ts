@@ -239,13 +239,16 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 						.then((resultado) => {
 							if (resultado){
 								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg encontrada en carpeta destino " + this.dirdestino);
+								this.localNotifications.clearAll();
 							}
 							else {
 								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg NO encontrada en carpeta destino " + this.dirdestino);
+								this.localNotifications.clearAll();
 							}
 						})
 						.catch((error) => {
 							console.log("[descarga.components.descargarFichero] Se ha producido un error buscando la imagen en carpeta destinoo: " + JSON.stringify(error));
+							this.localNotifications.clearAll();
 						}); 
 						this.file.readAsBinaryString(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
 						.then((resultado) => {
@@ -258,6 +261,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 					.catch((error) => {
 						if (error.code != 4){
 							console.log("[descarga.components.descargarFichero] Error descargando imagen " + JSON.stringify(error));
+							this.localNotifications.clearAll();
 						}
 					});
 				})

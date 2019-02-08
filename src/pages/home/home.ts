@@ -81,14 +81,16 @@ export class HomePage implements OnDestroy, OnInit {
             album : 'Bienvenido a Sherwood',
             duration: 0,
             elapsed: 0,
+            hasSkipForward : true, //optional, default: false. true value overrides hasNext.
+            hasSkipBackward : true, //optional, default: false. true value overrides hasPrev.
             skipForwardInterval: 15, // display number for skip forward, optional, default: 0
             skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
             hasScrubbing: false, // enable scrubbing from control center and lockscreen progress bar, optional
-            playIcon: 'media_play.png',
-            pauseIcon: 'media_pause.png',
-            prevIcon: 'media_prev.png',
-            nextIcon: 'media_next.png',
-            closeIcon: 'media_close.png'
+            playIcon: 'media_play',
+            pauseIcon: 'media_pause',
+            prevIcon: 'media_prev',
+            nextIcon: 'media_next',
+            closeIcon: 'media_close'
         }
         this.events.subscribe('like:modificado', (valoresLike) => {
             console.log('[HOME.constructor] Recibido mensaje Like Modificado');

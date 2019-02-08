@@ -28,6 +28,9 @@
           <p *ngFor="let item of tituloObj">
               {{item.cadena | eliminaHashtag}}
             <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+            <!-- 
+              <a ng-href="http://www.twitter.com/{{item.usuario}}">{{item.usuario}}</a>
+             -->
           </p>
         </div>
       </ion-card-title>

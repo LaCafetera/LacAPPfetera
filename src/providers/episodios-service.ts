@@ -99,6 +99,7 @@ export class EpisodiosService {
 
     dameChatEpisodio(episodio_id){
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages').map(res => res.json());
+        //console.log("[EPISODIOS-SERVICE] "+ JSON.stringify (episodiosJSON));
         return episodiosJSON;
     }
 
@@ -114,6 +115,13 @@ export class EpisodiosService {
         headers.append ('Authorization', 'Bearer ' + token);
         return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages?text='+comentario, null, {headers: headers}).map(res => res.json());
     }
+
+    /*enviaComentarios (episodio_id:string, usuario: string, token: string, comentario:string){
+        console.log("[EPISODIOS-SERVICE.enviaComentarios] Solicitado envío de comentario para el episodio "+ episodio_id + " con token " + token);
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        return this.http.get('https://api.spreaker.com/v2/sync/users/'+usuario+'/notifications', {headers: headers}).map(res => res.json());
+    }*/
 
 	borraComentarios  (episodio_id:string, usuario: string, token: string, message_id: string){
         console.log("[EPISODIOS-SERVICE.borraComentarios] Solicitado borrar el comentario " + message_id + "para el episodio "+ episodio_id + " con token " + token);
