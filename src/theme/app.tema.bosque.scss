@@ -243,6 +243,10 @@ page-home {
       .card-content p{
         color: $bosque-primary;
         border-top: solid 1px $bosque-light;
+
+        a {
+          color: $bosque-danger;
+        }
       }
     }
 

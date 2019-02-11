@@ -100,31 +100,6 @@
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
-        <resource-file src="res/drawable-hdpi/media_close.png" target="res/drawable-hdpi/media_close.png" />
-        <resource-file src="res/drawable-hdpi/media_next.png" target="res/drawable-hdpi/media_next.png" />
-        <resource-file src="res/drawable-hdpi/media_pause.png" target="res/drawable-hdpi/media_pause.png" />
-        <resource-file src="res/drawable-hdpi/media_play.png" target="res/drawable-hdpi/media_play.png" />
-        <resource-file src="res/drawable-hdpi/media_prev.png" target="res/drawable-hdpi/media_prev.png" />
-        <resource-file src="res/drawable-mdpi/media_close.png" target="res/drawable-mdpi/media_close.png" />
-        <resource-file src="res/drawable-mdpi/media_next.png" target="res/drawable-mdpi/media_next.png" />
-        <resource-file src="res/drawable-mdpi/media_pause.png" target="res/drawable-mdpi/media_pause.png" />
-        <resource-file src="res/drawable-mdpi/media_play.png" target="res/drawable-mdpi/media_play.png" />
-        <resource-file src="res/drawable-mdpi/media_prev.png" target="res/drawable-mdpi/media_prev.png" />
-        <resource-file src="res/drawable-xhdpi/media_close.png" target="res/drawable-xhdpi/media_close.png" />
-        <resource-file src="res/drawable-xhdpi/media_next.png" target="res/drawable-xhdpi/media_next.png" />
-        <resource-file src="res/drawable-xhdpi/media_pause.png" target="res/drawable-xhdpi/media_pause.png" />
-        <resource-file src="res/drawable-xhdpi/media_play.png" target="res/drawable-xhdpi/media_play.png" />
-        <resource-file src="res/drawable-xhdpi/media_prev.png" target="res/drawable-xhdpi/media_prev.png" />
-        <resource-file src="res/drawable-xxhdpi/media_close.png" target="res/drawable-xxhdpi/media_close.png" />
-        <resource-file src="res/drawable-xxhdpi/media_next.png" target="res/drawable-xxhdpi/media_next.png" />
-        <resource-file src="res/drawable-xxhdpi/media_pause.png" target="res/drawable-xxhdpi/media_pause.png" />
-        <resource-file src="res/drawable-xxhdpi/media_play.png" target="res/drawable-xxhdpi/media_play.png" />
-        <resource-file src="res/drawable-xxhdpi/media_prev.png" target="res/drawable-xxhdpi/media_prev.png" />
-        <resource-file src="res/drawable-xxxhdpi/media_close.png" target="res/drawable-xxxhdpi/media_close.png" />
-        <resource-file src="res/drawable-xxxhdpi/media_next.png" target="res/drawable-xxxhdpi/media_next.png" />
-        <resource-file src="res/drawable-xxxhdpi/media_pause.png" target="res/drawable-xxxhdpi/media_pause.png" />
-        <resource-file src="res/drawable-xxxhdpi/media_play.png" target="res/drawable-xxxhdpi/media_play.png" />
-        <resource-file src="res/drawable-xxxhdpi/media_prev.png" target="res/drawable-xxxhdpi/media_prev.png" />
     </platform>
     <allow-navigation href="https://radiocable.carto.com" />
     <plugin name="cordova-plugin-contacts" spec="^3.0.1" />

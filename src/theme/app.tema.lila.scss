@@ -239,6 +239,10 @@ page-home {
       .card-content p{
         color: $lila-primary;
         border-top: solid 1px $lila-light;
+
+        a {
+          color: $lila-danger;
+        }
       }
     }
 

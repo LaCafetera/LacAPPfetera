@@ -243,6 +243,10 @@ page-home {
       .card-content p{
         color: $cafe-primary;
         border-top: solid 1px $cafe-light;
+
+        a {
+          color: $cafe-danger;
+        }
       }
     }
 

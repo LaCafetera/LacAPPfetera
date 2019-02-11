@@ -22,6 +22,10 @@ page-chat {
     .card-content p{
       /* espacio bajo la línea */
       padding-top: 6px;
+
+      a {
+        font-weight: bold;
+      }
     }
   }
 
