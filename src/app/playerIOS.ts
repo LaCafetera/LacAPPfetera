@@ -127,6 +127,7 @@ export class PlayerIOS implements /*OnInit, */OnDestroy {
         const onSuccess = () => {
             console.log('[PLAYERIOS.crearepPlugin] La reprodución ha terminado.');
             this.stop();
+            this.events.publish('reproduccion:finCap', true);
         };
         const onError = (error) => {
             console.error("[PLAYERIOS.crearepPlugin] Error en reproducción código " + error.code + " - " + error.message);

@@ -235,15 +235,16 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 						this.porcentajeDescargado = 0;
 						//this.guardaDescargados.guardaProgramas(this.capItem);
 						this.guardaDescargados.guardaProgramas(datosCapitulo);
+						this.localNotifications.clearAll();
 						this.file.checkFile(this.dirdestino, capitulo + '.jpg')// Confirmamos que existe. A ver si confirmando luego se ve.
 						.then((resultado) => {
 							if (resultado){
 								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg encontrada en carpeta destino " + this.dirdestino);
-								this.localNotifications.clearAll();
+								this.msgDescarga ("Imagen " + capitulo + ".jpg encontrada en carpeta destino " + this.dirdestino + " - " + resultado);
 							}
 							else {
 								console.log("[descarga.components.descargarFichero] Imagen " + capitulo + ".jpg NO encontrada en carpeta destino " + this.dirdestino);
-								this.localNotifications.clearAll();
+								this.msgDescarga ("Imagen " + capitulo + ".jpg NO encontrada en carpeta destino " + this.dirdestino + " - " + resultado);
 							}
 						})
 						.catch((error) => {

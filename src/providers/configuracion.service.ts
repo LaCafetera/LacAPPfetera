@@ -121,8 +121,8 @@ export class ConfiguracionService {
 
     setTimeRep (cap: string, pos:number){
         console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos + " (redondeada)");
-        if (cap == null || pos == null){
-            console.log("[CONFIGURACION_SERVICE.setTimeRep] No puedo guardar un valor nulo")
+        if (cap == null || pos == null || cap == '' || pos == 0){
+            console.log("[CONFIGURACION_SERVICE.setTimeRep] No voy a guardar un valor nulo o vacío.")
         }
         else if (cap.toString().indexOf("str")!= -1){ // El toString es porque si me llega un número no se toma en serio que sea una cadena... :-\
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No debo guardar la posición para un capítulo en vivo")

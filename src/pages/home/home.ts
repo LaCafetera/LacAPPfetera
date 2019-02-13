@@ -40,10 +40,12 @@ export class HomePage implements OnDestroy, OnInit {
     timerVigilaDescargas: number;
 
     mostrarFechasAbsolutas : boolean = false;
+    entrandoEnRep : boolean = false;
 
     desconectado : boolean = false;
     mscControlOpt: MusicControlsOptions;
     statusPlay: boolean = false;
+    relojArena: number = 0;
 
     constructor(public navCtrl: NavController,
                 private episodiosService: EpisodiosService,
@@ -104,6 +106,10 @@ export class HomePage implements OnDestroy, OnInit {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas a ' + dato.valor);
             this.mostrarFechasAbsolutas = dato.valor;
             this.chngDetector.markForCheck();
+        });
+        this.events.subscribe('reproductor:autodestruccion', (dato) => {
+            console.log('[HOME.constructor] Solicitada autodestrucción en ' + dato.valor + ' minutos... tic...tac...tic...tac...');
+            this.lanzarAutodestruccion(dato.valor);
         });
         //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
         // https://ionicframework.com/docs/native/app-version/
@@ -264,6 +270,7 @@ export class HomePage implements OnDestroy, OnInit {
 
     pushPage(item){
         console.log('[HOME.pushPage] Entro en episodio. ');// + JSON.stringify (item));
+        this.entrandoEnRep = true;
         this.mscControlOpt.cover = item.objeto.image_url;
         this.mscControlOpt.track = item.objeto.title;
 		this.mscControlOpt.duration = Math.round(item.objeto.duration/1000);
@@ -398,7 +405,7 @@ export class HomePage implements OnDestroy, OnInit {
                         elapsed: posicion,
                         isPlaying: true
                       });*/
-                    console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
+                   // console.log('[HOME.creaControlEnNotificaciones] Recibido tiempo transcurrido: ' + posicion);
                 });
                 this.events.subscribe('reproduccion:descarga', (dato) => {
                     if (dato.descargar ) {
@@ -462,13 +469,19 @@ export class HomePage implements OnDestroy, OnInit {
                     case 'music-controls-stop-listening':
                     case 'music-controls-media-button-stop':
                         //this.mscControl.destroy();
-                        console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
-                        this.events.unsubscribe('like:modificado');
-                        this.events.unsubscribe('capitulo:fenecido');
-                        this.events.unsubscribe('reproduccion:status');
-						this.events.unsubscribe('reproduccion:descarga');
-                        //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
-                        this.reproductor.release(this._configuracion);
+                        if (!this.entrandoEnRep){
+                            console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  Cerrando por aquí ya que el NgOnDestroy no me tira');
+                            this.events.unsubscribe('like:modificado');
+                            this.events.unsubscribe('capitulo:fenecido');
+                            this.events.unsubscribe('reproduccion:status');
+                            this.events.unsubscribe('reproduccion:descarga');
+                            //this.mscControl.destroy(); // <-- Revisar esto que no funciona.
+                            this.reproductor.release(this._configuracion);
+                        }
+                        else {
+                            console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  No cierro porque estoy entrando en el reproductor.');  
+                            this.entrandoEnRep = false;
+                        }
                         break;
                     case 'music-controls-media-button' :
                 // External controls (iOS only)
@@ -531,6 +544,32 @@ export class HomePage implements OnDestroy, OnInit {
             }
         }
         this.chngDetector.detectChanges();
+    }
+
+    lanzarAutodestruccion(minutos:number){
+        console.log('[HOME.lanzarAutodestruccion] Solicitada autodestrucción.');
+        clearTimeout(this.relojArena); // Primero anulamos un posible anterior temporizador.
+        this.events.unsubscribe('reproduccion:finCap');
+        if (minutos != 0 && minutos != 666){
+            this.relojArena = setTimeout (()=>{
+                this.mscControl.destroy()
+                .then((data) => {
+                    console.log('[HOME.autoDestruccion] Control remoto destruido OK ' + JSON.stringify(data));
+                    this.platform.exitApp();
+                })
+                .catch((error) => {
+                    console.error('[HOME.autoDestruccion] ***** ERROR ***** Control remoto destruido KO ' + error)
+                    this.platform.exitApp(); 
+                });
+            }, minutos*60000);
+        }
+        if (minutos == 666)  {
+            this.events.subscribe('reproduccion:finCap', (dato) => {
+                console.log('[HOME.lanzarAutodestruccion] Recibido fin de capítulo. Cierro la app.');
+                this.mscControl.destroy();
+                this.platform.exitApp();
+            });
+        }
     }
 
 /*------------------------- salir -----------------

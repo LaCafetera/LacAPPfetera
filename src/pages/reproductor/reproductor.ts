@@ -837,21 +837,36 @@ export class ReproductorPage implements OnInit, OnDestroy{
             text: '... al terminar el episodio',
             handler: () => {
               console.log('Al terminar el episodio');
+              this.events.publish('reproductor:autodestruccion', {valor:666});
+              this.msgDescarga('Autoapagado al terminar capítulo.');
             }
           }, {
             text: '... dentro de 60 minutos',
             handler: () => {
               console.log('60 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:60});
+              this.msgDescarga('Autoapagado en 60 minutos.');
             }
           }, {
             text: '... dentro de 30 minutos',
             handler: () => {
               console.log('30 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:30});
+              this.msgDescarga('Autoapagado en 30 minutos.');
             }
           }, {
             text: '... dentro de 15 minutos',
             handler: () => {
               console.log('15 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:15});
+              this.msgDescarga('Autoapagado en 15 minutos.');
+            }
+          },{
+            text: '¡Corta el cable azul!',
+            handler: () => {
+              console.log('Cancelar autoapagado');
+              this.events.publish('reproductor:autodestruccion', {valor:0});
+              this.msgDescarga('Autoapagado cancelado.');
             }
           }, {
             text: 'Ya lo apago yo si eso',

@@ -118,7 +118,7 @@ export class PlayerAndroid implements OnDestroy {
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            //console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
+            console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
             this.estadoExo=datos;
         })
         .catch ((err)=> {
@@ -172,12 +172,13 @@ export class PlayerAndroid implements OnDestroy {
                                 this.continuaPlayStreaming(this.ultimaPosicion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Relanzado. ");
                             }
-                            /*else {
-                                this.events.publish('errorReproduccion:status', {status:666});
+                            else {
+                                this.events.publish('reproduccion:finCap', true);
+                            /*    this.events.publish('errorReproduccion:status', {status:666});
                                 this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
                                 this.stop();
-                                this.estadoExo = null;
-                            }*/
+                                this.estadoExo = null;*/
+                            }
                         }
                         else {
                     //this.estado = this.estadoPlayer.MEDIA_STOPPED;
@@ -185,11 +186,13 @@ export class PlayerAndroid implements OnDestroy {
                             this.estadoExo.position = '0';
                             this.guardaPos(this.configuracion);
                             this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
+                            this.events.publish('reproduccion:finCap', true);
                         }
                     }
                     else {
                         this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED); //No guardo la posición porque si ha cascado antes de comenzar a cantar, guardaría un 0
                         //this.msgDescarga("No se ha conseguido conectar con el servidor.");
+                        this.events.publish('reproduccion:finCap', true);
                     }
                     this.inVigilando(false);
                 }
