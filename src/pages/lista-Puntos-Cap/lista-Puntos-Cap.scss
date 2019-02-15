@@ -16,8 +16,9 @@ page-lista-Puntos-Cap {
     }
   }
 
+  // Relación columna imagen | columna texto
   @media screen and (min-width: 21em) and (max-width: 25em) and (orientation:portrait) {
-    // Móvil 4", 4.7" Vertical
+    // Móvil 4", 4.7" Vertical (336px a 400px)
     [col-4] {
       width: 25%;
       flex: 0 0 25%;
@@ -28,8 +29,8 @@ page-lista-Puntos-Cap {
     }
   }
 
-  @media screen and (min-width: 25em) and (orientation:portrait) {
-    // Móvil mayor de 4.7" Vertical
+  @media screen and (min-width: 25.0625em) and (orientation:portrait) {
+    // Móvil mayor de 4.7" Vertical (401px)
     [col-4] {
       width: 22%;
       flex: 0 0 22%;
@@ -40,8 +41,8 @@ page-lista-Puntos-Cap {
     }
   }
 
-  @media screen and (min-width: 35em) and (orientation:landscape) {
-    // Móvil 4,7" y mayores Horizontal
+  @media screen and (min-width: 37.5em) and (orientation:landscape) {
+    // Móvil 4,7" y mayores Horizontal (600px)
     [col-4] {
       width: 22%;
       flex: 0 0 22%;
@@ -52,8 +53,9 @@ page-lista-Puntos-Cap {
     }
   }
 
-  @media screen and (min-width: 35em) and (max-width: 42em) {
-    // Móvil 4" y mayores Horizontal
+  // Número de columnas en el listado
+  @media screen and (min-width: 35em) and (max-width: 47.9375em) {
+    // Móvil 4" y mayores Horizontal (560px a 767px)
     ion-list {
       overflow: hidden;
     }
@@ -65,18 +67,10 @@ page-lista-Puntos-Cap {
     ion-list >.card:nth-child(odd) {
       clear: left;
     }
-    [col-4] {
-      width: 33.3333%;
-      flex: 0 0 33.3333%;
-    }
-    [col-8] {
-      width: 66.6667%;
-      flex: 0 0 66.6667%;
-    }
   }
 
-  @media screen and (min-width: 42em) and (max-width: 64em) {
-    // Tablet Vertical a dos columnas
+  @media screen and (min-width: 48em) and (max-width: 63.9375em) {
+    // Tablet Vertical a dos columnas (768px a 1023px)
     ion-list >.card {
       float: left;
       width: 48%;
@@ -88,7 +82,7 @@ page-lista-Puntos-Cap {
   }
 
   @media screen and (min-width: 64em) {
-    // Tablet Horizontal a tres columnas
+    // Tablet Horizontal a tres columnas (1024px)
     ion-list >.card {
       width: 32%;
       margin: 6px;
