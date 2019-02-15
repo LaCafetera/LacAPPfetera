@@ -4,6 +4,7 @@ page-home {
     padding-top: 2px;
 
     .card {
+
       .hashtag {
         font-size: 1.4rem;
         font-weight: bold;
@@ -11,19 +12,20 @@ page-home {
       .fas {
         font-size: 1.2rem;
       }
-      h3 {
-        padding-bottom: 0px;
-      }
       .texto{
-          padding: 0;
-      }
+        padding: 0;
+
+        h3 {
+          padding-bottom: 0px;
+        }
 
         .capDirecto {
-          margin-top: 10%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
 
           .iconoCD {
             float:left;
-            margin-left: 10%;
             margin-right: 10px;
             margin-top: 11px;
 
@@ -39,6 +41,8 @@ page-home {
         p {
           font-size: 1.2rem;
         }
+      }
+
       .iconos {
         font-size: 1.2rem;
 
@@ -52,8 +56,46 @@ page-home {
     }
   }
 
-  @media screen and (min-width: 35em) and (max-width: 40em) { //(max-width: 64em) {
-    // Móvil 4" Horizontal y Tablet Vertical a dos columnas
+  // Relación columna imagen | columna texto
+  @media screen and (min-width: 21em) and (max-width: 25em) and (orientation:portrait) {
+    // Móvil 4", 4.7" Vertical (336px a 400px)
+    [col-4] {
+      width: 25%;
+      flex: 0 0 25%;
+    }
+    [col-8] {
+      width: 75%;
+      flex: 0 0 75%;
+    }
+  }
+
+  @media screen and (min-width: 25.0625em) and (orientation:portrait) {
+    // Móvil mayor de 4.7" Vertical (401px)
+    [col-4] {
+      width: 22%;
+      flex: 0 0 22%;
+    }
+    [col-8] {
+      width: 78%;
+      flex: 0 0 78%;
+    }
+  }
+
+  @media screen and (min-width: 37.5em) and (orientation:landscape) {
+    // Móvil 4,7" y mayores Horizontal (600px)
+    [col-4] {
+      width: 22%;
+      flex: 0 0 22%;
+    }
+    [col-8] {
+      width: 78%;
+      flex: 0 0 78%;
+    }
+  }
+
+  // Número de columnas en el listado
+  @media screen and (min-width: 35em) and (max-width: 47.9375em) {
+    // Móvil 4" y mayores Horizontal (560px a 767px)
     ion-list {
       overflow: hidden;
     }
@@ -67,8 +109,8 @@ page-home {
     }
   }
 
-  @media screen and (min-width: 40em) and (max-width: 64em) {
-    // Tablet Vertical a dos columnas
+  @media screen and (min-width: 48em) and (max-width: 63.9375em) {
+    // Tablet Vertical a dos columnas (768px a 1023px)
     ion-list >.card {
       float: left;
       width: 48%;
@@ -80,7 +122,7 @@ page-home {
   }
 
   @media screen and (min-width: 64em) {
-    // Tablet Horizontal a tres columnas
+    // Tablet Horizontal a tres columnas (1024px)
     ion-list >.card {
       width: 32%;
       margin: 6px;
