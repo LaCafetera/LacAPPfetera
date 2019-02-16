@@ -59,12 +59,13 @@ export class CapitulosDescargadosPage implements OnDestroy {
         });
         events.subscribe("like:modificado", (valoresLike) => {
             console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje Like Modificado');
-            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
+            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio);
         });
         events.subscribe("menuDescargas:orden", (ordenado) => {
             console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje de cambiar el orden. (' + ordenado + ')');
             this.ordenarCapitulos = ordenado.valor;
-            this.creaListaCapitulos (this.usuario, this.token)
+            this.creaListaCapitulos (this.usuario, this.token);
+            this._configuracion.guardaValor("ordenarCapitulos", this.ordenarCapitulos);
         });
     }
 
@@ -92,6 +93,17 @@ export class CapitulosDescargadosPage implements OnDestroy {
         .catch (() => {
             console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
             this.creaListaCapitulos (null, null);
+        });
+
+        this._configuracion.dameValor("ordenarCapitulos")
+        .then ((dato) => {
+            if (dato != null){
+                this.ordenarCapitulos = dato;
+            }
+        })
+        .catch (() => {
+            this.msgDescarga ("Error extrayendo orden para mostrar los capítulos.");
+            this.ordenarCapitulos = true;
         });
     }
 
