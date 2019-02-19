@@ -305,4 +305,15 @@ export class ConfiguracionService {
         console.log("[CONFIGURACION.SERVICE.getTokenScribble] Devolviendo token Scribble ");
         return (this.storage.get ("tokenScribble"));
     }
+
+    dameValor (dato: string):Promise<any>{
+        console.log ("[CONFIGURACION.SERVICE.dameDaato] Me solicitan el dato asociado a " + dato);
+        return (this.storage.get (dato));
+    }
+
+    guardaValor(dato: string, valor:any){
+        this.storage.set (dato, valor)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.guardaValor] Dato " + valor + " asociado a " + dato))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.guardaValor] Error guardando dato  " + valor + " asociado a " + dato +  " - " + error));
+    }
 }

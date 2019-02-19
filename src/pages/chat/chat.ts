@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, ToastController, Events, Content } from 'ionic-angular';
+import { NavController, NavParams, ToastController, Events, Content, PopoverController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -7,6 +7,7 @@ import { Dialogs } from '@ionic-native/dialogs';
 import { Keyboard } from '@ionic-native/keyboard';
 import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 import anchorme from "anchorme";
+import { MenuExtChatComponent } from '../../components/menuext_chat/menuext_chat';
 
 // https://www.npmjs.com/package/ng2-emoji
 //import { Ng2EmojiModule } from 'ng2-emoji';
@@ -33,6 +34,8 @@ export class ChatPage {
     mostrarFechasAbsolutas : boolean = false;
     iconoEnvioTotal: string = "fas fa-unlink";
 
+    ordenChatAsc: boolean = true;
+
     @ViewChild(Content) content: Content;
     bajar: boolean = false;
     desactivado: boolean = true;
@@ -46,20 +49,28 @@ export class ChatPage {
                 private toastCtrl: ToastController,
                 private dialogs: Dialogs,
                 private keyboard: Keyboard,
-                public events: Events) {
+                public events: Events,
+                public popoverCtrl: PopoverController) {
         this.episodio = this.navParams.get('episodioMsg');
         this.hashtag = this.navParams.get('hashtag');
         console.log("[CHAT]: Hashtag recibido: "+ this.hashtag);
-        /*this._configuracion.dameUsuario()
-        .then ((dataUsuario) => {
-            this.usuario_id = dataUsuario;
-        })
-        .catch (() => {
-            console.log("[CHAT.ionViewDidLoad] Error recuperando usuario.")
-        });*/
+
         events.subscribe("fechasAbsolutas:status", (valor) => {
             console.log('[HOME.constructor] Cambiado valor fechas absolutas');
             this.mostrarFechasAbsolutas = valor;
+        });
+        
+        events.subscribe("menuChat:orden", (ordenado) => {
+            console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje de cambiar el orden. (' + ordenado.valor + ')');
+            clearInterval(this.timer);
+            this.items = [];
+            if (ordenado.valor) {
+                this.vigilaMensajesAsc();
+            }
+            else {
+                this.vigilaMensajesDesc();
+            }
+            this._configuracion.guardaValor("ordenChatAsc", ordenado.valor);
         });
     }
 
@@ -108,16 +119,34 @@ export class ChatPage {
     .catch (() => {
         this.msgDescarga ("Error extrayendo usuario de Spreaker.");
     });
-    //this.vigilaMensajesAsc();
-    this.vigilaMensajesDesc();
+
+    this._configuracion.dameValor("ordenChatAsc")
+    .then ((dato) => {
+        if (dato != null) {
+            this.ordenChatAsc = dato;
+        }
+        if (this.ordenChatAsc) {
+            this.vigilaMensajesAsc();
+        }
+        else {
+            this.vigilaMensajesDesc();
+        }
+    })
+    .catch (() => {
+        this.msgDescarga ("Error extrayendo orden para mostrar el chat.");
+        this.ordenChatAsc = true;
+        this.vigilaMensajesAsc();
+    });
   }
   
   vigilaMensajesAsc (){
+    this.ordenChatAsc = true;
+    console.log("[CHAT.dameComentarios] ordenChatAsc a TRUE");
     this.timer = setInterval(() =>{
         //console.log("[CHAT.dameComentarios] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
             data => {
-                if (this.items == []){
+                if (this.items.length == 0){
                     this.items=data.response.items;
                 }
                 else {
@@ -139,6 +168,8 @@ export class ChatPage {
 }
 
   vigilaMensajesDesc (){
+    this.ordenChatAsc = false;
+    console.log("[CHAT.dameComentarios] ordenChatAsc a FALSE");
     this.timer = setInterval(() =>{
         //console.log("[CHAT.vigilaMensajesDesc] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
@@ -303,6 +334,15 @@ export class ChatPage {
         console.log("[CHAT.activaDesactiva] activaDesactiva ");
         this.desactivado = !(this.mensajeTxt.length != 0 && this.token_id != "");
     }
-
     
+    muestraMenu(myEvent) {
+        let datosObjeto = {ordenado: this.ordenChatAsc}
+        let popover = this.popoverCtrl.create(MenuExtChatComponent, datosObjeto );
+        popover.present({
+            ev: myEvent
+        });
+    }
+
+// Quitar scroll
+// https://github.com/ionic-team/ionic/issues/7644    
 }

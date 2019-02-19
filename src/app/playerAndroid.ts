@@ -38,6 +38,8 @@ export class PlayerAndroid implements OnDestroy {
 
     estado : number = this.estadoPlayer.MEDIA_NONE;
 
+    existePlayer: boolean = false;
+
     aspecto: AndroidExoPlayerAspectRatio = 'FILL_SCREEN';
     controlador: AndroidExoPlayerControllerConfig = { // If this object is not present controller will not be visible
         streamImage: 'https://d1bm3dmew779uf.cloudfront.net/large/1e40f2bb313c60fabc2ef6ae4ef65573.jpg',
@@ -223,16 +225,27 @@ export class PlayerAndroid implements OnDestroy {
             console.log("[PLAYERANDROID.crearepPlugin] Solicitado posicionar el audio en: " + Number(data));
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.params.seekTo = (this.enVivo ? 0 : Number(data));
-            this.androidExoplayer.show(this.params).subscribe
-            ((data) => {
-                console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
-                this.estadoExo=data;
-                this.inVigilando(true); 
-                if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
-                    this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
-                }
-            }),
-            ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
+            if (! this.existePlayer){
+                this.androidExoplayer.show(this.params).subscribe
+                ((data) => {
+                    console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                    this.estadoExo=data;
+                    this.inVigilando(true); 
+                    if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
+                        this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
+                    }
+                    this.existePlayer = true;
+                }),
+                ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
+            }
+            else{
+                this.androidExoplayer.setStream (this.capitulo, this.controlador).then(()=> {
+                    this.params.seekTo = (this.enVivo ? 0 : Number(data));
+                    console.log("[PLAYERANDROID.crearepPlugin] Cambiada posición.");
+                }),
+                ((error) => console.error("[PLAYERANDROID.crearepPlugin]  error en setStream: " +  + JSON.stringify(error)));
+                
+            }
         })
         .catch (() => {
             this.params.seekTo = 0;
@@ -265,6 +278,7 @@ export class PlayerAndroid implements OnDestroy {
         ((data) => {
             console.log("[PLAYERANDROID.crearepPluginTiempo] recibidos datos " + JSON.stringify(data))
             this.inVigilando(true);
+            this.existePlayer = true;
             /*if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
                 if (!this.saltoSolicitado){
                     this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
@@ -414,6 +428,7 @@ export class PlayerAndroid implements OnDestroy {
             if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
                 this.androidExoplayer.stop();
             }
+            this.existePlayer = false;
             this.androidExoplayer.close();
         }
     }
@@ -470,9 +485,11 @@ export class PlayerAndroid implements OnDestroy {
             console.log("[PLAYERANDROID.release] close OK ");
             //this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);
+            this.existePlayer = true;
         })
         .catch ((err)=> {
             console.error("[PLAYERANDROID.release] close KO " + err);
+            this.existePlayer = true;
         });
         //this.estado = this.estadoPlayer.MEDIA_STOPPED;
         this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);
