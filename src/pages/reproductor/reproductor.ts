@@ -468,8 +468,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
     compartir(){
         console.log ('[REPRODUCTOR.compartir] Compartiendo url ' + this.httpAudio);
 
+        var options: any;
+
         if (!this.esIOS){
-            var options = {
+            options = {
                 message: this.titulo, // not supported on some apps (Facebook, Instagram)
                 subject: 'Creo que esto puede interesarte.', // fi. for email
                 files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
@@ -478,7 +480,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             }
         }
         else {
-            var options = {
+            options = {
                 message: this.titulo + ' ' + this.httpAudio, // not supported on some apps (Facebook, Instagram)
                 subject: 'Creo que esto puede interesarte.', // fi. for email
                 files: [this.imagen], //[imagen], // an array of filenames either locally or remotely
