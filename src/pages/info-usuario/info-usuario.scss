@@ -63,4 +63,27 @@ page-info-usuario {
     }
   }
 
+  @media screen and (min-width: 48em) and (orientation:portrait) {
+    // Tablets Vertical
+    ion-card {
+      img {
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5%;
+      }
+    }
+  }
+
+  @media screen and (min-width: 64em) and (orientation:landscape) {
+    // Tablets Horizontal
+    ion-card {
+      img {
+        width: 25%;
+        float: left;
+        margin-left: 4%;
+        padding-right: 25px;
+      }
+    }
+  }
 }

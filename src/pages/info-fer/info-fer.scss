@@ -1,3 +1,72 @@
 page-info-fer {
 
+  ion-card {
+    img {
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 5%;
+    }
+  }
+
+  // Relación columna imagen | columna texto
+  @media screen and (min-width: 21em) and (orientation:portrait) {
+    // Móvil 4.7" y mayores Vertical (336px)
+    ion-card {
+      img {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5%;
+      }
+    }
+  }
+
+  @media screen and (min-width: 37.5em) and (orientation:landscape) {
+    // Móvil 4,7" y mayores Horizontal (600px)
+    ion-card {
+      img {
+        width: 45%;
+        float: left;
+        padding-right: 25px;
+        margin-left: 4%;
+      }
+    }
+  }
+
+  @media screen and (max-width: 47.9375em) and (orientation:landscape) {
+    // Móviles en Horizontal
+    ion-card {
+      img {
+        width: 40%;
+        float: left;
+        margin-left: 4%;
+        padding-right: 25px;
+      }
+    }
+  }
+
+  @media screen and (min-width: 48em) and (orientation:portrait) {
+    // Tablets Vertical
+    ion-card {
+      img {
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5%;
+      }
+    }
+  }
+
+  @media screen and (min-width: 64em) and (orientation:landscape) {
+    // Tablets Horizontal
+    ion-card {
+      img {
+        width: 25%;
+        float: left;
+        margin-left: 4%;
+        padding-right: 25px;
+      }
+    }
+  }
 }

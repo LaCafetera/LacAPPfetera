@@ -14,7 +14,7 @@
   "dependencies": {
     "@angular/common": "5.2.11",
     "@angular/compiler": "5.2.11",
-    "@angular/compiler-cli": "5.2.11",
+    "@angular/compiler-cli": "^7.2.5",
     "@angular/core": "5.2.11",
     "@angular/forms": "5.2.11",
     "@angular/http": "5.2.11",
@@ -48,7 +48,7 @@
     "anchorme": "^1.1.2",
     "babel-register": "^6.26.0",
     "clean": "4.0.2",
-    "cordova-android": "6.4.0",
+    "cordova-android": "^8.0.0",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-background-mode": "^0.7.2",
     "cordova-plugin-badge": "0.8.8",
@@ -86,7 +86,7 @@
     "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "3.2.1"
+    "@ionic/app-scripts": "^3.2.2"
   },
   "description": "An Ionic project",
   "config": {
