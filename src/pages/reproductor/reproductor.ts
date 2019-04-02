@@ -466,7 +466,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 console.log ('[REPRODUCTOR.twitteaCapitulo] Recibida respuesta: ' + respuesta);
                 if (respuesta == 1) {// café para todos
                     if (!this.esIOS){
-                        this.socialsharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
+                        this.socialsharing.shareViaTwitter(this.dameTexto() + this.titulo, this.imagen, this.httpAudio)
                         .then((respuesta) => {
                             console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
                         })
@@ -475,7 +475,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                         });
                     }
                     else {
-                        this.socialsharing.shareViaTwitter(this.titulo + ' ' + this.httpAudio, this.imagen)
+                        this.socialsharing.shareViaTwitter(this.dameTexto() + this.titulo + ' ' + this.httpAudio, this.imagen)
                         .then((respuesta) => {
                             console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
                         })
@@ -878,6 +878,14 @@ export class ReproductorPage implements OnInit, OnDestroy{
           }]
         });
         await actionSheet.present();
+      }
+
+      dameTexto():string {
+          var posibles= ["Escucha ",
+                         "Estoy oyendo ",
+                         "No te pierdas ",
+                         "No te puedes perder "];
+                         return (posibles[Math.floor((Math.random()*posibles.length))])
       }
 
 }
