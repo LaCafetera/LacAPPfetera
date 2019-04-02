@@ -142,13 +142,13 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
     }
 	
 	descargaFichero (datosCapitulo: any){
-		this.descargarFicheroIOS (datosCapitulo);/*.episode_id);/
+		//this.descargarFicheroIOS (datosCapitulo);/*.episode_id);/
 		if (this.platform.is("ios")){
 			this.descargarFicheroIOS (datosCapitulo.episode_id);
 		}
 		else {
             this.descargarFicheroAndroid(datosCapitulo);
-		}*/
+		}
 	}
 
     descargarFicheroAndroid(datosCapitulo: any){
@@ -186,7 +186,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 			this.downloader.download(descargaImg)
 			.then((location: string) => {
 				//this.ficheroDescargado.emit({existe: true, direccion: this.dirdestino});
-				this.guardaDescargados.guardaProgramas(this.capItem);
+				//this.guardaDescargados.guardaProgramas(this.capItem);
 			})
 			.catch((error: any) => 
 				console.error('[Descarga.components.descargarFicheroNG] imagen: ' + error)
