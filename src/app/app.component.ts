@@ -398,16 +398,25 @@ export class MyApp implements OnDestroy {
           this.nombreUsu = data.response.user.fullname;
           this.descripcion = data.response.user.description;
           this.datosUsu = data.response.user;
+          this.events.publish('conexionSpreaker:datos', {conectado: true,
+                                                         usuario:data.response.user,
+                                                         token: token});
           console.log("[APP.actualizaAvatar] Avatar actualizado " + data.response.user.image_url);
         }),
         ((error) => {
             console.log("[APP.actualizaAvatar] Error actualizando Avatar " + error);
+            this.events.publish('conexionSpreaker:datos', {conectado: false,
+                                                           usuario:null,
+                                                           token: null});
         });
       }
       else {
         this.imgItem = "assets/icon/icon.png";
         this.descripcion = "Resistente de Sherwood";
         this.nombreUsu = "Proscrito";
+        this.events.publish('conexionSpreaker:datos', {conectado: false,
+                                                       usuario:null,
+                                                       token: null});
       }
     }
 

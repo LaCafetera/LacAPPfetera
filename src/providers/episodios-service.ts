@@ -78,18 +78,92 @@ export class EpisodiosService {
 //                                }
                             },
                             err => {
-                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                                console.error("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
                             }
                         )}
                     );
                 },
                 err => {
                     //[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:Response with status: 0  for URL: null
-                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
+                    console.error("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
                 }
             );
         });
     }
+
+    dameDeLoQueMeGusta(usuario:string, ultimocap: string, numCaps: number){
+        let direccion = 'https://api.spreaker.com/v2/users/'+usuario+'/likes?limit='+numCaps;
+        if (ultimocap != null) {
+            console.log("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Solicitados audios más allá del "+ ultimocap  );
+            direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
+        }
+        console.log("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] "+ direccion  );
+        return Observable.create(observer => {
+            this.http.get(direccion).map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                observer.next ({objeto:data.response.episode,
+                                    like: true,
+                                    escuchado: 0});
+                            },
+                            err => {
+                                console.error("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.error("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Error en episodios:" + err);
+                }
+            );
+        });
+    }
+
+    buscaEpisodios(usuario:string, token:string, palabraABuscar: string){
+        let direccion = 'https://api.spreaker.com/v2/search/shows/1060718?type=episodes&q='+palabraABuscar;
+        console.log("[EPISODIOS-SERVICE.buscaEpisodios] "+ direccion  );
+        return Observable.create(observer => {
+            this.http.get(direccion).map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                if (token!= null) {
+                                    this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
+                                    .subscribe (
+                                        espureo=>{
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: true,
+                                                            escuchado: 0});
+                                        },
+                                        error=>{
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: false,
+                                                            escuchado: 0});
+                                        }
+                                    )
+                                }
+                                else{
+                                    observer.next ({objeto:data.response.episode,
+                                                    like: false,
+                                                    escuchado: 0});
+                                }
+                            },
+                            err => {
+                                console.error("[EPISODIOS-SERVICE.buscaEpisodios] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.error("[EPISODIOS-SERVICE.buscaEpisodios] Error en episodios:" + err);
+                }
+            );
+        });
+    }
+
 
     dameDetalleEpisodio(episodio_id){
         //console.log("[EPISODIOS-SERVICE.dameDetalleEpisodio] Entrando para episodio " + episodio_id );

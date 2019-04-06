@@ -884,7 +884,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
           var posibles= ["Escucha ",
                          "Estoy oyendo ",
                          "No te pierdas ",
-                         "No te puedes perder "];
+                         "No te puedes perder ",
+                         "Anímate a escuchar ",
+                         "Sal de la Agenda Setting: "];
                          return (posibles[Math.floor((Math.random()*posibles.length))])
       }
 

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 
-import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL } from 'ionic-angular';
+import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL, ActionSheetController, ToastController } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls';
 import { Network } from '@ionic-native/network';
@@ -46,6 +46,12 @@ export class HomePage implements OnDestroy, OnInit {
     mscControlOpt: MusicControlsOptions;
     statusPlay: boolean = false;
     relojArena: number = 0;
+    ordenado: boolean = true;
+    soloCapitulosConLike: boolean = true;
+    buscando: boolean = false ; // para mostrar o no el campo de búsqueda de episodios.
+    textoBusqueda:string = '';
+
+    datosConexion: any;
 
     constructor(public navCtrl: NavController,
                 private episodiosService: EpisodiosService,
@@ -60,8 +66,17 @@ export class HomePage implements OnDestroy, OnInit {
                 public mscControl: MusicControls,
                 private episodiosGuardados: EpisodiosGuardadosService,
                 public reproductor: Player,
-                private descargaCafetera: DescargaCafetera) {
+                private descargaCafetera: DescargaCafetera,
+                public actionSheetController: ActionSheetController,
+                public toastCtrl: ToastController) {
         this.items = new Array();
+
+        this.datosConexion = new Object();
+        this.datosConexion.conectado = false;
+        this.datosConexion.usuario = null;
+        this.datosConexion.token = null;
+        console.log('************************** '+ JSON.stringify (this.datosConexion));
+
 
         this.mscControlOpt =
         {
@@ -111,19 +126,20 @@ export class HomePage implements OnDestroy, OnInit {
             console.log('[HOME.constructor] Solicitada autodestrucción en ' + dato.valor + ' minutos... tic...tac...tic...tac...');
             this.lanzarAutodestruccion(dato.valor);
         });
+        this.events.subscribe('conexionSpreaker:datos', (dato) => {
+            console.log('[HOME.constructor] Recibidos datos de conexión');
+            this.datosConexion = dato;
+        });
         //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
         // https://ionicframework.com/docs/native/app-version/
             
         //this.navCtrl.setRoot(SlideInicioPage);
-
-
-
     }
 
     ngOnInit() {
         this.platform.ready()
         .then(() => {
-            this.compruebaConexion();
+            this.compruebaConexion(false);
         })
         .catch((error)=>{
             console.error('[HOME.ngOnInit] Error:' + JSON.stringify(error));
@@ -145,7 +161,7 @@ export class HomePage implements OnDestroy, OnInit {
         //this.backgroundMode.disable();
     }
 
-    compruebaConexion (){
+    compruebaConexion (losQueMeGustan: boolean){
         //console.log('[HOME.ionViewDidLoad] Entrando' );
         // BackgroundMode.enable();
         this.desconectado = this.network.type === 'none';
@@ -153,7 +169,7 @@ export class HomePage implements OnDestroy, OnInit {
         while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
         if (this.desconectado){
             this.dialogs.alert('El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo', 'Super-Gurú.');
-			this.episodiosGuardados.daListaProgramas(true).subscribe(
+			/*this.episodiosGuardados.daListaProgramas(true).subscribe(
             data => {
 				if (this.items == null){
                     this.items = [{objeto:data, like: false}];
@@ -168,52 +184,64 @@ export class HomePage implements OnDestroy, OnInit {
             },
             err => {
                 console.log('[home.compruebaConexion] Error en detalle:' + err);
-            });
+            });*/
+            this.cargaEpisodiosGuardados(this.ordenado);
         }
         else{
-            this.cargaUsuarioParaProgramas(null);
+            //this.cargaUsuarioParaProgramas(null);
+            if (losQueMeGustan){
+                this.cargaProgramasLike(this.datosConexion.usuario.user_id, null);
+            }
+            else{
+                this.cargaProgramas(null);
+            }
             this._configuracion.getFechasAbsolutas()
                 .then((dato)=>this.mostrarFechasAbsolutas = dato)
-                .catch((error) => console.log('[HOME.ionViewDidLoad] Error descargando usuario:' + error));
+                .catch((error) => console.log('[HOME.compruebaConexion] Error descargando usuario:' + error));
         }
+    }
+
+    despliegaProgramasBuscados (){
+        //console.log('[HOME.ionViewDidLoad] Entrando' );
+        // BackgroundMode.enable();
+        this.desconectado = this.network.type === 'none';
+        console.log('[home.cargaProgramasBuscados] el sistema me dice que la conexión es ' + this.network.type);
+        while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
+        if (this.desconectado){
+            this.dialogs.alert('El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo', 'Super-Gurú.');
+            this.cargaEpisodiosGuardados(this.ordenado);
+        }
+        else{
+            this.cargaProgramasBuscados();
+        }
+    }
+
+    cargaEpisodiosGuardados(ordenado:boolean){
+        this.episodiosGuardados.daListaProgramas(ordenado).subscribe(
+            data => {
+				if (this.items == null){
+                    this.items = [{objeto:data, like: false}];
+                    console.log('[home.cargaEpisodiosGuardados] Recibido capítulo ' + data.title);
+                    console.log('[home.cargaEpisodiosGuardados] Imagen ' + data.image_url);
+				}
+				else {
+					this.items.push({objeto:data, like: false});
+                    console.log('[home.cargaEpisodiosGuardados] Recibido otro capítulo ' + data.title);
+                    console.log('[home.cargaEpisodiosGuardados] Imagen ' + data.image_url);
+				}
+            },
+            err => {
+                console.log('[home.cargaEpisodiosGuardados] Error en detalle:' + err);
+            });
     }
 
     cargaUsuarioParaProgramas (episodio:string){
-        this._configuracion.dameUsuario()
-        .then ((dataUsuario) => {
-            //console.log('[HOME.cargaUsuarioParaProgramas] dataUsuario ' + dataUsuario);
-            if (dataUsuario != null){
-                this._configuracion.dameToken()
-                .then ((dataToken) => {
-            //        console.log('[HOME.cargaUsuarioParaProgramas] dataToken ' + dataToken);
-                    if (dataToken != null) {
-            //            console.log('[HOME.cargaUsuarioParaProgramas] Usuario: ' + dataUsuario + ' token:' + dataToken);
-                        this.cargaProgramas(dataUsuario, dataToken, episodio);
-                    }
-                    else {
-                        console.log('[HOME.cargaUsuarioParaProgramas] El usuario no está logueado');
-                        this.cargaProgramas(null, null, episodio);
-                    }
-                })
-                .catch ((error) => {
-                    console.log('[HOME.cargaUsuarioParaProgramas] Error descargando token:' + error);
-                    this.cargaProgramas(null, null, episodio);
-                });
-            }
-            else {
-                console.log('[HOME.cargaUsuarioParaProgramas] El usuario no está logueado');
-                this.cargaProgramas(null, null, episodio);
-            }
-        })
-        .catch ((error) => {
-            console.log('[HOME.cargaUsuarioParaProgramas] Error descargando usuario:' + error);
-            this.cargaProgramas(null, null, episodio);
-        });
+        this.cargaProgramas(episodio);
     }
 
-    cargaProgramas (usuario:string, token:string, episodio:string){
+    cargaProgramas (episodio:string){
         this.contadorCapitulos = this.numCapsXDescarga;
-        this.episodiosService.dameEpisodios(usuario, token, episodio, this.numCapsXDescarga).subscribe(
+        this.episodiosService.dameEpisodios(this.datosConexion.usuario, this.datosConexion.token, episodio, this.numCapsXDescarga).subscribe(
             data => {
                 this.contadorCapitulos--;
                 console.log('[HOME.cargaProgramas] faltan por descargar ' + this.contadorCapitulos + ' capítulos');
@@ -261,12 +289,117 @@ export class HomePage implements OnDestroy, OnInit {
                 console.log('[HOME.cargaProgramas] Error descargando episodio: ' + err.message);
                 this.dialogs.alert ('Error descargando episodios' + err, 'Error');
                 this.contadorCapitulos--;
-              /*  if (this.contadorCapitulos == 0){
-                }*/
             }
         );
     }
 
+    cargaProgramasLike (usuario:string, episodio:string){
+        this.contadorCapitulos = this.numCapsXDescarga;
+        this.episodiosService.dameDeLoQueMeGusta(usuario, episodio, this.numCapsXDescarga).subscribe(
+            data => {
+                this.contadorCapitulos--;
+                console.log('[HOME.cargaProgramas] faltan por descargar ' + this.contadorCapitulos + ' capítulos');
+                this._configuracion.getTimeRep(data.objeto.episode_id.toString())
+                .then ((dataEscuchado) => {
+                    console.log('[HOME.cargaProgramas] ha escuchado ' + dataEscuchado + ' y dura ' + data.objeto.duration);
+                    if (dataEscuchado == 0) {
+                        data.escuchado = 0;
+                    }
+                    else if ((data.objeto.duration - dataEscuchado) < 60000){
+                        data.escuchado = 2;
+                    }
+                    else {
+                        data.escuchado = 1;
+                    }
+                })
+                .catch ((error) => {
+                    console.error('[HOME.cargaProgramas] lakagaste ' + error);
+                });
+                //this.items=data.response.items;
+                //console.log('[HOME.cargaProgramas] Recibido ' + JSON.stringify(data));
+                //console.log('[HOME.cargaProgramas] like vale  ' + data.like + ' para el cap '+ data.objeto.episode_id) ;
+                if (this.items == null){
+                    this.items = data;
+                }
+                else {
+                    this.items.push(data);
+                    let ordenado = this.items;
+                    let mapped = ordenado.map((el, i) => {
+                        return { index: i, value: el.objeto.episode_id };
+                    });
+
+                    // ordenando el array mapeado conteniendo los valores reducidos
+                    mapped.sort((a, b) => {
+                        return (b.value - a.value);
+                    });
+
+                    // contenedor para el orden resultante
+                    this.items = mapped.map((el) =>{
+                        return ordenado[el.index];
+                    });
+                }
+            },
+            err => {
+                console.log('[HOME.cargaProgramas] Error descargando episodio: ' + err.message);
+                this.dialogs.alert ('Error descargando episodios' + err, 'Error');
+                this.contadorCapitulos--;
+            }
+        );
+    }
+
+    cargaProgramasBuscados (){
+        this.contadorCapitulos = this.numCapsXDescarga;
+        this.episodiosService.buscaEpisodios(this.datosConexion.usuario, this.datosConexion.token, this.textoBusqueda).subscribe(
+            data => {
+                this.contadorCapitulos--;
+                console.log('[HOME.cargaProgramasBuscados] faltan por descargar ' + this.contadorCapitulos + ' capítulos');
+                this._configuracion.getTimeRep(data.objeto.episode_id.toString())
+                .then ((dataEscuchado) => {
+                    console.log('[HOME.cargaProgramasBuscados] ha escuchado ' + dataEscuchado + ' y dura ' + data.objeto.duration);
+                    if (dataEscuchado == 0) {
+                        data.escuchado = 0;
+                    }
+                    else if ((data.objeto.duration - dataEscuchado) < 60000){
+                        data.escuchado = 2;
+                    }
+                    else {
+                        data.escuchado = 1;
+                    }
+                })
+                .catch ((error) => {
+                    console.error('[HOME.cargaProgramasBuscados] lakagaste ' + error);
+                });
+                //this.items=data.response.items;
+                //console.log('[HOME.cargaProgramas] Recibido ' + JSON.stringify(data));
+                //console.log('[HOME.cargaProgramas] like vale  ' + data.like + ' para el cap '+ data.objeto.episode_id) ;
+                if (this.items == null){
+                    this.items = data;
+                }
+                else {
+                    this.items.push(data);
+                    let ordenado = this.items;
+                    let mapped = ordenado.map((el, i) => {
+                        return { index: i, value: el.objeto.episode_id };
+                    });
+
+                    // ordenando el array mapeado conteniendo los valores reducidos
+                    mapped.sort((a, b) => {
+                        return (b.value - a.value);
+                    });
+
+                    // contenedor para el orden resultante
+                    this.items = mapped.map((el) =>{
+                        return ordenado[el.index];
+                    });
+                }
+            },
+            err => {
+                console.log('[HOME.cargaProgramas] Error descargando episodio: ' + err.message);
+                this.dialogs.alert ('Error descargando episodios' + err, 'Error');
+                this.contadorCapitulos--;
+            }
+        );
+    }
 
     pushPage(item){
         console.log('[HOME.pushPage] Entro en episodio. ');// + JSON.stringify (item));
@@ -291,7 +424,8 @@ export class HomePage implements OnDestroy, OnInit {
         }
         else {
             console.log('[HOME.recalentarCafe] Episodio vale ' + episodio);
-            this.cargaUsuarioParaProgramas(episodio);
+            //this.cargaUsuarioParaProgramas(episodio);
+            this.cargaProgramas(episodio);
             this.timerVigilaDescargas = setInterval(() =>{
                 console.log('[HOME.recalentarCafe] faltan por descargar ' + this.contadorCapitulos + ' cap�tulos');
                 if (this.contadorCapitulos == 0){
@@ -349,7 +483,7 @@ export class HomePage implements OnDestroy, OnInit {
         }
         else {
             event.complete();
-            this.compruebaConexion();
+            this.compruebaConexion(!this.soloCapitulosConLike);
         }
     }
 /*
@@ -363,6 +497,70 @@ export class HomePage implements OnDestroy, OnInit {
         popover.present({
             ev: myEvent
         });
+    }
+
+    async muestraMenuListado(myEvent) {
+        const actionSheet = await this.actionSheetController.create({
+            title: 'Listados',
+            buttons: [{
+                text: 'Todos los programas',
+                icon: 'list',
+                handler: () => {
+                    console.log('Quiere todos los programas');
+                    this.compruebaConexion (!this.soloCapitulosConLike);
+                }
+            }, {
+                text: 'Descargados por fecha',
+                icon: 'calendar',
+                handler: () => {
+                    console.log('Quiere los descargados por fecha');
+                    while (this.items.pop()!= undefined) {};
+                    this.cargaEpisodiosGuardados(this.ordenado);
+                }
+            }, {
+                text: 'Descargados por orden de descarga',
+                icon: 'cloud-download',
+                handler: () => {
+                    console.log('Quiere los descargados por descarga');
+                    while (this.items.pop()!= undefined) {};
+                    this.cargaEpisodiosGuardados(!this.ordenado);
+                }
+            }, {
+                text: 'Favoritos',
+                icon: 'heart',
+                handler: () => {
+                    console.log('Lista de favoritos');
+                    if (this.datosConexion.conectado){
+                        this.compruebaConexion (this.soloCapitulosConLike);
+                    }
+                    else {
+                        this.msgDescarga ('Para descargar los capítulos que le gustan debe estar logueado.')
+                    }
+                }
+            }, {
+                text: 'Buscar programa',
+                icon: 'search',
+                handler: () => {
+                    console.log('Buscando un programa en concreto');
+                    this.buscando = true;
+                }
+            }, {
+                text: 'Cancelar',
+                icon: 'close',
+                role: 'cancel',
+                handler: () => {
+                    console.log('Cancelado');
+                }
+            }]
+          });
+        await actionSheet.present();
+    }
+
+    procesaIonInput(entrada){
+        console.log('[HOME.procesaIonInput] Buscando programas con el texto ' + this.textoBusqueda);
+        this.buscando = false;
+        this.despliegaProgramasBuscados();
+
     }
 
     actualizaLike (valorLike, episodio){
@@ -570,6 +768,15 @@ export class HomePage implements OnDestroy, OnInit {
                 this.platform.exitApp();
             });
         }
+    }
+
+
+    msgDescarga  (mensaje: string) {
+        let toast = this.toastCtrl.create({
+            message: mensaje,
+            duration: 3000
+        });
+        toast.present();
     }
 
 /*------------------------- salir -----------------

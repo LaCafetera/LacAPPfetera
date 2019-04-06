@@ -8,6 +8,12 @@
         <ion-title>
             La cAPPfetera
         </ion-title>
+        <!--ion-input type="search" clearInput ionChange="procesaBusqueda()" ionInput= "procesaIonInput()" *ngIf="buscando"></ion-input-->
+        <ion-buttons end>
+            <button ion-button right icon-only clear (click)="muestraMenuListado($event)">
+                <ion-icon name="search"></ion-icon>
+            </button>
+        </ion-buttons>
 
         <ion-buttons end>
             <button ion-button right icon-only clear (click)="muestraMenu($event)">
@@ -23,9 +29,12 @@
     <ion-refresher (ionRefresh)="hacerCafe($event)">
         <ion-refresher-content loadingText="Haciendo café..."></ion-refresher-content>
     </ion-refresher>
-
+    <form (ngSubmit)="procesaIonInput($event)"  *ngIf="buscando">
+        <ion-searchbar type="search" [(ngModel)]="textoBusqueda" name="barraBusqueda"></ion-searchbar>
+    </form>
     <ion-list>
         <ion-card *ngFor="let item of items" text-wrap>
+            <!--ion-ripple-effect></ion-ripple-effect-->
             <ion-row class="hashtag" *ngIf="item.objeto.title.indexOf('#')> -1">
                 <ion-col col-11>
                     <!-- <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a> -->

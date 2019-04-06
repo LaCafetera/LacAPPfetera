@@ -276,12 +276,19 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 					}
 					this.descargando = false;
 					this.icono = 'ios-cloud-download';
+
 					this.porcentajeDescargado = 0;
+
 					this.localNotifications.clearAll();
+
 				});
+
 				this.descargando = true;
+
 				this.fileTransfer.onProgress((progress) => {
+
 					this.porcentajeCalculado = Math.round(((progress.loaded / progress.total) * 100));
+
 					if (this.porcentajeCalculado != this.porcentajeDescargado){
 						console.log("[DESCARGA.descargarFichero] Cambiando porcentaje de " + this.porcentajeDescargado + " a " + this.porcentajeCalculado);
 						this.porcentajeDescargado = this.porcentajeCalculado;
