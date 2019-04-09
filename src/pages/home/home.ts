@@ -132,7 +132,7 @@ export class HomePage implements OnDestroy, OnInit {
         });
         //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
         // https://ionicframework.com/docs/native/app-version/
-            
+
         //this.navCtrl.setRoot(SlideInicioPage);
     }
 
@@ -501,9 +501,9 @@ export class HomePage implements OnDestroy, OnInit {
 
     async muestraMenuListado(myEvent) {
         const actionSheet = await this.actionSheetController.create({
-            title: 'Listados',
+            title: 'Filtrar listado de programas',
             buttons: [{
-                text: 'Todos los programas',
+                text: 'Ver todos los programas',
                 icon: 'list',
                 handler: () => {
                     console.log('Quiere todos los programas');
@@ -518,7 +518,7 @@ export class HomePage implements OnDestroy, OnInit {
                     this.cargaEpisodiosGuardados(this.ordenado);
                 }
             }, {
-                text: 'Descargados por orden de descarga',
+                text: 'Descargados por orden',
                 icon: 'cloud-download',
                 handler: () => {
                     console.log('Quiere los descargados por descarga');
@@ -526,7 +526,7 @@ export class HomePage implements OnDestroy, OnInit {
                     this.cargaEpisodiosGuardados(!this.ordenado);
                 }
             }, {
-                text: 'Favoritos',
+                text: 'Mostrar programas favoritos',
                 icon: 'heart',
                 handler: () => {
                     console.log('Lista de favoritos');
@@ -538,7 +538,7 @@ export class HomePage implements OnDestroy, OnInit {
                     }
                 }
             }, {
-                text: 'Buscar programa',
+                text: 'Buscar programas',
                 icon: 'search',
                 handler: () => {
                     console.log('Buscando un programa en concreto');
@@ -597,7 +597,7 @@ export class HomePage implements OnDestroy, OnInit {
         .then((data) => {
             console.log('[HOME.creaControlEnNotificaciones] Control remoto creado OK ' + JSON.stringify(data));
             if (!this.platform.is('ios')) {
-                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));            
+                this.events.subscribe('reproduccion:status', (statusRep) => this.cambiamscControl(statusRep));
                 this.events.subscribe('reproduccion:posicion', (posicion) => {
                     /*this.mscControl.updateElapsed({
                         elapsed: posicion,
@@ -677,7 +677,7 @@ export class HomePage implements OnDestroy, OnInit {
                             this.reproductor.release(this._configuracion);
                         }
                         else {
-                            console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  No cierro porque estoy entrando en el reproductor.');  
+                            console.log('[HOME.creaControlEnNotificaciones] music-controls-stop-listening  No cierro porque estoy entrando en el reproductor.');
                             this.entrandoEnRep = false;
                         }
                         break;
@@ -757,7 +757,7 @@ export class HomePage implements OnDestroy, OnInit {
                 })
                 .catch((error) => {
                     console.error('[HOME.autoDestruccion] ***** ERROR ***** Control remoto destruido KO ' + error)
-                    this.platform.exitApp(); 
+                    this.platform.exitApp();
                 });
             }, minutos*60000);
         }
