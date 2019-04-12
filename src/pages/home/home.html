@@ -10,8 +10,8 @@
         </ion-title>
         <!--ion-input type="search" clearInput ionChange="procesaBusqueda()" ionInput= "procesaIonInput()" *ngIf="buscando"></ion-input-->
         <ion-buttons end>
-            <button ion-button right icon-only clear (click)="muestraMenuListado($event)">
-                <ion-icon name="search"></ion-icon>
+            <button ion-button icon-only clear (click)="muestraMenuListado($event)">
+                <i class="fas fa-filter"></i> 
             </button>
         </ion-buttons>
 
@@ -74,11 +74,11 @@
             </ion-row>
 
             <ion-row class="iconos" (click)="pushPage(item)">
-                <ion-col col-5 *ngIf="mostrarFechasAbsolutas">
+                <ion-col col-6 *ngIf="mostrarFechasAbsolutas">
                     <p>{{ item.objeto.published_at | formateaFecha }}</p>
                 </ion-col>
 
-                <ion-col col-5 *ngIf="!mostrarFechasAbsolutas">
+                <ion-col col-6 *ngIf="!mostrarFechasAbsolutas">
                     <p>{{ item.objeto.published_at | tiempoHastaAhora }}</p>
                 </ion-col>
 
@@ -87,7 +87,7 @@
                     {{ item.objeto.messages_count}}
                 </ion-col>
 
-                <ion-col col-3 icon-left>
+                <ion-col col-2 icon-left>
                     <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
                     <ion-icon name='heart' *ngIf='item.like' class="likesi"></ion-icon>
                     {{ item.objeto.likes_count}}
