@@ -73,7 +73,9 @@ page-chat {
   }
 
   .emoji{
-    display:inline-block;
+    /*display:inline-block;  */
+    margin-bottom: .25em;
+    vertical-align: middle;
   }
 
 }

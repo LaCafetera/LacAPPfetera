@@ -7,6 +7,7 @@ import { Dialogs } from '@ionic-native/dialogs';
 import { Keyboard } from '@ionic-native/keyboard';
 import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 import anchorme from "anchorme";
+import emojis from "emojis";
 import { MenuExtChatComponent } from '../../components/menuext_chat/menuext_chat';
 
 // https://www.npmjs.com/package/ng2-emoji
@@ -147,6 +148,9 @@ export class ChatPage {
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
             data => {
                 if (this.items.length == 0){
+                    data.response.items.forEach(element => {
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
+                    });
                     this.items=data.response.items;
                 }
                 else {
@@ -157,6 +161,9 @@ export class ChatPage {
                         i++;
                         //console.log("[CHAT.dameComentarios] " + i );
                     }
+                    data.response.items.slice(0,i).forEach(element => {
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
+                    });
                     this.items = data.response.items.slice(0,i).concat(this.items);
                 }
             },
@@ -177,9 +184,7 @@ export class ChatPage {
                 if (this.items.length == 0){
                     data.response.items.forEach(element => {
                         //console.log("[CHAT.vigilaMensajesDesc] iniciando con " + element.message_id);
-                        //this.textoTroceado = this.cadenaTwitter.troceaCadena(element.text);
-                        element.text = anchorme(element.text);
-                        //element.textoTroceado= this.cadenaTwitter.troceaCadena(element.text);
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
                         this.items.unshift(element);
                         this.bajar = true;
                     });
@@ -194,7 +199,7 @@ export class ChatPage {
                     }
                     data.response.items.splice(i, data.response.items.length - i );
                     data.response.items.forEach(element => {
-                        element.text = anchorme(element.text);
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
                         this.items = this.items.concat(element);
                         this.bajar = true;
                     });

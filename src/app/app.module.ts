@@ -26,7 +26,7 @@ import { Downloader } from '@ionic-native/downloader';
 import { Vibration } from '@ionic-native/vibration';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 
-import { Ng2EmojiModule } from 'ng2-emoji';
+//import { Ng2EmojiModule } from 'ng2-emoji';
 
 import { Player } from './player';
 import { PlayerAndroid } from './playerAndroid';
@@ -89,7 +89,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   imports: [
     BrowserModule,
     HttpModule,
-    Ng2EmojiModule,
+    //Ng2EmojiModule,
     IonicModule.forRoot(MyApp, { // Esta llave es para poner atrás en lugar de back en el menú de navegación
       backButtonText: ''}),
     IonicStorageModule.forRoot()
