@@ -31,6 +31,14 @@ page-chat {
       a {
         font-weight: bold;
       }
+      img { /* emoji */
+        width: auto;
+        display: inline;
+      }
+      .emoji{
+        margin-bottom: .25em;
+        vertical-align: middle;
+      }
     }
   }
 
@@ -77,10 +85,6 @@ page-chat {
     }
   }
 
-  .emoji{
-    /*display:inline-block;  */
-    margin-bottom: .25em;
-    vertical-align: middle;
-  }
+
 
 }
