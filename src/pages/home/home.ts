@@ -4,6 +4,7 @@ import { NavController, Events, MenuController, PopoverController, Platform, nor
 import { Dialogs } from '@ionic-native/dialogs';
 import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls';
 import { Network } from '@ionic-native/network';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -19,7 +20,7 @@ import { Player } from '../../app/player';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  providers: [EpisodiosService,  Dialogs, Network, EpisodiosGuardadosService]
+  providers: [EpisodiosService,  Dialogs, Network, BackgroundMode, EpisodiosGuardadosService]
 })
 
 export class HomePage implements OnDestroy, OnInit {
@@ -68,7 +69,8 @@ export class HomePage implements OnDestroy, OnInit {
                 public reproductor: Player,
                 private descargaCafetera: DescargaCafetera,
                 public actionSheetController: ActionSheetController,
-                public toastCtrl: ToastController) {
+                public toastCtrl: ToastController,
+                private backgroundMode: BackgroundMode) {
         this.items = new Array();
 
         this.datosConexion = new Object();
@@ -753,11 +755,11 @@ export class HomePage implements OnDestroy, OnInit {
                 this.mscControl.destroy()
                 .then((data) => {
                     console.log('[HOME.autoDestruccion] Control remoto destruido OK ' + JSON.stringify(data));
-                    this.platform.exitApp();
+                    this.killingMeSoftly();
                 })
                 .catch((error) => {
                     console.error('[HOME.autoDestruccion] ***** ERROR ***** Control remoto destruido KO ' + error)
-                    this.platform.exitApp();
+                    this.killingMeSoftly();
                 });
             }, minutos*60000);
         }
@@ -765,9 +767,20 @@ export class HomePage implements OnDestroy, OnInit {
             this.events.subscribe('reproduccion:finCap', (dato) => {
                 console.log('[HOME.lanzarAutodestruccion] Recibido fin de capítulo. Cierro la app.');
                 this.mscControl.destroy();
-                this.platform.exitApp();
+                this.killingMeSoftly();
             });
         }
+    }
+
+    killingMeSoftly () {
+        if (this.platform.is('ios')) {
+            this.reproductor.release(this._configuracion);
+            this.backgroundMode.moveToBackground();            
+        }
+        else {
+            this.platform.exitApp();
+        }
+
     }
 
 
