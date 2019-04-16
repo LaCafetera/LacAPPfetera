@@ -17,6 +17,12 @@
 </ion-header>
 
 <ion-content #content class="chat">
+
+
+    <!--ion-infinite-scroll *ngIf="!ordenChatAsc" (ionInfinite)="quieroMas($event)">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll-->
+
     <ion-card class="comentario" *ngFor="let item of items">
         <ion-item>
             <ion-avatar item-left  (click)="muestraDatosUsuario(item.author_id)">
@@ -40,7 +46,7 @@
         </ion-card-content>
     </ion-card>
 
-    <!--ion-infinite-scroll (ionInfinite)="quieroMas($event)">
+    <!--ion-infinite-scroll *ngIf="ordenChatAsc" (ionInfinite)="quieroMas($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll-->
 </ion-content>

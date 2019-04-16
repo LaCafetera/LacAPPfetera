@@ -42,6 +42,8 @@ export class ChatPage {
     desactivado: boolean = true;
     textoTroceado: Array<Object>;
 
+    descargandoMasMensajes: boolean = false;
+
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
                 private episodiosService: EpisodiosService,
@@ -142,7 +144,7 @@ export class ChatPage {
   
   vigilaMensajesAsc (){
     this.ordenChatAsc = true;
-    console.log("[CHAT.dameComentarios] ordenChatAsc a TRUE");
+    console.log("[CHAT.dameComentarios] ordenChatAsc a FALSE");
     this.timer = setInterval(() =>{
         //console.log("[CHAT.dameComentarios] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
@@ -176,7 +178,7 @@ export class ChatPage {
 
   vigilaMensajesDesc (){
     this.ordenChatAsc = false;
-    console.log("[CHAT.dameComentarios] ordenChatAsc a FALSE");
+    console.log("[CHAT.dameComentarios] ordenChatAsc a TRUE");
     this.timer = setInterval(() =>{
         //console.log("[CHAT.vigilaMensajesDesc] Actualizando Chat");
         this.episodiosService.dameChatEpisodio(this.episodio).subscribe(
@@ -185,7 +187,7 @@ export class ChatPage {
                     data.response.items.forEach(element => {
                         //console.log("[CHAT.vigilaMensajesDesc] iniciando con " + element.message_id);
                         element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
-                        this.items.unshift(element);
+                        this.items.splice(0, 0, element);
                         this.bajar = true;
                     });
                 }
@@ -193,16 +195,20 @@ export class ChatPage {
                     let longArray = data.response.items.length;
                     let i:number=0;
                     //console.log("[CHAT.vigilaMensajesDesc] último: " + this.items[this.items.length - 1].message_id );
+                    //while (data.response.items[i].message_id != this.items[this.items.length - 1].message_id && (i+1) < longArray) {
                     while (data.response.items[i].message_id != this.items[this.items.length - 1].message_id && (i+1) < longArray) {
+                        //console.log("[CHAT.vigilaMensajesDesc] " + data.response.items[i].message_id + " - " + this.items[this.items.length - 1].message_id + " - " + i );
                         i++;
-                        //console.log("[CHAT.vigilaMensajesDesc] " + i );
                     }
+                    console.log("[CHAT.vigilaMensajesDesc] Encontrados " + i + " mensajes nuevos ");
                     data.response.items.splice(i, data.response.items.length - i );
                     data.response.items.forEach(element => {
                         element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
-                        this.items = this.items.concat(element);
+                        //this.items.splice(0, 0, element);
+                        this.items=this.items.concat(element);
                         this.bajar = true;
                     });
+                    //console.log("[CHAT.vigilaMensajesDesc] " + JSON.stringify(this.items));
                 }
             },
             err => {
@@ -216,18 +222,36 @@ export class ChatPage {
     }, 1000);
   }
 
-  quieroMas(event){
-      this.episodiosService.dameMasComentarios(this.episodio, this.items[this.items.length-1].message_id).subscribe(
+    quieroMas(event){
+        console.log ("[CHAT.quieroMas] Solicitados más mensajes. DescargandoMasMensajes " + this.descargandoMasMensajes );
+        if (!this.descargandoMasMensajes){
+            this.descargandoMasMensajes = true;
+            this.episodiosService.dameMasComentarios(this.episodio, this.items[this.items.length-1].message_id).subscribe(
             data => {
-                this.items=this.items.concat(data.response.items);
+                if (this.ordenChatAsc) {
+                    data.response.items.forEach(element => {
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
+                    });
+                    this.items=this.items.concat(data.response.items);
+                    console.log ("[CHAT.quieroMas] Dejamos la cantidad de mensajes en " + this.items.length );
+                }
+                else {
+                    data.response.items.forEach(element => {
+                        element.text = anchorme(emojis.html(element.text, 'assets/images/emoticonos/'));
+                        this.items.push(element);
+                    });
+                    console.log ("[CHAT.quieroMas] Dejamos la cantidad de mensajes en " + this.items.length );
+                }
                 //console.log("[HOME] Recibidos "+data.response.items.length+" nuevos elementos. Ahora la lista tiene "+ this.items.length + " elementos");
                 event.complete();
+                this.descargandoMasMensajes = false;
             },
             err => {
                 event.complete();
                 console.log(err);
-            }
-        );
+                this.descargandoMasMensajes = false;
+            });
+        }
     }
 
     enviarComentario(mensaje: any, donde:string){
