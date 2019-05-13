@@ -144,7 +144,7 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
 	descargaFichero (datosCapitulo: any){
 		//this.descargarFicheroIOS (datosCapitulo);/*.episode_id);/
 		if (this.platform.is("ios")){
-			this.descargarFicheroIOS (datosCapitulo.episode_id);
+			this.descargarFicheroIOS (datosCapitulo);
 		}
 		else {
             this.descargarFicheroAndroid(datosCapitulo);
