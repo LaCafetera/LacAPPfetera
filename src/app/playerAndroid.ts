@@ -40,6 +40,8 @@ export class PlayerAndroid implements OnDestroy {
 
     existePlayer: boolean = false;
 
+    meEstabanLlamando: boolean = false;
+
     aspecto: AndroidExoPlayerAspectRatio = 'FILL_SCREEN';
     controlador: AndroidExoPlayerControllerConfig = { // If this object is not present controller will not be visible
         streamImage: 'https://d1bm3dmew779uf.cloudfront.net/large/1e40f2bb313c60fabc2ef6ae4ef65573.jpg',
@@ -120,7 +122,7 @@ export class PlayerAndroid implements OnDestroy {
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
+           // console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
             this.estadoExo=datos;
         })
         .catch ((err)=> {
@@ -149,6 +151,10 @@ export class PlayerAndroid implements OnDestroy {
             else if (this.estadoExo.playbackState == "STATE_BUFFERING" && this.estado != this.estadoPlayer.MEDIA_STARTING && this.estado != this.estadoPlayer.MEDIA_STOPPED){
                 //this.estado = this.estadoPlayer.MEDIA_STARTING;
                 this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);  
+            }
+            else if (this.estadoExo.playbackState == "STATE_IDLE" && this.estado != this.estadoPlayer.MEDIA_NONE && this.estado != this.estadoPlayer.MEDIA_STOPPED){
+                //this.estado = this.estadoPlayer.MEDIA_STARTING;
+                this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
             }
             else if (this.estadoExo.playbackState == "STATE_IDLE" && this.estado != this.estadoPlayer.MEDIA_NONE && this.estado != this.estadoPlayer.MEDIA_STOPPED){
                 //this.estado = this.estadoPlayer.MEDIA_STARTING;
@@ -228,11 +234,23 @@ export class PlayerAndroid implements OnDestroy {
             if (! this.existePlayer){
                 this.androidExoplayer.show(this.params).subscribe
                 ((data) => {
-                    console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                    //console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
                     this.estadoExo=data;
                     this.inVigilando(true); 
                     if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
                         this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
+                    }
+                    else if((data.eventType == "AUDIO_FOCUS_EVENT" && data.audioFocus == "AUDIOFOCUS_LOSS_TRANSIENT") && 
+                            (this.estado == this.estadoPlayer.MEDIA_RUNNING || this.estado == this.estadoPlayer.MEDIA_STARTING)){
+                        console.log("[PLAYERANDROID.crearepPlugin] Me llaman " + JSON.stringify(data));
+                        this.play('', configuracion);
+                        this.meEstabanLlamando = true;
+                    }
+                    else if((data.eventType == "AUDIO_FOCUS_EVENT" && data.audioFocus == "AUDIOFOCUS_GAIN") && 
+                            (this.estado == this.estadoPlayer.MEDIA_PAUSED)){
+                        console.log("[PLAYERANDROID.crearepPlugin] cuelgan " + JSON.stringify(data));
+                        this.play('', configuracion);
+                        this.meEstabanLlamando = false;
                     }
                     this.existePlayer = true;
                 }),

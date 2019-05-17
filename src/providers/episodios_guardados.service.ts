@@ -197,7 +197,7 @@ export class EpisodiosGuardadosService {
                 this.file.checkFile(entry.toInternalURL(), nombreYExtension)
                 .then((value)=>{
                     if(value == true) {
-                        resolve (this.store.andeLoDejo() + '/' + nombreYExtension);
+                        resolve (entry.toInternalURL() + '/' + nombreYExtension);
                     }
                     else {
                         resolve (null);

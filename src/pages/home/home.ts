@@ -752,14 +752,13 @@ export class HomePage implements OnDestroy, OnInit {
         this.events.unsubscribe('reproduccion:finCap');
         if (minutos != 0 && minutos != 666){
             this.relojArena = setTimeout (()=>{
+                this.killingMeSoftly();
                 this.mscControl.destroy()
                 .then((data) => {
-                    console.log('[HOME.autoDestruccion] Control remoto destruido OK ' + JSON.stringify(data));
-                    this.killingMeSoftly();
+                    console.log('[HOME.autoDestruccion] Control remoto destruido OK ');
                 })
                 .catch((error) => {
-                    console.error('[HOME.autoDestruccion] ***** ERROR ***** Control remoto destruido KO ' + error)
-                    this.killingMeSoftly();
+                    console.error('[HOME.autoDestruccion] ***** ERROR ***** Control remoto destruido KO ')
                 });
             }, minutos*60000);
         }
@@ -773,14 +772,17 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     killingMeSoftly () {
+        console.log('[HOME.killingMeSoftly] Cerrando la app.');
         if (this.platform.is('ios')) {
+            console.log('[HOME.killingMeSoftly] Detectada plataforma iOS. Parando reproducción');
+            this.reproductor.stop();
             this.reproductor.release(this._configuracion);
-            this.backgroundMode.moveToBackground();            
+            this.backgroundMode.moveToBackground();           
         }
         else {
+            console.log('[HOME.killingMeSoftly] Detectada plataforma Android. Cerrando.');
             this.platform.exitApp();
         }
-
     }
 
 

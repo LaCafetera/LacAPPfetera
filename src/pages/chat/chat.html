@@ -19,9 +19,9 @@
 <ion-content #content class="chat">
 
 
-    <!--ion-infinite-scroll *ngIf="!ordenChatAsc" (ionInfinite)="quieroMas($event)">
-            <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll-->
+    <ion-infinite-scroll position="posicion" (ionInfinite)="quieroMas($event, !ordenChatAsc)">
+            <ion-infinite-scroll-content loadingText="Descargando más comentarios..."></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
 
     <ion-card class="comentario" *ngFor="let item of items">
         <ion-item>
@@ -46,7 +46,7 @@
         </ion-card-content>
     </ion-card>
 
-    <!--ion-infinite-scroll *ngIf="ordenChatAsc" (ionInfinite)="quieroMas($event)">
+    <!--ion-infinite-scroll *ngIf="ordenChatAsc" (ionInfinite)="quieroMas($event, ordenChatAsc)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll-->
 </ion-content>
