@@ -12,10 +12,12 @@ log.txt
 .vscode/
 npm-debug.log*
 
+
 .idea/
 .sass-cache/
 .tmp/
 .versions/
+.sourcemaps/
 coverage/
 dist/
 node_modules/

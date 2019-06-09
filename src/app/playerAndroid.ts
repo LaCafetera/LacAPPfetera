@@ -1,5 +1,4 @@
-import { Injectable, Component, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
-//import { File } from '@ionic-native/file';
+import { Injectable, Component, OnDestroy  } from '@angular/core';
 import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
 import { Events, ToastController, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -16,12 +15,8 @@ export class PlayerAndroid implements OnDestroy {
 
 
     private capitulo: string ="";
-    //private descargado:boolean = false;
-    //private statusRep:number;
 
     seekPdte:boolean = false;
-    //ubicacionAudio:string ="";
-    //audioRecibido: string = "";
     paradaEncolada: boolean = false;
     timerVigila: number = 0;
     timerGetReady: number = 0;
@@ -30,7 +25,6 @@ export class PlayerAndroid implements OnDestroy {
     ultimaPosicion: number = 0;
     ultimaPosicionGuardada: number = 0;
 
-    //saltoSolicitado: boolean = false;
     enVivo: boolean = false;
 
     estadoExo: AndroidExoplayerState = null;
@@ -44,6 +38,10 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     estado : number = this.estadoPlayer.MEDIA_NONE;
+
+    existePlayer: boolean = false;
+
+    meEstabanLlamando: boolean = false;
 
     aspecto: AndroidExoPlayerAspectRatio = 'FILL_SCREEN';
     controlador: AndroidExoPlayerControllerConfig = { // If this object is not present controller will not be visible
@@ -82,31 +80,6 @@ export class PlayerAndroid implements OnDestroy {
                 public events: Events,
                 public platform : Platform,
                 private backgroundMode: BackgroundMode){
-/*
-        file.resolveLocalFilesystemUrl(file.dataDirectory)
-            .then((entry)=>{
-                this.ubicacionAudio = entry.toInternalURL();
-                //this.crearepPlugin (audio);
-            })
-            .catch((error)=>{
-                console.error("[PLAYERANDROID] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)
-            });*/
-//        this.repPlugin = new MediaPlugin ();
-    }
-
-    ngOnInit(){ 
-
-    /*    this.platform.ready().then(() => {
-            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory)
-            .then((entry)=>{
-                this.ubicacionAudio = entry.toInternalURL();
-                console.log("[PLAYERANDROID.ngOnInit] La ubicación del audio es: " + this.ubicacionAudio)
-            })
-            .catch((error)=>{console.error("[PLAYERANDROID.ngOnInit] ERROR RECUPERANDO UBICACIÓN DE AUDIO:" + error)});
-        })
-        .catch((error)=>{
-            console.error('[REPRODUCTOR.ngOnInit] Error:' + JSON.stringify(error));
-        });   */
     }
 
     ngOnDestroy(){
@@ -127,7 +100,6 @@ export class PlayerAndroid implements OnDestroy {
     }
 
     private inVigilando (interruptor:boolean){
-        //var _that = this;
         if (interruptor) {
             if (this.timerVigila == 0){
                 this.timerVigila = setInterval(() =>{
@@ -152,7 +124,7 @@ export class PlayerAndroid implements OnDestroy {
     actualizaStatus(){
         this.androidExoplayer.getState()
         .then((datos)=>{
-            //console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
+           // console.log("[PLAYERANDROID.actualizaStatus] Estado recibido: " + JSON.stringify(datos) + ' -- ' + this.estado );
             this.estadoExo=datos;
         })
         .catch ((err)=> {
@@ -186,6 +158,10 @@ export class PlayerAndroid implements OnDestroy {
                 //this.estado = this.estadoPlayer.MEDIA_STARTING;
                 this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
             }
+            else if (this.estadoExo.playbackState == "STATE_IDLE" && this.estado != this.estadoPlayer.MEDIA_NONE && this.estado != this.estadoPlayer.MEDIA_STOPPED){
+                //this.estado = this.estadoPlayer.MEDIA_STARTING;
+                this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
+            }
             else if (this.estadoExo.playbackState == "STATE_ENDED"){ 
                 // Esto por si queremos ir más allá del tamaño del audio.
                 if (Number(this.estadoExo.position) > Number(this.estadoExo.duration) && Number(this.estadoExo.duration) > 0 && this.estado == this.estadoPlayer.MEDIA_STARTING){
@@ -206,12 +182,13 @@ export class PlayerAndroid implements OnDestroy {
                                 this.continuaPlayStreaming(this.ultimaPosicion);
                                 console.error("[PLAYERANDROID.actualizaStatus] Relanzado. ");
                             }
-                            /*else {
-                                this.events.publish('errorReproduccion:status', {status:666});
+                            else {
+                                this.events.publish('reproduccion:finCap', true);
+                            /*    this.events.publish('errorReproduccion:status', {status:666});
                                 this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED);  
                                 this.stop();
-                                this.estadoExo = null;
-                            }*/
+                                this.estadoExo = null;*/
+                            }
                         }
                         else {
                     //this.estado = this.estadoPlayer.MEDIA_STOPPED;
@@ -219,11 +196,13 @@ export class PlayerAndroid implements OnDestroy {
                             this.estadoExo.position = '0';
                             //this.guardaPos(this.configuracion);
                             this.stop(); // Pongo esto después de enviar el estado "stopped" porque el Stop va a poner estatus NONE, y quiero que pase por el "Stopped"
+                            this.events.publish('reproduccion:finCap', true);
                         }
                     }
                     else {
                         this.publicaEstado(this.estadoPlayer.MEDIA_STOPPED); //No guardo la posición porque si ha cascado antes de comenzar a cantar, guardaría un 0
                         //this.msgDescarga("No se ha conseguido conectar con el servidor.");
+                        this.events.publish('reproduccion:finCap', true);
                     }
                     this.inVigilando(false);
                 }
@@ -254,16 +233,39 @@ export class PlayerAndroid implements OnDestroy {
             console.log("[PLAYERANDROID.crearepPlugin] Solicitado posicionar el audio en: " + Number(data));
             this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.params.seekTo = (this.enVivo ? 0 : Number(data));
-            this.androidExoplayer.show(this.params).subscribe
-            ((data) => {
-                //console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
-                this.estadoExo=data;
-                this.inVigilando(true); 
-                if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
-                    this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
-                }
-            }),
-            ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
+            if (! this.existePlayer){
+                this.androidExoplayer.show(this.params).subscribe
+                ((data) => {
+                    //console.log("[PLAYERANDROID.crearepPlugin] recibidos datos " + JSON.stringify(data))
+                    this.estadoExo=data;
+                    this.inVigilando(true); 
+                    if ((data.eventType == "START_EVENT" || data.eventType == "LOADING_EVENT") && this.estado == this.estadoPlayer.MEDIA_STOPPED){
+                        this.publicaEstado(this.estadoPlayer.MEDIA_STARTING);
+                    }
+                    else if((data.eventType == "AUDIO_FOCUS_EVENT" && data.audioFocus == "AUDIOFOCUS_LOSS_TRANSIENT") && 
+                            (this.estado == this.estadoPlayer.MEDIA_RUNNING || this.estado == this.estadoPlayer.MEDIA_STARTING)){
+                        console.log("[PLAYERANDROID.crearepPlugin] Me llaman " + JSON.stringify(data));
+                        this.play('', configuracion);
+                        this.meEstabanLlamando = true;
+                    }
+                    else if((data.eventType == "AUDIO_FOCUS_EVENT" && data.audioFocus == "AUDIOFOCUS_GAIN") && 
+                            (this.estado == this.estadoPlayer.MEDIA_PAUSED)){
+                        console.log("[PLAYERANDROID.crearepPlugin] cuelgan " + JSON.stringify(data));
+                        this.play('', configuracion);
+                        this.meEstabanLlamando = false;
+                    }
+                    this.existePlayer = true;
+                }),
+                ((error) => console.error("[PLAYERANDROID.crearepPlugin] recibido error " +  + JSON.stringify(error)));
+            }
+            else{
+                this.androidExoplayer.setStream (this.capitulo, this.controlador).then(()=> {
+                    this.params.seekTo = (this.enVivo ? 0 : Number(data));
+                    console.log("[PLAYERANDROID.crearepPlugin] Cambiada posición.");
+                }),
+                ((error) => console.error("[PLAYERANDROID.crearepPlugin]  error en setStream: " +  + JSON.stringify(error)));
+                
+            }
         })
         .catch (() => {
             this.params.seekTo = 0;
@@ -296,6 +298,7 @@ export class PlayerAndroid implements OnDestroy {
         ((data) => {
             console.log("[PLAYERANDROID.crearepPluginTiempo] recibidos datos " + JSON.stringify(data))
             this.inVigilando(true);
+            this.existePlayer = true;
             /*if (data.eventType == "POSITION_DISCONTINUITY_EVENT" && this.estado == this.estadoPlayer.MEDIA_RUNNING){
                 if (!this.saltoSolicitado){
                     this.msgDescarga("Se ha producido un pequeño corte en el flujo de datos.")
@@ -445,6 +448,7 @@ export class PlayerAndroid implements OnDestroy {
             if (this.estado != this.estadoPlayer.MEDIA_STOPPED) {
                 this.androidExoplayer.stop();
             }
+            this.existePlayer = false;
             this.androidExoplayer.close();
         }
     }
@@ -502,9 +506,11 @@ export class PlayerAndroid implements OnDestroy {
             console.log("[PLAYERANDROID.release] close OK ");
             //this.estado = this.estadoPlayer.MEDIA_STOPPED;
             this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);
+            this.existePlayer = true;
         })
         .catch ((err)=> {
             console.error("[PLAYERANDROID.release] close KO " + err);
+            this.existePlayer = true;
         });
         //this.estado = this.estadoPlayer.MEDIA_STOPPED;
         this.publicaEstado (this.estadoPlayer.MEDIA_STOPPED);

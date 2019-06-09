@@ -44,6 +44,15 @@ export class listaPuntosCap {
                 else if (element.title.toUpperCase().includes('MEMORIA HISTÓRICA')){
                     element.image_original_url = 'assets/images/MEMORIA_HISTORICA.png'
                 }
+                else if (element.title.toUpperCase().includes('PLATA O PLOMO')){
+                    element.image_original_url = 'assets/images/PLATA_O_PLOMO.png'
+                }
+                else if (element.title.toUpperCase().includes('INICIO')){
+                    element.image_original_url = 'assets/images/INICIO.png'
+                }
+                else if (element.title.toUpperCase().includes('ANÁLISIS DE ACTUALIDAD')){
+                    element.image_original_url = 'assets/images/ANALISIS_DE_ACTUALIDAD.png'
+                }
                 else {
                     element.image_original_url = 'assets/images/GENERICO.png'
                 }

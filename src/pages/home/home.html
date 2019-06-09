@@ -1,21 +1,23 @@
 <ion-header>
     <ion-navbar color=(color)>
 
-        <!--ion-nav-buttons left-->
-        	<button ion-button ion-icon menuToggle icon-only left>
-                <ion-icon name="settings"></ion-icon>
-                <!--<ion-icon name="settings"></ion-icon>-->
-            </button>
-        <!--/ion-nav-buttons-->
+        <button ion-button ion-icon menuToggle icon-only left>
+            <ion-icon name="settings"></ion-icon>
+        </button>
+
         <ion-title>
             La cAPPfetera
         </ion-title>
+        <!--ion-input type="search" clearInput ionChange="procesaBusqueda()" ionInput= "procesaIonInput()" *ngIf="buscando"></ion-input-->
+        <ion-buttons end>
+            <button ion-button icon-only clear (click)="muestraMenuListado($event)">
+                <i class="fas fa-filter"></i> 
+            </button>
+        </ion-buttons>
 
         <ion-buttons end>
-            <!--button ion-button right icon-only clear [navPush]="infoFer"-->
             <button ion-button right icon-only clear (click)="muestraMenu($event)">
                 <ion-icon name="menu"></ion-icon>
-                <!--<ion-icon name="menu"></ion-icon>-->
             </button>
         </ion-buttons>
 
@@ -27,14 +29,22 @@
     <ion-refresher (ionRefresh)="hacerCafe($event)">
         <ion-refresher-content loadingText="Haciendo café..."></ion-refresher-content>
     </ion-refresher>
-
+    <form (ngSubmit)="procesaIonInput($event)"  *ngIf="buscando">
+        <ion-searchbar type="search" [(ngModel)]="textoBusqueda" name="barraBusqueda"></ion-searchbar>
+    </form>
     <ion-list>
         <ion-card *ngFor="let item of items" text-wrap>
+            <!--ion-ripple-effect></ion-ripple-effect-->
             <ion-row class="hashtag" *ngIf="item.objeto.title.indexOf('#')> -1">
-                <!-- Aquí lo suyo sería que si el hashtag está vacío, no salga el row, seguro que esto Jose Carlos lo hace guay ;) -->
-                <ion-col>
+                <ion-col col-11>
                     <!-- <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} &nbsp;<ion-icon name="md-arrow-round-forward"></ion-icon>&nbsp;<ion-icon name="logo-twitter"></ion-icon></a> -->
                     <a [href]="dameEnlace(item.objeto.title)">{{ item.objeto.title | muestraHashtag }} </a>
+                </ion-col>
+                <ion-col col-1 icon-left *ngIf="item.escuchado == 0">
+                    <i class="fas fa-circle"></i> <!-- Si no se ha reproducido -->
+                </ion-col>
+                <ion-col col-1 icon-left *ngIf="item.escuchado == 1">
+                    <i class="fas fa-adjust"></i> <!-- Si está empezado -->
                 </ion-col>
             </ion-row>
 
@@ -53,7 +63,7 @@
                         <div class="capDirecto" *ngIf="item.objeto.type=='LIVE'">
                             <!-- Muestra el icono y el texto en directo -->
                             <div class="iconoCD">
-                                <ion-icon name="ios-radio-outline"></ion-icon>
+                                <i class="fas fa-volume-up"></i>
                             </div>
                             <div class="textoCD">
                                 Directo
@@ -64,11 +74,11 @@
             </ion-row>
 
             <ion-row class="iconos" (click)="pushPage(item)">
-                <ion-col col-5 *ngIf="mostrarFechasAbsolutas">
+                <ion-col col-6 *ngIf="mostrarFechasAbsolutas">
                     <p>{{ item.objeto.published_at | formateaFecha }}</p>
                 </ion-col>
 
-                <ion-col col-5 *ngIf="!mostrarFechasAbsolutas">
+                <ion-col col-6 *ngIf="!mostrarFechasAbsolutas">
                     <p>{{ item.objeto.published_at | tiempoHastaAhora }}</p>
                 </ion-col>
 
@@ -77,14 +87,14 @@
                     {{ item.objeto.messages_count}}
                 </ion-col>
 
-                <ion-col col-3 icon-left>
+                <ion-col col-2 icon-left>
                     <ion-icon name='heart' *ngIf='!item.like'></ion-icon>
                     <ion-icon name='heart' *ngIf='item.like' class="likesi"></ion-icon>
                     {{ item.objeto.likes_count}}
                 </ion-col>
 
-                <ion-col col-1 icon-right text-center>
-                    <ion-icon name="play" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
+                <ion-col col-1 icon-left>
+                    <ion-icon name="play" class="reproduciendo" *ngIf="item.objeto.episode_id==capEnRep"></ion-icon>
                 </ion-col>
             </ion-row>
         </ion-card>

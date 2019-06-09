@@ -69,11 +69,21 @@ page-home {
           color: $cafe-light;
         }
       }
+      .fas {
+        color: $cafe-primary;
+      }
       h3 {
         color: $cafe-primary;
       }
       .capDirecto {
         color: $cafe-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $cafe-danger;
+          }
+        }
       }
       p {
         color: $cafe-primary;
@@ -90,6 +100,10 @@ page-home {
         }
 
         .likesi {
+          color: $cafe-danger;
+        }
+
+        .reproduciendo {
           color: $cafe-danger;
         }
 
@@ -230,6 +244,10 @@ page-home {
       .card-content p{
         color: $cafe-primary;
         border-top: solid 1px $cafe-light;
+
+        a {
+          color: $cafe-danger;
+        }
       }
     }
 

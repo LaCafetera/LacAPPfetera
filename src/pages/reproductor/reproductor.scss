@@ -62,6 +62,7 @@ page-reproductor {
       ion-label {
         // Elimina un padding left de serie
         margin: 0px;
+        margin-top: 10px;
       }
 
         .enVivoTexto {
@@ -90,7 +91,7 @@ page-reproductor {
       }
 
       .botonDirectoStop {
-        font-size: 3.8rem;
+        font-size: 4.2rem;
         font-weight: bold;
 
         ion-icon {
@@ -164,16 +165,32 @@ page-reproductor {
     }
   }
 
-  @media screen and (min-width: 35em) and (max-width: 47em) {
-    // Móvil 4" Horizontal
+  @media screen and (min-width: 21em) and (orientation:portrait) {
+    // Móvil 4.7" y mayores Vertical (336px)
+
+  }
+
+  @media screen and (min-width: 37.5em) and (orientation:landscape) {
+    // Móvil 4,7" y mayores Horizontal (600px)
+    #imagen-cap {
+      /* div contiene imagen del capítulo, centrada y tamaño variable */
+      margin-bottom: 3%;
+    }
+
+    #enVivo {
+      /* botón de reproducción en vivo */
+      margin-top: 4%;
+      margin-bottom: 4%;
+    }
+
+  }
+
+  @media screen and (max-width: 47.9375em) and (orientation:landscape) {
+    // Móviles en Horizontal
     .reproductor {
-      height: 94%;
 
       #titular {
         /* div para centrar el titular en la tarjeta y separarlo */
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
         margin-top: 0%;
         margin-bottom: 2%;
       }
@@ -182,27 +199,28 @@ page-reproductor {
         /* div contiene imagen del capítulo */
         float: left;
         padding-left: 5%;
-        width: 38%;
+        width: 35%;
+        margin-right: 5%;
       }
 
       #enVivo {
         /* botón de reproducción en vivo */
-        margin-top: -3%;
         width: 60%;
       }
 
       #botonera {
         /* botonera completa de reproducción en diferido */
         float: left;
-        margin-top: -3%;
-        margin-left: 7%;
+        margin-top: 2%;
+        margin-bottom: 5%;
+        margin-left: 5%;
         width: 50%;
       }
 
       #barra_reprod {
         float:left;
         width: 30%;
-        margin-left: 17%;
+        margin-left: 15%;
         clear: none;
         margin-bottom: 0px;
 
@@ -220,33 +238,35 @@ page-reproductor {
       }
 
       .social {
-        width: 50%;
+        width: 95%;
+        margin-top: 2%;
         margin-right: auto;
         margin-left: auto;
       }
     }
   }
 
-  @media screen and (min-width: 64em) {
-    // iPad Horizontal
-
+  @media screen and (min-width: 48em) {
+    // Tablets Vertical
     .reproductor {
       #imagen-cap {
         /* div contiene imagen del capítulo */
         float: left;
         padding-left: 5%;
-        width: 50%;
+        width: 40%;
+        margin-right: 5%;
+        margin-bottom: 5%;
       }
 
       #enVivo {
           width: 50%;
-          margin-top: 100px;
+          margin-top: 0px;
       }
 
       #botonera {
         /* botonera completa de reproducción en diferido */
         float: left;
-        margin-top: 10%;
+        margin-top: 4%;
         width: 50%;
       }
 
@@ -256,12 +276,12 @@ page-reproductor {
         width: 45%;
         padding-left: 5%;
         clear: none;
-        margin-bottom:-40px;
+        margin-bottom:0px;
       }
 
       .social {
         float: left;
-        margin-top: 10%;
+        margin-top: 5%;
         width: 40%;
         margin-left: 5%;
       }

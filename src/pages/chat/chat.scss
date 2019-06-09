@@ -1,4 +1,9 @@
 page-chat {
+
+  .fa-sort {
+    font-size: 2.2rem;
+  }
+
   .comentario {
     /* cada comentario */
     h3 {
@@ -24,41 +29,66 @@ page-chat {
       }
     }
     .card-content p{
-      /* esacio bajo la línea */
+      /* espacio bajo la línea */
       padding-top: 6px;
+
+      a {
+        font-weight: bold;
+      }
+      img { /* emoji */
+        width: auto;
+        display: inline;
+      }
+      .emoji{
+        margin-bottom: .25em;
+        vertical-align: middle;
+      }
     }
   }
 
   .cajaTexto {
     /* Área de escritura */
-    height: 90px;
+    height: 60px;
     padding-top: 5px;
     padding-left: 5px;
+    display: flex;
+    flex-direction: row;
 
     .item-textarea {
       /* caja de texto */
       border-radius: 5px;
+      height: 30px;
+      flex: 8 0;
+      align-self: center;
     }
+
+      .input-ios[clearInput] .text-input {
+        padding-right: 0px;
+      }
 
     .button {
       /* botones */
       height: 30px;
-      width: 100%;
+      width: 30px;
+      flex: 0 0 30px;
+      align-self: center;
 
       .envio {
-        /* botón enviar */
-        font-size: 3.1rem;
+        /* botón enviar al chat*/
+        font-size: 3.5rem;
+      }
+
+      .fas {
+        font-size: 2rem;
       }
 
       .logoTW {
         /* botón Twitter */
-        font-size: 2.2rem;
+        font-size: 2.8rem;
       }
     }
   }
 
-  .emoji{
-    display:inline-block;
-  }
+
 
 }

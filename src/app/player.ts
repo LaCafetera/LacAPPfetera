@@ -202,12 +202,41 @@ export class Player implements OnDestroy {
             // que no tiene por qué ser el mismo que va a reproducir.
             if (this.cantaIos_local('')){
                 this.playerIOS.cerrarAudio();
+                    
+                // Ahora sí lo paso, porque no sé si estoy en android reproduciendo descargado, o en Android reproduciendo en streaming. (O en iOS, en cuyo caso da todo igual).
+                if (this.cantaIos_local(audioIn)){
+                    // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android
+                    // y he pasado de reproducir en local a reproducir en remoto, el reproductor
+                    // me lo tiene que crear como "true"
+                    this.crearepPlugin(audioIn,configuracion, true, this.enVivo );
+                    return (this.playerIOS.play(audio, configuracion));
+                }
+                else {
+                    this.crearepPlugin(audioIn,configuracion, true, this.enVivo);
+    //                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                    return (true);
+                }
             }
             else {
-                this.playerAndroid.cerrarAudio();
+                //this.playerAndroid.cerrarAudio();
+                
+                // Ahora sí lo paso, porque no sé si estoy en android reproduciendo descargado, o en Android reproduciendo en streaming. (O en iOS, en cuyo caso da todo igual).
+                if (this.cantaIos_local(audioIn)){
+                    this.playerAndroid.cerrarAudio();
+                    // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android
+                    // y he pasado de reproducir en local a reproducir en remoto, el reproductor
+                    // me lo tiene que crear como "true"
+                    this.crearepPlugin(audioIn,configuracion, true, this.enVivo );
+                    return (this.playerIOS.play(audio, configuracion));
+                }
+                else {
+                    this.crearepPlugin(audioIn,configuracion, true, this.enVivo);
+    //                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
+                    return (true);
+                }
             }
             // Ahora sí lo paso, porque no sé si estoy en android reproduciendo descargado, o en Android reproduciendo en streaming. (O en iOS, en cuyo caso da todo igual).
-            if (this.cantaIos_local(audioIn)){
+            /*if (this.cantaIos_local(audioIn)){
                 // no puedo pasar autoplay a true si estoy en ios, pero si estoy en Android
                 // y he pasado de reproducir en local a reproducir en remoto, el reproductor
                 // me lo tiene que crear como "true"
@@ -218,7 +247,7 @@ export class Player implements OnDestroy {
                 this.crearepPlugin(audioIn,configuracion, true, this.enVivo);
 //                this.playerAndroid.play(audio, configuracion).then(()=> {return(true)});
                 return (true);
-            }
+            }*/
         }
     }
 

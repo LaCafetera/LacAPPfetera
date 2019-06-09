@@ -69,11 +69,21 @@ page-home {
           color: $lila-light;
         }
       }
+      .fas {
+        color: $lila-primary;
+      }
       h3 {
         color: $lila-primary;
       }
       .capDirecto {
         color: $lila-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $lila-danger;
+          }
+        }
       }
       p {
         color: $lila-primary;
@@ -87,6 +97,10 @@ page-home {
 
         ion-icon {
           color: $lila-primary;
+        }
+
+        .reproduciendo {
+          color: $lila-danger;
         }
 
         .likesi {
@@ -226,6 +240,10 @@ page-home {
       .card-content p{
         color: $lila-primary;
         border-top: solid 1px $lila-light;
+
+        a {
+          color: $lila-danger;
+        }
       }
     }
 

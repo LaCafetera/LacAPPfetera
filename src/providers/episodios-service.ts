@@ -59,34 +59,111 @@ export class EpisodiosService {
                                             espureo=>{
                                             //  console.log("[EPISODIOS-SERVICE.dameEpisodios] Devuelve datos --> Me gusta el capítulo " + capitulo.episode_id );
                                                 observer.next ({objeto:data.response.episode,
-                                                                like: true});
+                                                                like: true,
+                                                                escuchado: 0});
                                             },
                                             error=>{
                                             // console.log("[EPISODIOS-SERVICE.dameEpisodios] No me gusta el capítulo " + capitulo.episode_id);
                                                 observer.next ({objeto:data.response.episode,
-                                                                like: false});
+                                                                like: false,
+                                                                escuchado: 0});
                                             }
                                         )
                                     }
                                     else{
                                         observer.next ({objeto:data.response.episode,
-                                                        like: false});
+                                                        like: false,
+                                                        escuchado: 0});
                                     }
 //                                }
                             },
                             err => {
-                                console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
+                                console.error("[EPISODIOS-SERVICE.dameEpisodios] Error en detalle:" + err);
                             }
                         )}
                     );
                 },
                 err => {
                     //[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:Response with status: 0  for URL: null
-                    console.log("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
+                    console.error("[EPISODIOS-SERVICE.dameEpisodios] Error en episodios:" + err);
                 }
             );
         });
     }
+
+    dameDeLoQueMeGusta(usuario:string, ultimocap: string, numCaps: number){
+        let direccion = 'https://api.spreaker.com/v2/users/'+usuario+'/likes?limit='+numCaps;
+        if (ultimocap != null) {
+            console.log("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Solicitados audios más allá del "+ ultimocap  );
+            direccion = direccion + '&filter=listenable&last_id=' + ultimocap;
+        }
+        console.log("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] "+ direccion  );
+        return Observable.create(observer => {
+            this.http.get(direccion).map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                observer.next ({objeto:data.response.episode,
+                                    like: true,
+                                    escuchado: 0});
+                            },
+                            err => {
+                                console.error("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.error("[EPISODIOS-SERVICE.dameDeLoQueMeGusta] Error en episodios:" + err);
+                }
+            );
+        });
+    }
+
+    buscaEpisodios(usuario:string, token:string, palabraABuscar: string){
+        let direccion = 'https://api.spreaker.com/v2/search/shows/1060718?type=episodes&q='+palabraABuscar;
+        console.log("[EPISODIOS-SERVICE.buscaEpisodios] "+ direccion  );
+        return Observable.create(observer => {
+            this.http.get(direccion).map(res => res.json()).subscribe(
+                data => {
+                    data.response.items.forEach((capitulo, elemento, array) => {
+                        this.dameDetalleEpisodio(capitulo.episode_id).subscribe(
+                            data => {
+                                if (token!= null) {
+                                    this.episodioDimeSiLike(capitulo.episode_id, usuario, token)
+                                    .subscribe (
+                                        espureo=>{
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: true,
+                                                            escuchado: 0});
+                                        },
+                                        error=>{
+                                            observer.next ({objeto:data.response.episode,
+                                                            like: false,
+                                                            escuchado: 0});
+                                        }
+                                    )
+                                }
+                                else{
+                                    observer.next ({objeto:data.response.episode,
+                                                    like: false,
+                                                    escuchado: 0});
+                                }
+                            },
+                            err => {
+                                console.error("[EPISODIOS-SERVICE.buscaEpisodios] Error en detalle:" + err);
+                            }
+                        )}
+                    );
+                },
+                err => {
+                    console.error("[EPISODIOS-SERVICE.buscaEpisodios] Error en episodios:" + err);
+                }
+            );
+        });
+    }
+
 
     dameDetalleEpisodio(episodio_id){
         //console.log("[EPISODIOS-SERVICE.dameDetalleEpisodio] Entrando para episodio " + episodio_id );
@@ -95,7 +172,8 @@ export class EpisodiosService {
     }
 
     dameChatEpisodio(episodio_id){
-        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages').map(res => res.json());
+        let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio_id+'/messages?limit=10').map(res => res.json());
+        //console.log("[EPISODIOS-SERVICE] "+ JSON.stringify (episodiosJSON));
         return episodiosJSON;
     }
 
@@ -111,6 +189,13 @@ export class EpisodiosService {
         headers.append ('Authorization', 'Bearer ' + token);
         return this.http.post('https://api.spreaker.com/v2/episodes/'+episodio_id+'/messages?text='+comentario, null, {headers: headers}).map(res => res.json());
     }
+
+    /*enviaComentarios (episodio_id:string, usuario: string, token: string, comentario:string){
+        console.log("[EPISODIOS-SERVICE.enviaComentarios] Solicitado envío de comentario para el episodio "+ episodio_id + " con token " + token);
+        let headers = new Headers();
+        headers.append ('Authorization', 'Bearer ' + token);
+        return this.http.get('https://api.spreaker.com/v2/sync/users/'+usuario+'/notifications', {headers: headers}).map(res => res.json());
+    }*/
 
 	borraComentarios  (episodio_id:string, usuario: string, token: string, message_id: string){
         console.log("[EPISODIOS-SERVICE.borraComentarios] Solicitado borrar el comentario " + message_id + "para el episodio "+ episodio_id + " con token " + token);
@@ -211,6 +296,29 @@ export class EpisodiosService {
         let episodiosJSON = this.http.get('https://api.spreaker.com/v2/episodes/'+ episodio+'/chapters').map(res => res.json());
         return episodiosJSON;
     }
+
+
+///////////////////////////////////// Mapa Cafetero /////////////////////////////////////
+    mapaCafeteroSolicitaToken (){
+        console.log("[EPISODIOS-SERVICE.mapaCafeteroSolicitaToken] Solicitado token del mapa cafetero para código que tenemos metido a piñón.");
+        let headers = new Headers();
+        headers.append ('Content-Type', 'application/x-www-form-urlencoded');
+        let gt = "grant_type=authorization_code";
+        let cID = "client_id=56867005-647b-4c11-a08e-93c93ae998a2";
+        let cs = "client_secret=vWLL3TL7+MiS/CfONmSiPvmlIX2/mtKLO4xS8bBUkOo=";
+        let ru = "redirect_uri=https://www.mapa.radiolacafetera.com";
+        let code = "code=5wZFbgNJHgO3Y2nE6kNO";
+        console.log('[EPISODIOS-SERVICE.mapaCafeteroSolicitaToken] https://www.scribblemaps.com/oauth/token ?' + gt + '&' + cID + '&' + cs + '&' + ru + '&' + code );
+        return this.http.post('https://www.scribblemaps.com/oauth/token ',(gt + '&' + cID + '&' + cs + '&' + ru + '&code=' + code), {headers: headers}).map(res => res.json());
+    }
+
+    damePuntosMapa () {
+        console.log("[EPISODIOS-SERVICE.damePuntosMapa] Me preguntan por los puntos del mapa cafetero");
+        //let episodiosJSON = this.http.get('https://www.scribblemaps.com/api/maps/ghQCV2cSHo/smjson').map(res => res.json());
+        let episodiosJSON = this.http.get('https://www.scribblemaps.com/api/maps/ghQCV2cSHo/geojson').map(res => res.json());
+        return episodiosJSON;
+    }
+
 
 }
 

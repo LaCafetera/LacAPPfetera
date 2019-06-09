@@ -6,6 +6,7 @@ import { SQLite } from '@ionic-native/sqlite';
 import { HttpModule } from '@angular/http';
 
 import { File } from '@ionic-native/file';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { Media } from '@ionic-native/media';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -20,8 +21,12 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { AndroidExoplayer } from '@ionic-native/android-exoplayer';
 import { AppVersion } from '@ionic-native/app-version';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Downloader } from '@ionic-native/downloader';
+import { Vibration } from '@ionic-native/vibration';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
-import { Ng2EmojiModule } from 'ng2-emoji';
+//import { Ng2EmojiModule } from 'ng2-emoji';
 
 import { Player } from './player';
 import { PlayerAndroid } from './playerAndroid';
@@ -30,6 +35,8 @@ import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from "../providers/episodios-service";
 import { CadenasTwitterService } from "../providers/cadenasTwitter.service";
 import { EpisodiosGuardadosService } from "../providers/episodios_guardados.service";
+import { DescargaCafetera } from '../providers/descarga.service';
+import { StoreProvider } from '../providers/store.service';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -43,9 +50,11 @@ import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
 import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
 import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
 import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
+import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
 
-import { DescargaCafetera } from '../components/descarga.component';
 import { MenuExtComponent } from '../components/menuext/menuext';
+import { MenuExtDescComponent } from '../components/menuext_descargados/menuext_descargados';
+import { MenuExtChatComponent } from '../components/menuext_chat/menuext_chat';
 
 import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
 import { muestraHashtagPipe } from './muestraHashtag.pipe'
@@ -57,7 +66,6 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   declarations: [
     MyApp,
     HomePage,
-    DescargaCafetera,
     InfoFerPage,
     ReproductorPage,
     //DetalleCapituloPage,
@@ -71,14 +79,17 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
+    MenuExtDescComponent, 
+    MenuExtChatComponent,
     CapitulosDescargadosPage,
     listaPuntosCap,
-    SlideInicioPage
+    SlideInicioPage,
+    MapaOyentesPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    Ng2EmojiModule,
+    //Ng2EmojiModule,
     IonicModule.forRoot(MyApp, { // Esta llave es para poner atrás en lugar de back en el menú de navegación
       backButtonText: ''}),
     IonicStorageModule.forRoot()
@@ -95,12 +106,16 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
     InfoUsuarioPage,
     MapaCafeteroPage,
     MenuExtComponent,
+    MenuExtDescComponent, 
+    MenuExtChatComponent, 
     CapitulosDescargadosPage,
     listaPuntosCap,
-    SlideInicioPage
+    SlideInicioPage,
+    MapaOyentesPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,
+              FileTransfer, FileTransferObject,
               Media,
               Dialogs,
               SocialSharing,
@@ -120,8 +135,14 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
               EpisodiosService,
               CadenasTwitterService,
               EpisodiosGuardadosService,
+              DescargaCafetera,
               AndroidExoplayer,
               SQLite,
-              AppVersion]
+              AppVersion,
+              Geolocation,
+              Downloader,
+              Vibration,
+              LocalNotifications,
+    StoreProvider]
 })
 export class AppModule {}

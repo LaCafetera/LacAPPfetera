@@ -1,5 +1,5 @@
-import { Component, ChangeDetectorRef,/*, Output, EventEmitter*/OnInit,  OnDestroy} from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL} from 'ionic-angular';
+import { Component, ChangeDetectorRef,/* Output,*/ EventEmitter, OnInit,  OnDestroy} from '@angular/core';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL, ActionSheetController } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Network } from '@ionic-native/network';
@@ -13,6 +13,8 @@ import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
 import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
+import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service"
+import { AutoDestruccionComponent } from "../../components/auto-destruccion";
 
 
 /*
@@ -24,11 +26,13 @@ import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
-  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, /*Player,*/ BackgroundMode]
+  providers: [EpisodiosService, ConfiguracionService, CadenasTwitterService, Dialogs, SocialSharing, Network, /*Player,*/ BackgroundMode, EpisodiosGuardadosService]
 })
 
 export class ReproductorPage implements OnInit, OnDestroy{
 
+	
+	
     capItem: any;
     reproductor: Player;
 
@@ -43,7 +47,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     reproduciendo: boolean = false;
     descargando: boolean = false;
     //statusRep: number;
-    ficheroExiste: boolean;
+    //ficheroExiste: boolean;
     posicionRepStr: string = '00:00:00';
     tamanyoStr: string = '01:00:00'
     posicionRep: number = 0;
@@ -84,12 +88,16 @@ export class ReproductorPage implements OnInit, OnDestroy{
     capItemTxt: string;
 
     sinConexionCantando: boolean = false;
+    icono: string;
+    iconoDescarga: string = 'ios-cloud-download';
 
     // Con esta variable vamos a monitorizar posibles cortes. Será false si Schrodingüer me dice que el capítulo está vivo, o si siendo
     // retaguardia el capítulo no ha llegado al final. Si siendo true llega un estado de Stop, entonces saltará el error de conexión.
     corteEnDescarga: boolean = false;
     // Puede haber terminado la reproducción porque hayan pulsado stop...
     stopPulsado:boolean = false;
+	
+	fechaCapitulo: string = '';
 
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
@@ -103,12 +111,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 private dialogs: Dialogs,
                 private socialsharing: SocialSharing,
                 private network: Network,
-                //private player: Player,
                 private chngDetector: ChangeDetectorRef,
-                public modalCtrl: ModalController/*,
-                //public mscControl: MusicControls,
-                //private backgroundMode: BackgroundMode,
-                private musicControls: MusicControls*/) {
+                public modalCtrl: ModalController,
+                private episodiosDescargados: EpisodiosGuardadosService,
+                private actionSheet: ActionSheetController) {
 
         this.capItem = this.navParams.get('episodio').objeto;
         this.capItemTxt = JSON.stringify(this.capItem);
@@ -122,8 +128,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
         console.log('[REPRODUCTOR.constructor] El fichero de imagen es: ' + this.imagen);
         this.enVivo = this.capItem.type=='LIVE';
         this.reproductor = this.navParams.get('player');
-        //this.mscControl = this.navParams.get('controlador');
-        //this.soloWifi = this.navParams.get('soloWifi');
         this.episodioDescarga = (this.enVivo?null:this.episodio);
         this.dirTwitter = this.navParams.get('enlaceTwitter');// + '?f=tweets' ;
         this.titulo = this.capItem.title;
@@ -131,39 +135,20 @@ export class ReproductorPage implements OnInit, OnDestroy{
         this.totDurPlay =  this.capItem.duration;
         this.tamanyoStr = this.dameTiempo(this.totDurPlay/1000);
         this.tituloObj = cadenaTwitter.troceaCadena(this.titulo);
+		this.fechaCapitulo = this.capItem.published_at;
         this.events.subscribe('audio:peticion', (peticion: string) => this.atiendePeticion(peticion));
         this.events.subscribe('conexion:status', (conexion) => this.revisaConexion(conexion));
         this.events.subscribe('reproduccionHome:status', (statusRep) => this.cambiandoStatusRep(statusRep));
         this.events.subscribe('posicion:modificado', (posicionObj) => this.cambiaPosicion(posicionObj));
-        //this.events.subscribe('reproduccion:status', (statusRep) => this.cambiandoStatusRep(statusRep));
-        /*if (this.reproductor == null) {
-            console.log('[REPRODUCTOR.ngOnInit] El reproductor era nulo, así que me lo invento.');
-            this.reproductor = this.player;
-            this.events.publish('audio:modificado', {reproductor:this.reproductor/*, controlador:this.mscControl});
-        }*/
-        //console.log('[REPRODUCTOR.ngOnInit] Estatus es :' +  this.reproductor.dameStatusRep());
+        this.events.subscribe('descarga.ficheroDescargado', (descargaObj) => this.ficheroExiste(this.episodio));
     }
 
-    /****************************************
-     Hay que estudiar esto. Salir de la página cancelará la descarga. ¿Seguro que quiere salir?
-
-
-  ionViewCanLeave(): boolean{
-   // here we can either return true or false
-   // depending on if we want to leave this view
-   if(isValid(randomValue)){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-    */
 
     ngOnInit() {
         console.log ('[app.component.ngOnInit]');
         this.platform.ready().then(() => {
             this.esIOS = this.platform.is('ios');
+            this.ficheroExiste(this.episodio);
             this._configuracion.getTwitteado(this.episodio)
             .then((val)=> {
             //    console.log('[REPRODUCTOR.constructor] recibida verificación de twitteado ' + val + ' para el capítulo ' + this.episodio );
@@ -171,29 +156,11 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.twitteaCapitulo ();
                     this._configuracion.setTwitteado(this.episodio);
                 }
-                //this.actualizaPosicion();
             })
             .catch(()=>{
                 console.log('[REPRODUCTOR.ngOnInit] Error recuperando posición de la reproducción.');
             });
- /*            this.events.subscribe('errorReproduccion:status', (statusRep) => {
-                console.error('[REPRODUCTOR.ngOnInit] Error en la reproducción. Recibido ' + statusRep);
-                if (!this.stopPulsado) {
-                    if (statusRep == '666') { // Si es Android
-                        this.dialogs.alert('Se ha producido un corte del flujo de audio con Spreaker.', 'Super - Gurú');
-                    }
-                }
-            });
-
-            if (this.mscControl == null) {
-                console.log('[REPRODUCTOR.ngOnInit] Creando un nuevo player en la zona de notificación.');
-                this.mscControl = this.musicControls; //new MusicControls ();
-                this.creaControlEnNotificaciones (false);
-            }
-            else {
-                console.log('[REPRODUCTOR.ngOnInit] mscControl != null ' + JSON.stringify(this.mscControl));
-            }
-*/
+            
             this.episodiosService.damePuntosEpisodio(this.episodio).subscribe(
                 data => {
                     this.detallesCapitulo = data.response.items;
@@ -237,8 +204,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
         //this._configuracion.setTimeRep(this.episodio, this.posicionRep);
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
+        clearInterval(this.timerParpadeo);
         this.timer = 0;
         this.timerVigilaEnVivo = 0;
+        this.timerParpadeo = 0;
         if (!this.events.unsubscribe('audio:peticion')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de audio.')};
         if (!this.events.unsubscribe('conexion:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de conexion.')};
         if (!this.events.unsubscribe('reproduccionHome:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.')};
@@ -374,6 +343,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
+                        this.events.publish('reproduccion:posicion', Math.round(position));
                         //console.log ('[REPRODUCTOR.iniciaContadorRep] this.posicionRep: ' + this.posicionRep + ' this.totDurPlay ' + this.totDurPlay);
                         if (Math.abs(this.posicionRep - this.totDurPlay) < 1000) {
                             this.corteEnDescarga = false;
@@ -408,10 +378,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.reproductor.stop();// // Comento esto porque hacer stop si no está reproduciendo provoca un error. Con el release lo hago todo.
         }
         this.stopPulsado = true;
-        //this.reproductor.release(this._configuracion);
     }
 
-    playPause(/*configuracion: ConfiguracionService*/){
+    playPause(){
         let descargaPermitida = (this.network.type === 'wifi' || !this.soloWifi);
         console.log ('[REPRODUCTOR.playPause] La conexión es ' + this.network.type + ' y la obligación de tener wifi es ' + this.soloWifi + ' y reproduciendo vale ' + this.reproduciendo);
 
@@ -444,7 +413,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     actualizaPosicion(){
         if (this.reproductor != null){
-            //if (this.reproductor.inicializado && this.reproductor.dameStatus() != this.reproductor.dameStatusStop()){//} this.reproduciendo){
             this.reproductor.seekTo(this.posicionRep);
             this.posicionRepStr = this.dameTiempo(Math.round(this.posicionRep/1000));
         //    console.log('[REPRODUCTOR.actualizaPosicion] Ha cambiado la posición del slider: ' + this.posicionRepStr + ' - ' + this.posicionRep);
@@ -467,9 +435,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     compartir(){
         console.log ('[REPRODUCTOR.compartir] Compartiendo url ' + this.httpAudio);
-
         var options: any;
-
         if (!this.esIOS){
             options = {
                 message: this.titulo, // not supported on some apps (Facebook, Instagram)
@@ -502,7 +468,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                 console.log ('[REPRODUCTOR.twitteaCapitulo] Recibida respuesta: ' + respuesta);
                 if (respuesta == 1) {// café para todos
                     if (!this.esIOS){
-                        this.socialsharing.shareViaTwitter(this.titulo, this.imagen, this.httpAudio)
+                        this.socialsharing.shareViaTwitter(this.dameTexto() + this.titulo, this.imagen, this.httpAudio)
                         .then((respuesta) => {
                             console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
                         })
@@ -511,7 +477,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                         });
                     }
                     else {
-                        this.socialsharing.shareViaTwitter(this.titulo + ' ' + this.httpAudio, this.imagen)
+                        this.socialsharing.shareViaTwitter(this.dameTexto() + this.titulo + ' ' + this.httpAudio, this.imagen)
                         .then((respuesta) => {
                             console.log ('[REPRODUCTOR.twitteaCapitulo] Twitteo OK: ' + respuesta);
                         })
@@ -528,7 +494,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
     }
 
     muestraDetalle(myEvent) {
-        //let popover = this.popoverCtrl.create(DetalleCapituloPage, {id_episodio: this.episodio});
         console.log ('[REPRODUCTOR.muestraDetalle] Enviando datos : ' + this.capItem.title + ' - ' +  this.capItem.description);
         let popover = this.popoverCtrl.create(DetalleCapituloPage, {titulo: this.capItem.title, detalle: this.capItem.description});
         popover.present({ ev: myEvent }) ;
@@ -556,11 +521,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     console.log('[REPRODUCTOR.ficheroDescargado] reproductor es nulo');
                     this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false, this.enVivo);
                 } else {
-                    //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                     if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
-                        //this.iconoPlayPause = 'pause';
-						//this.reproduciendo = true;
-                        //this.iniciaContadorRep();
                         this.stopPulsado = true; // Esto lo pongo para que no salte el 'se ha producido un corte'.
                         this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
                         console.log('[REPRODUCTOR.ficheroDescargado] ya estaba reproduciendo. Se iba por ' + this.posicionRep/1000);
@@ -581,21 +542,12 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     console.log('[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo este mismo audio ');
                     // Se trata de que 'cambiandoStatusRep' centralice el cambio del icono del play/pause, el contador, etc...
                     this.cambiandoStatusRep(this.reproductor.dameStatus());
-                    //this.iconoPlayPause = 'pause';
-					//this.reproduciendo = true;
-                    //this.iniciaContadorRep();
-
-                    //this.reproduciendo = (this.reproductor.dameStatus()==this.reproductor.dameStatusRep());
                 }
                 else {
                     console.log('[REPRODUCTOR.ficheroDescargado] Estábamos reproduciendo otro audio');
-                    //this.iconoPlayPause = 'play';
-					//this.reproduciendo = false;
                 }
             }
         }
-		//this.mscControl.updateIsPlaying(this.reproduciendo);
-        //this.mscControl.updateDismissable(true);
     }
 
     meGustasMucho(){
@@ -648,11 +600,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
             this.msgDescarga ('Debe estar conectado a Spreaker para poder realizar esa acción.');
         });
     }
-/*
-    estaLogeado (){
-        return true;
-    }
-*/
+    
     listaContenido() {
         this.navCtrl.push(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
     }
@@ -674,34 +622,8 @@ export class ReproductorPage implements OnInit, OnDestroy{
             }
         }
     }
-/*
-    listaContenido_old() {
-        if (!this.noHayPuntos){
-            let listadoPosiciones = this.modalCtrl.create(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
-            listadoPosiciones.onDidDismiss(datos =>{
-                this.msgDescarga(datos.descripcion);
-                let statusActual = this.reproductor.dameStatus();
-                if (datos.posicion != 0){
-                    console.log('[REPRODUCTOR.presentContaactModal] El estado de la reproducción es: ' + statusActual);
-                    if (this.reproductor.dameStatusStop() == statusActual || statusActual === undefined){
-                        this._configuracion.setTimeRep(this.episodio, Number(datos.posicion));
-                        this.playPause();
-                    }
-                    else {
-                        if (this.reproductor.dameStatusPause() == statusActual){
-                            this.playPause();
-                        }
-                        this.player.seekTo(datos.posicion);
-                    }
-                }
-            });
-            listadoPosiciones.present();
-        }
-        else {
-            this.msgDescarga('Este capítulo no tiene divisiones.')
-        }
-    }
-*/
+
+    
     revisaConexion(conexion) {
         console.log('[REPRODUCTOR.revisaConexion] this.network.type ' + conexion.valor + ' this.soloWifi ' + this.soloWifi + ' this.reproduciendo ' + this.reproduciendo + ' this.noRequiereDescarga ' + this.noRequiereDescarga + ' this.sinConexionCantando ' + this.sinConexionCantando + ' this.esIOS ' + this.esIOS);
         if (this.esIOS){
@@ -733,8 +655,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
     }
 
     actualizaDetalle(position: number){
-    //detallesCapitulo: string[];
-    //detalleIntervalo: number = 0;
         let i = 0;
         let encontrado: boolean = false;
         if (this.detallesCapitulo.length > 0){
@@ -829,6 +749,148 @@ export class ReproductorPage implements OnInit, OnDestroy{
         return (ubicacion);
       }
     }
+
+    ficheroExiste(fichero: string):void{
+        let nombrerep: string;
+        this.episodiosDescargados.dimeSiLoTengo(fichero)
+        .then((nombreConUbicacion) => {
+            if (nombreConUbicacion != null) {
+                nombrerep = encodeURI(nombreConUbicacion);
+                console.log('[REPRODUCTOR.ficheroExiste] El fichero existe. Reproduciendo descarga. ' + nombrerep + ' . ');
+                this.noRequiereDescarga = true;
+                this.iconoDescarga = 'trash';
+            }
+            else {
+                nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
+                console.log('[REPRODUCTOR.ficheroExiste] El fichero no existe. Reproduciendo de red. ' + nombrerep + ' . ');
+                this.noRequiereDescarga = false;
+                this.iconoDescarga = 'cloud-download'; 
+            }
+            this.parametrizaReproduccion(nombrerep);
+            //this.chngDetector.detectChanges();
+        })
+        .catch ((error) => {           
+            console.error('[REPRODUCTOR.ficheroExiste] Se ha producido un error. Reproduciendo de red. ' + error + ' . ');
+            nombrerep = encodeURI('https://api.spreaker.com/v2/episodes/'+this.episodio+'/play'); // stream
+            this.noRequiereDescarga = false;
+            this.iconoDescarga = 'cloud-download'; 
+            this.parametrizaReproduccion(nombrerep);
+            //this.chngDetector.detectChanges();
+        });
+    }
+
+    parametrizaReproduccion (nombreConUbicacion: string){
+        if (this.audioEnRep != null){
+            console.log('[REPRODUCTOR.parametrizaReproduccion] Segunda o más vez que entramos. AudioEnRep vale ' + this.audioEnRep);
+            if (this.audioEnRep != nombreConUbicacion){
+                this.stopPulsado = true; // Esto lo pongo para que no salte el 'se ha producido un corte'.
+                this.reproductor.release(this._configuracion);
+                this.audioEnRep = nombreConUbicacion;
+                if (!this.reproductor.inicializado) {
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor es nulo');
+                    this.reproductor.crearepPlugin (this.audioEnRep, this._configuracion, false, this.enVivo);
+                } else {
+                    if (this.reproduciendo && (this.network.type === 'wifi' || !this.soloWifi)){
+                        this.stopPulsado = true; // Esto lo pongo para que no salte el 'se ha producido un corte'.
+                        this.reproductor.play(this.audioEnRep, this._configuracion, this.enVivo);
+                        console.log('[REPRODUCTOR.parametrizaReproduccion] ya estaba reproduciendo. Se iba por ' + this.posicionRep/1000);
+                    }
+                }
+            }
+        }
+        else {
+            console.log('[REPRODUCTOR.parametrizaReproduccion] Primera vez que entramos.' + this.reproductor);
+            this.audioEnRep = nombreConUbicacion;
+            if (!this.reproductor == null) {
+                console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor es nulo');
+                this.reproductor.crearepPlugin(this.audioEnRep, this._configuracion, false, this.enVivo);
+            }
+            else {
+                console.log('[REPRODUCTOR.parametrizaReproduccion] reproductor no es nulo');
+                if (this.reproductor.reproduciendoEste(this.audioEnRep)){
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] Estábamos reproduciendo este mismo audio ');
+                    this.cambiandoStatusRep(this.reproductor.dameStatus());
+                }
+                else {
+                    console.log('[REPRODUCTOR.parametrizaReproduccion] Estábamos reproduciendo otro audio');
+                }
+            }
+        }
+    }
+	
+	procesaDescarga(){
+		if (!this.enVivo) {
+            console.log('[REPRODUCTOR.procesaDescarga] Solicitada descarga / borrado: ' + !this.noRequiereDescarga);
+            this.events.publish('reproduccion:descarga',{descargar: !this.noRequiereDescarga, 
+                                                         datosEpisodio: this.capItem});
+									/*	 datosEpisodio: {episodio_id: this.episodio,
+                                                         episodio_fecha: this.fechaCapitulo,
+                                                         episodio_imagen: this.imagen}});*/
+		}
+		else {
+			this.msgDescarga('No es posible descargar reproducciones en vivo');
+		}
+    }
+
+    async muestraMenuAutodestruccion() {
+        const actionSheet = await this.actionSheet.create({
+          title: 'Esta cafetera se autodestruirá...',
+          buttons: [{
+            text: '... al terminar el episodio',
+            handler: () => {
+              console.log('Al terminar el episodio');
+              this.events.publish('reproductor:autodestruccion', {valor:666});
+              this.msgDescarga('Autoapagado al terminar capítulo.');
+            }
+          }, {
+            text: '... dentro de 60 minutos',
+            handler: () => {
+              console.log('60 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:60});
+              this.msgDescarga('Autoapagado en 60 minutos.');
+            }
+          }, {
+            text: '... dentro de 30 minutos',
+            handler: () => {
+              console.log('30 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:30});
+              this.msgDescarga('Autoapagado en 30 minutos.');
+            }
+          }, {
+            text: '... dentro de 15 minutos',
+            handler: () => {
+              console.log('15 minutos');
+              this.events.publish('reproductor:autodestruccion', {valor:15});
+              this.msgDescarga('Autoapagado en 15 minutos.');
+            }
+          },{
+            text: '¡Corta el cable azul!',
+            handler: () => {
+              console.log('Cancelar autoapagado');
+              this.events.publish('reproductor:autodestruccion', {valor:0});
+              this.msgDescarga('Autoapagado cancelado.');
+            }
+          }, {
+            text: 'Ya lo apago yo si eso',
+            icon: 'close',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancelado');
+            }
+          }]
+        });
+        await actionSheet.present();
+      }
+
+      dameTexto():string {
+          var posibles= ["Escucha ",
+                         "Estoy oyendo ",
+                         "No te pierdas ",
+                         "No te puedes perder ",
+                         "Anímate a escuchar ",
+                         "Sal de la Agenda Setting: "];
+                         return (posibles[Math.floor((Math.random()*posibles.length))])
+      }
 
 }
 

@@ -1,10 +1,9 @@
 import { Component,  OnDestroy } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, ToastController, normalizeURL } from 'ionic-angular';
-//import { File } from '@ionic-native/file';
+import { IonicPage, NavController, NavParams, Events, ToastController, normalizeURL, PopoverController } from 'ionic-angular';
 
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service";
 
-//import { MusicControls } from '@ionic-native/music-controls';
+import { MenuExtDescComponent } from '../../components/menuext_descargados/menuext_descargados';
 
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
@@ -21,7 +20,7 @@ import { ReproductorPage } from "../reproductor/reproductor";
 @Component({
   selector: 'page-capitulos-descargados',
   templateUrl: 'capitulos-descargados.html',
-  providers: [/*File, */EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
+  providers: [EpisodiosService, ConfiguracionService, EpisodiosGuardadosService]
 })
 export class CapitulosDescargadosPage implements OnDestroy {
 
@@ -31,18 +30,20 @@ export class CapitulosDescargadosPage implements OnDestroy {
     //mscControl: MusicControls;
     reproductor: Player;
     capEnRep:string = "ninguno";
+    ordenarCapitulos: boolean = true;
+    usuario:string = "";
+    token: string = "";
 
     constructor(public navCtrl: NavController, 
                 public navParams: NavParams, 
-                //private file: File, 
                 private episodiosService: EpisodiosService, 
                 private _configuracion: ConfiguracionService, 
                 public events: Events,
                 private dameDescargados: EpisodiosGuardadosService, 
-                public toastCtrl: ToastController) {
+                public toastCtrl: ToastController,
+                public popoverCtrl: PopoverController) {
         this.items = new Array();
         this.reproductor = this.navParams.get('player');
-        //this.mscControl = this.navParams.get('controlador');
         if( this.reproductor != null) {
             this.capEnRep = this.reproductor.dameCapitulo();
             console.log('[CAPITULOS-DESCARGADOS.constructor] El capítulo que se está reproduciendo es ' + this.capEnRep);
@@ -54,12 +55,17 @@ export class CapitulosDescargadosPage implements OnDestroy {
             console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje Audio Modificado');
             if (reproductorIn != null){
                 this.reproductor=reproductorIn.reproductor;
-                //this.mscControl = reproductorIn.controlador;
             }
         });
         events.subscribe("like:modificado", (valoresLike) => {
-            console.log('[HOME.constructor] Recibido mensaje Like Modificado');
-            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio)
+            console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje Like Modificado');
+            this.actualizaLike (valoresLike.valorLike, valoresLike.episodio);
+        });
+        events.subscribe("menuDescargas:orden", (ordenado) => {
+            console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje de cambiar el orden. (' + ordenado + ')');
+            this.ordenarCapitulos = ordenado.valor;
+            this.creaListaCapitulos (this.usuario, this.token);
+            this._configuracion.guardaValor("ordenarCapitulos", this.ordenarCapitulos);
         });
     }
 
@@ -68,9 +74,11 @@ export class CapitulosDescargadosPage implements OnDestroy {
         .then ((Usuario) => {
             if (Usuario != null){
                 console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] recibido usuario " + Usuario );
+                this.usuario = Usuario;
                 this._configuracion.dameToken()
                 .then ((token) => {
                     this.creaListaCapitulos (Usuario, token);
+                    this.token = token;
                 })
                 .catch ((error) => {
                     console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker:" + error);
@@ -80,11 +88,22 @@ export class CapitulosDescargadosPage implements OnDestroy {
             else {
                 console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Error extrayendo usuario de Spreaker.");
                 this.creaListaCapitulos (null, null);
-            } //  if (Usuario != null)
-        }) // .then ((Usuario) => {
+            } 
+        })
         .catch (() => {
             console.log ("[CAPITULOS-DESCARGADOS.ionViewDidLoad] Debe estar conectado a Spreaker para poder realizar esa acción.");
             this.creaListaCapitulos (null, null);
+        });
+
+        this._configuracion.dameValor("ordenarCapitulos")
+        .then ((dato) => {
+            if (dato != null){
+                this.ordenarCapitulos = dato;
+            }
+        })
+        .catch (() => {
+            this.msgDescarga ("Error extrayendo orden para mostrar los capítulos.");
+            this.ordenarCapitulos = true;
         });
     }
 
@@ -96,7 +115,8 @@ export class CapitulosDescargadosPage implements OnDestroy {
     }
 
     creaListaCapitulos (usuario: string, token:string){
-        this.dameDescargados.daListaProgramas().subscribe(
+        this.items = [];
+        this.dameDescargados.daListaProgramas(this.ordenarCapitulos).subscribe(
             data => {
                 if (token != null && usuario != null){
                     this.episodiosService.episodioDimeSiLike(data["episode_id"], usuario, token)
@@ -128,7 +148,10 @@ export class CapitulosDescargadosPage implements OnDestroy {
                         this.items.push({objeto:data, like: false, objetoTxt: JSON.stringify(data)});
                     }
                 }
-                console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] La imagen de este item es:" + data.image_url);  
+                /*console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] La imagen de este item es:" + data.image_url);  
+                if (this.ordenarCapitulos) {
+                    this.items = this.tidyYourRoom(this.items);
+                }*/
             },
             err => {
                 console.log("[CAPITULOS-DESCARGADOS.creaListaCapitulos] Error en detalle:" + err);
@@ -140,10 +163,10 @@ export class CapitulosDescargadosPage implements OnDestroy {
         return "https://twitter.com/hashtag/"+this.damehashtag(cadena)
     }
 
-    tidyYourRoom(){
-        let ordenado = this.items;
-        let mapped = ordenado.map((el, i) => {
-            return { index: i, value: el.objeto.episode_id };
+    tidyYourRoom(listaProgramas: Array<any>) :Array<object>{
+        //let ordenado = listaProgramas;
+        let mapped = listaProgramas.map((el, i) => {
+            return { index: i, value: el.episode_id };
         });
 
         // ordenando el array mapeado conteniendo los valores reducidos
@@ -152,11 +175,11 @@ export class CapitulosDescargadosPage implements OnDestroy {
         });
 
         // contenedor para el orden resultante
-        this.items = mapped.map((el) =>{
-            return ordenado[el.index];
-        });
+        return( mapped.map((el) =>{
+            return listaProgramas[el.index];
+        }));
     }
-
+    
     damehashtag(cadena:string):string{
         let hashtag:string ="";
         let posHT = cadena.indexOf('#');
@@ -227,5 +250,13 @@ export class CapitulosDescargadosPage implements OnDestroy {
             cssClass: 'msgDescarga'
         });
         toast.present();
+    }
+    
+    muestraMenu(myEvent) {
+        let datosObjeto = {ordenado: this.ordenarCapitulos}
+        let popover = this.popoverCtrl.create(MenuExtDescComponent, datosObjeto );
+        popover.present({
+            ev: myEvent
+        });
     }
 }

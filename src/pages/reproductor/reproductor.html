@@ -28,6 +28,9 @@
           <p *ngFor="let item of tituloObj">
               {{item.cadena | eliminaHashtag}}
             <a [href]="cadenaTwitter.dameDirTwitter(item.usuario)">{{item.usuario}}</a>
+            <!-- 
+              <a ng-href="http://www.twitter.com/{{item.usuario}}">{{item.usuario}}</a>
+             -->
           </p>
         </div>
       </ion-card-title>
@@ -116,32 +119,34 @@
       <ion-row class="social" no-padding text-center>
         <!-- Botones corazón, descarga, compartir y chat -->
 
-        <ion-col col-3>
+        <ion-col col-2 offset-1>
           <button ion-button clear (click)='meGustasMucho()'>
             <ion-icon name='heart' [color]='colorLike'></ion-icon>
             <!--ion-icon name='heart' color='danger'></ion-icon-->
           </button>
         </ion-col>
 
-        <ion-col col-3>
-          <!--div *ngIf="!enVivo"-->
-            <descargaCafetera [capDownload]="capItemTxt" (ficheroDescargado)="ficheroDescargado($event)">
-            </descargaCafetera>
-          <!--/div>
-          <div *ngIf="enVivo">
-            <button ion-button clear (click)="msgDescarga('No es posible descargar reproducciones en vivo')">
-              <ion-icon name='lock' isActive="false"></ion-icon>
+        <ion-col col-2>
+          <!-->descargaCafetera [capDownload]="capItemTxt" (ficheroDescargado)="ficheroDescargado($event)">
+          </descargaCafetera-->
+            <button ion-button clear (click)="procesaDescarga()">
+              <ion-icon  [name]="iconoDescarga"></ion-icon>
             </button>
-          </div-->
         </ion-col>
 
-        <ion-col col-3>
+        <ion-col col-2>
+          <button ion-button clear (click)="muestraMenuAutodestruccion()">
+            <ion-icon name='timer'></ion-icon>
+          </button>
+        </ion-col>
+
+        <ion-col col-2>
           <button ion-button clear (click)="compartir()">
             <ion-icon name='share'></ion-icon>
           </button>
         </ion-col>
 
-        <ion-col col-3 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio, hashtag:titulo | muestraHashtag}">
+        <ion-col col-2 [navPush]="pantallaChat" [navParams]="{episodioMsg: episodio, hashtag:titulo | muestraHashtag}">
           <button ion-button clear>
             <ion-icon name='chatbubbles'></ion-icon>
           </button>

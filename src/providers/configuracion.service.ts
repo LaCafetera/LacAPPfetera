@@ -120,9 +120,9 @@ export class ConfiguracionService {
     }
 
     setTimeRep (cap: string, pos:number){
-        //console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos + " (redondeada)");
-        if (cap == null || pos == null){
-            console.log("[CONFIGURACION_SERVICE.setTimeRep] No puedo guardar un valor nulo")
+        console.log("[CONFIGURACION.SERVICE.setTimeRep] Guardando posición del cap. " + cap + ": " + pos + " (redondeada)");
+        if (cap == null || pos == null || cap == '' || pos == 0){
+            console.log("[CONFIGURACION_SERVICE.setTimeRep] No voy a guardar un valor nulo o vacío.")
         }
         else if (cap.toString().indexOf("str")!= -1){ // El toString es porque si me llega un número no se toma en serio que sea una cadena... :-\
             console.log("[CONFIGURACION_SERVICE.setTimeRep] No debo guardar la posición para un capítulo en vivo")
@@ -134,7 +134,7 @@ export class ConfiguracionService {
         }
     }
 
-    getTimeRep(cap: string){
+    getTimeRep(cap: string) : Promise <number>{
         console.log("[CONFIGURACION.SERVICE.getTimeRep] Recuperando posición del cap. " + cap + ".");
         //return this.theme.asObservable();
         return new Promise ((resolve,reject) =>{
@@ -153,7 +153,12 @@ export class ConfiguracionService {
                 .then (
                     data=> {
                         console.log ("[CONFIGURACION.SERVICE.getTimeRep] Enviado "+ data);
-                        resolve(data);
+                        if (data == null) {
+                            resolve(0);
+                        }
+                        else {
+                            resolve(data);
+                        }
                     },
                     error=> {
                         console.error ("[CONFIGURACION.SERVICE.getTimeRep] Error "+ error);
@@ -287,5 +292,28 @@ export class ConfiguracionService {
                 resolve(0);
             }); 
         });
+    }
+
+    setTokenScribble (token: string){
+        console.log("[CONFIGURACION.SERVICE.setTokenScribble] Guardando token login Scribble " + token);
+        this.storage.set ("tokenScribble", token)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.setTokenScribble] Dato guardado: tokenScribble"))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.setTokenScribble] Error guardando dato: tokenSpreaker - " + error));
+    }
+    
+    getTokenScribble ():Promise<any>{
+        console.log("[CONFIGURACION.SERVICE.getTokenScribble] Devolviendo token Scribble ");
+        return (this.storage.get ("tokenScribble"));
+    }
+
+    dameValor (dato: string):Promise<any>{
+        console.log ("[CONFIGURACION.SERVICE.dameDaato] Me solicitan el dato asociado a " + dato);
+        return (this.storage.get (dato));
+    }
+
+    guardaValor(dato: string, valor:any){
+        this.storage.set (dato, valor)
+        .then ((data) => console.log ("[CONFIGURACION.SERVICE.guardaValor] Dato " + valor + " asociado a " + dato))
+        .catch ((error) => console.error ("[CONFIGURACION.SERVICE.guardaValor] Error guardando dato  " + valor + " asociado a " + dato +  " - " + error));
     }
 }

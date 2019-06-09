@@ -10,6 +10,14 @@
     <ion-title>
             Descargados
     </ion-title>
+
+    <ion-buttons end>
+        <button ion-button right icon-only clear (click)="muestraMenu($event)">
+            <ion-icon name="menu"></ion-icon>
+        </button>
+
+    </ion-buttons>
+
   </ion-navbar>
 
 </ion-header>
@@ -60,8 +68,8 @@
                 </ion-col>
 
                 <ion-col col-3>
-                    <descargaCafetera [capDownload]="item.objeto" (ficheroBorrado)="borrarElemento($event)">
-                    </descargaCafetera>
+                    <!--descargaCafetera [capDownload]="item.objeto" (ficheroBorrado)="borrarElemento($event)">
+                    </descargaCafetera-->
                 </ion-col>
 
             </ion-row>

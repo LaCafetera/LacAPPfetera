@@ -81,6 +81,9 @@
             color: $base-light;
           }
         }
+        .fas {
+          color: $base-primary;
+        }
         h3 {
           /* Resto de texto del titular */
           color: $base-primary;
@@ -88,6 +91,13 @@
         .capDirecto {
           /* Texto + icono Directo */
           color: $base-danger;
+
+          .iconoCD {
+
+            .fas {
+              color: $base-danger;
+            }
+          }
         }
         p {
           /* Texto tiempo que hace del capítulo */
@@ -108,6 +118,10 @@
           }
 
           .likesi {
+            color: $base-danger;
+          }
+
+          .reproduciendo {
             color: $base-danger;
           }
         }
@@ -244,6 +258,10 @@
     .card-content p{
       color: $base-primary;
       border-top: solid 1px $base-light;
+
+      a {
+        color: $base-danger;
+      }
     }
   }
 

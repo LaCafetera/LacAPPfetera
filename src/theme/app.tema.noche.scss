@@ -70,11 +70,21 @@ page-home {
           color: $noche-light;
         }
       }
+      .fas {
+        color: $noche-primary;
+      }
       h3 {
         color: $noche-primary;
       }
       .capDirecto {
         color: $noche-danger;
+
+        .iconoCD {
+
+          .fas {
+            color: $noche-danger;
+          }
+        }
       }
       p {
         color: $noche-light;
@@ -91,6 +101,10 @@ page-home {
         }
 
         .likesi {
+          color: $noche-danger;
+        }
+
+        .reproduciendo {
           color: $noche-danger;
         }
       }
@@ -226,6 +240,10 @@ page-home {
       .card-content p{
         color: $noche-primary;
         border-top: solid 1px $noche-light;
+
+        a {
+          color: $noche-danger;
+        }
       }
     }
 

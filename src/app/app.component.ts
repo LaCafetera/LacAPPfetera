@@ -38,7 +38,9 @@ export class MyApp implements OnDestroy {
   nombreUsu: string = "Proscrito";
   descripcion: string = "Resistente de Sherwood"
   datosUsu: Array<any> = null;
-  verApp: string = ''
+  verApp: string = '';
+
+  ordenChatAsc: boolean = true;
 
   constructor(public _platform: Platform,
               private _configuracion: ConfiguracionService,
@@ -114,7 +116,7 @@ export class MyApp implements OnDestroy {
         .catch ((error)=> console.error('[HOME.ngOnInit] Error extrayendo versión de la app: ' + error));
 
 
-        this.barraEstado.styleDefault();
+        //this.barraEstado.styleDefault();
         this.splashscreen.hide();
         this._configuracion.getWIFI()
           .then((val)=> {
@@ -148,7 +150,7 @@ export class MyApp implements OnDestroy {
           if (this._platform.is("ios")){
             this.barraEstado.overlaysWebView(true);
           }
-          this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
+          //this.barraEstado.backgroundColorByHexString("#000"); //-->ESto se lo voy a dejar a Mczhy. ;-)
           //StatusBar.backgroundColorByHexString("toolbar-title"); //-->ESto parece que no funciona :-(
         });
 
@@ -156,6 +158,12 @@ export class MyApp implements OnDestroy {
         .then((dato)=>this.fechasAbsolutas = dato==true)
         .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
+        this._configuracion.dameValor("ordenChatAsc")
+        .then ((dato) => {
+          if (dato != null) {
+              this.ordenChatAsc = dato;
+          }
+        });
 
         if (!this._platform.is("ios")){
           this.backgroundMode.setDefaults({
@@ -237,6 +245,7 @@ export class MyApp implements OnDestroy {
     setWIFI(e) {
         console.log("[app.component.setWIFI] El valor que trato de guardar es " + e.checked );
         this._configuracion.setWIFI(e.checked);
+        this.events.publish('descargaWIFI:status', {valor:e.checked});
     }
 
     setFechasAbsolutas(e) {
@@ -387,6 +396,13 @@ export class MyApp implements OnDestroy {
       this.conectadoASpreaker = false;
     }
 
+    setOrdenChat(evento){
+      console.log ("[APP.setOrdenChat] Cambiando orden del chat.");
+      this.ordenChatAsc  = evento.checked;
+      this._configuracion.guardaValor("ordenChatAsc", this.ordenChatAsc);
+      this.events.publish('menuChat:orden', {valor:this.ordenChatAsc});
+    }
+
     actualizaAvatar (token:string){
       // console.log("[APP.actualizaAvatar] Solicitada actualización de avatar con token " + token);
       if (token != null){
@@ -397,16 +413,25 @@ export class MyApp implements OnDestroy {
           this.nombreUsu = data.response.user.fullname;
           this.descripcion = data.response.user.description;
           this.datosUsu = data.response.user;
+          this.events.publish('conexionSpreaker:datos', {conectado: true,
+                                                         usuario:data.response.user,
+                                                         token: token});
           console.log("[APP.actualizaAvatar] Avatar actualizado " + data.response.user.image_url);
         }),
         ((error) => {
             console.log("[APP.actualizaAvatar] Error actualizando Avatar " + error);
+            this.events.publish('conexionSpreaker:datos', {conectado: false,
+                                                           usuario:null,
+                                                           token: null});
         });
       }
       else {
         this.imgItem = "assets/icon/icon.png";
         this.descripcion = "Resistente de Sherwood";
         this.nombreUsu = "Proscrito";
+        this.events.publish('conexionSpreaker:datos', {conectado: false,
+                                                       usuario:null,
+                                                       token: null});
       }
     }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Observable } from 'rxjs/Observable';
+import { StoreProvider } from './store.service';
 import 'rxjs/add/operator/map';
 
 
@@ -10,11 +11,11 @@ export class EpisodiosGuardadosService {
     dirdestino:string;
     fichero : string = 'cafesLocales.lst'
 
-    constructor(private file: File) {
+    constructor(private file: File, private store: StoreProvider ) {
     }
 
     ngOnInit(){
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
             console.log("[EpisodiosGuardados.ngOnInit] ********************************* BIEEEEEENNNNNN ********************************");
@@ -27,14 +28,15 @@ export class EpisodiosGuardadosService {
     guardaProgramas (programa: object){
         console.log("[EpisodiosGuardados.guardaProgramas] Guardando "+ JSON.stringify(programa))
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
                 .then ((datos)=> {
                     let programasObjeto = JSON.parse(datos);
                     if (!this.yaEstaba(programa, programasObjeto)) {
-                        var todosProgramas = JSON.stringify(this.tidyYourRoom(programasObjeto.concat([programa])));
+                        //var todosProgramas = JSON.stringify(this.tidyYourRoom(programasObjeto.concat([programa])));
+                        var todosProgramas = JSON.stringify(programasObjeto.concat([programa]));
                         console.log("[EpisodiosGuardados.guardaProgramas] ." + todosProgramas);
                         this.file.writeFile (this.dirdestino, this.fichero, todosProgramas, {replace: true, append:false, truncate:0})
                         .then ((data) => {
@@ -62,10 +64,10 @@ export class EpisodiosGuardadosService {
         });
     }
 
-    borraProgramas (programa: object){
+    borraProgramas (programa: string){
         console.log("[EpisodiosGuardados.borraProgramas] this.dirdestino "+ this.dirdestino+" this.fileDownload " + this.fichero)
         //let listaDescargados = {"programas":[programa]};
-        this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+        this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
         .then((entry) => {
             this.dirdestino = entry.toInternalURL();
                 this.dameDatosFichero ()
@@ -129,7 +131,7 @@ export class EpisodiosGuardadosService {
 
     dameDatosFichero (): Promise <any>{
         let promesa = new Promise ((resolve, reject) => {
-            this.file.resolveLocalFilesystemUrl(this.file.dataDirectory) // --> Probar esto: externalDataDirectory
+            this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
             .then((entry) => {
                 this.dirdestino = entry.toInternalURL();
                 this.file.checkFile(this.dirdestino, this.fichero)
@@ -161,14 +163,21 @@ export class EpisodiosGuardadosService {
         return (promesa);
     }
 
-    daListaProgramas () : Observable <any> {
+    daListaProgramas (orden: boolean) : Observable <any> {
         return Observable.create(observer => {
             this.dameDatosFichero ()
             .then ((datos)=> {
-                console.log("[EpisodiosGuardados.daListaProgramas] enviado: " + JSON.stringify(JSON.parse(datos).programas));
-                JSON.parse(datos).forEach((elemento, index, array) => {
-                    observer.next(elemento);
-                });
+                console.log("[EpisodiosGuardados.daListaProgramas] enviado datos ordenados / sin ordenar " + orden);
+                if (! orden){
+                    JSON.parse(datos).forEach((elemento, index, array) => {
+                        observer.next(elemento);
+                    });
+                }
+                else {
+                    this.tidyYourRoom(JSON.parse(datos)).forEach((elemento, index, array) => {
+                        observer.next(elemento);
+                    });
+                }
                 observer.complete();
             })
             .catch ((error)=> {
@@ -176,5 +185,34 @@ export class EpisodiosGuardadosService {
                 observer.complete();
             })
         })
+    }
+
+    dimeSiLoTengo(nombreFichero: string): Promise <any>{
+        let nombreYExtension = nombreFichero + ".mp3";
+        console.log("[EpisodiosGuardados.dimeSiLoTengo] Buscando si tengo el fichero " + nombreYExtension)
+        let promesa = new Promise ((resolve, reject) => {
+            this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
+            .then((entry) => {
+                console.log (" [EpisodiosGuardados.dimeSiLoTengo] "  + entry.toInternalURL());
+                this.file.checkFile(entry.toInternalURL(), nombreYExtension)
+                .then((value)=>{
+                    if(value == true) {
+                        resolve (entry.toInternalURL() + '/' + nombreYExtension);
+                    }
+                    else {
+                        resolve (null);
+                    }
+                })
+                .catch((error) => {
+                    console.warn ("[EpisodiosGuardados.dimeSiLoTengo] Parece que no hemos encontrado el fichero: " + error.body);
+                    resolve (null);
+                });
+            })
+            .catch((error) => {
+                console.log("[EpisodiosGuardados.dimeSiLoTengo] Problemas entrando en carpeta: " + error.body);
+                reject("Problemas entrando en carpeta: " + error.body);
+            });
+        });
+        return (promesa);
     }
 }
