@@ -38,7 +38,9 @@ export class MyApp implements OnDestroy {
   nombreUsu: string = "Proscrito";
   descripcion: string = "Resistente de Sherwood"
   datosUsu: Array<any> = null;
-  verApp: string = ''
+  verApp: string = '';
+
+  ordenChatAsc: boolean = true;
 
   constructor(public _platform: Platform,
               private _configuracion: ConfiguracionService,
@@ -156,6 +158,12 @@ export class MyApp implements OnDestroy {
         .then((dato)=>this.fechasAbsolutas = dato==true)
         .catch((error) => console.log("[HOME.ionViewDidLoad] Error descargando usuario:" + error));
 
+        this._configuracion.dameValor("ordenChatAsc")
+        .then ((dato) => {
+          if (dato != null) {
+              this.ordenChatAsc = dato;
+          }
+        });
 
         if (!this._platform.is("ios")){
           this.backgroundMode.setDefaults({
@@ -386,6 +394,13 @@ export class MyApp implements OnDestroy {
       this._configuracion.setTokenSpreaker(null);
       this.actualizaAvatar(null);
       this.conectadoASpreaker = false;
+    }
+
+    setOrdenChat(evento){
+      console.log ("[APP.setOrdenChat] Cambiando orden del chat.");
+      this.ordenChatAsc  = evento.checked;
+      this._configuracion.guardaValor("ordenChatAsc", this.ordenChatAsc);
+      this.events.publish('menuChat:orden', {valor:this.ordenChatAsc});
     }
 
     actualizaAvatar (token:string){

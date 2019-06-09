@@ -321,32 +321,33 @@ export class DescargaCafetera implements /* OnInit,*/ OnDestroy {
     }
 
     borrarDescarga (capitulo: string) {
-		this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) // --> Probar esto: externalDataDirectory
-		.then((entry) => {
-			this.dirdestino = entry.toInternalURL();
-			this.file.removeFile(this.dirdestino, capitulo + '.mp3')
-				.then(() => {
-					console.log("[Descarga.borrarDescarga] El fichero " + capitulo + '.mp3 se ha eliminado.');
-					this.icono = 'cloud-download';
-					this.ficheroDescargado.emit({existe: false, direccion: null});
-					this.msgDescarga('Programa borrado');
-					this.guardaDescargados.borraProgramas(this.capItem);
-					this.events.publish('descarga.ficheroDescargado', {existe: false, direccion: this.dirdestino});
-					this.file.removeFile(this.dirdestino, capitulo + '.jpg')
-					.then(() => {
-						console.log("[Descarga.borrarDescarga] Borrada imagen asociada.");
-					})
-					.catch((err) => {
-						console.log("[Descarga.borrarDescarga] Error borrando imagen "+ this.dirdestino + capitulo + ".jpg . Error code: " + err.code + " message: " + err.message);
-					});
-				})
-				.catch((err) => {
-					console.log("[Descarga.borrarDescarga] Error borrando fichero "+ this.dirdestino + capitulo + ".mp3 . Error code: " + err.code + " message: " + err.message);
-				});
+		//this.file.resolveLocalFilesystemUrl(this.store.andeLoDejo()) 
+		//.then((entry) => {
+		//	this.dirdestino = entry.toInternalURL();
+		//this.file.removeFile(this.dirdestino, capitulo + '.mp3')
+		this.file.removeFile(this.store.andeLoDejo(), capitulo + '.mp3')
+		.then(() => {
+			console.log("[Descarga.borrarDescarga] El fichero " + capitulo + '.mp3 se ha eliminado.');
+			this.icono = 'cloud-download';
+			this.ficheroDescargado.emit({existe: false, direccion: null});
+			this.msgDescarga('Programa borrado');
+			this.guardaDescargados.borraProgramas(this.capItem);
+			this.events.publish('descarga.ficheroDescargado', {existe: false, direccion: this.dirdestino});
+			this.file.removeFile(this.dirdestino, capitulo + '.jpg')
+			.then(() => {
+				console.log("[Descarga.borrarDescarga] Borrada imagen asociada.");
 			})
-		.catch((error) => {
-			console.log("[Descarga.borrarDescarga] Error recuperando carpeta de destino: " + error.body);
-			this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
+			.catch((err) => {
+				console.log("[Descarga.borrarDescarga] Error borrando imagen "+ this.dirdestino + capitulo + ".jpg . Error code: " + err.code + " message: " + err.message);
+			});
+		})
+		.catch((err) => {
+			console.log("[Descarga.borrarDescarga] Error borrando fichero "+ this.dirdestino + capitulo + ".mp3 . Error code: " + err.code + " message: " + err.message);
 		});
+		//})
+		//.catch((error) => {
+		//	console.log("[Descarga.borrarDescarga] Error recuperando carpeta de destino: " + error.body);
+		//	this.dialogs.alert("Se ha producido un error accediendo a sistema de ficheros", 'Error', 'Por rojerash')
+		//});
     }
 }
