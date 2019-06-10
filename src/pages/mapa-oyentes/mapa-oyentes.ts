@@ -25,7 +25,7 @@ export class MapaOyentesPage{
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
-              private iab: InAppBrowser, 
+              //private iab: InAppBrowser, 
               private epService: EpisodiosService, 
               private _configuracion: ConfiguracionService,
               private episodiosService: EpisodiosService) {

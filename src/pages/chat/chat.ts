@@ -272,17 +272,17 @@ export class ChatPage {
                 event.complete();
             }
 
-        if ( this.usuario_id != "" && this.token_id != "" && cadena != null) {
+        /*if ( this.usuario_id != "" && this.token_id != "" && cadena != null) {
             this.episodiosService.enviaComentarios(this.episodio, this.usuario_id, this.token_id,  cadena).subscribe(
                 data => {
-                    console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/);
-                    this.mensajeTxt = null;
+                     console.log("[[CHAT.enviarComentario] Mensaje enviado" /* + JSON.stringify(data)*/ //);
+        /*            this.mensajeTxt = null;
                 },
                 err => {
                     console.log("[[CHAT.enviarComentario] Error enviando mensaje:" + err);
                     this.msgDescarga ("Se ha producido un error al tratar de enviar el mensaje: " + err);
                 }
-            );
+            );*/
         }
         else{
             this.acaboDeEntrar = false;
