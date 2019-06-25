@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL, ActionSheetController, ToastController } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -24,7 +24,7 @@ import { Player } from '../../app/player';
 })
 
 export class HomePage implements OnDestroy, OnInit {
-
+    
     items: Array<any>;
    // reproductor = ReproductorPage;
     infoFer = InfoFerPage;
@@ -53,6 +53,7 @@ export class HomePage implements OnDestroy, OnInit {
     textoBusqueda:string = '';
 
     datosConexion: any;
+    infiniteScroll: boolean = true;
 
     constructor(public navCtrl: NavController,
                 private episodiosService: EpisodiosService,
@@ -164,33 +165,14 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     compruebaConexion (losQueMeGustan: boolean){
-        //console.log('[HOME.ionViewDidLoad] Entrando' );
-        // BackgroundMode.enable();
         this.desconectado = this.network.type === 'none';
         console.log('[home.compruebaConexion] el sistema me dice que la conexión es ' + this.network.type);
         while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
         if (this.desconectado){
-            this.dialogs.alert('El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo', 'Super-Gurú.');
-			/*this.episodiosGuardados.daListaProgramas(true).subscribe(
-            data => {
-				if (this.items == null){
-                    this.items = [{objeto:data, like: false}];
-                    console.log('[home.compruebaConexion] Recibido capítulo ' + data.title);
-                    console.log('[home.compruebaConexion] Imagen ' + data.image_url);
-				}
-				else {
-					this.items.push({objeto:data, like: false});
-                    console.log('[home.compruebaConexion] Recibido otro capítulo ' + data.title);
-                    console.log('[home.compruebaConexion] Imagen ' + data.image_url);
-				}
-            },
-            err => {
-                console.log('[home.compruebaConexion] Error en detalle:' + err);
-            });*/
+            this.dialogs.alert('El terminal no tiene conexión. Por favor, conéctese y arrastre la pantalla hacia abajo', '');
             this.cargaEpisodiosGuardados(this.ordenado);
         }
         else{
-            //this.cargaUsuarioParaProgramas(null);
             if (losQueMeGustan){
                 this.cargaProgramasLike(this.datosConexion.usuario.user_id, null);
             }
@@ -204,8 +186,6 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     despliegaProgramasBuscados (){
-        //console.log('[HOME.ionViewDidLoad] Entrando' );
-        // BackgroundMode.enable();
         this.desconectado = this.network.type === 'none';
         console.log('[home.cargaProgramasBuscados] el sistema me dice que la conexión es ' + this.network.type);
         while (this.items.pop()!= undefined) {} //Vacío la matriz de capítulos antes de volver a rellenar.
@@ -219,6 +199,7 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     cargaEpisodiosGuardados(ordenado:boolean){
+        this.infiniteScroll = false;
         this.episodiosGuardados.daListaProgramas(ordenado).subscribe(
             data => {
 				if (this.items == null){
@@ -263,9 +244,6 @@ export class HomePage implements OnDestroy, OnInit {
                 .catch ((error) => {
                     console.error('[HOME.cargaProgramas] lakagaste ' + error);
                 });
-                //this.items=data.response.items;
-                //console.log('[HOME.cargaProgramas] Recibido ' + JSON.stringify(data));
-                //console.log('[HOME.cargaProgramas] like vale  ' + data.like + ' para el cap '+ data.objeto.episode_id) ;
                 if (this.items == null){
                     this.items = data;
                 }
@@ -317,9 +295,6 @@ export class HomePage implements OnDestroy, OnInit {
                 .catch ((error) => {
                     console.error('[HOME.cargaProgramas] lakagaste ' + error);
                 });
-                //this.items=data.response.items;
-                //console.log('[HOME.cargaProgramas] Recibido ' + JSON.stringify(data));
-                //console.log('[HOME.cargaProgramas] like vale  ' + data.like + ' para el cap '+ data.objeto.episode_id) ;
                 if (this.items == null){
                     this.items = data;
                 }
@@ -419,22 +394,28 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     recalentarCafe(event){
-        let episodio = this.items[this.items.length-1].objeto.episode_id;
-        if (episodio == null){
-            console.log('[HOME.recalentarCafe] Episodio nulo');
-            event.complete();
+        if (this.infiniteScroll){
+            let episodio = this.items[this.items.length-1].objeto.episode_id;
+            if (episodio == null){
+                console.log('[HOME.recalentarCafe] Episodio nulo');
+                event.complete();
+            }
+            else {
+                console.log('[HOME.recalentarCafe] Episodio vale ' + episodio);
+                //this.cargaUsuarioParaProgramas(episodio);
+                this.cargaProgramas(episodio);
+                this.timerVigilaDescargas = setInterval(() =>{
+                    console.log('[HOME.recalentarCafe] faltan por descargar ' + this.contadorCapitulos + ' cap�tulos');
+                    if (this.contadorCapitulos == 0){
+                        clearInterval(this.timerVigilaDescargas);
+                        event.complete();
+                    }
+                }, 1000);
+            }
         }
         else {
-            console.log('[HOME.recalentarCafe] Episodio vale ' + episodio);
-            //this.cargaUsuarioParaProgramas(episodio);
-            this.cargaProgramas(episodio);
-            this.timerVigilaDescargas = setInterval(() =>{
-                console.log('[HOME.recalentarCafe] faltan por descargar ' + this.contadorCapitulos + ' cap�tulos');
-                if (this.contadorCapitulos == 0){
-                    clearInterval(this.timerVigilaDescargas);
-                    event.complete();
-                }
-            }, 1000);
+            event.complete();
+            this.msgDescarga('Revisando capítulos descargados no puede ver si hay nuevos programas.');
         }
     }
 
@@ -461,38 +442,41 @@ export class HomePage implements OnDestroy, OnInit {
     }
 
     hacerCafe(event){
-        if (this.items.length > 0 && !this.desconectado){
-            this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
-                data => {
-                    // console.log('[HOME.hacerCafe] ' + JSON.stringify (data));
-                    if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
-                        this.items.unshift(data);
-                        console.log('[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo');
+        if (this.infiniteScroll){
+            if (this.items.length > 0 && !this.desconectado){
+                this.episodiosService.dameEpisodios(null, null, null, 1).subscribe(
+                    data => {
+                        // console.log('[HOME.hacerCafe] ' + JSON.stringify (data));
+                        if (data.objeto.episode_id != this.items[0].objeto.episode_id ) {
+                            this.items.unshift(data);
+                            console.log('[HOME.hacerCafe] Se han encontrado 1 nuevo capítulo');
+                        }
+                        else{
+                            //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso �ste se hubiera actualizado
+                            this.items.shift();
+                            this.items.unshift(data);
+                        }
+                        event.complete();
+                    },
+                    err => {
+                        event.complete();
+                        console.log('[HOME.hacerCafe] Error haciendo café: ' + err);
+                        this.dialogs.alert ('Error descargando episodios' + err, 'Error');
                     }
-                    else{
-                        //Quitamos el primer elemento que tenemos y le ponemos el primero que acabamos de descargar, por si acaso �ste se hubiera actualizado
-                        this.items.shift();
-                        this.items.unshift(data);
-                    }
-                    event.complete();
-                },
-                err => {
-                    event.complete();
-                    console.log('[HOME.hacerCafe] Error haciendo café: ' + err);
-                    this.dialogs.alert ('Error descargando episodios' + err, 'Error');
-                }
-            );
+                );
+            }
+            else {
+                event.complete();
+                this.compruebaConexion(!this.soloCapitulosConLike);
+            }
         }
         else {
             event.complete();
-            this.compruebaConexion(!this.soloCapitulosConLike);
+            this.msgDescarga('Revisando capítulos descargados no puede ver si hay nuevos programas.');
         }
+
     }
-/*
-    abreDatosUsuario() {
-        console.log('[HOME.abreDatosUsuario] ************************************************************');
-    }
-*/
+
     muestraMenu(myEvent) {
         let datosObjeto = {player: this.reproductor/*, controlador:this.mscControl*/}
         let popover = this.popoverCtrl.create(MenuExtComponent, datosObjeto );
@@ -509,6 +493,7 @@ export class HomePage implements OnDestroy, OnInit {
                 icon: 'list',
                 handler: () => {
                     console.log('Quiere todos los programas');
+                    this.infiniteScroll = true;
                     this.compruebaConexion (!this.soloCapitulosConLike);
                 }
             }, {
@@ -517,6 +502,7 @@ export class HomePage implements OnDestroy, OnInit {
                 handler: () => {
                     console.log('Quiere los descargados por fecha');
                     while (this.items.pop()!= undefined) {};
+                    this.infiniteScroll = false;
                     this.cargaEpisodiosGuardados(this.ordenado);
                 }
             }, {
@@ -525,6 +511,7 @@ export class HomePage implements OnDestroy, OnInit {
                 handler: () => {
                     console.log('Quiere los descargados por descarga');
                     while (this.items.pop()!= undefined) {};
+                    this.infiniteScroll = false;
                     this.cargaEpisodiosGuardados(!this.ordenado);
                 }
             }, {
@@ -532,6 +519,7 @@ export class HomePage implements OnDestroy, OnInit {
                 icon: 'heart',
                 handler: () => {
                     console.log('Lista de favoritos');
+                    this.infiniteScroll = false;
                     if (this.datosConexion.conectado){
                         this.compruebaConexion (this.soloCapitulosConLike);
                     }
@@ -544,6 +532,7 @@ export class HomePage implements OnDestroy, OnInit {
                 icon: 'search',
                 handler: () => {
                     console.log('Buscando un programa en concreto');
+                    this.infiniteScroll = true;
                     this.buscando = true;
                 }
             }, {
