@@ -29,7 +29,7 @@ export class listaPuntosCap {
                 else if (element.title.toUpperCase().includes('SOBREMESA')){
                     element.image_original_url = 'assets/images/SOBREMESA.png'
                 }
-                else if (element.title.toUpperCase().includes('PRENSA INTERNACIONAL')){
+                else if (element.title.toUpperCase().includes('INTERNACIONAL')){
                     element.image_original_url = 'assets/images/PRENSA_INTERNACIONAL.png'
                 }
                 else if (element.title.toUpperCase().includes('VIDEOFORUM')){
@@ -38,20 +38,26 @@ export class listaPuntosCap {
                 else if (element.title.toUpperCase().includes('CIENCIA')){
                     element.image_original_url = 'assets/images/CIENCIA.png'
                 }
-                else if (element.title.toUpperCase().includes('ECOLOGÍA')){
+                else if (element.title.toUpperCase().includes('ECOLOGÍA') || element.title.toUpperCase().includes('URALDE')){
                     element.image_original_url = 'assets/images/ECOLOGIA.png'
                 }
-                else if (element.title.toUpperCase().includes('MEMORIA HISTÓRICA')){
+                else if (element.title.toUpperCase().includes('MEMORIA HISTÓRICA') || element.title.toUpperCase().includes('EMILIO SILVA')){
                     element.image_original_url = 'assets/images/MEMORIA_HISTORICA.png'
                 }
                 else if (element.title.toUpperCase().includes('PLATA O PLOMO')){
                     element.image_original_url = 'assets/images/PLATA_O_PLOMO.png'
                 }
-                else if (element.title.toUpperCase().includes('INICIO')){
+                else if (element.title.toUpperCase().includes('INICIO') || element.title.toUpperCase().includes('RESUMEN')){
                     element.image_original_url = 'assets/images/INICIO.png'
                 }
-                else if (element.title.toUpperCase().includes('ANÁLISIS DE ACTUALIDAD')){
+                else if (element.title.toUpperCase().includes('ANÁLISIS DE ACTUALIDAD') || element.title.toUpperCase().includes('ANÁLISIS ACTUALIDAD')) {
                     element.image_original_url = 'assets/images/ANALISIS_DE_ACTUALIDAD.png'
+                }
+                else if (element.title.toUpperCase().includes('FEMINISMO')){
+                    element.image_original_url = 'assets/images/FEMINISMO.png'
+                }
+                else if (element.title.toUpperCase().includes('CARNE CRUDA') || element.title.toUpperCase().includes('JAVIER GALLEGO')) {
+                    element.image_original_url = 'assets/images/CARNE_CRUDA.png'
                 }
                 else {
                     element.image_original_url = 'assets/images/GENERICO.png'
