@@ -1,7 +1,7 @@
 import { Component, ViewChild  } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, Platform } from 'ionic-angular';
 import { HomePage } from '../home/home';
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 //import { errorHandler } from '@angular/platform-browser/src/browser';
 
 /**

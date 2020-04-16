@@ -1,6 +1,6 @@
 import { Injectable, Component, OnInit, OnDestroy /*, Output, EventEmitter*/ } from '@angular/core';
 //import { File } from '@ionic-native/file';
-import { Media, MediaObject } from '@ionic-native/media';
+import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { Events, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
 

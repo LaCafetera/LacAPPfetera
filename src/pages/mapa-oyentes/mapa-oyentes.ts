@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef} from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { InAppBrowser} from '@ionic-native/in-app-browser';
+import { InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import leaflet from 'leaflet';

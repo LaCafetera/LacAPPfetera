@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ToastController, Events, Content, PopoverController } from 'ionic-angular';
-import { SocialSharing } from '@ionic-native/social-sharing';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
-import { Dialogs } from '@ionic-native/dialogs';
-import { Keyboard } from '@ionic-native/keyboard';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 import anchorme from "anchorme";
 import emojis from "emojis";

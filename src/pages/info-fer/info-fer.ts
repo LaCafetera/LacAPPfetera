@@ -1,9 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { Media, MediaObject } from '@ionic-native/media';
+import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { Platform } from 'ionic-angular';
-import { Dialogs } from '@ionic-native/dialogs';
-import { Vibration } from '@ionic-native/vibration';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { Vibration } from '@ionic-native/vibration/ngx';
 
 
 /*

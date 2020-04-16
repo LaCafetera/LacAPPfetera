@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { File } from '@ionic-native/file';
+import { File } from '@ionic-native/file/ngx';
 import { Observable } from 'rxjs/Observable';
 import { StoreProvider } from './store.service';
 import 'rxjs/add/operator/map';

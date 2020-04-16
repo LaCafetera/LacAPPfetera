@@ -41,9 +41,10 @@
         </ion-card-content>
     </ion-card>
 
-    <ion-infinite-scroll [position]="posicion" (ionInfinite)="quieroMas($event)">
+    <ion-infinite-scroll [position]="posicion" threshold=30% (ionInfinite)="quieroMas($event)">
         <ion-infinite-scroll-content loadingText="Descargando más comentarios..."></ion-infinite-scroll-content>
     </ion-infinite-scroll>
+
 
 </ion-content>
 
@@ -52,7 +53,7 @@
         <i [class]='iconoEnvioTotal'></i>
     </button>
     <ion-item>
-        <ion-textarea type='text' name='mensaje' autocomplete='true' autocorrect='on' spellcheck='on' placeholder='¡Exprésate!' [(ngModel)]='mensajeTxt' (ionFocus)='muestraTeclado()' (ionBlur)='ocultaTeclado()' (ionInput)= 'activaDesactiva()'></ion-textarea>
+        <ion-textarea type='text' name='mensaje' autocomplete='true' autocorrect='on' spellcheck='on' placeholder='¡Exprésate!' [(ngModel)]='mensajeTxt' (ionFocus)='muestraTeclado()' (ionBlur)='ocultaTeclado()' (ionInput)= 'activaDesactiva()' (input)='adjustTextarea($event)'></ion-textarea>
         <!-- <textarea #myInput id="myInput" rows="1" maxLength="500" (keyup)="resize()" [(ngModel)]="myStuff"></textarea> -->
     </ion-item>
     <button ion-button clear [disabled]="desactivado" (click)="enviarComentario(formulario, 'spreaker')">

@@ -1,13 +1,13 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { Nav, Platform, ToastController, MenuController, Events } from 'ionic-angular';
-import { StatusBar} from '@ionic-native/status-bar';
+import { StatusBar} from '@ionic-native/status-bar/ngx';
 import { Contacts, ContactField, ContactName, ContactAddress, ContactFindOptions } from '@ionic-native/contacts';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 //import { InAppBrowser} from '@ionic-native/in-app-browser'
-import { Deeplinks } from '@ionic-native/deeplinks';
-import { BackgroundMode } from '@ionic-native/background-mode';
-import { Network } from '@ionic-native/network';
-import { AppVersion } from '@ionic-native/app-version';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
@@ -215,7 +215,7 @@ export class MyApp implements OnDestroy {
           console.log('[app.component.ngOnInit] Background activado');
         }
 
-        this.network.onchange().subscribe(
+        this.network.onChange().subscribe(
           data=> {
               console.log('[app.component.ngOnInit] Se ha producido un cambio de conexión ' + this.network.type);
               this.events.publish('conexion:status', {valor:this.network.type});

@@ -1,8 +1,8 @@
 import { Injectable, Component, OnDestroy  } from '@angular/core';
-import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer';
+import { AndroidExoplayer, AndroidExoPlayerParams, AndroidExoPlayerAspectRatio, AndroidExoPlayerControllerConfig, AndroidExoplayerState } from '@ionic-native/android-exoplayer/ngx';
 import { Events, ToastController, Platform } from 'ionic-angular';
 import { ConfiguracionService } from '../providers/configuracion.service';
-import { BackgroundMode } from '@ionic-native/background-mode';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 //declare var cordova: any;
 

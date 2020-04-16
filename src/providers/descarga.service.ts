@@ -1,11 +1,11 @@
 import { Injectable,Input, Output, EventEmitter, /*OnInit,*/ OnDestroy} from '@angular/core';
-import { File } from '@ionic-native/file';
-import { Dialogs } from '@ionic-native/dialogs';
-import { Network } from '@ionic-native/network';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file/ngx';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Events, ToastController, Platform } from 'ionic-angular';
-import { Downloader } from '@ionic-native/downloader';
-import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Downloader } from '@ionic-native/downloader/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { StoreProvider } from './store.service';
 
 import { ConfiguracionService } from './configuracion.service';

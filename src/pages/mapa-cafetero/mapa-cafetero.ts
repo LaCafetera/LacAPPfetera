@@ -1,7 +1,7 @@
 import { Component /*, OnDestroy*/} from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 /**
  * Generated class for the MapaCafeteroPage page.

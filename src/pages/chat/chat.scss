@@ -53,9 +53,9 @@ page-chat {
     .item-textarea {
       /* caja de texto */
       border-radius: 5px;
-      height: 30px;
+      /*height: 30px;*/
       flex: 8 0;
-      align-self: center;
+      align-self: flex-end;
     }
 
       .input-ios[clearInput] .text-input {

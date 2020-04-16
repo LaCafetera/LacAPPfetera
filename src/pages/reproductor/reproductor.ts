@@ -1,10 +1,10 @@
 import { Component, ChangeDetectorRef,/* Output,*/ EventEmitter, OnInit,  OnDestroy} from '@angular/core';
 import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL, ActionSheetController } from 'ionic-angular';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { Dialogs } from '@ionic-native/dialogs';
-import { Network } from '@ionic-native/network';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { Network } from '@ionic-native/network/ngx';
 //import { MusicControls } from '@ionic-native/music-controls';
-import { BackgroundMode } from '@ionic-native/background-mode';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';

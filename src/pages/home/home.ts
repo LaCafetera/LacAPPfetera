@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL, ActionSheetController, ToastController } from 'ionic-angular';
-import { Dialogs } from '@ionic-native/dialogs';
-import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls';
-import { Network } from '@ionic-native/network';
-import { BackgroundMode } from '@ionic-native/background-mode';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
