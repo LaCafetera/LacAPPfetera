@@ -40,7 +40,7 @@ import { StoreProvider } from '../providers/store.service';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { InfoFerPage } from '../pages/info-fer/info-fer';
+//import { InfoFerPage } from '../pages/info-fer/info-fer';
 import { ReproductorPage } from '../pages/reproductor/reproductor';
 //import { DetalleCapituloPage } from '../pages/detalle-capitulo/detalle-capitulo';
 import { ChatPage } from '../pages/chat/chat';
@@ -66,7 +66,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   declarations: [
     MyApp,
     HomePage,
-    InfoFerPage,
+   // InfoFerPage,
     ReproductorPage,
     //DetalleCapituloPage,
     ChatPage,
@@ -98,7 +98,7 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   entryComponents: [
     MyApp,
     HomePage,
-    InfoFerPage,
+    //InfoFerPage,
     ReproductorPage,
     //DetalleCapituloPage,
     InfoUsuChatPage,
