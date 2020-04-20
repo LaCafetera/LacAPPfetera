@@ -1,7 +1,7 @@
 import { Component, /*ViewChild, ElementRef*/  } from '@angular/core';
 import { /*PopoverController, */NavParams, ViewController, App } from 'ionic-angular';
 
-import { InfoFerPage } from "../../pages/info-fer/info-fer";
+import { InfoFerPage } from "../../pages/info-fer/info-fer.module";
 import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
 import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
 import { CapitulosDescargadosPage } from "../../pages/capitulos-descargados/capitulos-descargados";
@@ -48,7 +48,7 @@ export class MenuExtComponent {
      console.log('[MENUEXT.mostrarLaCafetera] Abriendo acerca de ');
       this.viewCtrl.dismiss();
   //    close();
-      this.appCtrl.getRootNav().push(this.infoFer);
+      this.appCtrl.getRootNav().push('InfoFerPage');//this.infoFer);
   }
 
   mostrarMapaCafetero(){

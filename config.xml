@@ -152,5 +152,4 @@
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-statusbar" spec="2.4.3" />
-    <engine name="android" spec="7.1.4" />
 </widget>

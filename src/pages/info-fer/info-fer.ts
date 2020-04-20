@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media/ngx';
 import { Platform } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
@@ -12,6 +12,7 @@ import { Vibration } from '@ionic-native/vibration/ngx';
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
+@IonicPage()
 @Component({
   selector: 'page-info-fer',
   templateUrl: 'info-fer.html',
