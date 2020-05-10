@@ -47,8 +47,8 @@
     "babel-register": "^6.26.0",
     "clean": "4.0.2",
     "cordova-android": "^7.1.4",
+    "cordova-plugin-advanced-background-mode": "1.1.0",
     "cordova-plugin-app-version": "^0.1.9",
-    "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova-plugin-device": "^2.0.3",
@@ -124,7 +124,6 @@
         "GEOLOCATION_USAGE_DESCRIPTION": "Buscándote en Sherwood"
       },
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-background-mode": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-screen-orientation": {},
@@ -139,8 +138,11 @@
       "integrator-cordova-plugin-downloader": {},
       "cordova-plugin-x-socialsharing": {
         "ANDROID_SUPPORT_V4_VERSION": "24.1.1+"
-      }
+      },
+      "cordova-plugin-advanced-background-mode": {}
     },
-    "platforms": []
+    "platforms": [
+      "android"
+    ]
   }
 }

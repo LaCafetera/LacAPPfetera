@@ -214,6 +214,9 @@ export class MyApp implements OnDestroy {
           });
           console.log('[app.component.ngOnInit] Background activado');
         }
+        else {
+          console.error('[app.component.ngOnInit] Lo considera Ios');
+        }
 
         this.network.onChange().subscribe(
           data=> {

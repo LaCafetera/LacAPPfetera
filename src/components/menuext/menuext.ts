@@ -1,8 +1,8 @@
 import { Component, /*ViewChild, ElementRef*/  } from '@angular/core';
 import { /*PopoverController, */NavParams, ViewController, App } from 'ionic-angular';
 
-import { InfoFerPage } from "../../pages/info-fer/info-fer.module";
-import { MapaCafeteroPage } from "../../pages/mapa-cafetero/mapa-cafetero";
+import { InfoFerModule } from "../../pages/info-fer/info-fer.module";
+import { MapaCafeteroPageModule } from "../../pages/mapa-cafetero/mapa-cafetero.module";
 import { InfoUsuarioPage } from "../../pages/info-usuario/info-usuario";
 import { CapitulosDescargadosPage } from "../../pages/capitulos-descargados/capitulos-descargados";
 import { MapaOyentesPage } from "../../pages/mapa-oyentes/mapa-oyentes";
@@ -29,8 +29,8 @@ import { Player } from '../../app/player';
 })
 export class MenuExtComponent {
 
-  infoFer = InfoFerPage;
-  mapaCafetero = MapaCafeteroPage;
+  infoFer = InfoFerModule;
+  mapaCafetero = MapaCafeteroPageModule;
   infoUsuario = InfoUsuarioPage;
   descargados = CapitulosDescargadosPage;
   mapaOyentes = MapaOyentesPage;
@@ -55,7 +55,7 @@ export class MenuExtComponent {
      console.log('[MENUEXT.mostrarLaCafetera] Abriendo acerca de ');
       this.viewCtrl.dismiss();
      // close();
-      this.appCtrl.getRootNav().push(this.mapaCafetero);
+      this.appCtrl.getRootNav().push('mapaCafetero');//this.mapaCafetero);
   }
 
   mostrarInfoUsuarioSpreaker(){
