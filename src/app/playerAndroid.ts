@@ -18,7 +18,7 @@ export class PlayerAndroid implements OnDestroy {
 
     seekPdte:boolean = false;
     paradaEncolada: boolean = false;
-    timerVigila: number = 0;
+    timerVigila: NodeJS.Timeout;
     timerGetReady: number = 0;
 
     porcentajeBuffer: number = 0;
@@ -100,7 +100,7 @@ export class PlayerAndroid implements OnDestroy {
 
     private inVigilando (interruptor:boolean){
         if (interruptor) {
-            if (this.timerVigila == 0){
+            if (this.timerVigila == null){
                 this.timerVigila = setInterval(() =>{
                     //this.mostrarhora();
                     this.actualizaStatus();
@@ -109,7 +109,7 @@ export class PlayerAndroid implements OnDestroy {
         }
         else {
             clearInterval(this.timerVigila);
-            this.timerVigila = 0;
+            // this.timerVigila = 0;
         }
     }
 

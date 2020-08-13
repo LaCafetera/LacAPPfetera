@@ -54,10 +54,10 @@ export class ReproductorPage implements OnInit, OnDestroy{
     posicionRep: number = 0;
     totDurPlay: number;
     iconoPlayPause: string = 'play';
-    timer: number = 0;
-    timerDescarga: number = 0;
-    timerVigilaEnVivo: number;
-    timerParpadeo: number = 0;
+    timer: NodeJS.Timeout;
+    timerDescarga: NodeJS.Timeout;
+    timerVigilaEnVivo: NodeJS.Timeout;
+    timerParpadeo: NodeJS.Timeout;
 
     titulo: string;
     descripcion: string;
@@ -205,9 +205,9 @@ export class ReproductorPage implements OnInit, OnDestroy{
         clearInterval(this.timer);
         clearInterval(this.timerVigilaEnVivo);
         clearInterval(this.timerParpadeo);
-        this.timer = 0;
-        this.timerVigilaEnVivo = 0;
-        this.timerParpadeo = 0;
+        // = 0;
+        //this.timerVigilaEnVivo = 0;
+        //this.timerParpadeo = 0;
         if (!this.events.unsubscribe('audio:peticion')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de audio.')};
         if (!this.events.unsubscribe('conexion:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de conexion.')};
         if (!this.events.unsubscribe('reproduccionHome:status')) {console.error('[REPRODUCTOR.ngOnDestroy] No me he dessuscrito de reproduccion.')};
@@ -289,7 +289,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     parpadeoTiempoRep(iniciar: boolean){
         console.log('[REPRODUCTOR.parpadeoTiempoRep] Parpadeo vale ' + this.timerParpadeo);
         if (iniciar){
-            if ( this.timerParpadeo == 0){
+            if ( this.timerParpadeo == null){
                 console.log('[REPRODUCTOR.parpadeoTiempoRep] Comenzando parpadeo');
                 this.timerParpadeo = setInterval(() =>{
                     this.ocultaTiempoRep = !this.ocultaTiempoRep;
@@ -306,7 +306,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         else {
             console.log('[REPRODUCTOR.parpadeoTiempoRep] Eliminando parpadeo');
             clearInterval(this.timerParpadeo);
-            this.timerParpadeo = 0;
+            //this.timerParpadeo = 0;
             this.iconoPlayPause = 'pause'; // Esto aquí es un poco bestia, pero en realidad es una forma de intentar forzar que ponga el pause...
             this.ocultaTiempoRep = false;
             //this.chngDetector.markForCheck();
@@ -339,7 +339,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
         if (!this.enVivo){
             console.log ('[REPRODUCTOR.iniciaContadorRep] Entrando');
             this.timer = setInterval(() => {
-                if (this.timer > 0) { // Esto no debería hacer falta, pero aunque haga un clearInterval no me hace demasiado caso :-(
+             //   if (this.timer > 0) { // Esto no debería hacer falta, pero aunque haga un clearInterval no me hace demasiado caso :-(
                     this.reproductor.getCurrentPosition()
                     .then((position) => {
                         this.posicionRep = position*1000;
@@ -362,7 +362,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
                     .catch ((error) => {
                         console.error('[REPRODUCTOR.iniciaContadorRep] Error solicitando posición de la reproducción: ' + error);
                     });
-                }
+             //   }
             }, 1000);
         }
     }

@@ -42,6 +42,8 @@
     "@ionic-native/sqlite": "^5.24.0",
     "@ionic-native/status-bar": "^5.24.0",
     "@ionic-native/vibration": "^5.24.0",
+    "@ionic/angular": "^5.3.1",
+    "@ionic/angular-toolkit": "^2.3.0",
     "@ionic/storage": "2.1.3",
     "anchorme": "^1.1.2",
     "babel-register": "^6.26.0",

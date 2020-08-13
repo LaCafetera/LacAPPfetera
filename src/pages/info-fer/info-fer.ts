@@ -25,7 +25,7 @@ export class InfoFerPage implements OnDestroy{
     reproduciendo: boolean = false;
     esAndroid:boolean;
     vibrando: boolean = false;
-    timer: number = 0;
+    timer: NodeJS.Timeout;
     imagenFer: string = "https://d1bm3dmew779uf.cloudfront.net/large/85c07fc70ab7c568dc559432042148c3.jpg";
     
     constructor(public navCtrl: NavController, public navParams: NavParams, public platform : Platform, private mensaje: Dialogs, private vibration: Vibration) {
@@ -69,7 +69,7 @@ export class InfoFerPage implements OnDestroy{
         }
         else {
             clearInterval (this.timer);
-            this.timer = 0;
+            //this.timer = 0;
             //this.vibration.vibrate(0); Esto sobra; cuando termine de vibrar, ha terminado.
             this.vibrando = false;
             this.imagenFer = "https://d1bm3dmew779uf.cloudfront.net/large/85c07fc70ab7c568dc559432042148c3.jpg";

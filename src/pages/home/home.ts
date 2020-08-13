@@ -36,7 +36,7 @@ export class HomePage implements OnDestroy, OnInit {
     numCapsXDescarga: number = 10;
 
     contadorCapitulos : number = 0;
-    timerVigilaDescargas: number;
+    timerVigilaDescargas: NodeJS.Timeout;
 
     mostrarFechasAbsolutas : boolean = false;
     entrandoEnRep : boolean = false;
@@ -44,7 +44,7 @@ export class HomePage implements OnDestroy, OnInit {
     desconectado : boolean = false;
     mscControlOpt: MusicControlsOptions;
     statusPlay: boolean = false;
-    relojArena: number = 0;
+    relojArena: NodeJS.Timeout;
     ordenado: boolean = true;
     soloCapitulosConLike: boolean = true;
     buscando: boolean = false ; // para mostrar o no el campo de búsqueda de episodios.

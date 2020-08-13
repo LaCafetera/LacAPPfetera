@@ -28,7 +28,7 @@ export class ChatPage {
     episodio: string;
     hashtag: string;
     items: Array<any> = [];
-    timer:number = 0;
+    timer: NodeJS.Timeout;
     mensajeTxt:string = "";
     usuario_id:string = "";
     token_id:string = "";
@@ -65,7 +65,7 @@ export class ChatPage {
 
     ngOnDestroy(){
         clearInterval(this.timer);
-        this.timer = 0;
+        //this.timer = 0;
     }
 
 
@@ -83,7 +83,7 @@ export class ChatPage {
     this.events.subscribe("menuChat:orden", (ordenado) => {
         console.log('[CAPITULOS-DESCARGADOS.constructor] Recibido mensaje de cambiar el orden. (' + ordenado.valor + ')');
         clearInterval(this.timer);
-        this.timer = 0;
+        //this.timer = 0;
         this.items = [];
         if (ordenado.valor) {
             this.acaboDeEntrar = false;
