@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, Events } from 'ionic-angular';
+import { NavController, NavParams, ToastController, Events, IonicPage } from 'ionic-angular';
 //import { FormBuilder } from '@angular/forms';
 
 import { EpisodiosService } from '../../providers/episodios-service';
@@ -11,7 +11,7 @@ import { ConfiguracionService } from '../../providers/configuracion.service';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-
+@IonicPage()
 @Component({
   selector: 'page-info-usuario',
   templateUrl: 'info-usuario.html',

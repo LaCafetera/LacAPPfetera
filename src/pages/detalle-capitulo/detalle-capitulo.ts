@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewController, NavParams/*, ModalController*/ } from 'ionic-angular';
+import { ViewController, NavParams,/*, ModalController*/ IonicPage} from 'ionic-angular';
 import { EpisodiosService } from '../../providers/episodios-service';
 
 /*
@@ -8,6 +8,7 @@ import { EpisodiosService } from '../../providers/episodios-service';
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
+@IonicPage()
 @Component({
   templateUrl: 'detalle-capitulo.html',
   providers: [EpisodiosService]

@@ -9,11 +9,11 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
-import { HomePage } from '../pages/home/home';
+//import { HomePage } from '../pages/home/home';
 import { ConfiguracionService } from '../providers/configuracion.service';
 import { EpisodiosService } from '../providers/episodios-service';
-import { InfoUsuarioPage } from '../pages/info-usuario/info-usuario';
-import { SlideInicioPage } from '../pages/slide-inicio/slide-inicio';
+import { InfoUsuarioPageModule } from '../pages/info-usuario/info-usuario.module';
+//import { SlideInicioPageModule } from '../pages/slide-inicio/slide-inicio.module';
 
 
 @Component({
@@ -67,7 +67,7 @@ export class MyApp implements OnDestroy {
   ngAfterViewInit() {
     this._platform.ready().then(() => {
       this._deepLink.routeWithNavController(this.nav,{
-          '/:detalles':InfoUsuarioPage
+          '/:detalles':'InfoUsuarioPageModule'
         }).subscribe((match) => {
         //console.log('[app.component.ngAfterViewInit] Enrutado. $link: '/* + match.$route + ' - '*/ +  JSON.stringify(match.$link) );
         //console.log('[app.component.ngAfterViewInit] Enrutado. $args: '/* + match.$route + ' - '*/ + JSON.stringify(match.$args ) );
@@ -105,10 +105,10 @@ export class MyApp implements OnDestroy {
             .then ((yasTadoAqui) => {
                  console.info ('No es la primera vez que ejecutamos esta versión de la app');
                  if (!yasTadoAqui){
-                   this.rootPage = SlideInicioPage;
+                   this.rootPage = 'SlideInicioPageModule';
                  }
                  else {
-                   this.rootPage = HomePage;
+                   this.rootPage = 'HomePage';
                  }
             })
             .catch ((error)=> console.error('[HOME.ngOnInit] Error tratando de averiguar si es nuestra primera vez: ' + error));
@@ -439,6 +439,6 @@ export class MyApp implements OnDestroy {
     }
 
     ayuda(){
-      this.nav.setRoot (SlideInicioPage);
+      this.nav.setRoot ('SlideInicioPage');
     }
 }

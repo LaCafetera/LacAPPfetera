@@ -39,52 +39,46 @@ import { DescargaCafetera } from '../providers/descarga.service';
 import { StoreProvider } from '../providers/store.service';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
+///import { HomePage } from '../pages/home/home';
 //import { InfoFerPage } from '../pages/info-fer/info-fer';
-import { ReproductorPage } from '../pages/reproductor/reproductor';
+///import { ReproductorPage } from '../pages/reproductor/reproductor';
 //import { DetalleCapituloPage } from '../pages/detalle-capitulo/detalle-capitulo';
-import { ChatPage } from '../pages/chat/chat';
-import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
-import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
-import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
-import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
-import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
-import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
-import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
+///import { ChatPage } from '../pages/chat/chat';
+///import { InfoUsuChatPage } from "../pages/info-usu-chat/info-usu-chat";
+///import { InfoUsuarioPage } from "../pages/info-usuario/info-usuario";
+///import { MapaCafeteroPage } from "../pages/mapa-cafetero/mapa-cafetero";
+///import { CapitulosDescargadosPage } from "../pages/capitulos-descargados/capitulos-descargados";
+///import { listaPuntosCap } from "../pages/lista-Puntos-Cap/lista-Puntos-Cap";
+///import { SlideInicioPage } from "../pages/slide-inicio/slide-inicio";
+///import { MapaOyentesPage } from "../pages/mapa-oyentes/mapa-oyentes";
 
 import { MenuExtComponent } from '../components/menuext/menuext';
 import { MenuExtDescComponent } from '../components/menuext_descargados/menuext_descargados';
 import { MenuExtChatComponent } from '../components/menuext_chat/menuext_chat';
-
-import { tiempoHastaAhoraPipe } from './tiempoHastaAhora.pipe'
-import { muestraHashtagPipe } from './muestraHashtag.pipe'
-import { eliminaHashtagPipe } from './eliminaHashtag.pipe'
-import { formateaFechaPipe } from './formateaFecha.pipe'
-import { formateaTiempoPipe } from './formateaTiempo.pipe'
+import { SlideInicioPageModule } from '../pages/slide-inicio/slide-inicio.module';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
+///    HomePage,
    // InfoFerPage,
-    ReproductorPage,
+    ///ReproductorPage,
     //DetalleCapituloPage,
-    ChatPage,
-    tiempoHastaAhoraPipe,
-    muestraHashtagPipe,
-    eliminaHashtagPipe,
-    formateaFechaPipe,
-    formateaTiempoPipe,
-    InfoUsuChatPage,
-    InfoUsuarioPage,
-    MapaCafeteroPage,
+    ///ChatPage,
+    ///tiempoHastaAhoraPipe,
+    ///muestraHashtagPipe,
+    ///eliminaHashtagPipe,
+    ///formateaFechaPipe,
+    ///formateaTiempoPipe,
+    ///InfoUsuChatPage,
+    ///InfoUsuarioPage,
+    ///MapaCafeteroPage,
     MenuExtComponent,
     MenuExtDescComponent, 
-    MenuExtChatComponent,
-    CapitulosDescargadosPage,
-    listaPuntosCap,
-    SlideInicioPage,
-    MapaOyentesPage
+    MenuExtChatComponent
+    ///CapitulosDescargadosPage,
+    ///listaPuntosCap,
+    ///MapaOyentesPage
   ],
   imports: [
     BrowserModule,
@@ -97,21 +91,20 @@ import { formateaTiempoPipe } from './formateaTiempo.pipe'
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage,
+///    HomePage,
     //InfoFerPage,
-    ReproductorPage,
+    ///ReproductorPage,
     //DetalleCapituloPage,
-    InfoUsuChatPage,
-    ChatPage,
-    InfoUsuarioPage,
-    MapaCafeteroPage,
+    ///InfoUsuChatPage,
+    ///ChatPage,
+    ///InfoUsuarioPage,
+    ///MapaCafeteroPage,
     MenuExtComponent,
     MenuExtDescComponent, 
-    MenuExtChatComponent, 
-    CapitulosDescargadosPage,
-    listaPuntosCap,
-    SlideInicioPage,
-    MapaOyentesPage
+    MenuExtChatComponent
+    ///CapitulosDescargadosPage,
+    ///listaPuntosCap,
+    ///MapaOyentesPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
               File,

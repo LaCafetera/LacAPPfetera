@@ -8,7 +8,7 @@ import { MenuExtDescComponent } from '../../components/menuext_descargados/menue
 import { EpisodiosService } from "../../providers/episodios-service";
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { Player } from '../../app/player';
-import { ReproductorPage } from "../reproductor/reproductor";
+import { ReproductorPageModule } from '../reproductor/reproductor.module';
 
 /**
  * Generated class for the CapitulosDescargadosPage page.
@@ -194,7 +194,7 @@ export class CapitulosDescargadosPage implements OnDestroy {
     }
 
     pushPage(item){
-        this.navCtrl.push(ReproductorPage, {episodio:   item,
+        this.navCtrl.push(ReproductorPageModule, {episodio:   item,
                                             player:     this.reproductor,
                                             //controlador:this.mscControl,
                                         //     soloWifi:this.soloWifi,

@@ -1,11 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, ToastController, Events, Content, PopoverController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, Events, Content, PopoverController, IonicPage } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { InfoUsuChatPage } from "../info-usu-chat/info-usu-chat";
 import anchorme from "anchorme";
 import emojis from "emojis";
 import { MenuExtChatComponent } from '../../components/menuext_chat/menuext_chat';
@@ -19,6 +18,7 @@ import { MenuExtChatComponent } from '../../components/menuext_chat/menuext_chat
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
+@IonicPage()
 @Component({
   selector: 'page-chat',
   templateUrl: 'chat.html',
@@ -368,7 +368,7 @@ export class ChatPage {
 
     muestraDatosUsuario(user_id){
         console.log("[CHAT.muestraDatosUser] Usuario " + user_id);
-        this.navCtrl.push(InfoUsuChatPage, {usuario: user_id});
+        this.navCtrl.push('InfoUsuChatPage', {usuario: user_id});
     }
 
     cambiaEnviaDos(){

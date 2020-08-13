@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 
-import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL, ActionSheetController, ToastController } from 'ionic-angular';
+import { NavController, Events, MenuController, PopoverController, Platform, normalizeURL, ActionSheetController, ToastController, IonicPage } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { MusicControls, MusicControlsOptions } from '@ionic-native/music-controls/ngx';
 import { Network } from '@ionic-native/network/ngx';
@@ -12,11 +12,9 @@ import { EpisodiosGuardadosService } from '../../providers/episodios_guardados.s
 import { DescargaCafetera } from '../../providers/descarga.service';
 import { MenuExtComponent } from '../../components/menuext/menuext';
 
-import { InfoFerPage } from '../info-fer/info-fer';
-import { ReproductorPage } from '../reproductor/reproductor';
 import { Player } from '../../app/player';
 
-
+@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
@@ -27,7 +25,7 @@ export class HomePage implements OnDestroy, OnInit {
     
     items: Array<any>;
    // reproductor = ReproductorPage;
-    infoFer = InfoFerPage;
+    infoFer = 'InfoFerModule';
     // reproductor: Player;
     capEnRep:string = 'ninguno';
     //soloWifi:boolean = false;
@@ -386,7 +384,7 @@ export class HomePage implements OnDestroy, OnInit {
 		this.mscControlOpt.duration = Math.round(item.objeto.duration/1000);
         this.creaControlEnNotificaciones();
         this.capEnRep = 'pdte' + item.objeto.episode_id;
-        this.navCtrl.push(ReproductorPage, {episodio:   item,
+        this.navCtrl.push('ReproductorPage', {episodio:   item,
                                             player:     this.reproductor,
                                        //     controlador:this.mscControl,
                                        //     soloWifi:this.soloWifi,

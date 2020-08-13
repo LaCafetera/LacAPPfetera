@@ -1,6 +1,6 @@
 import { Component, ViewChild  } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, Platform } from 'ionic-angular';
-import { HomePage } from '../home/home';
+//import { HomePageModule } from '../home/home.module';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 //import { errorHandler } from '@angular/platform-browser/src/browser';
 
@@ -10,7 +10,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
-
+@IonicPage()
 @Component({
   selector: 'page-slide-inicio',
   templateUrl: 'slide-inicio.html',
@@ -109,7 +109,7 @@ export class SlideInicioPage {
   }
 
   letsRock(){
-    this.navCtrl.setRoot (HomePage);
+    this.navCtrl.setRoot ('HomePage');
   }
 
   slideChanged(){

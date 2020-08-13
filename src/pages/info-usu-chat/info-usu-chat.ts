@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { /*IonicPage,*/ NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { EpisodiosService } from '../../providers/episodios-service';
 
 /**
@@ -8,7 +8,7 @@ import { EpisodiosService } from '../../providers/episodios-service';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-//@IonicPage()
+@IonicPage()
 @Component({
   selector: 'page-info-usu-chat',
   templateUrl: 'info-usu-chat.html',

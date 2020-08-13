@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef,/* Output,*/ EventEmitter, OnInit,  OnDestroy} from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL, ActionSheetController } from 'ionic-angular';
+import { NavController, NavParams, Platform, PopoverController, Events, ToastController, ModalController, normalizeURL, ActionSheetController, IonicPage } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { Network } from '@ionic-native/network/ngx';
@@ -9,10 +9,10 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { EpisodiosService } from '../../providers/episodios-service';
 import { ConfiguracionService } from '../../providers/configuracion.service';
 import { CadenasTwitterService } from '../../providers/cadenasTwitter.service';
-import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
-import { ChatPage } from '../chat/chat';
+//import { DetalleCapituloPage } from '../detalle-capitulo/detalle-capitulo';
+//import { ChatPage } from '../chat/chat';
 import { Player } from '../../app/player';
-import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
+//import { listaPuntosCap } from '../lista-Puntos-Cap/lista-Puntos-Cap';
 import { EpisodiosGuardadosService } from "../../providers/episodios_guardados.service"
 import { AutoDestruccionComponent } from "../../components/auto-destruccion";
 
@@ -23,6 +23,7 @@ import { AutoDestruccionComponent } from "../../components/auto-destruccion";
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
+@IonicPage()
 @Component({
   selector: 'page-reproductor',
   templateUrl: 'reproductor.html',
@@ -66,7 +67,6 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     porcentajeDescargado: number = 0;
 
-    pantallaChat= ChatPage;
     //mscControl: MusicControls;
     soloWifi: boolean;
     dirTwitter: string = '';
@@ -78,7 +78,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     detalleIntervalo: number = 0;
     hayEnlaceIntervalo: boolean = false;
 
-    pagChat: any = ChatPage;
+    pantallaChat: any = 'ChatPage';
 
     ocultaTiempoRep: boolean = false;
 
@@ -493,7 +493,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
 
     muestraDetalle(myEvent) {
         console.log ('[REPRODUCTOR.muestraDetalle] Enviando datos : ' + this.capItem.title + ' - ' +  this.capItem.description);
-        let popover = this.popoverCtrl.create(DetalleCapituloPage, {titulo: this.capItem.title, detalle: this.capItem.description});
+        let popover = this.popoverCtrl.create('DetalleCapituloPage', {titulo: this.capItem.title, detalle: this.capItem.description});
         popover.present({ ev: myEvent }) ;
     }
 
@@ -600,7 +600,7 @@ export class ReproductorPage implements OnInit, OnDestroy{
     }
     
     listaContenido() {
-        this.navCtrl.push(listaPuntosCap, {listadoPuntos: this.detallesCapitulo});
+        this.navCtrl.push('listaPuntosCap', {listadoPuntos: this.detallesCapitulo});
     }
 
     cambiaPosicion(datos: any){
